@@ -1,0 +1,18 @@
+.genetate-main{
+    margin: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.second-form{
+    margin-top: 80px;
+ 
+}
+
+.d-hidden{
+    visibility: hidden;
+}
+.d-visible{
+    visibility: visible
+}

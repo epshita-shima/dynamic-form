@@ -45,6 +45,26 @@ const SingleEntryForm = () => {
     setAge(event.target.value);
   };
 
+const handleSort=()=>{
+  let _count=[...count]
+  const draggedItemContent=_count.splice(dragItem.current,1)[0]
+  _count.splice(dragOverItem.current,0,draggedItemContent);
+  dragItem.current=null;
+  dragOverItem.current=null;
+  setCount(_count)
+}
+
+// const handleSortCheckBox=()=>{
+//   let _countCheck=[...countCheck]
+//   const draggedItemContent=_countCheck.splice(dragItem.current,1)[0]
+//   _countCheck.splice(dragOverItem.current,0,draggedItemContent);
+//   dragItem.current=null;
+//   dragOverItem.current=null;
+//   setCountCheck(_countCheck)  
+// }
+
+const dragItem=useRef()
+const dragOverItem=useRef()
   return (
     <div>
       <div className="single-entry-form">
@@ -59,6 +79,7 @@ const SingleEntryForm = () => {
             size="small"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            
           />
         </div>
         <div style={{ marginLeft: "5px" }}>
@@ -111,6 +132,7 @@ const SingleEntryForm = () => {
               const arrayDDF = [];
               const arrayCheck = [];
               const arrayDate = [];
+
               for (var i = 0; i < number; i++) {
                 array.push([i]);
               }
@@ -123,6 +145,7 @@ const SingleEntryForm = () => {
               for (var i = 0; i < numberDate; i++) {
                 arrayDate.push([i]);
               }
+
               setCount(array);
               setCountDDf(arrayDDF);
               setCountCheck(arrayCheck);
@@ -138,49 +161,59 @@ const SingleEntryForm = () => {
         initialValues={{}}
         onSubmit={(values, actions) => {}}
         render={({ values, setFieldValue, handleSubmit }) => (
-          <DragDropContext onDragEnd={() => {}}>
+          <DragDropContext>
             <Droppable droppableId="inputList">
-              {(provided) => (
+              {( provided) => (
                 <form
                   onSubmit={""}
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
                   <div className="form-parent">
-                    <div>
-                      {count.map((item, index) => {
+                    
+                     <div>
+                     {count.map((item, index) => {
                         return (
-                          <Draggable draggableId={index} index={0}>
+                          <Draggable  draggableId={item} index={index}>
                             {(provided) => (
                               <div
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 ref={provided.innerRef}
+                                draggable
+                                onDragStart={(e)=>{dragItem.current=index}}
+                                onDragEnter={(e)=>{dragOverItem.current=index}}
+                                onDragEnd={handleSort}
+                                onDragOver={(e)=>e.preventDefault}
+                                className="list-item"
                               >
                                 <TextField
                                   id="outlined-basic"
                                   variant="outlined"
                                   size="small"
                                   name={`item.${index}.check`}
+                                  placeholder="Enter text"
                                 />
                               </div>
                             )}
                           </Draggable>
                         );
                       })}
-                    </div>
+                     </div>
+                    
 
-                
-                        <div
-                         
-                        >
+{/*                 
+                         <div>
                           {countDDF.map((item, index) => {
                             return (
-                              <Draggable draggableId={index} index={0}>
+                              <Draggable draggableId={item} index={0}>
                               {(provided) => (
-                               <div   {...provided.draggableProps}
+                               <div  
+                                {...provided.draggableProps}
                                {...provided.dragHandleProps}
-                               ref={provided.innerRef}>
+                               ref={provided.innerRef}
+                              draggable
+                               >
                                <Box sx={{ minWidth: 120 }}>
                                  <FormControl fullWidth>
                                    <InputLabel id="demo-simple-select-label">
@@ -195,10 +228,10 @@ const SingleEntryForm = () => {
                                      size="small"
                                      onChange={handleChange}
                                    >
-                                     <MenuItem value={10}>Ten</MenuItem>
+                                     {/* <MenuItem value={10}>Ten</MenuItem>
                                      <MenuItem value={20}>Twenty</MenuItem>
-                                     <MenuItem value={30}>Thirty</MenuItem>
-                                   </Select>
+                                     <MenuItem value={30}>Thirty</MenuItem> */}
+                                   {/* </Select>
                                  </FormControl>
                                </Box>
                              </div>
@@ -207,20 +240,25 @@ const SingleEntryForm = () => {
                               
                             );
                           })}
-                        </div>
+                        </div>   */}
                      
-                    <Droppable droppableId="inputList">
+                    {/* <Droppable droppableId="inputList">
                       {(provided) => (
                         <div
                           ref={provided.innerRef}
                           {...provided.droppableProps}
                         ></div>
                       )}
-                    </Droppable>
+                    </Droppable> */}
 
                     {/* {countCheck.map((item, index) => {
                       return (
-                        <div>
+                        <div draggable
+                        onDragStart={(e)=>{dragItem.current=index}}
+                        onDragEnter={(e)=>{dragOverItem.current=index}}
+                        onDragEnd={ handleSortCheckBox}
+                        onDragOver={(e)=>e.preventDefault}
+                        className="list-item">
                           <FormGroup>
                             <FormControlLabel
                               control={<Checkbox defaultChecked />}
@@ -232,7 +270,7 @@ const SingleEntryForm = () => {
                     })}
                     {countDate.map((item, index) => {
                       return (
-                        <div>
+                        <div draggable>
                           <DatePicker
                             selected={startDate}
                             onChange={(date) => setStartDate(date)}

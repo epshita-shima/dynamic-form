@@ -2,6 +2,11 @@ import {
   Box,
   Button,
   Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -12,27 +17,25 @@ import {
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import "./SingleEntryForm.css";
-import { Formik } from "formik";
 import DatePicker from "react-datepicker";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { useNavigate } from "react-router-dom";
+import SingleForm from "../GenerateForm/SingleForm/SingleForm";
 
 const SingleEntryForm = () => {
+  const navigate=useNavigate()
   const [age, setAge] = useState("");
+  const [open, setOpen] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [inputValue, setInputValue] = useState("");
   const [inputValueDDF, setInputValueDDF] = useState("");
   const [inputValueCheck, setInputValueCheck] = useState("");
   const [inputValueDate, setInputValueDate] = useState("");
   const [count, setCount] = useState([]);
-  const [countDDF, setCountDDf] = useState([]);
-  const [countCheck, setCountCheck] = useState([]);
-  const [countDate, setCountDate] = useState([]);
-  const [allElement, setAllElement] = useState([]);
   const previousInputValue = useRef("");
   const previousInputValueDDF = useRef("");
   const previousInputValueCheck = useRef("");
   const previousInputValueDate = useRef("");
-const[input,setInput]=useState('')
+
   useEffect(() => {
     previousInputValue.current = inputValue;
     previousInputValueDDF.current = inputValueDDF;
@@ -43,27 +46,16 @@ const[input,setInput]=useState('')
   const handleChange = (event) => {
     setAge(event.target.value);
   };
-
-  const handleSort = () => {
-    let _count = [...allElement];
-    const draggedItemContent = _count.splice(dragItem.current, 1)[0];
-    _count.splice(dragOverItem.current, 0, draggedItemContent);
-    dragItem.current = null;
-    dragOverItem.current = null;
-    setAllElement(_count);
+  const handleClickOpen = () => {
+    setOpen(true);
   };
-console.log(allElement)
-  // const handleSortCheckBox=()=>{
-  //   let _countCheck=[...countCheck]
-  //   const draggedItemContent=_countCheck.splice(dragItem.current,1)[0]
-  //   _countCheck.splice(dragOverItem.current,0,draggedItemContent);
-  //   dragItem.current=null;
-  //   dragOverItem.current=null;
-  //   setCountCheck(_countCheck)
-  // }
 
-  const dragItem = useRef();
-  const dragOverItem = useRef();
+  const handleClose = () => {
+    setOpen(false);
+    navigate('/single-form')
+
+  };
+ 
   return (
     <div>
       <div className="single-entry-form">
@@ -121,42 +113,39 @@ console.log(allElement)
         <div>
           <Button
             variant="contained"
+            style={{marginLeft:'20px',marginTop:'20px'}}
             onClick={() => {
+              handleClickOpen()
               const number = inputValue;
               const numberDDf = inputValueDDF;
               const numberCheck = inputValueCheck;
               const numberDate = inputValueDate;
-              const array = [];
-              const arrayDDF = [];
-              const arrayCheck = [];
-              const arrayDate = [];
-              const elementArray = [];
+              var array = [];
 
               for (var i = 0; i < number; i++) {
                 array.push([<TextField
                   id="outlined-basic"
                   variant="outlined"
                   size="small"
-                  
                   onChange={(e)=>{
                   console.log(e.target.value)
                   }}
-                  name={`item.${i}.check`}
+                  name={`item.${i}.text`}
                   placeholder="Enter text"
                 />]);
               }
               for (var i = 0; i < numberDDf; i++) {
-                arrayDDF.push([<Box sx={{ minWidth: 120, marginTop: 1 }}>
+                array.push([<Box sx={{ minWidth: 100 }}>
                   <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">
                       Age
                     </InputLabel>
                     <Select
                       labelId="demo-simple-select-label"
-                      // id={`item.${index}.drop`}
+                      id={`item.${i}.drop`}
                       value={age}
                       label="Age"
-                      // name={`item.${index}.drop`}
+                      name={`item.${i}.drop`}
                       size="small"
                       onChange={handleChange}
                     >
@@ -165,118 +154,64 @@ console.log(allElement)
                 </Box>]);
               }
               for (var i = 0; i < numberCheck; i++) {
-                arrayCheck.push([<FormGroup>
+                array.push([<FormGroup>
                   <FormControlLabel
+                  name={`item.${i}.check`}
                     control={<Checkbox defaultChecked />}
                     label="Label"
                   />
                 </FormGroup>]);
               }
               for (var i = 0; i < numberDate; i++) {
-                arrayDate.push([ <DatePicker
+                array.push([ <DatePicker
                   selected={startDate}
+                  name={`item.${i}.date`}
                   onChange={(date) => setStartDate(date)}
                 />]);
               }
-              elementArray.push(array, arrayDDF, arrayCheck, arrayDate);
-              console.log(elementArray);
-              setAllElement(elementArray);
-              setCount(array);
-              setCountDDf(arrayDDF);
-              setCountCheck(arrayCheck);
-              setCountDate(arrayDate);
+            setCount([...array])
             }}
           >
             Enter
           </Button>
+          <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Give page name"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+          <TextField
+                  id="outlined-basic"
+                  variant="outlined"
+                  size="small"
+                  
+                  onChange={(e)=>{
+                  console.log(e.target.value)
+                  }}
+                  placeholder="Enter text"
+                />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Disagree</Button>
+          <Button onClick={handleClose} autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
         </div>
       </div>
 
-      <Formik
-        initialValues={{}}
-        onSubmit={(values, actions) => {}}
-        render={({ values, setFieldValue, handleSubmit }) => (
-          // <DragDropContext>
-          //   <Droppable droppableId="inputList">
-          //     {(provided) => (
-                <form
-                  onSubmit={""}
-                  // ref={provided.innerRef}
-                  // {...provided.droppableProps}
-                >
-                  <div>
-                    <div className="form-parent">
-                      {allElement.map((result, index) => {
-                        console.log(result)
-                        return (
-                          <div key={index} draggable 
-                          onDragStart={(e)=>{dragItem.current=index}}
-                          onDragEnter={(e)=>{dragOverItem.current=index}}
-                          onDragEnd={handleSort}
-                          onDragOver={(e)=>e.preventDefault}
-                         >
-                            {result.map((item, id) => {
-                              //  const handleItem= () => {
-                              //   let _count = [...result];
-                              //   const draggedItemContent = _count.splice(dragItem.current, 1)[0];
-                              //   _count.splice(dragOverItem.current, 0, draggedItemContent);
-                              //   dragItem.current = null;
-                              //   dragOverItem.current = null;
-                              //   setAllElement(_count);
-                              // };
-                              return (
-                                <div key={id} >
-                                  {index == 0 ? (
-                                    <div draggable  style={{marginTop:'5px'}}>
-                                      {
-                                        item
-                                      }
-                                    </div>
-                                  ) : (
-                                    ""
-                                  )}
-
-                                  {index == 1 ? (
-                                    <div draggable style={{marginLeft:'5px',marginTop:'5px'}}>
-                                      {
-                                        item
-                                      }
-                                    </div>
-                                  ) : (
-                                    ""
-                                  )}
-                                  {index == 2 ? (
-                                   <div draggable style={{marginLeft:'5px',marginTop:'5px'}}>
-                                    {
-                                      item
-                                    }
-                                   </div>
-                                  ) : (
-                                    ""
-                                  )}
-                                  {index == 3 ? (
-                                   <div draggable style={{marginLeft:'5px',marginTop:'5px'}}>
-                                    {
-                                      item
-                                    }
-                                   </div>
-                                  ) : (
-                                    ""
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </form>
-              // )}
-          //   </Droppable>
-          // </DragDropContext>
-        )}
-      />
+    <div>
+      {
+        <SingleForm count={count} setCount={setCount}></SingleForm>
+      }
+    </div>
     </div>
   );
 };

@@ -1,15 +1,13 @@
 .genetate-main{
-    margin: 100px;
+    margin:60px auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
-.second-form{
-    margin-top: 80px;
- 
-}
-
+/* .second-form{
+    margin-top: 60px;
+} */
 .d-hidden{
     visibility: hidden;
 }

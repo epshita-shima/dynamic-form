@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button ,Grid} from "@mui/material";
 import React, { useState } from "react";
 import "./GenerateForm.css";
 import Swal from "sweetalert2";
@@ -6,11 +6,12 @@ import SingleEntryForm from "../SingleEntryForm/SingleEntryForm";
 import { Link } from "react-router-dom";
 const GenerateForm = () => {
   const [open, setOpen] = useState(false);
+  const [opens, setOpens] = useState(true);
   const [singleEntryOpen, setSingleEntryOpen] = useState(false);
 
   return (
-    <div>
-      <div className="genetate-main">
+    <Grid className={`${opens ? "d-visible" : "d-hidden"}`}>
+      <Grid className="genetate-main">
         <Button
           variant="contained"
           onClick={() => {
@@ -19,8 +20,9 @@ const GenerateForm = () => {
         >
           Form Generate
         </Button>
-
-        <div className={`second-form ${open ? "d-visible" : "d-hidden"}`}>
+        
+      </Grid>
+      <Grid className={`genetate-main  ${open ? "d-visible" : "d-hidden"}`}>
           <Button
             variant="contained"
             style={{ background: "indigo" }}
@@ -37,12 +39,12 @@ const GenerateForm = () => {
           >
             Single Form with Details
           </Button>
-          <div className={`${singleEntryOpen ? "d-visible" : "d-hidden"}`}>
-            <SingleEntryForm></SingleEntryForm>
-          </div>
-        </div>
-      </div>
-    </div>
+          
+        </Grid>
+        <Grid className={`${singleEntryOpen ? "d-visible" : "d-hidden"}`}>
+            <SingleEntryForm opens={opens} setOpens={setOpens} setOpen={setOpen}></SingleEntryForm>
+          </Grid>
+    </Grid>
   );
 };
 

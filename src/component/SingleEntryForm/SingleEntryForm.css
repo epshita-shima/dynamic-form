@@ -28,3 +28,6 @@ text-align: center;
 .field-title{
     margin-top: 5px;
 }
+.dispaly-visibility{
+  visibility:hidden;
+}

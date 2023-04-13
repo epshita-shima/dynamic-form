@@ -28,6 +28,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const navigate = useNavigate();
   const [age, setAge] = useState("");
   // const [open, setOpen] = useState(true);
+  const [array, setArray] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
   const [inputValue, setInputValue] = useState("");
   const [inputValueDDF, setInputValueDDF] = useState("");
@@ -50,14 +51,6 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     setAge(event.target.value);
   };
 
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  // };
-
-  // const handleClose = () => {
-  //   setOpen(false);
-  // };
-
   const handleSort = () => {
     let _count = [...count];
     const draggedItemContent = _count.splice(dragItem.current, 1)[0];
@@ -69,6 +62,10 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
 
   const dragItem = useRef();
   const dragOverItem = useRef();
+
+  const addList = () => {
+    setCount([...count, ...array]);
+  };
 
   return (
     <Grid>
@@ -134,14 +131,20 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                 const numberDDf = inputValueDDF;
                 const numberCheck = inputValueCheck;
                 const numberDate = inputValueDate;
-                var array = [];
+                // var array = [];
 
                 for (var i = 0; i < number; i++) {
                   array.push([
                     <TextField
+                      id="standard-basic"
+                      label="Enter label"
+                      variant="standard"
+                    />,
+                    <TextField
                       id="outlined-basic"
                       variant="outlined"
                       size="small"
+                      style={{ marginTop: "3px" }}
                       onChange={(e) => {
                         console.log(e.target.value);
                       }}
@@ -152,11 +155,13 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                 }
                 for (var i = 0; i < numberDDf; i++) {
                   array.push([
+                    <TextField
+                      id="standard-basic"
+                      label="Enter label"
+                      variant="standard"
+                    />,
                     <Box sx={{ minWidth: 100 }}>
                       <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">
-                          Age
-                        </InputLabel>
                         <Select
                           labelId="demo-simple-select-label"
                           id={`item.${i}.drop`}
@@ -164,6 +169,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                           label="Age"
                           name={`item.${i}.drop`}
                           size="small"
+                          style={{ marginTop: "3px" }}
                           onChange={handleChange}
                         ></Select>
                       </FormControl>
@@ -172,9 +178,15 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                 }
                 for (var i = 0; i < numberCheck; i++) {
                   array.push([
+                    <TextField
+                      id="standard-basic"
+                      label="Enter label"
+                      variant="standard"
+                    />,
                     <FormGroup>
                       <FormControlLabel
                         name={`item.${i}.check`}
+                        style={{ marginTop: "3px" }}
                         control={<Checkbox defaultChecked />}
                         label="Label"
                       />
@@ -186,56 +198,51 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                     <DatePicker
                       selected={startDate}
                       name={`item.${i}.date`}
+                      style={{ marginTop: "3px" }}
                       onChange={(date) => setStartDate(date)}
                     />,
                   ]);
                 }
                 setCount([...array]);
-                // navigate('/single-form')
                 setOpens(false);
                 setOpen(false);
               }}
             >
               Enter
             </Button>
-            {/* <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              {"Give page name"}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  size="small"
-                  onChange={(e) => {
-                    console.log(e.target.value);
-                  }}
-                  placeholder="Enter text"
-                />
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Disagree</Button>
-              <Button onClick={handleClose} autoFocus>
-                Agree
-              </Button>
-            </DialogActions>
-          </Dialog> */}
           </Grid>
         </Grid>
       ) : (
-        <Grid style={{marginLeft:'100px'}}> 
+        <Grid style={{ margin: "50px" }}>
           <Formik
             initialValues={{}}
             render={({ values, setFieldValue }) => (
               <form>
-                <h2>Single Form</h2>
+                <h2
+                  style={{
+                    textAlign: "center",
+                    fontSize: "32px",
+                    color: "purple",
+                  }}
+                >
+                  Single Form
+                </h2>
+                <Button variant="contained" type="submit">
+                  Save
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="contained"
+                  style={{ marginLeft: "5px", background: "indigo" }}
+                  onClick={addList}
+                >
+                  Add row
+                </Button>
+                
+                  <a href="/slider" target="_blank" style={{ marginLeft: "5px", background: "purple", color:'white', textDecoration:'none', padding:'7px'}}> Slider view</a>
+             
+               
                 <Grid className="grid-container">
                   {count?.map((result, index) => {
                     console.log(result);
@@ -252,11 +259,23 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                         onDragEnd={handleSort}
                         onDragOver={(e) => e.preventDefault}
                         className="grid-item"
+                        // style={{display:'flex'}}
                       >
                         {result}
                       </Grid>
                     );
                   })}
+                  <Button
+                    variant="contained"
+                    style={{ background: "red", marginTop: "3px" }}
+                    onClick={() => {
+                      const itemList = [...count];
+                      itemList.splice(0);
+                      setCount(itemList);
+                    }}
+                  >
+                    X
+                  </Button>
                 </Grid>
               </form>
             )}

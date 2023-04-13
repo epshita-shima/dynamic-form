@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import SingleEntryForm from "./component/SingleEntryForm/SingleEntryForm";
 import SingleForm from "./component/GenerateForm/SingleForm/SingleForm";
+import Slider from "./component/SliderView/Slider";
 function App() {
   return (
     <div>
@@ -13,6 +14,7 @@ function App() {
       <Route path="/" element={<GenerateForm></GenerateForm>}></Route>
       <Route path="/single-entry" element={<SingleEntryForm></SingleEntryForm>}></Route>
       <Route  path="/single-form" element={<SingleForm/>}></Route>
+      <Route path="/slider" element={<Slider></Slider>}></Route>
     </Routes>
     </div>
   );

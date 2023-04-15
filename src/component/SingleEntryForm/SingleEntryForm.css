@@ -16,6 +16,12 @@ text-align: center;
     grid-template-columns: repeat(10, minmax(0, 1fr));
     padding: 10px;
   }
+.grid-containers {
+    margin-top: 15px;
+    display: grid;
+    /* grid-template-columns: repeat(10, minmax(0, 1fr)); */
+    padding: 10px;
+  }
  
   .grid-item {
     overflow: hidden;

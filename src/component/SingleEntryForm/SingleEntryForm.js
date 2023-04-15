@@ -39,13 +39,17 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const previousInputValueDDF = useRef("");
   const previousInputValueCheck = useRef("");
   const previousInputValueDate = useRef("");
-  console.log(count);
+  const [allCountArray,setAllCountarray]=useState([])
+console.log(allCountArray)
+
   useEffect(() => {
     previousInputValue.current = inputValue;
     previousInputValueDDF.current = inputValueDDF;
     previousInputValueCheck.current = inputValueCheck;
     previousInputValueDate.current = inputValueDate;
-  }, [inputValue, inputValueDDF, inputValueCheck]);
+
+    setAllCountarray([count,array])
+  }, [inputValue, inputValueDDF, inputValueCheck, setAllCountarray,count,array]);
 
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -74,7 +78,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
           <Grid>
             <label htmlFor="" className="text-style">
               Text Field
-            </label>{" "}
+            </label>
             <br></br>
             <TextField
               id="outlined-basic"
@@ -87,7 +91,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
           <Grid style={{ marginLeft: "5px" }}>
             <label htmlFor="" className="text-style">
               DropDown Field
-            </label>{" "}
+            </label>
             <br></br>
             <TextField
               id="outlined-basic"
@@ -136,11 +140,6 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                 for (var i = 0; i < number; i++) {
                   array.push([
                     <TextField
-                      id="standard-basic"
-                      label="Enter label"
-                      variant="standard"
-                    />,
-                    <TextField
                       id="outlined-basic"
                       variant="outlined"
                       size="small"
@@ -153,13 +152,9 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                     />,
                   ]);
                 }
+
                 for (var i = 0; i < numberDDf; i++) {
                   array.push([
-                    <TextField
-                      id="standard-basic"
-                      label="Enter label"
-                      variant="standard"
-                    />,
                     <Box sx={{ minWidth: 100 }}>
                       <FormControl fullWidth>
                         <Select
@@ -178,11 +173,6 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                 }
                 for (var i = 0; i < numberCheck; i++) {
                   array.push([
-                    <TextField
-                      id="standard-basic"
-                      label="Enter label"
-                      variant="standard"
-                    />,
                     <FormGroup>
                       <FormControlLabel
                         name={`item.${i}.check`}
@@ -203,9 +193,26 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                     />,
                   ]);
                 }
-                setCount([...array]);
-                setOpens(false);
-                setOpen(false);
+                array.push([
+                  <Button
+                    variant="contained"
+                    style={{ background: "red", marginTop: "3px" }}
+                    onClick={() => {
+                      const itemList = [...count];
+                      itemList.splice(10);
+                      setCount(itemList);
+                    }}
+                  >
+                    X
+                  </Button>,
+                ]);
+                if (array.length > 10) {
+                  alert("plz take less then 10 field");
+                } else {
+                  setCount([...array]);
+                  setOpens(false);
+                  setOpen(false);
+                }
               }}
             >
               Enter
@@ -239,13 +246,37 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                 >
                   Add row
                 </Button>
-                
-                  <a href="/slider" target="_blank" style={{ marginLeft: "5px", background: "purple", color:'white', textDecoration:'none', padding:'7px'}}> Slider view</a>
-             
-               
-                <Grid className="grid-container">
+
+                {/* <a
+                  href="/slider"
+                  target="_blank"
+                  style={{
+                    marginLeft: "5px",
+                    background: "purple",
+                    color: "white",
+                    textDecoration: "none",
+                    padding: "7px",
+                  }}
+                >
+                  Slider view
+                </a> */}
+
+                <br />
+                <div className={` grid-containers`} style={{gridTemplateColumns:`repeat(${array.length}, minmax(0, 1fr)`}}>
+                {array.map((item, i) => {
+                    return (
+                      <TextField
+                        id="standard-basic"
+                        label="Enter label"
+                        variant="standard"
+                        style={{ marginLeft: "15px" }}
+                      />
+                    );
+                  })}
+                </div>
+
+                <Grid className={` grid-containers`} style={{gridTemplateColumns:`repeat(${array.length}, minmax(0, 1fr)`,marginTop:'5px'}}>
                   {count?.map((result, index) => {
-                    console.log(result);
                     return (
                       <Grid
                         key={index}
@@ -259,23 +290,11 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                         onDragEnd={handleSort}
                         onDragOver={(e) => e.preventDefault}
                         className="grid-item"
-                        // style={{display:'flex'}}
                       >
                         {result}
                       </Grid>
                     );
                   })}
-                  <Button
-                    variant="contained"
-                    style={{ background: "red", marginTop: "3px" }}
-                    onClick={() => {
-                      const itemList = [...count];
-                      itemList.splice(0);
-                      setCount(itemList);
-                    }}
-                  >
-                    X
-                  </Button>
                 </Grid>
               </form>
             )}

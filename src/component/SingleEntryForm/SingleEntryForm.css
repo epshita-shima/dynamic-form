@@ -45,3 +45,7 @@ text-align: center;
 .display-show{
   visibility: visible;
 }
+.textField_label{
+  color: black !important;
+  font-weight: bold !important;
+}

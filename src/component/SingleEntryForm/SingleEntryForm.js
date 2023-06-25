@@ -12,10 +12,14 @@ import Swal from "sweetalert2";
 import Select from "react-select";
 import "./SingleEntryForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons";
-import swal from "sweetalert";
+import {
+  faArrowsRotate,
+  faPlusCircle,
+} from "@fortawesome/free-solid-svg-icons";
+
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import swal from "sweetalert";
 
 const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [array, setArray] = useState([]);
@@ -48,21 +52,15 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [allData, setAllData] = useState([]);
   const [singleData, setSingleData] = useState([]);
   const [inputTestData, setInputTestData] = useState({});
-  const [labelAPIData, setLabelAPIData] = useState([]);
-  const textboxRef = useRef(null);
-  const previousInputValues = useRef("");
-  const [dataarr, setDataarr] = useState([]);
-  const [labelAPIDataCopy, setLabelAPIDataCopy] = useState([]);
+  const [labelData, setLabelData] = useState([]);
+  const [columnValues, setColumnValues] = useState([]);
+  const [labelDataCopy, setLabelDataCopy] = useState([]);
   const [getDate, setGetDate] = useState([]);
-  const [checkValue, setCheckValue] = useState(false);
-  const [twoDimension,setTwoDimention]=useState([[]])
-  console.log(twoDimension)
-  console.log(getDate);
-  // if(dataarr?.length>0){
-  //   console.log(dataarr[0][0]["ChallanNo"]);
-  // }
-const dateNew=new Date().toLocaleDateString('sv-SE')
-console.log(dateNew)
+  const [twoDimensionData, setTwoDimentionData] = useState([[]]);
+  const [selectedOption, setSelectedOption] = useState([]);
+  const [modalSpecificData, setModalSpecificData] = useState([]);
+  const [allModelDataTable, setAllModelDataTable] = useState([]);
+  console.log(labelData);
   const modelData = {
     procedureName: "prc_GetPageInfo",
     parameters: {
@@ -70,9 +68,36 @@ console.log(dateNew)
     },
   };
   const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiI0OTViMjk4My1jNjY3LTRhYTktYjNhYi05ZjdjZmU1NTZkY2IiLCJuYmYiOjE2ODY5NzM3NjAsImV4cCI6MTY4NzAxNjk2MCwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.P10-CbMJLiIPcc-VsfaA0A10srR7fxAfpvNtnF2_110";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiI5MzM4Y2FmZi01MTI5LTQzN2YtOTY3My1iNzhkNWI4NzRjM2UiLCJuYmYiOjE2ODc2NjQ2ODksImV4cCI6MTY4NzcwNzg4OSwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.25ABtgnmowyjWBVaLaZSF8Q76yEo7dJzRa0FbUCMI3I";
+
+
 
   useEffect(() => {
+    const modelData = {
+      procedureName: "",
+      parameters: {},
+    };
+    modelData.procedureName = "prc_GetMasterInfoList";
+    fetch("https://localhost:44372/api/GetData/GetInitialData", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == true) {
+          const allModalData = JSON.parse(data.data);
+          setAllModelDataTable(allModalData);
+          
+        } else {
+          console.log(data);
+        }
+      });
+  }, []);
+  const handleLabelField=()=>{
     fetch(`https://localhost:44372/api/GetData/GetDataById`, {
       method: "POST",
       headers: {
@@ -84,34 +109,122 @@ console.log(dateNew)
       .then((res) => res.json())
       .then((data) => {
         if (data.status == true) {
-         
-         // console.log(getDate)
           const monthlySalesData = JSON.parse(data.data);
-          if (labelAPIData.length == 0) {
-            setLabelAPIDataCopy(monthlySalesData);
-            labelAPIData.push(monthlySalesData);
+          if (labelData.length == 0) {
+            labelDataCopy.push(monthlySalesData);
+            labelData.push(monthlySalesData);
           }
-          var obj = {};
-          labelAPIData.map((item, index) => {
-
-            item.forEach((element,i) => {
-              obj[element.ColumnName] = "";
-              console.log(element,i)
-              if(element.ColumnType=="datetime"){
-                twoDimension[0][i]=(new Date());
+          var createColumnValuesObject = {};
+          var multipleDateArrayField = [];
+          labelData.map((item, index) => {
+            multipleDateArrayField[index] = [];
+            item.forEach((element, i) => {
+              multipleDateArrayField[index][i] = {};
+              console.log(element, i);
+              multipleDateArrayField[index]["" + i]["ColumnName"] =
+                element.ColumnName;
+              multipleDateArrayField[index]["" + i]["ColumnType"] =
+                element.ColumnType;
+              multipleDateArrayField[index]["" + i]["ColumnValue"] = "";
+              multipleDateArrayField[index]["" + i]["RelatedTable"] =
+                element.RelatedTable;
+              if (element.ColumnType == "datetime") {
+                const newDate = new Date();
+                var year = newDate.toLocaleString("default", {
+                  year: "numeric",
+                });
+                var month = newDate.toLocaleString("default", {
+                  month: "2-digit",
+                });
+                var day = newDate.toLocaleString("default", {
+                  day: "2-digit",
+                });
+                var formattedDate = year + "-" + month + "-" + day;
+                multipleDateArrayField[index]["" + i]["ColumnValue"] =
+                  formattedDate;
+              }
+              createColumnValuesObject[element.ColumnName] = "";
+              if (element.ColumnType == "datetime") {
+                twoDimensionData[0][i] = new Date();
               }
             });
           });
-          console.log(twoDimension)
-          setTwoDimention(twoDimension)
+          var multipleDateArrayFieldcopy = [];
+          labelDataCopy.map((item, index) => {
+            multipleDateArrayFieldcopy[index] = [];
+            item.forEach((element, i) => {
+              multipleDateArrayFieldcopy[index][i] = {};
+              multipleDateArrayFieldcopy[index]["" + i]["ColumnName"] =
+                element.ColumnName;
+              multipleDateArrayFieldcopy[index]["" + i]["ColumnType"] =
+                element.ColumnType;
+              multipleDateArrayFieldcopy[index]["" + i]["ColumnValue"] = "";
+              multipleDateArrayField[index]["" + i]["RelatedTable"] =
+                element.RelatedTable;
+              if (element.ColumnType == "datetime") {
+                const newDate = new Date();
+                var year = newDate.toLocaleString("default", {
+                  year: "numeric",
+                });
+                var month = newDate.toLocaleString("default", {
+                  month: "2-digit",
+                });
+                var day = newDate.toLocaleString("default", {
+                  day: "2-digit",
+                });
+                var formattedDate = year + "-" + month + "-" + day;
+                multipleDateArrayFieldcopy[index]["" + i]["ColumnValue"] =
+                  formattedDate;
+              }
+              createColumnValuesObject[element.ColumnName] = "";
+
+              if (element.ColumnType == "datetime") {
+                twoDimensionData[0][i] = new Date();
+              }
+              if (element.RelatedTable != "") {
+                var dataTable = [];
+                for (var modelArrayPosition in allModelDataTable)
+                  dataTable.push([
+                    modelArrayPosition,
+                    allModelDataTable[modelArrayPosition],
+                  ]);
+                var dataMenuArr = [];
+                console.log(dataTable);
+                dataTable.map((ele) => {
+                  if (ele[1][0].title == element.RelatedTable) {
+                    ele[1].map((member) => {
+                      var dataMenuArrLength = dataMenuArr.length;
+                      dataMenuArr[dataMenuArrLength] = {};
+                      dataMenuArr[dataMenuArrLength]["label"] = member.label;
+                      dataMenuArr[dataMenuArrLength]["value"] = member.value;
+                    });
+                  }
+                });
+                console.log(dataMenuArr)
+                setSelectedOption((prev) => {
+                  const temp__details = [...prev];
+                  temp__details[i] = dataMenuArr;
+                  return temp__details;
+                });
+              }
+             
+            });
+          });
+
+          setLabelData(multipleDateArrayField);
+          setLabelDataCopy(multipleDateArrayFieldcopy);
+          console.log(twoDimensionData);
+          setTwoDimentionData(twoDimensionData);
           setGetDate([...getDate, new Date()]);
-          setDataarr([...dataarr, obj]);
+          setColumnValues([...columnValues, createColumnValuesObject]);
+
+           
         } else {
           console.log(data);
         }
       });
-  }, [setDataarr, labelAPIData]);
-
+  }
+ 
   var dropData = [
     {
       value: "1",
@@ -123,9 +236,6 @@ console.log(dateNew)
     },
   ];
 
-  useEffect(() => {
-    previousInputValues.current = inputValue;
-  }, [inputValue]);
   useEffect(() => {
     previousInputValue.current = inputValue;
     previousInputValueDDF.current = inputValueDDF;
@@ -263,12 +373,8 @@ console.log(dateNew)
   function insertAfter(newNode, refNode) {
     var fromthid = "";
     var fromthclass = "";
-    var frominputname = "";
-    var frominputplaceholder;
     var tothid = "";
     var tothclass = "";
-    var toinputname = "";
-    var toinputplaceholder = "";
 
     fromthid = newNode.id;
     fromthclass = newNode.className;
@@ -289,215 +395,253 @@ console.log(dateNew)
     var allelement = document.getElementsByClassName(refNode);
     var arr = [...allelement];
 
-    arr.forEach((element, i) => {
-      element.parentNode.insertBefore(newNode[i], element);
+    var fromNode = refNode.replace("dropTh", "");
+    fromNode = fromNode.replace(" border", "");
+
+    var frompositions = 0;
+    var topositions = 0;
+
+    var toNode = newNode[0].className.replace("dropTh", "");
+    toNode = toNode.replace(" border", "");
+
+    var b = document.getElementsByTagName("th");
+
+    for (var index = 0; index < b.length; index++) {
+      if (b[index].className == refNode) {
+        topositions = index;
+      } else if (index == toNode) {
+        frompositions = index;
+      }
+    }
+    console.log(frompositions, topositions);
+    if (topositions < 0) {
+      topositions = 0;
+    }
+    if (frompositions < 0) {
+      frompositions = 0;
+    }
+    var multipleDateArrayField = [...labelData];
+    multipleDateArrayField.map((item, index) => {
+      const e = item.splice(frompositions, 1)[0];
+      console.log(e); // ['css']
+      item.splice(topositions, 0, e);
+
+      multipleDateArrayField[index] = item;
     });
+
+    console.log(multipleDateArrayField);
+    setLabelData(multipleDateArrayField);
+
+    var multipleDateArrayFieldcopy = [...labelDataCopy];
+    multipleDateArrayFieldcopy.map((item, index) => {
+      const e = item.splice(frompositions, 1)[0];
+      console.log(e); // ['css']
+      item.splice(topositions, 0, e);
+
+      multipleDateArrayFieldcopy[index] = item;
+    });
+
+    console.log(multipleDateArrayField);
+    setLabelDataCopy(multipleDateArrayFieldcopy);
+
+    // labelData = multipleDateArrayField;
+
+    var tempjson = [];
+    console.log(labelData);
+    labelData.map((item, index) => {
+      tempjson[index] = {};
+      item.map((e, i) => {
+        var dataMenuArr = [];
+        if (item.ColumnType == "datetime") {
+          twoDimensionData[index][i] = item.ColumnValue;
+        }
+        console.log(e, tempjson, columnValues[index][e.ColumnName]);
+        tempjson["" + index][e.ColumnName] = columnValues[index][e.ColumnName];
+        console.log(item,index,i);
+        if (item[i].RelatedTable != null) {
+          var dataTable = [];
+          for (var modelArrayPosition in allModelDataTable)
+            dataTable.push([
+              modelArrayPosition,
+              allModelDataTable[modelArrayPosition],
+            ]);
+          
+          console.log(dataTable);
+          
+         
+          dataTable.map((ele) => {
+            console.log(ele[1]);
+            if (ele[1][0].title == item[i].RelatedTable) {
+              
+              
+             
+              ele[1].map((member) => {
+                
+                var dataMenuArrLength = dataMenuArr.length;
+                console.log(member,dataMenuArrLength);
+                dataMenuArr[dataMenuArrLength] = {};
+                dataMenuArr[dataMenuArrLength]["label"] = member.label;
+                dataMenuArr[dataMenuArrLength]["value"] = member.value;
+              });
+            }
+          });
+          
+        }
+        
+        console.log(dataMenuArr)
+        setSelectedOption((prev) => {
+          const temp__details = [...prev];
+          temp__details[i] = dataMenuArr;
+          return temp__details;
+        });
+      });
+    });
+    setTwoDimentionData(twoDimensionData);
+    setColumnValues(tempjson);
   }
-  
+
   function insertBeforeth(newNode, refNode) {
     var allelement = document.getElementsByClassName(refNode);
     var arr = [...allelement];
 
-    arr.forEach((element, i) => {
-      element.parentNode.insertBefore(newNode[i], element.nextSibling);
-    });
-  }
+    var fromNode = refNode.replace("dropTh", "");
+    fromNode = fromNode.replace(" border", "");
 
-  function randomNumberInRange(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+    var frompositions = 0;
+    var topositions = 0;
 
-  const handleGroupInput = (e, index) => {
-    const box = document.getElementsByName(`box${index}`);
-    box.forEach((element) => {
-      if (element.className == "css-5kkxb2-requiredInput-RequiredInput") {
-        var selectname = element.name;
-        var selectparentdiv =
-          document.getElementsByName(selectname)[0].parentElement;
-        if (element.className == "css-5kkxb2-requiredInput-RequiredInput") {
-          var selectname = element.name;
+    var toNode = newNode[0].className.replace("dropTh", "");
+    toNode = toNode.replace(" border", "");
 
-          for (
-            let a = 0;
-            a < document.getElementsByName(selectname).length;
-            a++
-          ) {
-            var selectparentdiv =
-              document.getElementsByName(selectname)[a].parentElement;
+    var b = document.getElementsByTagName("th");
 
-            for (var i = 0; i < selectparentdiv.childNodes.length; i++) {
-              if (
-                selectparentdiv.childNodes[i].className ==
-                " css-13cymwt-control"
-              ) {
-                for (
-                  var j = 0;
-                  j < selectparentdiv.childNodes[i].childNodes.length;
-                  j++
-                ) {
-                  if (
-                    selectparentdiv.childNodes[i].childNodes[j].className ==
-                    " css-1fdsijx-ValueContainer"
-                  ) {
-                    for (
-                      var k = 0;
-                      k <
-                      selectparentdiv.childNodes[i].childNodes[j].childNodes
-                        .length;
-                      k++
-                    ) {
-                      if (
-                        selectparentdiv.childNodes[i].childNodes[j].childNodes[
-                          k
-                        ].className == " css-1jqq78o-placeholder"
-                      ) {
-                        document.getElementById(
-                          selectparentdiv.childNodes[i].childNodes[j]
-                            .childNodes[k].id
-                        ).innerHTML = e.target.value;
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        } else {
-          element.placeholder = e.target.value;
-        }
-      } else {
-        element.placeholder = e.target.value;
-      }
-    });
-  };
-
-  const replaceFieldColumn = (e, i, randnum) => {
-    var allelement = document.getElementsByClassName(`dropTh${i}`);
-    var allelements = document.querySelectorAll(".droptargettd");
-    allelements.forEach((element) => {
-      element.style.display = "none";
-    });
-    var radioName = document.querySelector(
-      'input[name="replaceField"]:checked'
-    ).value;
-
-    if (radioName == "input") {
-      replacetempArray[i] = "input";
-      var placeholdervalue = "";
-
-      var placeholderdata = document.getElementById(e);
-      console.log(placeholderdata, allelement);
-      var placeData = placeholderdata?.value;
-
-      placeholdervalue = `${
-        placeData == "" || placeData == undefined
-          ? "Enter Text"
-          : `${placeData}`
-      }`;
-
-      for (
-        var elementloop = 1;
-        elementloop < allelement.length;
-        elementloop++
-      ) {
-        console.log(elementloop, randnum, i);
-        var inputReplace = `<td class="dropTh${i} border test" draggable="true" id="itemhello${randnum}${i}${
-          elementloop - 1
-        }"><div draggable="false" class="d-flex justify-content-between align-items-center"><input type="text" draggable="false" id="input${randnum}${i}" placeholder="${placeholdervalue}" class="form-control" name="box${i}" style="margin-top: 3px;"></div><div class="droptarget border" draggable="false" style="display: none;">Drop</div></td>`;
-        console.log(allelement[elementloop], inputReplace);
-        allelement[elementloop].innerHTML = inputReplace;
-      }
-    } else if (radioName == "dropdown") {
-      replacetempArray[i] = "dropdown";
-      var placeholdervalue = "";
-
-      var placeholderdata = document.getElementById(e);
-      var placeData = placeholderdata?.value;
-
-      placeholdervalue = `${
-        placeData == "" || placeData == undefined
-          ? "Enter Text"
-          : `${placeData}`
-      }`;
-
-      for (
-        var elementloop = 1;
-        elementloop < allelement.length;
-        elementloop++
-      ) {
-        var dropdownReplace = `<div draggable="false">
-      <div class="w-[100%] css-b62m3t-container" id="select2">
-      <span id="react-select-${
-        elementloop - 1
-      }-live-region" class="css-1f43avz-a11yText-A11yText">
-      </span>
-      <span aria-live="polite" aria-atomic="false" aria-relevant="additions text" class="css-1f43avz-a11yText-A11yText">
-      </span>
-      <div class=" css-13cymwt-control">
-         <div class=" css-1fdsijx-ValueContainer">
-            <div class=" css-1jqq78o-placeholder" id="react-select-${
-              elementloop - 1
-            }-placeholder">${placeholdervalue}</div>
-            <div class=" css-qbdosj-Input" data-value="">
-        <input class="" autocapitalize="none" autocomplete="off" autocorrect="off" id="react-select-${
-          elementloop - 1
-        }-input" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" aria-expanded="false" aria-haspopup="true" aria-label="Default select example" aria-required="true" role="combobox" aria-describedby="react-select-${i}-placeholder" value="" style="color: inherit; background: 0px center; opacity: 1; width: 100%; grid-area: 1 / 2 / auto / auto; font: inherit; min-width: 2px; border: 0px; margin: 0px; outline: 0px; padding: 0px;"></div>
-         </div>
-         <div class=" css-1hb7zxy-IndicatorsContainer">
-            <span class=" css-1u9des2-indicatorSeparator"></span>
-            <div class=" css-1xc3v61-indicatorContainer" aria-hidden="true">
-               <svg height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false" class="css-tj5bde-Svg">
-                  <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path>
-               </svg>
-            </div>
-         </div>
-      </div>
-      <input required="" name="box${i}" tabindex="-1" aria-hidden="true" class="css-5kkxb2-requiredInput-RequiredInput" value="">
-   </div>
-            </div>
-            <div
-            class="droptarget border"
-            style="display: none" 
-            draggable="false"
-            >
-            Drop
-            </div>`;
-        allelement[elementloop].innerHTML = dropdownReplace;
-      }
-    } else if (radioName == "checkbox") {
-      replacetempArray[i] = "checkbox";
-      for (
-        var elementloop = 1;
-        elementloop < allelement.length;
-        elementloop++
-      ) {
-        var checkboxReplace = `<div class="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"><label class="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root" style="margin-top: 3px;"><span class="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary Mui-checked MuiCheckbox-root MuiCheckbox-colorPrimary css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root"><input class="PrivateSwitchBase-input css-1m9pwf3" name="box${i}" type="checkbox" data-indeterminate="false" checked=""><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CheckBoxIcon"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg><span class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"></span></span><span class="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root">Label</span></label></div>`;
-        allelement[elementloop].innerHTML = checkboxReplace;
-      }
-    } else if (radioName == "date") {
-      replacetempArray[i] = "date";
-      for (
-        var elementloop = 1;
-        elementloop < allelement.length;
-        elementloop++
-      ) {
-        var dateReplace = `<div class="MuiFormControl-root MuiTextField-root css-1u3bzj6-MuiFormControl-root-MuiTextField-root"><div class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl MuiInputBase-sizeSmall css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root"><input aria-invalid="false" name="box${i}" id="date${i}" type="date" class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-1n4twyu-MuiInputBase-input-MuiOutlinedInput-input" value="Tue May 30 2023 14:54:02 GMT+0600 (Bangladesh Standard Time)"><fieldset aria-hidden="true" class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"><legend class="css-ihdtdm"><span class="notranslate">&ZeroWidthSpace;</span></legend></fieldset></div></div>`;
-        allelement[elementloop].innerHTML = dateReplace;
+    for (var index = 0; index < b.length; index++) {
+      if (b[index].className == refNode) {
+        topositions = index - 1;
+      } else if (index == toNode) {
+        frompositions = index;
       }
     }
-  };
+    console.log(frompositions, topositions);
+    if (topositions < 0) {
+      topositions = 0;
+    }
+    if (frompositions < 0) {
+      frompositions = 0;
+    }
+    var multipleDateArrayField = [...labelData]; //JSON.parse(JSON.stringify(labelData));
+    multipleDateArrayField.map((item, index) => {
+      const e = item.splice(frompositions, 1)[0];
+      console.log(e); // ['css']
+      item.splice(parseInt(topositions) + 1, 0, e);
 
-  const replaceFunction = (inputType, count) => {
-    replacetempArray.push(inputType);
-  };
+      multipleDateArrayField[index] = item;
+    });
+    console.log(multipleDateArrayField);
+    setLabelData(multipleDateArrayField);
+
+    var multipleDateArrayFieldcopy = [...labelDataCopy];
+    multipleDateArrayFieldcopy.map((item, index) => {
+      const e = item.splice(frompositions, 1)[0];
+      console.log(e); // ['css']
+      item.splice(parseInt(topositions) + 1, 0, e);
+
+      multipleDateArrayFieldcopy[index] = item;
+    });
+
+    console.log(multipleDateArrayField);
+    setLabelDataCopy(multipleDateArrayFieldcopy);
+
+    // labelData = multipleDateArrayField;
+
+    var tempjson = [];
+    labelData.map((item, index) => {
+      tempjson[index] = {};
+      item.map((e, i) => {
+        if (item.ColumnType == "datetime") {
+          twoDimensionData[index][i] = e.ColumnValue;
+        }
+        console.log(e, tempjson, columnValues[index][e.ColumnName], index, i);
+        tempjson["" + index][e.ColumnName] = columnValues[index][e.ColumnName];
+
+
+        labelData.map((item, index) => {
+          tempjson[index] = {};
+          item.map((e, i) => {
+            var dataMenuArr = [];
+            if (item.ColumnType == "datetime") {
+              twoDimensionData[index][i] = item.ColumnValue;
+            }
+            console.log(e, tempjson, columnValues[index][e.ColumnName]);
+            tempjson["" + index][e.ColumnName] = columnValues[index][e.ColumnName];
+            console.log(item,index,i);
+            if (item[i].RelatedTable != null) {
+              var dataTable = [];
+              for (var modelArrayPosition in allModelDataTable)
+                dataTable.push([
+                  modelArrayPosition,
+                  allModelDataTable[modelArrayPosition],
+                ]);
+              
+              console.log(dataTable);
+              
+             
+              dataTable.map((ele) => {
+                console.log(ele[1]);
+                if (ele[1][0].title == item[i].RelatedTable) {
+                  ele[1].map((member) => {
+                    
+                    var dataMenuArrLength = dataMenuArr.length;
+                    console.log(member,dataMenuArrLength);
+                    dataMenuArr[dataMenuArrLength] = {};
+                    dataMenuArr[dataMenuArrLength]["label"] = member.label;
+                    dataMenuArr[dataMenuArrLength]["value"] = member.value;
+                  });
+                }
+              });
+              
+            }
+            
+            console.log(dataMenuArr)
+            setSelectedOption((prev) => {
+              const temp__details = [...prev];
+              temp__details[i] = dataMenuArr;
+              return temp__details;
+            });
+          });
+        });
+      });
+    });
+    setTwoDimentionData(twoDimensionData);
+    setColumnValues(tempjson);
+
+    // arr.forEach((element, i) => {
+    //   element.parentNode.insertBefore(newNode[i], element.nextSibling);
+    // });
+  }
 
   const handleSubmit = (e, i) => {
     e.preventDefault();
-    const insertData = [];
-    dataarr.map((item) => {
-      insertData.push(item);
+    const modelPurchase = {
+      tableNameMaster: "TableXSingleInfo",
+      tableNameChild: "TableYDetailsInfo",
+      columnNamePrimary: "TableXId",
+      columnNameForign: "TableXId",
+      columnNameSerialNo: "",
+      serialType: "",
+      IsFlag: "",
+      data: {
+        TableXId: "",
+        MakeDate: "2022-01-01",
+        MakeBy: "Test",
+        PageSingleInfoId: "Test",
+      },
+      details: [],
+    };
+    columnValues.map((item) => {
+      modelPurchase.details.push(item);
     });
-    console.log(insertData);
+    console.log(modelPurchase);
   };
   {
     for (let i = 0; i < inputValue; i++) {
@@ -520,558 +664,559 @@ console.log(dateNew)
     }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
   }
 
-  const addList = () => {
-    const testArr = [];
-    let randnum = randomNumberInRange(1, 100);
-    let countOfInput = 0;
-    let number = inputValue;
-    let numberDDf = inputValueDDF;
-    let numberCheck = inputValueCheck;
-    let numberDate = parseInt(inputValueDate);
-    if (inputValueDate == "") {
-      numberDate = 0;
-    }
-    if (numberCheck == "") {
-      numberCheck = 0;
-    }
-    if (numberDDf == "") {
-      numberDDf = 0;
-    }
-    if (number == "") {
-      number = 0;
-    }
+  // const addList = () => {
+  //   const testArr = [];
+  //   let randnum = randomNumberInRange(1, 100);
+  //   let countOfInput = 0;
+  //   let number = inputValue;
+  //   let numberDDf = inputValueDDF;
+  //   let numberCheck = inputValueCheck;
+  //   let numberDate = parseInt(inputValueDate);
+  //   if (inputValueDate == "") {
+  //     numberDate = 0;
+  //   }
+  //   if (numberCheck == "") {
+  //     numberCheck = 0;
+  //   }
+  //   if (numberDDf == "") {
+  //     numberDDf = 0;
+  //   }
+  //   if (number == "") {
+  //     number = 0;
+  //   }
 
-    let countLebel = number + numberDDf + numberCheck + numberDate;
-    var getInputValue = document.getElementsByClassName("getInputValue");
+  //   let countLebel = number + numberDDf + numberCheck + numberDate;
+  //   var getInputValue = document.getElementsByClassName("getInputValue");
 
-    var arr = [...getInputValue];
-    arr.forEach((element) => {
-      allData.push(element.value);
-    });
+  //   var arr = [...getInputValue];
+  //   arr.forEach((element) => {
+  //     allData.push(element.value);
+  //   });
 
-    function test(e) {
-      var placeholderdata = document.getElementById(e);
-      var placeData = placeholderdata?.value;
+  //   function test(e) {
+  //     var placeholderdata = document.getElementById(e);
+  //     var placeData = placeholderdata?.value;
 
-      return `${
-        placeData == "" || placeData == undefined
-          ? "Enter Text"
-          : `${placeData}`
-      }`;
-    }
-    if (array.length == 0) {
-      for (let i = 0; i < countLebel; i++) {
-        var a = (
-          <th scope="col" class={`dropTh${i} border`} draggable="true">
-            <div className="d-flex justify-content-between align-items-center">
-              <TextField
-                id={`box${i}`}
-                name="L"
-                label={`${allData[i]}`}
-                variant="standard"
-                disabled
-                InputLabelProps={{
-                  className: "textField_label",
-                }}
-                className={`box${i}`}
-                style={{ marginLeft: "15px" }}
-                onChange={(e) => {
-                  handleGroupInput(e, i);
-                }}
-              />
+  //     return `${
+  //       placeData == "" || placeData == undefined
+  //         ? "Enter Text"
+  //         : `${placeData}`
+  //     }`;
+  //   }
 
-              <FontAwesomeIcon
-                icon={faArrowsRotate}
-                data-toggle="modal"
-                data-target={`#exampleModal${i}`}
-              ></FontAwesomeIcon>
-              <div
-                class="modal fade"
-                id={`exampleModal${i}`}
-                tabindex="-1"
-                role="dialog"
-                aria-labelledby={`exampleModal${i}Label`}
-                // aria-hidden="true"
-              >
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id={`exampleModal${i}Label`}>
-                        What you like to replace this field with?
-                      </h5>
-                      <button type="button" data-dismiss="modal">
-                        <span
-                        //  aria-hidden="true"
-                        >
-                          &times;
-                        </span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <div class="input-group">
-                        <div class="input-group-prepend">
-                          <div class="input-group-text">
-                            <input
-                              type="radio"
-                              value="input"
-                              name="replaceField"
-                              aria-label="Radio button for following text input"
-                            />
-                          </div>
-                        </div>
-                        <input
-                          id="inputField"
-                          type="text"
-                          class="form-control"
-                          aria-label="Text input with radio button"
-                        />
-                      </div>
-                      <div class="input-group  mt-2">
-                        <div class="input-group-prepend">
-                          <div class="input-group-text">
-                            <input
-                              type="radio"
-                              name="replaceField"
-                              value="dropdown"
-                              aria-label="Default select example"
-                            />
-                          </div>
-                        </div>
-                        <div className="w-75">
-                          <div draggable="false">
-                            <Select
-                              id={`select${countOfInput}`}
-                              class="form-select"
-                              className="w-[100%]"
-                              aria-label="Default select example"
-                              placeholder={test(`box${countOfInput}`)}
-                              required
-                              name={`box${countOfInput}`}
-                            ></Select>
-                          </div>
-                          <div
-                            class="droptarget border"
-                            style={{ display: "none" }}
-                            draggable="false"
-                          >
-                            Drop
-                          </div>
-                        </div>
-                      </div>
-                      <div class="input-group mt-2">
-                        <div class="input-group-prepend">
-                          <div class="input-group-text">
-                            <input
-                              type="radio"
-                              value="checkbox"
-                              name="replaceField"
-                              aria-label="Radio button for following text input"
-                            />
-                          </div>
-                        </div>
-                        <FormGroup>
-                          <FormControlLabel
-                            id="checkboxField"
-                            name={`item.${i}.check`}
-                            style={{ marginTop: "3px" }}
-                            control={<Checkbox defaultChecked />}
-                            label="Label"
-                          />
-                        </FormGroup>
-                      </div>
-                      <div class="input-group mt-2">
-                        <div class="input-group-prepend">
-                          <div class="input-group-text">
-                            <input
-                              type="radio"
-                              value="date"
-                              name="replaceField"
-                              aria-label="Radio button for following text input"
-                            />
-                          </div>
-                        </div>
-                        <TextField
-                          id="date"
-                          type="date"
-                          defaultValue={startDate}
-                          size="small"
-                        />
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button
-                        type="button"
-                        class="btn btn-primary close"
-                        data-dismiss="modal"
-                        aria-label="Close"
-                        onClick={(e) => {
-                          replaceFieldColumn(e, i, randnum);
-                        }}
-                      >
-                        Save changes
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="droptargettd border"
-              style={{ display: "none" }}
-              draggable="false"
-            >
-              Drop
-            </div>
-          </th>
-        );
-        testArray.push(a);
-      }
-    }
+  //   if (array.length == 0) {
+  //     for (let i = 0; i < countLebel; i++) {
+  //       var a = (
+  //         <th scope="col" class={`dropTh${i} border`} draggable="true">
+  //           <div className="d-flex justify-content-between align-items-center">
+  //             <TextField
+  //               id={`box${i}`}
+  //               name="L"
+  //               label={`${allData[i]}`}
+  //               variant="standard"
+  //               disabled
+  //               InputLabelProps={{
+  //                 className: "textField_label",
+  //               }}
+  //               className={`box${i}`}
+  //               style={{ marginLeft: "15px" }}
+  //               onChange={(e) => {
+  //                 handleGroupInput(e, i);
+  //               }}
+  //             />
 
-    if (array.length < 1) {
-      for (let i = 0; i < number; i++) {
-        testArr.push([
-          <td
-            class={`dropTh${countOfInput} border`}
-            draggable="false"
-            id={`item${randnum}${countOfInput}${i}`}
-          >
-            <div
-              draggable="false"
-              className="d-flex justify-content-between align-items-center"
-            >
-              {replaceFunction("input", countOfInput)}
-              <input
-                type="text"
-                draggable="false"
-                id={`${array.length}`}
-                // id={`${allInputValueData[countOfInput]}`}
-                size="small"
-                selectedIndex={`${array.length}`}
-                style={{ marginTop: "3px" }}
-                placeholder={`${allInputValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                className="getValue form-control"
-                data-animal-type={`box${countOfInput}`}
-                name={`box${countOfInput}`}
-                ref={textboxRef}
-                onChange={(e) => {
-                  const { name, value, placeholder } = e.target;
-                  if (isNaN(placeholder)) {
-                    inputTestData[placeholder] = value;
-                    setInputTestData({ ...inputTestData });
-                  }
-                  singleData[e.target.id] = inputTestData;
-                  // singleData.push(inputTestData)
-                  // if(singleData.length==''){
-                  // }
-                  // else{
-                  //   console.log(countOfInput)
-                  //   singleData[countOfInput] = inputTestData;
-                  // }
-                  // setInputTestData({
-                  //   ...inputTestData,
-                  //   [name]: e.target.value,
-                  // });
-                  // setFieldValue(`${allInputValueData[countOfInput]}`,e.target.value)
-                  for (let i = 0; i < array.length; i++) {
-                    // handleInputValue(e, i);
-                    // showDetails(e)
-                  }
-                }}
-              />
-            </div>
-            <div
-              class="droptarget1 border"
-              style={{ display: "none" }}
-              draggable="false"
-            >
-              Drop
-            </div>
-          </td>,
-        ]);
-        countOfInput = countOfInput + 1;
-      }
-      for (var i = 0; i < numberDDf; i++) {
-        testArr.push([
-          <td
-            class={`dropTh${countOfInput} border`}
-            draggable="false" //change dragable true to work again
-            id={`item${randnum}${countOfInput}${i}`}
-          >
-            <div draggable="false">
-              {replaceFunction("dropdown", i)}
-              <Select
-                id={array.length}
-                class="form-select"
-                className="w-[100%] getValue"
-                aria-label="Default select example"
-                placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                required
-                name={`box${countOfInput}`}
-                options={dropData}
-                // value={dropData.find((x) => x.value == category.groupId)}
-                onChange={(e, event, id) => {
-                  // const optionElementId = optionsElement.getAttribute('id');
-                  const { name, value, placeholder } = e;
-                  console.log(e, event);
-                  if (isNaN(placeholder)) {
-                    inputTestData[placeholder] = value;
-                    setInputTestData({ ...inputTestData });
-                  }
-                  singleData[e.id] = inputTestData;
-                  console.log(e.value);
-                  // category.groupId = e.value;
-                }}
-              ></Select>
-            </div>
-            <div
-              class="droptarget1 border" // remove 1 for dragable work
-              style={{ display: "none" }}
-              draggable="false"
-            >
-              Drop
-            </div>
-          </td>,
-        ]);
-        countOfInput = countOfInput + 1;
-      }
-      for (var i = 0; i < numberCheck; i++) {
-        testArr.push([
-          <td
-            class={`dropTh${countOfInput} border`}
-            draggable="false" //change dragable true to work again
-            id={`item${randnum}${countOfInput}${i}`}
-          >
-            <div draggable="false">
-              {replaceFunction("checkbox", i)}
-              <FormGroup>
-                <FormControlLabel
-                  name={`box${countOfInput}`}
-                  id={`check${countOfInput}`}
-                  style={{ marginTop: "3px" }}
-                  control={<Checkbox />}
-                  label="Label"
-                  onChange={(e) => {
-                    // const {value,name}=e.checked
-                    const { value, checked } = e.target;
-                    console.log(checked);
-                  }}
-                />
-              </FormGroup>
-            </div>
-            <div
-              class="droptarget1 border" // remove 1 for dragable work
-              style={{ display: "none" }}
-              draggable="false"
-            >
-              Drop
-            </div>
-          </td>,
-        ]);
-        countOfInput = countOfInput + 1;
-      }
-      for (var i = 0; i < numberDate; i++) {
-        testArr.push([
-          <td
-            class={`dropTh${countOfInput} border`}
-            draggable="false" //change dragable true to work again
-            id={`item${randnum}${countOfInput}${i}`}
-          >
-            <div draggable="false">
-              {replaceFunction("date", i)}
-              <TextField
-                name={`box${countOfInput}`}
-                id={`date${countOfInput}`}
-                type="date"
-                className="getValue"
-                defaultValue={startDate}
-                size="small"
-              />
-            </div>
-            <div
-              class="droptarget1 border" // remove 1 for dragable work
-              style={{ display: "none" }}
-              draggable="false"
-            >
-              Drop
-            </div>
-          </td>,
-        ]);
-        countOfInput = countOfInput + 1;
-      }
-    } else {
-      for (
-        var countreplaceTemp = 0;
-        countreplaceTemp < replacetempArray.length;
-        countreplaceTemp++
-      ) {
-        if (replacetempArray[countreplaceTemp] == "input") {
-          console.log(countreplaceTemp);
-          testArr.push([
-            <td
-              class={`dropTh${countOfInput} border`}
-              draggable="false" //change dragable true to work again
-              id={`item${randnum}${countOfInput}${countreplaceTemp}`}
-            >
-              <div
-                draggable="false"
-                className="d-flex justify-content-between align-items-center"
-              >
-                <input
-                  type="text"
-                  draggable="false"
-                  id={`${array.length}`}
-                  // id={`${allInputValueData[countOfInput]}`}
-                  size="small"
-                  style={{ marginTop: "3px" }}
-                  placeholder={`${allInputValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                  className="form-control getValue"
-                  // value={`${allInputValueData[countOfInput]}`}
-                  name={`box${countOfInput}`}
-                  data-animal-type={`box${countOfInput}`}
-                  onChange={(e) => {
-                    const { name, value, placeholder } = e.target;
-                    if (isNaN(placeholder)) {
-                      inputTestData[placeholder] = value;
-                      setInputTestData({ ...inputTestData });
-                    }
-                    singleData[e.target.id] = inputTestData;
-                  }}
-                />
-              </div>
-              <div
-                class="droptarge1t border" // remove 1 for dragable work
-                style={{ display: "none" }}
-                draggable="false"
-              >
-                Drop
-              </div>
-            </td>,
-          ]);
-          countOfInput = countOfInput + 1;
-          setCount(count + 1);
-        } else if (replacetempArray[countreplaceTemp] == "dropdown") {
-          testArr.push([
-            <td
-              class={`dropTh${countOfInput} border`}
-              draggable="false" //change dragable true to work again
-              // id={`item${randnum}${countOfInput}${countreplaceTemp}`}
-              id={array.length}
-            >
-              <div draggable="false">
-                <Select
-                  id={`select${countOfInput}`}
-                  class="form-select"
-                  className="w-[100%] getValue"
-                  aria-label="Default select example"
-                  // placeholder={test(`box${countOfInput}`)}
-                  placeholder={`${allDropValueData[countOfInput]}`}
-                  required
-                  name={`box${countOfInput}`}
-                  options={dropData}
-                  // value={dropData.find((x) => x.value == category.groupId)}
-                  onChange={(e) => {
-                    const { name, value, placeholder } = e;
-                    console.log(e);
-                    if (isNaN(placeholder)) {
-                      inputTestData[placeholder] = value;
-                      setInputTestData({ ...inputTestData });
-                    }
-                    singleData[e.id] = inputTestData;
-                    console.log(e.value);
-                    // category.groupId = e.value;
-                  }}
-                ></Select>
-              </div>
-              <div
-                class="droptarget1 border" // remove 1 for dragable work
-                style={{ display: "none" }}
-                draggable="false"
-              >
-                Drop
-              </div>
-            </td>,
-          ]);
-          countOfInput = countOfInput + 1;
-        } else if (replacetempArray[countreplaceTemp] == "checkbox") {
-          testArr.push([
-            <td
-              class={`dropTh${countOfInput} border`}
-              draggable="false" //change dragable true to work again
-              id={`item${randnum}${countOfInput}${countreplaceTemp}`}
-            >
-              <div draggable="false">
-                <FormGroup>
-                  <FormControlLabel
-                    name={`box${countOfInput}`}
-                    id={`check${countOfInput}`}
-                    style={{ marginTop: "3px" }}
-                    control={<Checkbox />}
-                    label="Label"
-                    onChange={(e) => {
-                      const { value, checked } = e.target;
-                      console.log(checked);
-                      // const {value,name}=e.target
-                    }}
-                  />
-                </FormGroup>
-              </div>
-              <div
-                class="droptarge1 border" // remove 1 for dragable work
-                style={{ display: "none" }}
-                draggable="false"
-              >
-                Drop
-              </div>
-            </td>,
-            //add else if condition for date
-          ]);
-          countOfInput = countOfInput + 1;
-        } else if (replacetempArray[countreplaceTemp] == "date") {
-          testArr.push([
-            <td
-              class={`dropTh${countOfInput} border`}
-              draggable="false" //change dragable true to work again
-              id={`item${randnum}${countOfInput}${i}`}
-            >
-              <div draggable="false">
-                <TextField
-                  name={`box${countOfInput}`}
-                  id={`date${countOfInput}`}
-                  type="date"
-                  className="getValue"
-                  defaultValue={startDate}
-                  size="small"
-                />
-              </div>
-              <div
-                class="droptarget1 border" // remove 1 for dragable work
-                style={{ display: "none" }}
-                draggable="false"
-              >
-                Drop
-              </div>
-            </td>,
-          ]);
-          countOfInput = countOfInput + 1;
-        }
-      }
-    }
+  //             <FontAwesomeIcon
+  //               icon={faArrowsRotate}
+  //               data-toggle="modal"
+  //               data-target={`#exampleModal${i}`}
+  //             ></FontAwesomeIcon>
+  //             <div
+  //               class="modal fade"
+  //               id={`exampleModal${i}`}
+  //               tabindex="-1"
+  //               role="dialog"
+  //               aria-labelledby={`exampleModal${i}Label`}
+  //               // aria-hidden="true"
+  //             >
+  //               <div class="modal-dialog" role="document">
+  //                 <div class="modal-content">
+  //                   <div class="modal-header">
+  //                     <h5 class="modal-title" id={`exampleModal${i}Label`}>
+  //                       What you like to replace this field with?
+  //                     </h5>
+  //                     <button type="button" data-dismiss="modal">
+  //                       <span
+  //                       //  aria-hidden="true"
+  //                       >
+  //                         &times;
+  //                       </span>
+  //                     </button>
+  //                   </div>
+  //                   <div class="modal-body">
+  //                     <div class="input-group">
+  //                       <div class="input-group-prepend">
+  //                         <div class="input-group-text">
+  //                           <input
+  //                             type="radio"
+  //                             value="input"
+  //                             name="replaceField"
+  //                             aria-label="Radio button for following text input"
+  //                           />
+  //                         </div>
+  //                       </div>
+  //                       <input
+  //                         id="inputField"
+  //                         type="text"
+  //                         class="form-control"
+  //                         aria-label="Text input with radio button"
+  //                       />
+  //                     </div>
+  //                     <div class="input-group  mt-2">
+  //                       <div class="input-group-prepend">
+  //                         <div class="input-group-text">
+  //                           <input
+  //                             type="radio"
+  //                             name="replaceField"
+  //                             value="dropdown"
+  //                             aria-label="Default select example"
+  //                           />
+  //                         </div>
+  //                       </div>
+  //                       <div className="w-75">
+  //                         <div draggable="false">
+  //                           <Select
+  //                             id={`select${countOfInput}`}
+  //                             class="form-select"
+  //                             className="w-[100%]"
+  //                             aria-label="Default select example"
+  //                             placeholder={test(`box${countOfInput}`)}
+  //                             required
+  //                             name={`box${countOfInput}`}
+  //                           ></Select>
+  //                         </div>
+  //                         <div
+  //                           class="droptarget border"
+  //                           style={{ display: "none" }}
+  //                           draggable="false"
+  //                         >
+  //                           Drop
+  //                         </div>
+  //                       </div>
+  //                     </div>
+  //                     <div class="input-group mt-2">
+  //                       <div class="input-group-prepend">
+  //                         <div class="input-group-text">
+  //                           <input
+  //                             type="radio"
+  //                             value="checkbox"
+  //                             name="replaceField"
+  //                             aria-label="Radio button for following text input"
+  //                           />
+  //                         </div>
+  //                       </div>
+  //                       <FormGroup>
+  //                         <FormControlLabel
+  //                           id="checkboxField"
+  //                           name={`item.${i}.check`}
+  //                           style={{ marginTop: "3px" }}
+  //                           control={<Checkbox defaultChecked />}
+  //                           label="Label"
+  //                         />
+  //                       </FormGroup>
+  //                     </div>
+  //                     <div class="input-group mt-2">
+  //                       <div class="input-group-prepend">
+  //                         <div class="input-group-text">
+  //                           <input
+  //                             type="radio"
+  //                             value="date"
+  //                             name="replaceField"
+  //                             aria-label="Radio button for following text input"
+  //                           />
+  //                         </div>
+  //                       </div>
+  //                       <TextField
+  //                         id="date"
+  //                         type="date"
+  //                         defaultValue={startDate}
+  //                         size="small"
+  //                       />
+  //                     </div>
+  //                   </div>
+  //                   <div class="modal-footer">
+  //                     <button
+  //                       type="button"
+  //                       class="btn btn-primary close"
+  //                       data-dismiss="modal"
+  //                       aria-label="Close"
+  //                       onClick={(e) => {
+  //                         replaceFieldColumn(e, i, randnum);
+  //                       }}
+  //                     >
+  //                       Save changes
+  //                     </button>
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //           <div
+  //             class="droptargettd border"
+  //             style={{ display: "none" }}
+  //             draggable="false"
+  //           >
+  //             Drop
+  //           </div>
+  //         </th>
+  //       );
+  //       testArray.push(a);
+  //     }
+  //   }
 
-    replaceArray.push(replacetempArray);
-    array.push(testArr);
+  //   if (array.length < 1) {
+  //     for (let i = 0; i < number; i++) {
+  //       testArr.push([
+  //         <td
+  //           class={`dropTh${countOfInput} border`}
+  //           draggable="false"
+  //           id={`item${randnum}${countOfInput}${i}`}
+  //         >
+  //           <div
+  //             draggable="false"
+  //             className="d-flex justify-content-between align-items-center"
+  //           >
+  //             {replaceFunction("input", countOfInput)}
+  //             <input
+  //               type="text"
+  //               draggable="false"
+  //               id={`${array.length}`}
+  //               // id={`${allInputValueData[countOfInput]}`}
+  //               size="small"
+  //               selectedIndex={`${array.length}`}
+  //               style={{ marginTop: "3px" }}
+  //               placeholder={`${allInputValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+  //               className="getValue form-control"
+  //               data-animal-type={`box${countOfInput}`}
+  //               name={`box${countOfInput}`}
+  //               onChange={(e) => {
+  //                 const { name, value, placeholder } = e.target;
+  //                 if (isNaN(placeholder)) {
+  //                   inputTestData[placeholder] = value;
+  //                   setInputTestData({ ...inputTestData });
+  //                 }
+  //                 singleData[e.target.id] = inputTestData;
+  //                 // singleData.push(inputTestData)
+  //                 // if(singleData.length==''){
+  //                 // }
+  //                 // else{
+  //                 //   console.log(countOfInput)
+  //                 //   singleData[countOfInput] = inputTestData;
+  //                 // }
+  //                 // setInputTestData({
+  //                 //   ...inputTestData,
+  //                 //   [name]: e.target.value,
+  //                 // });
+  //                 // setFieldValue(`${allInputValueData[countOfInput]}`,e.target.value)
+  //                 for (let i = 0; i < array.length; i++) {
+  //                   // handleInputValue(e, i);
+  //                   // showDetails(e)
+  //                 }
+  //               }}
+  //             />
+  //           </div>
+  //           <div
+  //             class="droptarget1 border"
+  //             style={{ display: "none" }}
+  //             draggable="false"
+  //           >
+  //             Drop
+  //           </div>
+  //         </td>,
+  //       ]);
+  //       countOfInput = countOfInput + 1;
+  //     }
+  //     for (var i = 0; i < numberDDf; i++) {
+  //       testArr.push([
+  //         <td
+  //           class={`dropTh${countOfInput} border`}
+  //           draggable="false" //change dragable true to work again
+  //           id={`item${randnum}${countOfInput}${i}`}
+  //         >
+  //           <div draggable="false">
+  //             {replaceFunction("dropdown", i)}
+  //             <Select
+  //               id={array.length}
+  //               class="form-select"
+  //               className="w-[100%] getValue"
+  //               aria-label="Default select example"
+  //               placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+  //               required
+  //               name={`box${countOfInput}`}
+  //               options={dropData}
+  //               // value={dropData.find((x) => x.value == category.groupId)}
+  //               onChange={(e, event, id) => {
+  //                 // const optionElementId = optionsElement.getAttribute('id');
+  //                 const { name, value, placeholder } = e;
+  //                 console.log(e, event);
+  //                 if (isNaN(placeholder)) {
+  //                   inputTestData[placeholder] = value;
+  //                   setInputTestData({ ...inputTestData });
+  //                 }
+  //                 singleData[e.id] = inputTestData;
+  //                 console.log(e.value);
+  //                 // category.groupId = e.value;
+  //               }}
+  //             ></Select>
+  //           </div>
+  //           <div
+  //             class="droptarget1 border" // remove 1 for dragable work
+  //             style={{ display: "none" }}
+  //             draggable="false"
+  //           >
+  //             Drop
+  //           </div>
+  //         </td>,
+  //       ]);
+  //       countOfInput = countOfInput + 1;
+  //     }
+  //     for (var i = 0; i < numberCheck; i++) {
+  //       testArr.push([
+  //         <td
+  //           class={`dropTh${countOfInput} border`}
+  //           draggable="false" //change dragable true to work again
+  //           id={`item${randnum}${countOfInput}${i}`}
+  //         >
+  //           <div draggable="false">
+  //             {replaceFunction("checkbox", i)}
+  //             <FormGroup>
+  //               <FormControlLabel
+  //                 name={`box${countOfInput}`}
+  //                 id={`check${countOfInput}`}
+  //                 style={{ marginTop: "3px" }}
+  //                 control={<Checkbox />}
+  //                 label="Label"
+  //                 onChange={(e) => {
+  //                   // const {value,name}=e.checked
+  //                   const { value, checked } = e.target;
+  //                   console.log(checked);
+  //                 }}
+  //               />
+  //             </FormGroup>
+  //           </div>
+  //           <div
+  //             class="droptarget1 border" // remove 1 for dragable work
+  //             style={{ display: "none" }}
+  //             draggable="false"
+  //           >
+  //             Drop
+  //           </div>
+  //         </td>,
+  //       ]);
+  //       countOfInput = countOfInput + 1;
+  //     }
+  //     for (var i = 0; i < numberDate; i++) {
+  //       testArr.push([
+  //         <td
+  //           class={`dropTh${countOfInput} border`}
+  //           draggable="false" //change dragable true to work again
+  //           id={`item${randnum}${countOfInput}${i}`}
+  //         >
+  //           <div draggable="false">
+  //             {replaceFunction("date", i)}
+  //             <TextField
+  //               name={`box${countOfInput}`}
+  //               id={`date${countOfInput}`}
+  //               type="date"
+  //               className="getValue"
+  //               defaultValue={startDate}
+  //               size="small"
+  //             />
+  //           </div>
+  //           <div
+  //             class="droptarget1 border" // remove 1 for dragable work
+  //             style={{ display: "none" }}
+  //             draggable="false"
+  //           >
+  //             Drop
+  //           </div>
+  //         </td>,
+  //       ]);
+  //       countOfInput = countOfInput + 1;
+  //     }
+  //   } else {
+  //     for (
+  //       var countreplaceTemp = 0;
+  //       countreplaceTemp < replacetempArray.length;
+  //       countreplaceTemp++
+  //     ) {
+  //       if (replacetempArray[countreplaceTemp] == "input") {
+  //         console.log(countreplaceTemp);
+  //         testArr.push([
+  //           <td
+  //             class={`dropTh${countOfInput} border`}
+  //             draggable="false" //change dragable true to work again
+  //             id={`item${randnum}${countOfInput}${countreplaceTemp}`}
+  //           >
+  //             <div
+  //               draggable="false"
+  //               className="d-flex justify-content-between align-items-center"
+  //             >
+  //               <input
+  //                 type="text"
+  //                 draggable="false"
+  //                 id={`${array.length}`}
+  //                 // id={`${allInputValueData[countOfInput]}`}
+  //                 size="small"
+  //                 style={{ marginTop: "3px" }}
+  //                 placeholder={`${allInputValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+  //                 className="form-control getValue"
+  //                 // value={`${allInputValueData[countOfInput]}`}
+  //                 name={`box${countOfInput}`}
+  //                 data-animal-type={`box${countOfInput}`}
+  //                 onChange={(e) => {
+  //                   const { name, value, placeholder } = e.target;
+  //                   if (isNaN(placeholder)) {
+  //                     inputTestData[placeholder] = value;
+  //                     setInputTestData({ ...inputTestData });
+  //                   }
+  //                   singleData[e.target.id] = inputTestData;
+  //                 }}
+  //               />
+  //             </div>
+  //             <div
+  //               class="droptarge1t border" // remove 1 for dragable work
+  //               style={{ display: "none" }}
+  //               draggable="false"
+  //             >
+  //               Drop
+  //             </div>
+  //           </td>,
+  //         ]);
+  //         countOfInput = countOfInput + 1;
+  //         setCount(count + 1);
+  //       } else if (replacetempArray[countreplaceTemp] == "dropdown") {
+  //         testArr.push([
+  //           <td
+  //             class={`dropTh${countOfInput} border`}
+  //             draggable="false" //change dragable true to work again
+  //             // id={`item${randnum}${countOfInput}${countreplaceTemp}`}
+  //             id={array.length}
+  //           >
+  //             <div draggable="false">
+  //               <Select
+  //                 id={`select${countOfInput}`}
+  //                 class="form-select"
+  //                 className="w-[100%] getValue"
+  //                 aria-label="Default select example"
+  //                 // placeholder={test(`box${countOfInput}`)}
+  //                 placeholder={`${allDropValueData[countOfInput]}`}
+  //                 required
+  //                 name={`box${countOfInput}`}
+  //                 options={dropData}
+  //                 // value={dropData.find((x) => x.value == category.groupId)}
+  //                 onChange={(e) => {
+  //                   const { name, value, placeholder } = e;
+  //                   console.log(e);
+  //                   if (isNaN(placeholder)) {
+  //                     inputTestData[placeholder] = value;
+  //                     setInputTestData({ ...inputTestData });
+  //                   }
+  //                   singleData[e.id] = inputTestData;
+  //                   console.log(e.value);
+  //                   // category.groupId = e.value;
+  //                 }}
+  //               ></Select>
+  //             </div>
+  //             <div
+  //               class="droptarget1 border" // remove 1 for dragable work
+  //               style={{ display: "none" }}
+  //               draggable="false"
+  //             >
+  //               Drop
+  //             </div>
+  //           </td>,
+  //         ]);
+  //         countOfInput = countOfInput + 1;
+  //       } else if (replacetempArray[countreplaceTemp] == "checkbox") {
+  //         testArr.push([
+  //           <td
+  //             class={`dropTh${countOfInput} border`}
+  //             draggable="false" //change dragable true to work again
+  //             id={`item${randnum}${countOfInput}${countreplaceTemp}`}
+  //           >
+  //             <div draggable="false">
+  //               <FormGroup>
+  //                 <FormControlLabel
+  //                   name={`box${countOfInput}`}
+  //                   id={`check${countOfInput}`}
+  //                   style={{ marginTop: "3px" }}
+  //                   control={<Checkbox />}
+  //                   label="Label"
+  //                   onChange={(e) => {
+  //                     const { value, checked } = e.target;
+  //                     console.log(checked);
+  //                     // const {value,name}=e.target
+  //                   }}
+  //                 />
+  //               </FormGroup>
+  //             </div>
+  //             <div
+  //               class="droptarge1 border" // remove 1 for dragable work
+  //               style={{ display: "none" }}
+  //               draggable="false"
+  //             >
+  //               Drop
+  //             </div>
+  //           </td>,
+  //           //add else if condition for date
+  //         ]);
+  //         countOfInput = countOfInput + 1;
+  //       } else if (replacetempArray[countreplaceTemp] == "date") {
+  //         testArr.push([
+  //           <td
+  //             class={`dropTh${countOfInput} border`}
+  //             draggable="false" //change dragable true to work again
+  //             id={`item${randnum}${countOfInput}${i}`}
+  //           >
+  //             <div draggable="false">
+  //               <TextField
+  //                 name={`box${countOfInput}`}
+  //                 id={`date${countOfInput}`}
+  //                 type="date"
+  //                 className="getValue"
+  //                 defaultValue={startDate}
+  //                 size="small"
+  //               />
+  //             </div>
+  //             <div
+  //               class="droptarget1 border" // remove 1 for dragable work
+  //               style={{ display: "none" }}
+  //               draggable="false"
+  //             >
+  //               Drop
+  //             </div>
+  //           </td>,
+  //         ]);
+  //         countOfInput = countOfInput + 1;
+  //       }
+  //     }
+  //   }
 
-    if (array.length > 10) {
-      alert("plz take less then 10 field");
-      return;
-    } else {
-      setCount([...array]);
-      setOpens(false);
-      setOpen(false);
-    }
-  };
+  //   replaceArray.push(replacetempArray);
+  //   array.push(testArr);
 
-  const inputFunction = (item, countOfInput, setFieldValue, i) => {
+  //   if (array.length > 10) {
+  //     alert("plz take less then 10 field");
+  //     return;
+  //   } else {
+  //     setCount([...array]);
+  //     setOpens(false);
+  //     setOpen(false);
+  //   }
+  // };
+
+  const handleInputValue = (item, countOfInput, i) => {
+    console.log(selectedOption);
 
     if (item.ColumnType == "textbox") {
       return (
@@ -1092,12 +1237,25 @@ console.log(dateNew)
               size="small"
               name={`${i}input`}
               style={{ marginTop: "3px" }}
+              value={labelData[i][countOfInput]["ColumnValue"]}
               className="getValue form-control"
-              s
+              placeholder={item.ColumnName}
               onChange={(e) => {
                 const { value } = e.target;
-                dataarr[i][item.ColumnName] = value;
-                setDataarr(dataarr);
+                // console.log(columnValues);
+                columnValues[i][item.ColumnName] = value;
+                // labelData[i][countOfInput]["ColumnValue"] = value;
+                // setLabelData(labelData)
+                // console.log(labelData,i,countOfInput,item)
+
+                setLabelData((prevArr) => {
+                  const result = [...prevArr];
+                  console.log(i, countOfInput, labelData, result);
+                  result[i][countOfInput].ColumnValue = value;
+                  return result;
+                });
+
+                setColumnValues(columnValues);
               }}
             />
           </div>
@@ -1127,11 +1285,20 @@ console.log(dateNew)
               className="w-[100%] getValue"
               aria-label="Default select example"
               // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-              options={dropData}
+              options={selectedOption[countOfInput]}
+              // value={selectedOption[countOfInput].find(
+              //   (x) => x.value == labelData[i][countOfInput]["ColumnValue"]
+              // )}
               onChange={(e) => {
                 const { value } = e;
-                dataarr[i][item.ColumnName] = value;
-                setDataarr(dataarr);
+                columnValues[i][item?.ColumnName] = value;
+                setLabelData((prevArr) => {
+                  const result = [...prevArr];
+                  console.log(i, countOfInput, labelData, result);
+                  result[i][countOfInput].ColumnValue = value;
+                  return result;
+                });
+                setColumnValues(columnValues);
               }}
             ></Select>
           </div>
@@ -1161,15 +1328,28 @@ console.log(dateNew)
                 style={{ marginTop: "3px" }}
                 control={<Checkbox />}
                 label="Label"
+                checked={labelData[i][countOfInput]["ColumnValue"]}
                 onChange={(e) => {
-                  const { value, checked } = e.target;
+                  const { checked } = e.target;
                   console.log(checked);
                   if (checked) {
-                    dataarr[i][item.ColumnName] = "true";
-                    setDataarr(dataarr);
+                    columnValues[i][item.ColumnName] = "true";
+                    setLabelData((prevArr) => {
+                      const result = [...prevArr];
+                      console.log(i, countOfInput, labelData, result);
+                      result[i][countOfInput].ColumnValue = true;
+                      return result;
+                    });
+                    setColumnValues(columnValues);
                   } else {
-                    dataarr[i][item.ColumnName] = "false";
-                    setDataarr(dataarr);
+                    columnValues[i][item.ColumnName] = "false";
+                    setLabelData((prevArr) => {
+                      const result = [...prevArr];
+                      console.log(i, countOfInput, labelData, result);
+                      result[i][countOfInput].ColumnValue = false;
+                      return result;
+                    });
+                    setColumnValues(columnValues);
                   }
                   // const {value,name}=e.checked
                 }}
@@ -1204,21 +1384,35 @@ console.log(dateNew)
                 type="radio"
                 name={`radio`}
                 id={`radio${i}`}
-                onChange={(e)=>{
+                checked={labelData[i][countOfInput]["ColumnValue"]}
+                onChange={(e) => {
                   const { value, checked } = e.target;
                   if (checked) {
-                    dataarr[i][item.ColumnName] = "true";
-                    setDataarr(dataarr);
-                    dataarr.forEach((e,index) => {
-                      if(index!=i){
-                        dataarr[index][item.ColumnName] = "";
-                        setDataarr(dataarr);
+                    columnValues[i][item.ColumnName] = "true";
+                    labelData[i][countOfInput].ColumnValue = "true";
+                    // setLabelData((prevArr) => {
+                    //   const result = [...prevArr];
+                    //   console.log(i,countOfInput,labelData,result);
+                    //   result[i][countOfInput].ColumnValue = "true";
+                    //   return result;
+                    // });
+                    setColumnValues(columnValues);
+                    setLabelData(labelData);
+                    columnValues.forEach((e, index) => {
+                      if (index != i) {
+                        columnValues[index][item.ColumnName] = "";
+
+                        setColumnValues(columnValues);
+
+                        labelData[index][countOfInput].ColumnValue = "";
+
+                        setLabelData(labelData);
                       }
                     });
-                  } 
-                  else {
-                   
-                   
+                    setLabelData((prevArr) => {
+                      const result = [...prevArr];
+                      return result;
+                    });
                   }
                 }}
               />
@@ -1250,24 +1444,23 @@ console.log(dateNew)
             <DatePicker
               dateFormat="yyyy-MM-dd"
               className="input text-center"
-              // value={startDate}
               name={`date${i}`}
               id={`date${i}`}
               placeholderText="Click to select a date"
-              selected={twoDimension[i][countOfInput]}
+              value={labelData[i][countOfInput]["ColumnValue"]}
+              selected={twoDimensionData[i][countOfInput]}
               onChange={(e) => {
                 // const date_data = getDate[i];
-
                 // setStartDate(startDate > new Date() ? new Date() : startDate);
                 // if (startDate == startDate) {
                 //   setIsDate(startDate ? false : true);
                 // }
-                // dataarr[i][item.ColumnName] =  formattedDate;
-                // setDataarr(dataarr)
-               
-                var temparr = [...twoDimension];
-                temparr[i][countOfInput] = e;
-                const newDate = temparr[i][countOfInput];
+                // columnValues[i][item.ColumnName] =  formattedDate;
+                // setColumnValues(columnValues)
+
+                var multipleDateArrayField = [...twoDimensionData];
+                multipleDateArrayField[i][countOfInput] = e;
+                const newDate = multipleDateArrayField[i][countOfInput];
                 var year = newDate.toLocaleString("default", {
                   year: "numeric",
                 });
@@ -1279,11 +1472,16 @@ console.log(dateNew)
                 });
                 var formattedDate = year + "-" + month + "-" + day;
 
-                dataarr[i][item.ColumnName] = formattedDate;
-                getDate.push(e)
-                setTwoDimention(temparr)
-                setDataarr(dataarr);
-               
+                columnValues[i][item.ColumnName] = formattedDate;
+                setLabelData((prevArr) => {
+                  const result = [...prevArr];
+                  console.log(i, countOfInput, labelData, result);
+                  result[i][countOfInput].ColumnValue = formattedDate;
+                  return result;
+                });
+                getDate.push(e);
+                setTwoDimentionData(multipleDateArrayField);
+                setColumnValues(columnValues);
               }}
             />
           </div>
@@ -1298,7 +1496,132 @@ console.log(dateNew)
       );
     }
   };
+  const handleReplaceCoulmn = (element, i, columnPos) => {
+    var radioName = document.querySelector(
+      'input[name="replaceField"]:checked'
+    ).value;
+    console.log(radioName);
+    labelData.map((e, pos) => {
+      e.map((el, position) => {
+        if (position == i) {
+          var wheredata = i + 1;
+          var updateColumnModel = {
+            dbName: "DynamicDemo",
+            tableName: "PageInfo",
+            columnData: "ColumnType",
+            valueData: radioName,
+            whereColumnNameData: "PageId",
+            whereData: wheredata + "",
+          };
+          console.log(JSON.stringify(updateColumnModel));
 
+          el.ColumnType = radioName;
+          if (updateColumnModel.valueData == "datetime") {
+            el.ColumnValue = new Date().toLocaleDateString("fr-CA");
+          } else {
+            el.ColumnValue = "";
+          }
+
+          fetch("http://localhost:53601/DBCommand/Update", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(updateColumnModel),
+          })
+            .then((res) => {
+              console.log(res);
+              res.json();
+            })
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      });
+    });
+
+    setLabelData(labelData);
+    setLabelData((prevArr) => {
+      const result = [...prevArr];
+      // result.ColumnValue=new Date().toLocaleDateString('fr-CA')
+      return result;
+    });
+
+    labelDataCopy.map((e, pos) => {
+      e.map((el, position) => {
+        if (position == i) {
+          el.ColumnType = radioName;
+          if (radioName == "datetime") {
+            el.ColumnValue = new Date().toLocaleDateString("fr-CA");
+          } else {
+            el.ColumnValue = "";
+          }
+        }
+      });
+    });
+
+    setLabelDataCopy(labelDataCopy);
+    setLabelDataCopy((prevArr) => {
+      const result = [...prevArr];
+      return result;
+    });
+  };
+
+  const handleDropdownValue = (i) => {
+    var radioName = document.querySelector(
+      'input[name="dropValueField"]:checked'
+    ).value;
+    console.log(radioName);
+    var dataTable = [];
+    for (var modelArrayPosition in allModelDataTable)
+      dataTable.push([
+        modelArrayPosition,
+        allModelDataTable[modelArrayPosition],
+      ]);
+    var dataMenuArr = [];
+    dataTable.map((element) => {
+      if (element[1][0].title == radioName) {
+        element[1].map((member) => {
+          var dataMenuArrLength = dataMenuArr.length;
+          dataMenuArr[dataMenuArrLength] = {};
+          dataMenuArr[dataMenuArrLength]["label"] = member.label;
+          dataMenuArr[dataMenuArrLength]["value"] = member.value;
+        });
+      }
+    });
+    setSelectedOption((prev) => {
+      const temp__details = [...prev];
+      temp__details[i] = dataMenuArr;
+      return temp__details;
+    });
+  };
+  const handleModalMenu = () => {
+    const modelData = {
+      procedureName: "",
+      parameters: {},
+    };
+    modelData.procedureName = "prc_GetMenuList";
+    fetch("https://localhost:44372/api/GetData/GetInitialData", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == true) {
+          const allModalData = JSON.parse(data.data);
+          setModalSpecificData(allModalData.Tables1);
+        } else {
+          console.log(data);
+        }
+      });
+  };
   return (
     <Grid>
       {/* {opens == true ? (
@@ -1441,7 +1764,7 @@ console.log(dateNew)
                 variant="contained"
                 style={{ marginLeft: "20px", marginTop: "20px" }}
                 onClick={() => {
-                  addList();
+                  // addList();
                 }}
               >
                 Enter
@@ -1451,22 +1774,26 @@ console.log(dateNew)
           <Grid className="d-flex  align-items-center">
             <Grid>
               {inputData?.map((item, name) => {
-                var labelName='labelName';
-                var labelType='labelType'
+                var labelName = "labelName";
+                var labelType = "labelType";
                 return (
                   <div style={{ marginLeft: "180px" }}>
                     <input
                       type="text"
                       name={name}
-                      id=""
+                      id={name}
                       className="getInputValue mt-2"
                       onChange={(e) => {
-                        setAllData( e.target.value,labelType,labelName)
-                        setAllData({...allData,[labelName]: e.target.value,[labelType]:e.target.type})
-                        // setAllInputValueData({
-                        //   ...allInputValueData,
-                        //   [name]: e.target.value,
+                        // setAllData(e.target.value, labelType, labelName);
+                        // setAllData({
+                        //   ...allData,
+                        //   [labelName]: e.target.value,
+                        //   [labelType]: e.target.type,
                         // });
+                        setAllInputValueData({
+                          ...allInputValueData,
+                          [name]: e.target.value,
+                        });
                       }}
                     />
                   </div>
@@ -1475,23 +1802,100 @@ console.log(dateNew)
             </Grid>
             <Grid>
               {dropdownData.map((item, name) => {
-                var labelName='labelName';
-                var labelType='labelType'
+                var labelName = "labelName";
+                var labelType = "labelType";
                 return (
-                  <div className="ps-5">
-                    <input
-                      type="dropdown"
-                      name={name}
-                      id=""
-                      className=" getInputValue mt-2"
-                      onChange={(e) => {
-                        setAllData({...allData,[labelName]: e.target.value,[labelType]:e.target.type})
-                        // setAllDropValueData({
-                        //   ...allDropValueData,
-                        //   [name]: e.target.value,
-                        // });
-                      }}
-                    />
+                  <div className="ps-5 d-flex align-items-center ">
+                    <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={selectedOption[name]}
+                      id={`dropValue${name}`}
+                      onChange={(e) => {}}
+                    ></Select>
+                    <div className="ms-2">
+                      <FontAwesomeIcon
+                        icon={faPlusCircle}
+                        className="text-success"
+                        data-toggle="modal"
+                        data-target={`#exampleModal${name}`}
+                        data-id={name}
+                        onClick={() => {
+                          handleModalMenu();
+                        }}
+                      ></FontAwesomeIcon>
+
+                      <div
+                        class="modal fade"
+                        id={`exampleModal${name}`}
+                        tabindex="-1"
+                        role="dialog"
+                        aria-labelledby={`exampleModal${name}Label`}
+                        // aria-hidden="true"
+                      >
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5
+                                class="modal-title"
+                                id={`exampleModal${name}Label`}
+                              >
+                                Select Menu
+                              </h5>
+                              <button type="button" data-dismiss="modal">
+                                <span
+                                //  aria-hidden="true"
+                                >
+                                  &times;
+                                </span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              {modalSpecificData
+                                .filter(
+                                  (person) => person.MenuName === "Master Entry"
+                                )
+                                .map((filteredPerson) => (
+                                  <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <div class="input-group-text">
+                                        <input
+                                          type="radio"
+                                          value={filteredPerson.SubMenuName}
+                                          name="dropValueField"
+                                          aria-label="Radio button for following text input"
+                                          onClick={((e)=>{
+                                           
+                                          })}
+                                        />
+                                      </div>
+                                    </div>
+                                    <h4 className="ms-2">
+                                      {filteredPerson.SubMenuName}
+                                    </h4>
+                                  </div>
+                                ))}
+
+                              <div class="modal-footer">
+                                <button
+                                  type="button"
+                                  class="btn btn-primary close"
+                                  data-dismiss="modal"
+                                  aria-label="Close"
+                                  onClick={(e) => {
+                                    handleDropdownValue(name);
+                                  }}
+                                >
+                                  Save changes
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 );
               })}
@@ -1506,7 +1910,10 @@ console.log(dateNew)
                       id=""
                       className="getInputValue mt-2"
                       onChange={(e) => {
-                        setAllData({...allData,[e.target.value]: e.target.value})
+                        setAllData({
+                          ...allData,
+                          [e.target.value]: e.target.value,
+                        });
                         // setAllCheckValueData({
                         //   ...allCheckValueData,
                         //   [e.target.value]: e.target.value,
@@ -1527,7 +1934,7 @@ console.log(dateNew)
                       id=""
                       className="getInputValue mt-2"
                       onChange={(e) => {
-                        setAllData({...allData,[name]: e.target.value})
+                        setAllData({ ...allData, [name]: e.target.value });
                         // setAllDateValueData({
                         //   ...allDateValueData,
                         //   [name]: e.target.value,
@@ -1572,37 +1979,50 @@ console.log(dateNew)
                   style={{ marginLeft: "5px", background: "indigo" }}
                   onClick={(e) => {
                     e.preventDefault();
+                    columnValues[columnValues.length] = {};
                     setGetDate([...getDate, new Date()]);
-                    setLabelAPIData((prev) => {
-                      const temp_details = [...prev];
-                      var temparr = [];
-                      var tempdatearr = [];
-                      temp_details[0].map((element,i) => {
-                        if(element.ColumnType=="datetime"){
-                          tempdatearr[i]=(new Date());
+                    twoDimensionData[twoDimensionData.length] = [];
+                    setLabelData((prevArr) => {
+                      const result = [...prevArr];
+
+                      result[0].map((element, i) => {
+                        if (element.ColumnType == "datetime") {
+                          twoDimensionData[twoDimensionData.length - 1][i] =
+                            new Date();
                         }
-                        temparr.push(element);
+                        columnValues[columnValues.length - 1][
+                          element.ColumnName
+                        ] = "";
                       });
-                      twoDimension.push(tempdatearr)
-                      setTwoDimention(twoDimension)
-                      temp_details.push(temparr);
-                      return temp_details;
+
+                      var tempdatanewrow = JSON.parse(
+                        JSON.stringify(labelDataCopy[0])
+                      );
+                      result.push(tempdatanewrow);
+                      console.log(result);
+                      return result;
                     });
+                    setTwoDimentionData(twoDimensionData);
                   }}
                 >
                   Add row
                 </Button>
-
+<Button
+    variant="contained"
+    type="button"
+    style={{ marginLeft: "5px", background: "indigo" }}
+    onClick={(e, index) => {
+handleLabelField()
+    }}>Show Data</Button>
                 <br />
                 <FieldArray
                   render={(arrayHelpers) => {
-                    console.log(values);
                     return (
                       <>
                         <table class="table  mt-4">
                           <thead className="border ">
                             <tr>
-                              {labelAPIData.map((item, i) => {
+                              {labelData.map((item, i) => {
                                 if (i == 0) {
                                   return item.map((element, index) => {
                                     return (
@@ -1623,22 +2043,21 @@ console.log(dateNew)
                                             }}
                                             className={`box${index}`}
                                             style={{ marginLeft: "15px" }}
-                                            onChange={(e) => {
-                                              handleGroupInput(e, index);
-                                            }}
+                                            onChange={(e) => {}}
                                           />
 
                                           <FontAwesomeIcon
                                             icon={faArrowsRotate}
                                             data-toggle="modal"
-                                            data-target={`#exampleModal${i}`}
+                                            data-target={`#exampleModal${index}`}
+                                            data-id={index}
                                           ></FontAwesomeIcon>
                                           <div
                                             class="modal fade"
-                                            id={`exampleModal${i}`}
+                                            id={`exampleModal${index}`}
                                             tabindex="-1"
                                             role="dialog"
-                                            aria-labelledby={`exampleModal${i}Label`}
+                                            aria-labelledby={`exampleModal${index}Label`}
                                             // aria-hidden="true"
                                           >
                                             <div
@@ -1649,7 +2068,7 @@ console.log(dateNew)
                                                 <div class="modal-header">
                                                   <h5
                                                     class="modal-title"
-                                                    id={`exampleModal${i}Label`}
+                                                    id={`exampleModal${index}Label`}
                                                   >
                                                     What you like to replace
                                                     this field with?
@@ -1671,7 +2090,7 @@ console.log(dateNew)
                                                       <div class="input-group-text">
                                                         <input
                                                           type="radio"
-                                                          value="input"
+                                                          value="textbox"
                                                           name="replaceField"
                                                           aria-label="Radio button for following text input"
                                                         />
@@ -1680,6 +2099,7 @@ console.log(dateNew)
                                                     <input
                                                       id="inputField"
                                                       type="text"
+                                                      placeholder="textbox"
                                                       class="form-control"
                                                       aria-label="Text input with radio button"
                                                     />
@@ -1698,15 +2118,9 @@ console.log(dateNew)
                                                     <div className="w-75">
                                                       <div draggable="false">
                                                         <Select
-                                                          // id={`select${countOfInput}`}
                                                           class="form-select"
                                                           className="w-[100%]"
                                                           aria-label="Default select example"
-                                                          // placeholder={test(
-                                                          //   `box${countOfInput}`
-                                                          // )}
-                                                          required
-                                                          // name={`box${countOfInput}`}
                                                         ></Select>
                                                       </div>
                                                       <div
@@ -1752,7 +2166,29 @@ console.log(dateNew)
                                                       <div class="input-group-text">
                                                         <input
                                                           type="radio"
-                                                          value="date"
+                                                          value="radiobutton"
+                                                          name="replaceField"
+                                                          aria-label="Radio button for following text input"
+                                                        />
+                                                      </div>
+                                                    </div>
+                                                    <input
+                                                      type="text"
+                                                      name={`radio`}
+                                                      placeholder="Radio"
+                                                      class="form-control"
+                                                      style={{
+                                                        marginLeft: "3px",
+                                                      }}
+                                                      onChange={(e) => {}}
+                                                    />
+                                                  </div>
+                                                  <div class="input-group mt-2">
+                                                    <div class="input-group-prepend">
+                                                      <div class="input-group-text">
+                                                        <input
+                                                          type="radio"
+                                                          value="datetime"
                                                           name="replaceField"
                                                           aria-label="Radio button for following text input"
                                                         />
@@ -1773,11 +2209,11 @@ console.log(dateNew)
                                                     data-dismiss="modal"
                                                     aria-label="Close"
                                                     onClick={(e) => {
-                                                      // replaceFieldColumn(
-                                                      //   e,
-                                                      //   i,
-                                                      //   randnum
-                                                      // );
+                                                      handleReplaceCoulmn(
+                                                        item,
+                                                        index,
+                                                        i
+                                                      );
                                                     }}
                                                   >
                                                     Save changes
@@ -1805,21 +2241,11 @@ console.log(dateNew)
                           </thead>
 
                           <tbody>
-                            {labelAPIData.map((item, index) => {
-                              //   var obj = {};
-                              //   item.forEach(element=>{
-                              //     obj[element.ColumnName] = "";
-                              //   })
-                              // //  console.log(obj)
+                            {labelData.map((item, index) => {
                               return (
                                 <tr id={`tr${index}`}>
                                   {item.map((element, i) => {
-                                    return inputFunction(
-                                      element,
-                                      i,
-                                      setFieldValue,
-                                      index
-                                    );
+                                    return handleInputValue(element, i, index);
                                   })}
                                   <td class="border">
                                     <Button
@@ -1832,24 +2258,15 @@ console.log(dateNew)
                                         textAlign: "center",
                                       }}
                                       onClick={(e) => {
-                                        console.log(e);
-                                        console.log(
-                                          document.getElementById(e.target.id)
-                                            .parentNode.parentNode.id
-                                        );
-                                        var tridname = document.getElementById(
-                                          e.target.id
-                                        ).parentNode.parentNode.id;
-                                        console.log(tridname);
-                                        document
-                                          .getElementById(tridname)
-                                          .remove();
-
-                                        setDataarr((prev) => {
+                                        setColumnValues((prev) => {
                                           const temp__details = [...prev];
-                                         
-                                            temp__details.splice(index, 1);
-                                          
+                                          temp__details.splice(index, 1);
+                                          return temp__details;
+                                        });
+                                        setLabelData((prev) => {
+                                          const temp__details = [...prev];
+                                          console.log(temp__details);
+                                          temp__details.splice(index, 1);
                                           return temp__details;
                                         });
                                       }}

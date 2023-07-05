@@ -60,7 +60,8 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [selectedOption, setSelectedOption] = useState([]);
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [allModelDataTable, setAllModelDataTable] = useState([]);
-  console.log(labelData);
+const [openModal,setOpenModal]=useState(true)
+
   const modelData = {
     procedureName: "prc_GetPageInfo",
     parameters: {
@@ -68,36 +69,34 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     },
   };
   const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiI5MzM4Y2FmZi01MTI5LTQzN2YtOTY3My1iNzhkNWI4NzRjM2UiLCJuYmYiOjE2ODc2NjQ2ODksImV4cCI6MTY4NzcwNzg4OSwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.25ABtgnmowyjWBVaLaZSF8Q76yEo7dJzRa0FbUCMI3I";
-
-
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiIzZTViMTc3Ny1mZTk4LTQ2ZmYtYTY3YS0yMzY3NzEwODIxY2EiLCJuYmYiOjE2ODg1MzE1NTksImV4cCI6MTY4ODU3NDc1OSwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.bmNuR_O4XMqcalNFlWBTsDE96E_OqBTBX5WubppwrFE";
 
   useEffect(() => {
-    const modelData = {
+    const modelDataLabel = {
       procedureName: "",
       parameters: {},
     };
-    modelData.procedureName = "prc_GetMasterInfoList";
+    modelDataLabel.procedureName = "prc_GetMasterInfoList";
     fetch("https://localhost:44372/api/GetData/GetInitialData", {
       method: "POST",
       headers: {
         authorization: `Bearer ${token}`,
         "content-type": "application/json",
       },
-      body: JSON.stringify(modelData),
+      body: JSON.stringify(modelDataLabel),
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
           setAllModelDataTable(allModalData);
-          
         } else {
           console.log(data);
         }
       });
   }, []);
-  const handleLabelField=()=>{
+
+  const handleLabelField = () => {
     fetch(`https://localhost:44372/api/GetData/GetDataById`, {
       method: "POST",
       headers: {
@@ -125,6 +124,14 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                 element.ColumnName;
               multipleDateArrayField[index]["" + i]["ColumnType"] =
                 element.ColumnType;
+              multipleDateArrayField[index]["" + i]["CalculationType"] =
+                element.CalculationType;
+              multipleDateArrayField[index]["" + i]["CalculationKey"] =
+                element.CalculationKey;
+              multipleDateArrayField[index]["" + i]["CalculationFormula"] =
+                element.CalculationFormula;
+              multipleDateArrayField[index]["" + i]["IsDisable"] =
+                element.IsDisable;
               multipleDateArrayField[index]["" + i]["ColumnValue"] = "";
               multipleDateArrayField[index]["" + i]["RelatedTable"] =
                 element.RelatedTable;
@@ -159,7 +166,15 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
               multipleDateArrayFieldcopy[index]["" + i]["ColumnType"] =
                 element.ColumnType;
               multipleDateArrayFieldcopy[index]["" + i]["ColumnValue"] = "";
-              multipleDateArrayField[index]["" + i]["RelatedTable"] =
+              multipleDateArrayFieldcopy[index]["" + i]["CalculationType"] =
+                element.CalculationType;
+              multipleDateArrayFieldcopy[index]["" + i]["CalculationKey"] =
+                element.CalculationKey;
+              multipleDateArrayFieldcopy[index]["" + i]["CalculationFormula"] =
+                element.CalculationFormula;
+              multipleDateArrayFieldcopy[index]["" + i]["IsDisable"] =
+                element.IsDisable;
+              multipleDateArrayFieldcopy[index]["" + i]["RelatedTable"] =
                 element.RelatedTable;
               if (element.ColumnType == "datetime") {
                 const newDate = new Date();
@@ -200,14 +215,13 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                     });
                   }
                 });
-                console.log(dataMenuArr)
+                console.log(dataMenuArr);
                 setSelectedOption((prev) => {
                   const temp__details = [...prev];
                   temp__details[i] = dataMenuArr;
                   return temp__details;
                 });
               }
-             
             });
           });
 
@@ -217,14 +231,12 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
           setTwoDimentionData(twoDimensionData);
           setGetDate([...getDate, new Date()]);
           setColumnValues([...columnValues, createColumnValuesObject]);
-
-           
         } else {
           console.log(data);
         }
       });
-  }
- 
+  };
+
   var dropData = [
     {
       value: "1",
@@ -457,7 +469,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
         }
         console.log(e, tempjson, columnValues[index][e.ColumnName]);
         tempjson["" + index][e.ColumnName] = columnValues[index][e.ColumnName];
-        console.log(item,index,i);
+        console.log(item, index, i);
         if (item[i].RelatedTable != null) {
           var dataTable = [];
           for (var modelArrayPosition in allModelDataTable)
@@ -465,30 +477,24 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
               modelArrayPosition,
               allModelDataTable[modelArrayPosition],
             ]);
-          
+
           console.log(dataTable);
-          
-         
+
           dataTable.map((ele) => {
             console.log(ele[1]);
             if (ele[1][0].title == item[i].RelatedTable) {
-              
-              
-             
               ele[1].map((member) => {
-                
                 var dataMenuArrLength = dataMenuArr.length;
-                console.log(member,dataMenuArrLength);
+                console.log(member, dataMenuArrLength);
                 dataMenuArr[dataMenuArrLength] = {};
                 dataMenuArr[dataMenuArrLength]["label"] = member.label;
                 dataMenuArr[dataMenuArrLength]["value"] = member.value;
               });
             }
           });
-          
         }
-        
-        console.log(dataMenuArr)
+
+        console.log(dataMenuArr);
         setSelectedOption((prev) => {
           const temp__details = [...prev];
           temp__details[i] = dataMenuArr;
@@ -564,7 +570,6 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
         console.log(e, tempjson, columnValues[index][e.ColumnName], index, i);
         tempjson["" + index][e.ColumnName] = columnValues[index][e.ColumnName];
 
-
         labelData.map((item, index) => {
           tempjson[index] = {};
           item.map((e, i) => {
@@ -573,8 +578,9 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
               twoDimensionData[index][i] = item.ColumnValue;
             }
             console.log(e, tempjson, columnValues[index][e.ColumnName]);
-            tempjson["" + index][e.ColumnName] = columnValues[index][e.ColumnName];
-            console.log(item,index,i);
+            tempjson["" + index][e.ColumnName] =
+              columnValues[index][e.ColumnName];
+            console.log(item, index, i);
             if (item[i].RelatedTable != null) {
               var dataTable = [];
               for (var modelArrayPosition in allModelDataTable)
@@ -582,27 +588,24 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                   modelArrayPosition,
                   allModelDataTable[modelArrayPosition],
                 ]);
-              
+
               console.log(dataTable);
-              
-             
+
               dataTable.map((ele) => {
                 console.log(ele[1]);
                 if (ele[1][0].title == item[i].RelatedTable) {
                   ele[1].map((member) => {
-                    
                     var dataMenuArrLength = dataMenuArr.length;
-                    console.log(member,dataMenuArrLength);
+                    console.log(member, dataMenuArrLength);
                     dataMenuArr[dataMenuArrLength] = {};
                     dataMenuArr[dataMenuArrLength]["label"] = member.label;
                     dataMenuArr[dataMenuArrLength]["value"] = member.value;
                   });
                 }
               });
-              
             }
-            
-            console.log(dataMenuArr)
+
+            console.log(dataMenuArr);
             setSelectedOption((prev) => {
               const temp__details = [...prev];
               temp__details[i] = dataMenuArr;
@@ -663,6 +666,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       setDateData(arrayDate);
     }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
   }
+
 
   // const addList = () => {
   //   const testArr = [];
@@ -1215,9 +1219,30 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   //   }
   // };
 
-  const handleInputValue = (item, countOfInput, i) => {
-    console.log(selectedOption);
+  const handleCalculation = (calculationFormula, i, countOfInput) => {
+    var calculationValue1 = 0;
+    var calculationValue = 0;
+    var target = 0;
+    const calculationFormulaField = JSON.parse(calculationFormula);
+    const calculateFormulaField = calculationFormulaField.Formula;
+    console.log(calculateFormulaField[0].Field1);
 
+    labelData[i].map((item, pos) => {
+      if (item.ColumnName == calculateFormulaField[0].Field1) {
+        if (item.ColumnValue != "") calculationValue1 = item.ColumnValue;
+      }
+      if (item.ColumnName == calculateFormulaField[0].Field2) {
+        if (item.ColumnValue != "") calculationValue = item.ColumnValue;
+      }
+      if (item.ColumnName == calculationFormulaField.Target) {
+        target = pos;
+      }
+    });
+    const result = parseFloat(calculationValue) * parseFloat(calculationValue1);
+    labelData[i][target].ColumnValue = result;
+  };
+
+  const handleInputValue = (item, countOfInput, i) => {
     if (item.ColumnType == "textbox") {
       return (
         <td
@@ -1235,6 +1260,10 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
               draggable="false"
               id={`item${i}`}
               size="small"
+              disabled={
+                labelData[i][countOfInput]["IsDisable"]?.toLowerCase?.() ===
+                "true"
+              }
               name={`${i}input`}
               style={{ marginTop: "3px" }}
               value={labelData[i][countOfInput]["ColumnValue"]}
@@ -1242,20 +1271,26 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
               placeholder={item.ColumnName}
               onChange={(e) => {
                 const { value } = e.target;
-                // console.log(columnValues);
                 columnValues[i][item.ColumnName] = value;
-                // labelData[i][countOfInput]["ColumnValue"] = value;
-                // setLabelData(labelData)
-                // console.log(labelData,i,countOfInput,item)
 
                 setLabelData((prevArr) => {
                   const result = [...prevArr];
-                  console.log(i, countOfInput, labelData, result);
                   result[i][countOfInput].ColumnValue = value;
                   return result;
                 });
-
+                console.log(labelData);
                 setColumnValues(columnValues);
+                if (
+                  labelData[i][countOfInput]["CalculationType"] == "dynamic"
+                ) {
+                  if (item.ColumnName == item.CalculationKey) {
+                    const calculationFormula = item.CalculationFormula;
+
+                    handleCalculation(calculationFormula, i, countOfInput);
+                  } else {
+                    console.log("hi");
+                  }
+                }
               }}
             />
           </div>
@@ -1500,7 +1535,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     var radioName = document.querySelector(
       'input[name="replaceField"]:checked'
     ).value;
-    console.log(radioName);
+
     labelData.map((e, pos) => {
       e.map((el, position) => {
         if (position == i) {
@@ -2007,13 +2042,16 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                 >
                   Add row
                 </Button>
-<Button
-    variant="contained"
-    type="button"
-    style={{ marginLeft: "5px", background: "indigo" }}
-    onClick={(e, index) => {
-handleLabelField()
-    }}>Show Data</Button>
+                <Button
+                  variant="contained"
+                  type="button"
+                  style={{ marginLeft: "5px", background: "indigo" }}
+                  onClick={(e, index) => {
+                    handleLabelField();
+                  }}
+                >
+                  Show Data
+                </Button>
                 <br />
                 <FieldArray
                   render={(arrayHelpers) => {
@@ -2025,6 +2063,7 @@ handleLabelField()
                               {labelData.map((item, i) => {
                                 if (i == 0) {
                                   return item.map((element, index) => {
+                                    console.log(element)
                                     return (
                                       <th
                                         scope="col"
@@ -2060,167 +2099,175 @@ handleLabelField()
                                             aria-labelledby={`exampleModal${index}Label`}
                                             // aria-hidden="true"
                                           >
-                                            <div
-                                              class="modal-dialog"
-                                              role="document"
-                                            >
-                                              <div class="modal-content">
-                                                <div class="modal-header">
-                                                  <h5
-                                                    class="modal-title"
-                                                    id={`exampleModal${index}Label`}
-                                                  >
-                                                    What you like to replace
-                                                    this field with?
-                                                  </h5>
-                                                  <button
-                                                    type="button"
-                                                    data-dismiss="modal"
-                                                  >
-                                                    <span
-                                                    //  aria-hidden="true"
+                                            {
+                                              openModal? (<div
+                                                class="modal-dialog"
+                                                role="document"
+                                              >
+                                                <div class="modal-content">
+                                                  <div class="modal-header">
+                                                    <h5
+                                                      class="modal-title"
+                                                      id={`exampleModal${index}Label`}
                                                     >
-                                                      &times;
-                                                    </span>
-                                                  </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                  <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                      <div class="input-group-text">
-                                                        <input
-                                                          type="radio"
-                                                          value="textbox"
-                                                          name="replaceField"
-                                                          aria-label="Radio button for following text input"
-                                                        />
-                                                      </div>
-                                                    </div>
-                                                    <input
-                                                      id="inputField"
-                                                      type="text"
-                                                      placeholder="textbox"
-                                                      class="form-control"
-                                                      aria-label="Text input with radio button"
-                                                    />
-                                                  </div>
-                                                  <div class="input-group  mt-2">
-                                                    <div class="input-group-prepend">
-                                                      <div class="input-group-text">
-                                                        <input
-                                                          type="radio"
-                                                          name="replaceField"
-                                                          value="dropdown"
-                                                          aria-label="Default select example"
-                                                        />
-                                                      </div>
-                                                    </div>
-                                                    <div className="w-75">
-                                                      <div draggable="false">
-                                                        <Select
-                                                          class="form-select"
-                                                          className="w-[100%]"
-                                                          aria-label="Default select example"
-                                                        ></Select>
-                                                      </div>
-                                                      <div
-                                                        class="droptarget border"
-                                                        style={{
-                                                          display: "none",
-                                                        }}
-                                                        draggable="false"
+                                                      What you like to replace
+                                                      this field with?
+                                                    </h5>
+                                                    <button
+                                                      type="button"
+                                                      data-dismiss="modal"
+                                                    >
+                                                      <span
+                                                      //  aria-hidden="true"
                                                       >
-                                                        Drop
-                                                      </div>
-                                                    </div>
+                                                        &times;
+                                                      </span>
+                                                    </button>
                                                   </div>
-                                                  <div class="input-group mt-2">
-                                                    <div class="input-group-prepend">
-                                                      <div class="input-group-text">
-                                                        <input
-                                                          type="radio"
-                                                          value="checkbox"
-                                                          name="replaceField"
-                                                          aria-label="Radio button for following text input"
-                                                        />
-                                                      </div>
-                                                    </div>
-                                                    <FormGroup>
-                                                      <FormControlLabel
-                                                        id="checkboxField"
-                                                        name={`item.${i}.check`}
-                                                        style={{
-                                                          marginTop: "3px",
-                                                        }}
-                                                        control={
-                                                          <Checkbox
-                                                            defaultChecked
+                                                  <div class="modal-body">
+                                                    <div class="input-group">
+                                                      <div class="input-group-prepend">
+                                                        <div class="input-group-text">
+                                                          <input
+                                                            type="radio"
+                                                            value="textbox"
+                                                            name="replaceField"
+                                                            aria-label="Radio button for following text input"
                                                           />
-                                                        }
-                                                        label="Label"
+                                                        </div>
+                                                      </div>
+                                                      <input
+                                                        id="inputField"
+                                                        type="text"
+                                                        placeholder="textbox"
+                                                        class="form-control"
+                                                        aria-label="Text input with radio button"
                                                       />
-                                                    </FormGroup>
-                                                  </div>
-                                                  <div class="input-group mt-2">
-                                                    <div class="input-group-prepend">
-                                                      <div class="input-group-text">
-                                                        <input
-                                                          type="radio"
-                                                          value="radiobutton"
-                                                          name="replaceField"
-                                                          aria-label="Radio button for following text input"
-                                                        />
+                                                    </div>
+                                                    <div class="input-group  mt-2">
+                                                      <div class="input-group-prepend">
+                                                        <div class="input-group-text">
+                                                          <input
+                                                            type="radio"
+                                                            name="replaceField"
+                                                            value="dropdown"
+                                                            data-toggle="modal" 
+                                                            data-target="#exampleModal"
+                                                            onClick={()=>{
+                                                              setOpenModal(false)
+                                                            }}
+                                                          ></input>
+                                                          
+                                                        </div>
+                                                        
+                                                      </div>
+                                                      <div className="w-75">
+                                                        <div draggable="false">
+                                                          <Select
+                                                            class="form-select"
+                                                            className="w-[100%]"
+                                                            aria-label="Default select example"
+                                                          ></Select>
+                                                        </div>
+                                                        <div
+                                                          class="droptarget border"
+                                                          style={{
+                                                            display: "none",
+                                                          }}
+                                                          draggable="false"
+                                                        >
+                                                          Drop
+                                                        </div>
                                                       </div>
                                                     </div>
-                                                    <input
-                                                      type="text"
-                                                      name={`radio`}
-                                                      placeholder="Radio"
-                                                      class="form-control"
-                                                      style={{
-                                                        marginLeft: "3px",
+                                                    <div class="input-group mt-2">
+                                                      <div class="input-group-prepend">
+                                                        <div class="input-group-text">
+                                                          <input
+                                                            type="radio"
+                                                            value="checkbox"
+                                                            name="replaceField"
+                                                            aria-label="Radio button for following text input"
+                                                          />
+                                                        </div>
+                                                      </div>
+                                                      <FormGroup>
+                                                        <FormControlLabel
+                                                          id="checkboxField"
+                                                          name={`item.${i}.check`}
+                                                          style={{
+                                                            marginTop: "3px",
+                                                          }}
+                                                          control={
+                                                            <Checkbox
+                                                              defaultChecked
+                                                            />
+                                                          }
+                                                          label="Label"
+                                                        />
+                                                      </FormGroup>
+                                                    </div>
+                                                    <div class="input-group mt-2">
+                                                      <div class="input-group-prepend">
+                                                        <div class="input-group-text">
+                                                          <input
+                                                            type="radio"
+                                                            value="radiobutton"
+                                                            name="replaceField"
+                                                            aria-label="Radio button for following text input"
+                                                          />
+                                                        </div>
+                                                      </div>
+                                                      <input
+                                                        type="text"
+                                                        name={`radio`}
+                                                        placeholder="Radio"
+                                                        class="form-control"
+                                                        style={{
+                                                          marginLeft: "3px",
+                                                        }}
+                                                        onChange={(e) => {}}
+                                                      />
+                                                    </div>
+                                                    <div class="input-group mt-2">
+                                                      <div class="input-group-prepend">
+                                                        <div class="input-group-text">
+                                                          <input
+                                                            type="radio"
+                                                            value="datetime"
+                                                            name="replaceField"
+                                                            aria-label="Radio button for following text input"
+                                                          />
+                                                        </div>
+                                                      </div>
+                                                      <TextField
+                                                        id="date"
+                                                        type="date"
+                                                        defaultValue={startDate}
+                                                        size="small"
+                                                      />
+                                                    </div>
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <button
+                                                      type="button"
+                                                      class="btn btn-primary close"
+                                                      data-dismiss="modal"
+                                                      aria-label="Close"
+                                                      onClick={(e) => {
+                                                        handleReplaceCoulmn(
+                                                          item,
+                                                          index,
+                                                          i
+                                                        );
                                                       }}
-                                                      onChange={(e) => {}}
-                                                    />
-                                                  </div>
-                                                  <div class="input-group mt-2">
-                                                    <div class="input-group-prepend">
-                                                      <div class="input-group-text">
-                                                        <input
-                                                          type="radio"
-                                                          value="datetime"
-                                                          name="replaceField"
-                                                          aria-label="Radio button for following text input"
-                                                        />
-                                                      </div>
-                                                    </div>
-                                                    <TextField
-                                                      id="date"
-                                                      type="date"
-                                                      defaultValue={startDate}
-                                                      size="small"
-                                                    />
+                                                    >
+                                                      Save changes
+                                                    </button>
                                                   </div>
                                                 </div>
-                                                <div class="modal-footer">
-                                                  <button
-                                                    type="button"
-                                                    class="btn btn-primary close"
-                                                    data-dismiss="modal"
-                                                    aria-label="Close"
-                                                    onClick={(e) => {
-                                                      handleReplaceCoulmn(
-                                                        item,
-                                                        index,
-                                                        i
-                                                      );
-                                                    }}
-                                                  >
-                                                    Save changes
-                                                  </button>
-                                                </div>
-                                              </div>
-                                            </div>
+                                              </div>):''
+                                            }
                                           </div>
                                         </div>
 
@@ -2257,6 +2304,7 @@ handleLabelField()
                                         borderRadius: "50px",
                                         textAlign: "center",
                                       }}
+                                    
                                       onClick={(e) => {
                                         setColumnValues((prev) => {
                                           const temp__details = [...prev];
@@ -2273,6 +2321,7 @@ handleLabelField()
                                     >
                                       X
                                     </Button>
+                                 
                                   </td>
                                 </tr>
                               );
@@ -2289,6 +2338,38 @@ handleLabelField()
         ></Formik>
       </Grid>
       {/* )} */}
+
+      
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={()=>{
+          setOpenModal(true)
+        }}>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={()=>{
+          setOpenModal(true)
+        }}>Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onClick={()=>{
+         
+            setOpenModal(true)
+          
+          
+        }}>Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
     </Grid>
   );
 };

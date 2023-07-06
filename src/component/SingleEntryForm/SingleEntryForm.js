@@ -2157,31 +2157,43 @@ console.log(columnValues)
                                               icon={faXmark}
                                               className="ms-2 bg-danger rounded p-1 text-white"
                                               onClick={()=>{
-                                                setColumnValues((prev) => {
-                                                  const temp__details = [...prev];
-                                                  // temp__details.splice(1, 1);
-                                                  temp__details.map((item)=>{
-                                                    delete item[element.ColumnName]
-                                                  })
-
-                                                  return temp__details;
-                                                });
-                                                setLabelData((prev) => {
-                                                  const temp__details = [...prev];
-                                                  temp__details.map((item)=>{
-                                                  item.splice(index, 1);  
-                                                  })
-                                                  return temp__details;
-                                                });
-                                                setLabelDataCopy((prev) => {
-                                                  const temp__details = [...prev];
-                                                  temp__details.map((item)=>{
-                                                  item.splice(index, 1);  
-
-                                                  })
-                                                  
-                                                  return temp__details;
-                                                });
+                                                swal({
+                                                  title: "Are you sure?",
+                                                  text: "Once deleted, you will not be able to recover this record",
+                                                  icon: "warning",
+                                                  buttons: true,
+                                                  dangerMode: true,
+                                                }).then((willDelete) => {
+                                                  if (willDelete) {
+                                                    setColumnValues((prev) => {
+                                                      const temp__details = [...prev];
+                                                      // temp__details.splice(1, 1);
+                                                      temp__details.map((item)=>{
+                                                        delete item[element.ColumnName]
+                                                      })
+                                                      return temp__details;
+                                                    });
+                                                    setLabelData((prev) => {
+                                                      const temp__details = [...prev];
+                                                      temp__details.map((item)=>{
+                                                      item.splice(index, 1);  
+                                                      })
+                                                      return temp__details;
+                                                    });
+                                                    setLabelDataCopy((prev) => {
+                                                      const temp__details = [...prev];
+                                                      temp__details.map((item)=>{
+                                                      item.splice(index, 1);  
+                                                      })
+                                                      return temp__details;
+                                                    });
+                                                    swal("Delete success", {
+                                                      icon: "success",
+                                                    });
+                                                      setShowDeleteIcon(false)   
+                                                    }
+                                                  });
+                                               
                                               }}
                                             ></FontAwesomeIcon>) :''
                                           }

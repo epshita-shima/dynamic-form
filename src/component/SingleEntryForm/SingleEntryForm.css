@@ -49,3 +49,28 @@ text-align: center;
   color: black !important;
   font-weight: bold !important;
 }
+.textField_LabelSize{
+  font-size: 10px;
+}
+.textField_LabelSizeNormal{
+  font-size: 16px;
+}
+.zoomLabel:hover{
+  transform: scale(1.5);
+}
+
+/* .zoom-in-out-box {
+  animation: zoom-in-zoom-out 1s linear infinite;
+}
+
+@keyframes zoom-in-zoom-out {
+  0% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.2, 1.2);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+} */

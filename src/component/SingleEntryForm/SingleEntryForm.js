@@ -70,6 +70,11 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [allModelDataTable, setAllModelDataTable] = useState([]);
   const [pageName, setPageName] = useState([]);
+  const [pageNameStatus, setPageNameStatus] = useState(false);
+  const [field1Validation, setField1Validation] = useState(false);
+  const [field2Validation, setField2Validation] = useState(false);
+  const [fieldTargetValidation, setFieldTargetValidation] = useState(false);
+  const [fieldFormulaValidation, setFieldFormulaValidation] = useState(false);
 const [openModal,setOpenModal]=useState(true)
 
   const modelData = {
@@ -1712,8 +1717,16 @@ const [openModal,setOpenModal]=useState(true)
                 value={pageName}
                 onChange={(e) => { 
                   setPageName(e.target.value);
+                  if(e.target.value!=''){
+                    setPageNameStatus(true);
+                  }
+                  else{
+                    setPageNameStatus(false);
+                  }
                 }}
               />
+              <br></br>
+              <label className={pageNameStatus==false?"d-visible":"d-hidden"} style={{color:"red"}}>Page Name can not be empty</label>
               </Grid>
           <Grid className="single-entry-form">
             
@@ -1730,6 +1743,7 @@ const [openModal,setOpenModal]=useState(true)
                 defaultValue="0"
                 value={inputValue}
                 onChange={(e) => {
+                  
                   if (e.target.value < 0) {
                     swal({
                       title: "Not Possible!",
@@ -1855,9 +1869,9 @@ const [openModal,setOpenModal]=useState(true)
                 style={{ marginLeft: "20px", marginTop: "20px" }}
                 
                 data-toggle="modal"
-                data-target={`#exampleModalFormula`}
+                data-target={pageName==''?``:`#exampleModalFormula`}
                 onClick={() => {
-                  
+                  setPageNameStatus(true)
                 }}
               >
                 Enter
@@ -2443,6 +2457,9 @@ const [openModal,setOpenModal]=useState(true)
                         if(e.value=="Auto"){
                           setDisplayFormulaAuto(true)
                         }
+                        else{
+                          setDisplayFormulaAuto(false)
+                        }
                       }}
                     ></Select>
 
@@ -2456,10 +2473,19 @@ const [openModal,setOpenModal]=useState(true)
                       id={`dropValueField1`}
                       onChange={(e) => {
                         console.log(e.value);
-                        pageFormula[0]['Formula'][0]['Field1'] = e.value;
+                        if(pageFormula[0]['Formula'][0]['Field2']==e.value){
+                          setField1Validation(false)
+                        }
+                        else if(pageFormula[0]['Target']==e.value){
+                          setField1Validation(false)
+                        }
+                        else{
+                          setField1Validation(true)
+                          pageFormula[0]['Formula'][0]['Field1'] = e.value;
+                        }
                       }}
                     ></Select>
-                    
+                    {field1Validation==false?<label className="" style={{color:"red"}}>Value can not be same as Field2 or Target</label>:""}
                     <Select
                       class="form-select"
                       className="w-[100%] mt-2"
@@ -2484,7 +2510,8 @@ const [openModal,setOpenModal]=useState(true)
                         pageFormula[0]['Formula'][0]['FormulaType'] = e.value;
                       }}
                     ></Select>
-
+                    {fieldFormulaValidation==false?<label className="" style={{color:"red"}}>Value can not be empty</label>:""}
+                    
                     
                   <Select
                       class="form-select"
@@ -2495,11 +2522,19 @@ const [openModal,setOpenModal]=useState(true)
                       id={`dropValueField2`}
                       onChange={(e) => {
                         console.log(e.value);
-                       
-                        pageFormula[0]['Formula'][0]['Field2'] = e.value;
+                        if(pageFormula[0]['Formula'][0]['Field1']==e.value){
+                          setField2Validation(false)
+                        }
+                        else if(pageFormula[0]['Target']==e.value){
+                          setField2Validation(false)
+                        }
+                        else{
+                          setField2Validation(true)
+                          pageFormula[0]['Formula'][0]['Field2'] = e.value;
+                        }
                       }}
                     ></Select>
-                    
+                    {field2Validation==false?<label className="" style={{color:"red"}}>Value can not be same as Field1 or Target</label>:""}
                     <Select
                       class="form-select"
                       className="w-[100%] mt-2"
@@ -2508,185 +2543,218 @@ const [openModal,setOpenModal]=useState(true)
                       options={allInputValueForFormulaData}
                       id={`dropValueFieldTarget`}
                       onChange={(e) => {
+                        if(pageFormula[0]['Formula'][0]['Field1']==e.value){
+                          setFieldTargetValidation(false)
+                        }
+                        else if(pageFormula[0]['Field2']==e.value){
+                          setFieldTargetValidation(false)
+                        }
+                        else{
+                          setFieldTargetValidation(true)
+                          pageFormula[0]['Formula'][0]['Field2'] = e.value;
+                        }
                         console.log(e.value);
                        setFormulaTarget(e.value);
                         pageFormula[0]['Target'] = e.value;
                       }}
                     ></Select>
+                    {fieldTargetValidation==false?<label className="" style={{color:"red"}}>Value can not be same as Field1 or Field2</label>:""}
                     </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={()=>{
           setOpenModal(true)
         }}>Close</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" onClick={()=>{         
-           // addList();
-           const modelDataLabel = {
-            procedureName: "",
-            parameters: {},
-          };
-          modelDataLabel.procedureName = "InsertDynamicTable";
-          modelDataLabel.parameters = {
-            DBName: "DynamicDemo",
-            TableName: "tblMenu",
-            ColumnData: "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo, TableName",
-            ValueData: "'Master Entry','"+pageName+"','/"+pageName.replace(' ','-')+"','1','0','12',getdate(),'','"+pageName.replace(/ /g, '')+"'"
-          };
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onClick={()=>{   
+          console.log(field1Validation,field2Validation,fieldFormulaValidation,fieldTargetValidation);
+          if(pageFormula[0]['Formula'][0]['FormulaType']==""){
+            setFieldFormulaValidation(false)
+          }   
+          if(pageFormula[0]['Formula'][0]['Field2']==""){
+            setField1Validation(false)
+          }  
+          if(pageFormula[0]['Formula'][0]['Field1']==""){
+            setField1Validation(false)
+          }  
+          if(pageFormula[0]['Formula'][0]['FormulaType']==""){
+            setFieldFormulaValidation(false)
+          }  
+          if(pageFormula[0]['Formula'][0]['Target']==""){
+            setFieldTargetValidation(false)
+          }  
+          if(field1Validation==false || field2Validation==false || fieldFormulaValidation==false || fieldTargetValidation==false){
 
-          fetch("http://localhost:53601/DBCommand/Insert", {
-            method: "POST",
-            headers: {
-              "content-type": "application/json",
-            },
-            body: JSON.stringify( modelDataLabel.parameters),
-          })
-            .then((res) => {
-              console.log(res);
+          } 
+          else{
+// addList();
+const modelDataLabel = {
+  procedureName: "",
+  parameters: {},
+};
+modelDataLabel.procedureName = "InsertDynamicTable";
+modelDataLabel.parameters = {
+  DBName: "DynamicDemo",
+  TableName: "tblMenu",
+  ColumnData: "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo, TableName",
+  ValueData: "'Master Entry','"+pageName+"','/"+pageName.replace(' ','-')+"','1','0','12',getdate(),'','"+pageName.replace(/ /g, '')+"'"
+};
 
-              var tableModelData = {
-                "tableNameMaster": "",
-                "tableNameChild": null,
-                "columnNamePrimary": null,
-                "columnNameForign": null,
-                "serialType": null,
-                "columnNameSerialNo": null,
-                "isFlag": null,
-                "data": "",
-                "detailsData": [],
-                "whereParams": null
-              }
-              tableModelData.detailsData = [];
-              tableModelData.tableNameChild = "PageInfo";
+fetch("http://localhost:53601/DBCommand/Insert", {
+  method: "POST",
+  headers: {
+    "content-type": "application/json",
+  },
+  body: JSON.stringify( modelDataLabel.parameters),
+})
+  .then((res) => {
+    console.log(res);
 
-              var allInputValueDataLength = 0;
-              if(allInputValueData!=null){
-                allInputValueDataLength =  Object.keys(allInputValueData).length
-              }
+    var tableModelData = {
+      "tableNameMaster": "",
+      "tableNameChild": null,
+      "columnNamePrimary": null,
+      "columnNameForign": null,
+      "serialType": null,
+      "columnNameSerialNo": null,
+      "isFlag": null,
+      "data": "",
+      "detailsData": [],
+      "whereParams": null
+    }
+    tableModelData.detailsData = [];
+    tableModelData.tableNameChild = "PageInfo";
 
-              
-              var allCheckValueDataLength = 0;
-              if(allCheckValueData!=null){
-                allCheckValueDataLength =  Object.keys(allCheckValueData).length
-              }
-              
-              var allDateValueDataLength = 0;
-              if(allDateValueData!=null){
-                allDateValueDataLength =  Object.keys(allDateValueData).length
-              }
+    var allInputValueDataLength = 0;
+    if(allInputValueData!=null){
+      allInputValueDataLength =  Object.keys(allInputValueData).length
+    }
 
-              var allDropValueDataLength = 0;
-              if(allDropValueData!=null){
-                allDropValueDataLength =  Object.keys(allDropValueData).length
-              }
-              
+    
+    var allCheckValueDataLength = 0;
+    if(allCheckValueData!=null){
+      allCheckValueDataLength =  Object.keys(allCheckValueData).length
+    }
+    
+    var allDateValueDataLength = 0;
+    if(allDateValueData!=null){
+      allDateValueDataLength =  Object.keys(allDateValueData).length
+    }
 
-              for(let allInputValueDataCount = 0; allInputValueDataCount <allInputValueDataLength ; allInputValueDataCount++) {
-                
-                  var tabledataparams = {
-                    PageId: 'newid()',
-                    MenuId: '2',
-                    ColumnName: allInputValueData[allInputValueDataCount],
-                    ColumnType: "textbox",
-                    ColumnDataType: "",
-                    SiteName: "DynamicSite",
-                    CalculationType: calculationType,
-                    CalculationKey: allInputValueData[allInputValueDataCount],
-                    CalculationFormula: JSON.stringify(pageFormula),
-                    RelatedTable: "",
-                    Position: "",
-                    IsDisable: formulaTarget==allInputValueData[allInputValueDataCount]?"1":"0",
-                    
-                  };
-                  tableModelData.detailsData.push(tabledataparams);
-              }
+    var allDropValueDataLength = 0;
+    if(allDropValueData!=null){
+      allDropValueDataLength =  Object.keys(allDropValueData).length
+    }
+    
 
-              for(let allCheckValueDataCount = 0; allCheckValueDataCount < allCheckValueDataLength; allCheckValueDataCount++) {
-                
-                var tabledataparams = {
-                  PageId: 'newid()',
-                  MenuId: '2',
-                  ColumnName: allCheckValueData[allCheckValueDataCount],
-                  ColumnType: "checkbox",
-                  ColumnDataType: "",
-                  SiteName: "DynamicSite",
-                  CalculationType: "Manual",
-                  CalculationKey: "",
-                  CalculationFormula: "",
-                  RelatedTable: "",
-                  Position: "",
-                  IsDisable: "0",
-                  
-                };
-                tableModelData.detailsData.push(tabledataparams);
-            }
+    for(let allInputValueDataCount = 0; allInputValueDataCount <allInputValueDataLength ; allInputValueDataCount++) {
+      
+        var tabledataparams = {
+          PageId: 'newid()',
+          MenuId: '2',
+          ColumnName: allInputValueData[allInputValueDataCount],
+          ColumnType: "textbox",
+          ColumnDataType: "",
+          SiteName: "DynamicSite",
+          CalculationType: calculationType,
+          CalculationKey: allInputValueData[allInputValueDataCount],
+          CalculationFormula: JSON.stringify(pageFormula),
+          RelatedTable: "",
+          Position: "",
+          IsDisable: formulaTarget==allInputValueData[allInputValueDataCount]?"1":"0",
+          
+        };
+        tableModelData.detailsData.push(tabledataparams);
+    }
 
-            for(let allDateValueDataCount = 0; allDateValueDataCount < allDateValueDataLength; allDateValueDataCount++) {
-              
-              var tabledataparams = {
-                PageId: 'newid()',
-                MenuId: '2',
-                ColumnName: allDateValueData[allDateValueDataCount],
-                ColumnType: "datetime",
-                ColumnDataType: "",
-                SiteName: "DynamicSite",
-                CalculationType: "Manual",
-                CalculationKey: "",
-                CalculationFormula: "",
-                RelatedTable: "",
-                Position: "",
-                IsDisable: "0",
-                
-              };
-              tableModelData.detailsData.push(tabledataparams);
-          }
+    for(let allCheckValueDataCount = 0; allCheckValueDataCount < allCheckValueDataLength; allCheckValueDataCount++) {
+      
+      var tabledataparams = {
+        PageId: 'newid()',
+        MenuId: '2',
+        ColumnName: allCheckValueData[allCheckValueDataCount],
+        ColumnType: "checkbox",
+        ColumnDataType: "",
+        SiteName: "DynamicSite",
+        CalculationType: "Manual",
+        CalculationKey: "",
+        CalculationFormula: "",
+        RelatedTable: "",
+        Position: "",
+        IsDisable: "0",
+        
+      };
+      tableModelData.detailsData.push(tabledataparams);
+  }
 
-          for(let allDropValueDataCount = 0; allDropValueDataCount < allDropValueDataLength; allDropValueDataCount++) {
-            
-            var tabledataparams = {
-              PageId: 'newid()',
-              MenuId: '2',
-              ColumnName: allDropValueData[allDropValueDataCount],
-              ColumnType: "dropdown",
-              ColumnDataType: "",
-              SiteName: "DynamicSite",
-              CalculationType: "Manual",
-              CalculationKey: "",
-              CalculationFormula: "",
-              RelatedTable: "",
-              Position: "",
-              IsDisable: "0",
-              
-            };
-            tableModelData.detailsData.push(tabledataparams);
+  for(let allDateValueDataCount = 0; allDateValueDataCount < allDateValueDataLength; allDateValueDataCount++) {
+    
+    var tabledataparams = {
+      PageId: 'newid()',
+      MenuId: '2',
+      ColumnName: allDateValueData[allDateValueDataCount],
+      ColumnType: "datetime",
+      ColumnDataType: "",
+      SiteName: "DynamicSite",
+      CalculationType: "Manual",
+      CalculationKey: "",
+      CalculationFormula: "",
+      RelatedTable: "",
+      Position: "",
+      IsDisable: "0",
+      
+    };
+    tableModelData.detailsData.push(tabledataparams);
+}
+
+for(let allDropValueDataCount = 0; allDropValueDataCount < allDropValueDataLength; allDropValueDataCount++) {
+  
+  var tabledataparams = {
+    PageId: 'newid()',
+    MenuId: '2',
+    ColumnName: allDropValueData[allDropValueDataCount],
+    ColumnType: "dropdown",
+    ColumnDataType: "",
+    SiteName: "DynamicSite",
+    CalculationType: "Manual",
+    CalculationKey: "",
+    CalculationFormula: "",
+    RelatedTable: "",
+    Position: "",
+    IsDisable: "0",
+    
+  };
+  tableModelData.detailsData.push(tabledataparams);
+}
+
+    console.log(allCheckValueData,allDropValueData,allDateValueData,allData);
+    fetch("https://localhost:44372/api/DoubleMasterEntry/InsertListData", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(tableModelData),
+    })
+
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == true) {
+          
+        } else {
+          console.log(data);
         }
-
-              console.log(allCheckValueData,allDropValueData,allDateValueData,allData);
-              fetch("https://localhost:44372/api/DoubleMasterEntry/InsertListData", {
-                method: "POST",
-                headers: {
-                  authorization: `Bearer ${token}`,
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify(tableModelData),
-              })
-
-                .then((res) => res.json())
-                .then((data) => {
-                  if (data.status == true) {
-                    
-                  } else {
-                    console.log(data);
-                  }
-                });
-              
-              
-            })
-            .then((data) => {
-              console.log(data);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+      });
+    
+    
+  })
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+          }
+           
         }}>Save changes</button>
       </div>
     </div>

@@ -20,6 +20,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
+import { json } from "react-router-dom";
 
 const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [array, setArray] = useState([]);
@@ -33,6 +34,9 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const previousInputValueDDF = useRef("");
   const previousInputValueCheck = useRef("");
   const previousInputValueDate = useRef("");
+  const [displayFormulaAuto, setDisplayFormulaAuto] = useState(false);
+  const [calculationType, setCalculationType] = useState("Manual");
+  const [formulaTarget, setFormulaTarget] = useState("");
   const [testArray, setTestArray] = useState([]);
   const [replacetempArray, setreplacetempArray] = useState([]);
   const replaceArray = [];
@@ -49,6 +53,11 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [allCheckValueData, setAllCheckValueData] = useState(null);
   const [allDateValueData, setAllDateValueData] = useState(null);
 
+  
+  const [allInputValueForFormulaData, setAllInputValueForFormulaData] = useState([]);
+  
+  const [pageFormula, setPageFormula] = useState([{Formula:[{Field1:'',FormulaType:'',Field2:''}],Target:{}}]);
+
   const [allData, setAllData] = useState([]);
   const [singleData, setSingleData] = useState([]);
   const [inputTestData, setInputTestData] = useState({});
@@ -60,6 +69,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [selectedOption, setSelectedOption] = useState([]);
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [allModelDataTable, setAllModelDataTable] = useState([]);
+  const [pageName, setPageName] = useState([]);
 const [openModal,setOpenModal]=useState(true)
 
   const modelData = {
@@ -69,7 +79,7 @@ const [openModal,setOpenModal]=useState(true)
     },
   };
   const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiIzZTViMTc3Ny1mZTk4LTQ2ZmYtYTY3YS0yMzY3NzEwODIxY2EiLCJuYmYiOjE2ODg1MzE1NTksImV4cCI6MTY4ODU3NDc1OSwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.bmNuR_O4XMqcalNFlWBTsDE96E_OqBTBX5WubppwrFE";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiIwODhiNzQ1MC0wMTZhLTQwM2QtYjM3My01NWQ0NzQ0ZTBjYTciLCJuYmYiOjE2ODg4MDU1MDYsImV4cCI6MTY4ODg0ODcwNiwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.2YEVum_Cf_GK8LhLAiotpdLCnAzFnthEHoBsM9zX04g";
 
   useEffect(() => {
     const modelDataLabel = {
@@ -95,6 +105,27 @@ const [openModal,setOpenModal]=useState(true)
         }
       });
   }, []);
+
+  const insertField = (modelDataParams) => {
+    fetch("http://localhost:53601/DBCommand/Insert", {
+      method: "POST",
+                        headers: {
+                          "content-type": "application/json",
+                        },
+                        body: JSON.stringify( modelDataParams),
+                      })
+                        .then((res) => {
+                          console.log(res);
+                          res.json();
+                        })
+                        .then((data) => {
+                          console.log(data);
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        });
+                        
+  }
 
   const handleLabelField = () => {
     fetch(`https://localhost:44372/api/GetData/GetDataById`, {
@@ -1624,6 +1655,15 @@ const [openModal,setOpenModal]=useState(true)
           dataMenuArr[dataMenuArrLength] = {};
           dataMenuArr[dataMenuArrLength]["label"] = member.label;
           dataMenuArr[dataMenuArrLength]["value"] = member.value;
+          var allDropValueDataLength = 0;
+          if(allDropValueData!=null){
+            allDropValueDataLength = Object.keys(allDropValueData).length;
+          }
+
+          setAllDropValueData({
+            ...allDropValueData,
+            [allDropValueDataLength]: radioName,
+          });
         });
       }
     });
@@ -1659,9 +1699,24 @@ const [openModal,setOpenModal]=useState(true)
   };
   return (
     <Grid>
-      {/* {opens == true ? (
+      {opens == true ? (
         <Grid>
           <Grid className="single-entry-form">
+              <label>Page Name</label>
+              <br></br>
+              <TextField
+                id="outlined-basic"
+                variant="outlined"
+                type="text"
+                size="small"
+                value={pageName}
+                onChange={(e) => { 
+                  setPageName(e.target.value);
+                }}
+              />
+              </Grid>
+          <Grid className="single-entry-form">
+            
             <Grid>
               <label htmlFor="" className="text-style">
                 Text Field
@@ -1798,8 +1853,11 @@ const [openModal,setOpenModal]=useState(true)
               <Button
                 variant="contained"
                 style={{ marginLeft: "20px", marginTop: "20px" }}
+                
+                data-toggle="modal"
+                data-target={`#exampleModalFormula`}
                 onClick={() => {
-                  // addList();
+                  
                 }}
               >
                 Enter
@@ -1825,10 +1883,21 @@ const [openModal,setOpenModal]=useState(true)
                         //   [labelName]: e.target.value,
                         //   [labelType]: e.target.type,
                         // });
+
                         setAllInputValueData({
                           ...allInputValueData,
                           [name]: e.target.value,
                         });
+                        var tempValue = {
+                          label:e.target.value,
+                          value:e.target.value
+                        }
+                        allInputValueForFormulaData[name]=tempValue;
+                        setAllInputValueForFormulaData((prev) => {
+                          const temp__details = [...prev];
+                          return temp__details;
+                        });
+                        console.log(allInputValueForFormulaData);
                       }}
                     />
                   </div>
@@ -1947,12 +2016,12 @@ const [openModal,setOpenModal]=useState(true)
                       onChange={(e) => {
                         setAllData({
                           ...allData,
-                          [e.target.value]: e.target.value,
+                          [allData.length]: e.target.value,
                         });
-                        // setAllCheckValueData({
-                        //   ...allCheckValueData,
-                        //   [e.target.value]: e.target.value,
-                        // });
+                        setAllCheckValueData({
+                          ...allCheckValueData,
+                          [name]: e.target.value,
+                        });
                       }}
                     />
                   </div>
@@ -1969,11 +2038,11 @@ const [openModal,setOpenModal]=useState(true)
                       id=""
                       className="getInputValue mt-2"
                       onChange={(e) => {
-                        setAllData({ ...allData, [name]: e.target.value });
-                        // setAllDateValueData({
-                        //   ...allDateValueData,
-                        //   [name]: e.target.value,
-                        // });
+                        setAllData({ ...allData, [allData.length]: e.target.value });
+                        setAllDateValueData({
+                          ...allDateValueData,
+                          [name]: e.target.value,
+                        });
                       }}
                     />
                   </div>
@@ -1982,7 +2051,7 @@ const [openModal,setOpenModal]=useState(true)
             </Grid>
           </Grid>
         </Grid>
-      ) : ( */}
+      ) : ( 
       <Grid style={{ margin: "50px" }}>
         <Formik
           initialValues={{}}
@@ -2337,12 +2406,293 @@ const [openModal,setOpenModal]=useState(true)
           }}
         ></Formik>
       </Grid>
-      {/* )} */}
+     )}
 
       
 
+<div class="modal fade" id="exampleModalFormula" tabindex="-1" role="dialog" aria-labelledby="exampleModalFormulaLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalFormulaLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={()=>{
+          setOpenModal(true)
+        }}>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+        <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={[{
+                        label:"Manual",
+                        value:"Manual"
+                      },
+                      {
+                        label:"Auto",
+                        value:"Auto"
+                      }]}
+                      id={`dropValue`}
+                      onChange={(e) => {
+                        console.log(e.value);
+                        setCalculationType(e.value);
+                        if(e.value=="Auto"){
+                          setDisplayFormulaAuto(true)
+                        }
+                      }}
+                    ></Select>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className={`${displayFormulaAuto?"d-visible":"d-hidden"}`}>
+                    <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={allInputValueForFormulaData}
+                      id={`dropValueField1`}
+                      onChange={(e) => {
+                        console.log(e.value);
+                        pageFormula[0]['Formula'][0]['Field1'] = e.value;
+                      }}
+                    ></Select>
+                    
+                    <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={[{
+                        label:'+',
+                        value:'+'
+                      },{
+                        label:'-',
+                        value:'-'
+                      },{
+                        label:'*',
+                        value:'*'
+                      },{
+                        label:'/',
+                        value:'/'
+                      }]}
+                      id={`dropValueFormula`}
+                      onChange={(e) => {
+                        console.log(e.value);
+                        pageFormula[0]['Formula'][0]['FormulaType'] = e.value;
+                      }}
+                    ></Select>
+
+                    
+                  <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={allInputValueForFormulaData}
+                      id={`dropValueField2`}
+                      onChange={(e) => {
+                        console.log(e.value);
+                       
+                        pageFormula[0]['Formula'][0]['Field2'] = e.value;
+                      }}
+                    ></Select>
+                    
+                    <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={allInputValueForFormulaData}
+                      id={`dropValueFieldTarget`}
+                      onChange={(e) => {
+                        console.log(e.value);
+                       setFormulaTarget(e.value);
+                        pageFormula[0]['Target'] = e.value;
+                      }}
+                    ></Select>
+                    </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={()=>{
+          setOpenModal(true)
+        }}>Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onClick={()=>{         
+           // addList();
+           const modelDataLabel = {
+            procedureName: "",
+            parameters: {},
+          };
+          modelDataLabel.procedureName = "InsertDynamicTable";
+          modelDataLabel.parameters = {
+            DBName: "DynamicDemo",
+            TableName: "tblMenu",
+            ColumnData: "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo, TableName",
+            ValueData: "'Master Entry','"+pageName+"','/"+pageName.replace(' ','-')+"','1','0','12',getdate(),'','"+pageName.replace(/ /g, '')+"'"
+          };
+
+          fetch("http://localhost:53601/DBCommand/Insert", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify( modelDataLabel.parameters),
+          })
+            .then((res) => {
+              console.log(res);
+
+              var tableModelData = {
+                "tableNameMaster": "",
+                "tableNameChild": null,
+                "columnNamePrimary": null,
+                "columnNameForign": null,
+                "serialType": null,
+                "columnNameSerialNo": null,
+                "isFlag": null,
+                "data": "",
+                "detailsData": [],
+                "whereParams": null
+              }
+              tableModelData.detailsData = [];
+              tableModelData.tableNameChild = "PageInfo";
+
+              var allInputValueDataLength = 0;
+              if(allInputValueData!=null){
+                allInputValueDataLength =  Object.keys(allInputValueData).length
+              }
+
+              
+              var allCheckValueDataLength = 0;
+              if(allCheckValueData!=null){
+                allCheckValueDataLength =  Object.keys(allCheckValueData).length
+              }
+              
+              var allDateValueDataLength = 0;
+              if(allDateValueData!=null){
+                allDateValueDataLength =  Object.keys(allDateValueData).length
+              }
+
+              var allDropValueDataLength = 0;
+              if(allDropValueData!=null){
+                allDropValueDataLength =  Object.keys(allDropValueData).length
+              }
+              
+
+              for(let allInputValueDataCount = 0; allInputValueDataCount <allInputValueDataLength ; allInputValueDataCount++) {
+                
+                  var tabledataparams = {
+                    PageId: 'newid()',
+                    MenuId: '2',
+                    ColumnName: allInputValueData[allInputValueDataCount],
+                    ColumnType: "textbox",
+                    ColumnDataType: "",
+                    SiteName: "DynamicSite",
+                    CalculationType: calculationType,
+                    CalculationKey: allInputValueData[allInputValueDataCount],
+                    CalculationFormula: JSON.stringify(pageFormula),
+                    RelatedTable: "",
+                    Position: "",
+                    IsDisable: formulaTarget==allInputValueData[allInputValueDataCount]?"1":"0",
+                    
+                  };
+                  tableModelData.detailsData.push(tabledataparams);
+              }
+
+              for(let allCheckValueDataCount = 0; allCheckValueDataCount < allCheckValueDataLength; allCheckValueDataCount++) {
+                
+                var tabledataparams = {
+                  PageId: 'newid()',
+                  MenuId: '2',
+                  ColumnName: allCheckValueData[allCheckValueDataCount],
+                  ColumnType: "checkbox",
+                  ColumnDataType: "",
+                  SiteName: "DynamicSite",
+                  CalculationType: "Manual",
+                  CalculationKey: "",
+                  CalculationFormula: "",
+                  RelatedTable: "",
+                  Position: "",
+                  IsDisable: "0",
+                  
+                };
+                tableModelData.detailsData.push(tabledataparams);
+            }
+
+            for(let allDateValueDataCount = 0; allDateValueDataCount < allDateValueDataLength; allDateValueDataCount++) {
+              
+              var tabledataparams = {
+                PageId: 'newid()',
+                MenuId: '2',
+                ColumnName: allDateValueData[allDateValueDataCount],
+                ColumnType: "datetime",
+                ColumnDataType: "",
+                SiteName: "DynamicSite",
+                CalculationType: "Manual",
+                CalculationKey: "",
+                CalculationFormula: "",
+                RelatedTable: "",
+                Position: "",
+                IsDisable: "0",
+                
+              };
+              tableModelData.detailsData.push(tabledataparams);
+          }
+
+          for(let allDropValueDataCount = 0; allDropValueDataCount < allDropValueDataLength; allDropValueDataCount++) {
+            
+            var tabledataparams = {
+              PageId: 'newid()',
+              MenuId: '2',
+              ColumnName: allDropValueData[allDropValueDataCount],
+              ColumnType: "dropdown",
+              ColumnDataType: "",
+              SiteName: "DynamicSite",
+              CalculationType: "Manual",
+              CalculationKey: "",
+              CalculationFormula: "",
+              RelatedTable: "",
+              Position: "",
+              IsDisable: "0",
+              
+            };
+            tableModelData.detailsData.push(tabledataparams);
+        }
+
+              console.log(allCheckValueData,allDropValueData,allDateValueData,allData);
+              fetch("https://localhost:44372/api/DoubleMasterEntry/InsertListData", {
+                method: "POST",
+                headers: {
+                  authorization: `Bearer ${token}`,
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify(tableModelData),
+              })
+
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.status == true) {
+                    
+                  } else {
+                    console.log(data);
+                  }
+                });
+              
+              
+            })
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }}>Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+{/* <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -2369,7 +2719,7 @@ const [openModal,setOpenModal]=useState(true)
       </div>
     </div>
   </div>
-</div>
+</div> */}
     </Grid>
   );
 };

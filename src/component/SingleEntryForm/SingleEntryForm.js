@@ -70,12 +70,23 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [allModelDataTable, setAllModelDataTable] = useState([]);
   const [pageName, setPageName] = useState([]);
-  const [pageNameStatus, setPageNameStatus] = useState(false);
-  const [field1Validation, setField1Validation] = useState(false);
-  const [field2Validation, setField2Validation] = useState(false);
-  const [fieldTargetValidation, setFieldTargetValidation] = useState(false);
-  const [fieldFormulaValidation, setFieldFormulaValidation] = useState(false);
+  const [pageNameStatus, setPageNameStatus] = useState(2);
+  const [field1Validation, setField1Validation] = useState(2);
+  const [field2Validation, setField2Validation] = useState(2);
+  const [fieldTargetValidation, setFieldTargetValidation] = useState(2);
+  const [fieldFormulaValidation, setFieldFormulaValidation] = useState(2);
 const [openModal,setOpenModal]=useState(true)
+const [showCalculactionModal,setShowCalculactionModal]=useState(false)
+const [keyValue,setKeyValue]=useState([{
+  key:'qty',
+  type:'calcField'
+},{
+  key:'rate',
+  type:'calcField'
+},{
+  key:'amount',
+  type:'targetField'
+}]);
 
   const modelData = {
     procedureName: "prc_GetPageInfo",
@@ -84,7 +95,7 @@ const [openModal,setOpenModal]=useState(true)
     },
   };
   const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiIwODhiNzQ1MC0wMTZhLTQwM2QtYjM3My01NWQ0NzQ0ZTBjYTciLCJuYmYiOjE2ODg4MDU1MDYsImV4cCI6MTY4ODg0ODcwNiwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.2YEVum_Cf_GK8LhLAiotpdLCnAzFnthEHoBsM9zX04g";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiIwZDYzZTYyOC03YjkxLTQxZDUtYmNkZS1jNDlmMDAxMzc2MzUiLCJuYmYiOjE2ODg4Nzg1NTIsImV4cCI6MTY4ODkyMTc1MiwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.h545BOOEE0TH3AorZ5xGHgFe37U3HcBCkp1MoJJ6QGg";
 
   useEffect(() => {
     const modelDataLabel = {
@@ -130,6 +141,182 @@ const [openModal,setOpenModal]=useState(true)
                           console.log(err);
                         });
                         
+  }
+
+
+  function submitForm(){
+    const modelDataLabel = {
+      procedureName: "",
+      parameters: {},
+    };
+    modelDataLabel.procedureName = "InsertDynamicMenuTable";
+    modelDataLabel.parameters = {
+      DBName: "DynamicDemo",
+      TableName: "tblMenu",
+      ColumnData: "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo, TableName",
+      ValueData: "'Master Entry','"+pageName+"','/"+pageName.replace(' ','-')+"','1','0','12',getdate(),'','"+pageName.replace(/ /g, '')+"'"
+    };
+    
+    fetch("https://localhost:44372/api/GetData/GetDataById", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelDataLabel),
+    })
+    .then((res) => res.json())
+    .then((data) => {
+        console.log(JSON.stringify(data));
+        if (data.status == true) {
+          const tableData = JSON.parse(data.data);
+          var menuId = tableData[0]?.Column1
+        
+        var tableModelData = {
+          "tableNameMaster": "",
+          "tableNameChild": null,
+          "columnNamePrimary": null,
+          "columnNameForign": null,
+          "serialType": null,
+          "columnNameSerialNo": null,
+          "isFlag": null,
+          "data": "",
+          "detailsData": [],
+          "whereParams": null
+        }
+        tableModelData.detailsData = [];
+        tableModelData.tableNameChild = "PageInfo";
+    
+        var allInputValueDataLength = 0;
+        if(allInputValueData!=null){
+          allInputValueDataLength =  Object.keys(allInputValueData).length
+        }
+    
+        
+        var allCheckValueDataLength = 0;
+        if(allCheckValueData!=null){
+          allCheckValueDataLength =  Object.keys(allCheckValueData).length
+        }
+        
+        var allDateValueDataLength = 0;
+        if(allDateValueData!=null){
+          allDateValueDataLength =  Object.keys(allDateValueData).length
+        }
+    
+        var allDropValueDataLength = 0;
+        if(allDropValueData!=null){
+          allDropValueDataLength =  Object.keys(allDropValueData).length
+        }
+        var orderPosition = 0;
+    
+        for(let allInputValueDataCount = 0; allInputValueDataCount <allInputValueDataLength ; allInputValueDataCount++) {
+          orderPosition++;
+            var tabledataparams = {
+              PageId: 'newid()',
+              MenuId: menuId,
+              ColumnName: allInputValueData[allInputValueDataCount],
+              ColumnType: "textbox",
+              ColumnDataType: "",
+              SiteName: "DynamicSite",
+              CalculationType: calculationType,
+              CalculationKey: allInputValueData[allInputValueDataCount],
+              CalculationFormula: JSON.stringify(pageFormula),
+              RelatedTable: "",
+              Position: orderPosition,
+              IsDisable: formulaTarget==allInputValueData[allInputValueDataCount]?"1":"0",
+              
+            };
+            tableModelData.detailsData.push(tabledataparams);
+        }
+    
+        for(let allCheckValueDataCount = 0; allCheckValueDataCount < allCheckValueDataLength; allCheckValueDataCount++) {
+          orderPosition++;
+          var tabledataparams = {
+            PageId: 'newid()',
+            MenuId: menuId,
+            ColumnName: allCheckValueData[allCheckValueDataCount],
+            ColumnType: "checkbox",
+            ColumnDataType: "",
+            SiteName: "DynamicSite",
+            CalculationType: "Manual",
+            CalculationKey: "",
+            CalculationFormula: "",
+            RelatedTable: "",
+            Position: orderPosition,
+            IsDisable: "0",
+            
+          };
+          tableModelData.detailsData.push(tabledataparams);
+      }
+    
+      for(let allDateValueDataCount = 0; allDateValueDataCount < allDateValueDataLength; allDateValueDataCount++) {
+        orderPosition++;
+        var tabledataparams = {
+          PageId: 'newid()',
+          MenuId: menuId,
+          ColumnName: allDateValueData[allDateValueDataCount],
+          ColumnType: "datetime",
+          ColumnDataType: "",
+          SiteName: "DynamicSite",
+          CalculationType: "Manual",
+          CalculationKey: "",
+          CalculationFormula: "",
+          RelatedTable: "",
+          Position: orderPosition,
+          IsDisable: "0",
+          
+        };
+        tableModelData.detailsData.push(tabledataparams);
+    }
+    
+    for(let allDropValueDataCount = 0; allDropValueDataCount < allDropValueDataLength; allDropValueDataCount++) {
+      orderPosition++;
+      var tabledataparams = {
+        PageId: 'newid()',
+        MenuId: menuId,
+        ColumnName: allDropValueData[allDropValueDataCount],
+        ColumnType: "dropdown",
+        ColumnDataType: "",
+        SiteName: "DynamicSite",
+        CalculationType: "Manual",
+        CalculationKey: "",
+        CalculationFormula: "",
+        RelatedTable: "",
+        Position: orderPosition,
+        IsDisable: "0",
+        
+      };
+      tableModelData.detailsData.push(tabledataparams);
+    }
+    
+        console.log(allCheckValueData,allDropValueData,allDateValueData,allData);
+        fetch("https://localhost:44372/api/DoubleMasterEntry/InsertListData", {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${token}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(tableModelData),
+        })
+    
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status == true) {
+              
+            } else {
+              console.log(data);
+            }
+          });
+        
+        }
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    
   }
 
   const handleLabelField = () => {
@@ -653,10 +840,6 @@ const [openModal,setOpenModal]=useState(true)
     });
     setTwoDimentionData(twoDimensionData);
     setColumnValues(tempjson);
-
-    // arr.forEach((element, i) => {
-    //   element.parentNode.insertBefore(newNode[i], element.nextSibling);
-    // });
   }
 
   const handleSubmit = (e, i) => {
@@ -1718,15 +1901,15 @@ const [openModal,setOpenModal]=useState(true)
                 onChange={(e) => { 
                   setPageName(e.target.value);
                   if(e.target.value!=''){
-                    setPageNameStatus(true);
+                    setPageNameStatus(1);
                   }
                   else{
-                    setPageNameStatus(false);
+                    setPageNameStatus(0);
                   }
                 }}
               />
               <br></br>
-              <label className={pageNameStatus==false?"d-visible":"d-hidden"} style={{color:"red"}}>Page Name can not be empty</label>
+              <label className={pageNameStatus==0?"d-visible":"d-hidden"} style={{color:"red"}}>Page Name can not be empty</label>
               </Grid>
           <Grid className="single-entry-form">
             
@@ -1867,11 +2050,103 @@ const [openModal,setOpenModal]=useState(true)
               <Button
                 variant="contained"
                 style={{ marginLeft: "20px", marginTop: "20px" }}
-                
                 data-toggle="modal"
-                data-target={pageName==''?``:`#exampleModalFormula`}
-                onClick={() => {
-                  setPageNameStatus(true)
+                data-target={`#exampleModalFormula`}
+                onClick={() => {                
+                  var foundKey = 0;
+                  var foundEmpty = 0;
+                  console.log(allInputValueData);
+                  var allInputValueDataLength = 0;
+                  if(inputValue!=''){
+                    allInputValueDataLength =  inputValue;
+                  }   
+                  var allCheckValueDataLength = 0;
+                  if(inputValueCheck!=''){
+                    allCheckValueDataLength =  inputValueCheck
+                  }
+                  
+                  var allDateValueDataLength = 0;
+                  if(inputValueDate!=''){
+                    allDateValueDataLength =  inputValueDate
+                  }
+              
+                  var allDropValueDataLength = 0;
+                  if(inputValueDDF!=''){
+                    allDropValueDataLength =  inputValueDDF
+                  }   
+                  var totalField = allCheckValueDataLength+allInputValueDataLength+allDateValueDataLength+allDropValueDataLength;
+                  
+                  if(pageName!=""){
+                    if(totalField>12){
+                      alert('There cannot be more than 12 input');
+                    }
+                    else{
+                      var totalValueField = 0;
+
+                      if(allInputValueData==null){
+                        totalValueField+=0;
+                      }
+                      else{
+                        totalValueField+=allInputValueData.length;
+                      }
+
+                      if(allCheckValueData==null){
+                        totalValueField+=0;
+                      }
+                      else{
+                        totalValueField+=allCheckValueData.length;
+                      }
+
+                      if(allDropValueData==null){
+                        totalValueField+=0;
+                      }
+                      else{
+                        totalValueField+=allDropValueData.length;
+                      }
+
+                      if(allDateValueData==null){
+                        totalValueField+=0;
+                      }
+                      else{
+                        totalValueField+=allDateValueData.length;
+                      }
+
+                      if(totalValueField<totalField){
+                        foundEmpty = 1;
+                      }
+                      if(foundEmpty==1){
+                          alert("Column Name field cannot be empty");
+                      }
+                      else{
+                        if(inputValue>2){
+                        
+                          for(let countKeyValue = 0; countKeyValue <allInputValueDataLength ; countKeyValue++) {
+                            if(keyValue.some(item => item.key === allInputValueData[countKeyValue])){
+                              foundKey = 1;
+                              
+                            }
+                            
+                          }
+                          if(foundKey==1){
+                              setShowCalculactionModal(true);
+                              
+                          }
+                          else{
+                            submitForm();
+                          }
+                          }
+                          else{
+                            submitForm();
+                          }
+                      }
+                      
+                    }
+                    
+                    
+                  }
+                  else{
+                    setPageNameStatus(0);
+                  }
                 }}
               >
                 Enter
@@ -2423,14 +2698,14 @@ const [openModal,setOpenModal]=useState(true)
      )}
 
       
-
-<div class="modal fade" id="exampleModalFormula" tabindex="-1" role="dialog" aria-labelledby="exampleModalFormulaLabel" aria-hidden="true">
+{showCalculactionModal?(
+<div style={{display:showCalculactionModal?"none !important":"block"}} class="modal fade" id="exampleModalFormula" tabindex="-1" role="dialog" aria-labelledby="exampleModalFormulaLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalFormulaLabel">Modal title</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={()=>{
-          setOpenModal(true)
+          setShowCalculactionModal(false);
         }}>
           <span aria-hidden="true">&times;</span>
         </button>
@@ -2472,20 +2747,20 @@ const [openModal,setOpenModal]=useState(true)
                       options={allInputValueForFormulaData}
                       id={`dropValueField1`}
                       onChange={(e) => {
-                        console.log(e.value);
+                        console.log(e.value,pageFormula);
                         if(pageFormula[0]['Formula'][0]['Field2']==e.value){
-                          setField1Validation(false)
+                          setField1Validation(0)
                         }
                         else if(pageFormula[0]['Target']==e.value){
-                          setField1Validation(false)
+                          setField1Validation(0)
                         }
                         else{
-                          setField1Validation(true)
+                          setField1Validation(1)
                           pageFormula[0]['Formula'][0]['Field1'] = e.value;
                         }
                       }}
                     ></Select>
-                    {field1Validation==false?<label className="" style={{color:"red"}}>Value can not be same as Field2 or Target</label>:""}
+                    {field1Validation==0?<label className="" style={{color:"red"}}>Value can not be same as Field2 or Target</label>:""}
                     <Select
                       class="form-select"
                       className="w-[100%] mt-2"
@@ -2508,9 +2783,15 @@ const [openModal,setOpenModal]=useState(true)
                       onChange={(e) => {
                         console.log(e.value);
                         pageFormula[0]['Formula'][0]['FormulaType'] = e.value;
+                        if(e.value!=""){
+                          setFieldFormulaValidation(1);
+                        }
+                        else{                         
+                          setFieldFormulaValidation(0);
+                        }
                       }}
                     ></Select>
-                    {fieldFormulaValidation==false?<label className="" style={{color:"red"}}>Value can not be empty</label>:""}
+                    {fieldFormulaValidation==0?<label className="" style={{color:"red"}}>Value can not be empty</label>:""}
                     
                     
                   <Select
@@ -2523,18 +2804,18 @@ const [openModal,setOpenModal]=useState(true)
                       onChange={(e) => {
                         console.log(e.value);
                         if(pageFormula[0]['Formula'][0]['Field1']==e.value){
-                          setField2Validation(false)
+                          setField2Validation(0)
                         }
                         else if(pageFormula[0]['Target']==e.value){
-                          setField2Validation(false)
+                          setField2Validation(0)
                         }
                         else{
-                          setField2Validation(true)
+                          setField2Validation(1)
                           pageFormula[0]['Formula'][0]['Field2'] = e.value;
                         }
                       }}
                     ></Select>
-                    {field2Validation==false?<label className="" style={{color:"red"}}>Value can not be same as Field1 or Target</label>:""}
+                    {field2Validation==0?<label className="" style={{color:"red"}}>Value can not be same as Field1 or Target</label>:""}
                     <Select
                       class="form-select"
                       className="w-[100%] mt-2"
@@ -2544,215 +2825,51 @@ const [openModal,setOpenModal]=useState(true)
                       id={`dropValueFieldTarget`}
                       onChange={(e) => {
                         if(pageFormula[0]['Formula'][0]['Field1']==e.value){
-                          setFieldTargetValidation(false)
+                          setFieldTargetValidation(0)
                         }
-                        else if(pageFormula[0]['Field2']==e.value){
-                          setFieldTargetValidation(false)
+                        else if(pageFormula[0]['Formula'][0]['Field2']==e.value){
+                          setFieldTargetValidation(0)
                         }
                         else{
-                          setFieldTargetValidation(true)
-                          pageFormula[0]['Formula'][0]['Field2'] = e.value;
-                        }
-                        console.log(e.value);
+                          console.log(e.value);
                        setFormulaTarget(e.value);
-                        pageFormula[0]['Target'] = e.value;
+                          setFieldTargetValidation(1)
+                          pageFormula[0]['Target'] = e.value;
+                        }
+                        
+                        
                       }}
                     ></Select>
-                    {fieldTargetValidation==false?<label className="" style={{color:"red"}}>Value can not be same as Field1 or Field2</label>:""}
+                    {fieldTargetValidation==0?<label className="" style={{color:"red"}}>Value can not be same as Field1 or Field2</label>:""}
                     </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={()=>{
           setOpenModal(true)
         }}>Close</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" onClick={()=>{   
-          console.log(field1Validation,field2Validation,fieldFormulaValidation,fieldTargetValidation);
+        <button type="button" class="btn btn-primary" onClick={()=>{   
+          
           if(pageFormula[0]['Formula'][0]['FormulaType']==""){
-            setFieldFormulaValidation(false)
+            setFieldFormulaValidation(0)
           }   
           if(pageFormula[0]['Formula'][0]['Field2']==""){
-            setField1Validation(false)
+            setField1Validation(0)
           }  
           if(pageFormula[0]['Formula'][0]['Field1']==""){
-            setField1Validation(false)
+            setField1Validation(0)
           }  
           if(pageFormula[0]['Formula'][0]['FormulaType']==""){
-            setFieldFormulaValidation(false)
+            setFieldFormulaValidation(0)
           }  
           if(pageFormula[0]['Formula'][0]['Target']==""){
-            setFieldTargetValidation(false)
+            setFieldTargetValidation(0)
           }  
-          if(field1Validation==false || field2Validation==false || fieldFormulaValidation==false || fieldTargetValidation==false){
+          if(field1Validation!=1 || field2Validation!=1 || fieldFormulaValidation!=1 || fieldTargetValidation!=1){
 
           } 
           else{
 // addList();
-const modelDataLabel = {
-  procedureName: "",
-  parameters: {},
-};
-modelDataLabel.procedureName = "InsertDynamicTable";
-modelDataLabel.parameters = {
-  DBName: "DynamicDemo",
-  TableName: "tblMenu",
-  ColumnData: "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo, TableName",
-  ValueData: "'Master Entry','"+pageName+"','/"+pageName.replace(' ','-')+"','1','0','12',getdate(),'','"+pageName.replace(/ /g, '')+"'"
-};
-
-fetch("http://localhost:53601/DBCommand/Insert", {
-  method: "POST",
-  headers: {
-    "content-type": "application/json",
-  },
-  body: JSON.stringify( modelDataLabel.parameters),
-})
-  .then((res) => {
-    console.log(res);
-
-    var tableModelData = {
-      "tableNameMaster": "",
-      "tableNameChild": null,
-      "columnNamePrimary": null,
-      "columnNameForign": null,
-      "serialType": null,
-      "columnNameSerialNo": null,
-      "isFlag": null,
-      "data": "",
-      "detailsData": [],
-      "whereParams": null
-    }
-    tableModelData.detailsData = [];
-    tableModelData.tableNameChild = "PageInfo";
-
-    var allInputValueDataLength = 0;
-    if(allInputValueData!=null){
-      allInputValueDataLength =  Object.keys(allInputValueData).length
-    }
-
-    
-    var allCheckValueDataLength = 0;
-    if(allCheckValueData!=null){
-      allCheckValueDataLength =  Object.keys(allCheckValueData).length
-    }
-    
-    var allDateValueDataLength = 0;
-    if(allDateValueData!=null){
-      allDateValueDataLength =  Object.keys(allDateValueData).length
-    }
-
-    var allDropValueDataLength = 0;
-    if(allDropValueData!=null){
-      allDropValueDataLength =  Object.keys(allDropValueData).length
-    }
-    
-
-    for(let allInputValueDataCount = 0; allInputValueDataCount <allInputValueDataLength ; allInputValueDataCount++) {
-      
-        var tabledataparams = {
-          PageId: 'newid()',
-          MenuId: '2',
-          ColumnName: allInputValueData[allInputValueDataCount],
-          ColumnType: "textbox",
-          ColumnDataType: "",
-          SiteName: "DynamicSite",
-          CalculationType: calculationType,
-          CalculationKey: allInputValueData[allInputValueDataCount],
-          CalculationFormula: JSON.stringify(pageFormula),
-          RelatedTable: "",
-          Position: "",
-          IsDisable: formulaTarget==allInputValueData[allInputValueDataCount]?"1":"0",
-          
-        };
-        tableModelData.detailsData.push(tabledataparams);
-    }
-
-    for(let allCheckValueDataCount = 0; allCheckValueDataCount < allCheckValueDataLength; allCheckValueDataCount++) {
-      
-      var tabledataparams = {
-        PageId: 'newid()',
-        MenuId: '2',
-        ColumnName: allCheckValueData[allCheckValueDataCount],
-        ColumnType: "checkbox",
-        ColumnDataType: "",
-        SiteName: "DynamicSite",
-        CalculationType: "Manual",
-        CalculationKey: "",
-        CalculationFormula: "",
-        RelatedTable: "",
-        Position: "",
-        IsDisable: "0",
-        
-      };
-      tableModelData.detailsData.push(tabledataparams);
-  }
-
-  for(let allDateValueDataCount = 0; allDateValueDataCount < allDateValueDataLength; allDateValueDataCount++) {
-    
-    var tabledataparams = {
-      PageId: 'newid()',
-      MenuId: '2',
-      ColumnName: allDateValueData[allDateValueDataCount],
-      ColumnType: "datetime",
-      ColumnDataType: "",
-      SiteName: "DynamicSite",
-      CalculationType: "Manual",
-      CalculationKey: "",
-      CalculationFormula: "",
-      RelatedTable: "",
-      Position: "",
-      IsDisable: "0",
-      
-    };
-    tableModelData.detailsData.push(tabledataparams);
-}
-
-for(let allDropValueDataCount = 0; allDropValueDataCount < allDropValueDataLength; allDropValueDataCount++) {
-  
-  var tabledataparams = {
-    PageId: 'newid()',
-    MenuId: '2',
-    ColumnName: allDropValueData[allDropValueDataCount],
-    ColumnType: "dropdown",
-    ColumnDataType: "",
-    SiteName: "DynamicSite",
-    CalculationType: "Manual",
-    CalculationKey: "",
-    CalculationFormula: "",
-    RelatedTable: "",
-    Position: "",
-    IsDisable: "0",
-    
-  };
-  tableModelData.detailsData.push(tabledataparams);
-}
-
-    console.log(allCheckValueData,allDropValueData,allDateValueData,allData);
-    fetch("https://localhost:44372/api/DoubleMasterEntry/InsertListData", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(tableModelData),
-    })
-
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == true) {
-          
-        } else {
-          console.log(data);
-        }
-      });
-    
-    
-  })
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+              submitForm();
           }
            
         }}>Save changes</button>
@@ -2760,6 +2877,8 @@ for(let allDropValueDataCount = 0; allDropValueDataCount < allDropValueDataLengt
     </div>
   </div>
 </div>
+
+):''}
 {/* <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

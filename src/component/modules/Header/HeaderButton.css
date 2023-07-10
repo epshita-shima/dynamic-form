@@ -1,0 +1,37 @@
+.changeColor{
+    background-color: orange;
+}
+.changeColorBlue{
+    background-color: blue;
+}
+.colorWhite{
+    color: white;
+    display: block;
+    padding: .5rem 1rem;
+    text-decoration: none;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+.changeColorLightgray{
+    background-color: lightgray;
+}
+.btn-orange{
+    height: 25px;
+    width: 25px;
+    background-color: orange;
+    border-radius: 50%;
+    border: none;
+}
+.btn-blue{
+    height: 25px;
+    width: 25px;
+    background-color: blue;
+    border-radius: 50%;
+    border: none;
+}
+.btn-lightgray{
+    height: 25px;
+    width: 25px;
+    background-color: lightgray;
+    border-radius: 50%;
+    border: none;
+}

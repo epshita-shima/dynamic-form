@@ -59,18 +59,14 @@ text-align: center;
   transform: scale(1.5);
 }
 
-/* .zoom-in-out-box {
-  animation: zoom-in-zoom-out 1s linear infinite;
+.modal-height{
+  height:350px !important;
 }
-
-@keyframes zoom-in-zoom-out {
-  0% {
-    transform: scale(1, 1);
-  }
-  50% {
-    transform: scale(1.2, 1.2);
-  }
-  100% {
-    transform: scale(1, 1);
-  }
-} */
+.close-btn{
+  border-radius: 50px;
+  height: 40px;
+  width: 40px;
+  background-color: red !important;
+  color: white;
+  border: none;
+}

@@ -3,12 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import Header from "./Header";
 
-const HeaderButton = () => {
-  const [showHeader, setShowHeader] = useState(false);
+const HeaderButton = ({showHeader,setShowHeader}) => {
+ 
   return (
     <div>
       {showHeader ? (
-        <Header></Header>
+        <Header
+        showHeader={showHeader}
+        setShowHeader={setShowHeader}
+        ></Header>
       ) : (
         <div className="d-flex justify-content-center pt-2">
           <FontAwesomeIcon

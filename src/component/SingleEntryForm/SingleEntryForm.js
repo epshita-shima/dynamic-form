@@ -351,8 +351,7 @@ const navigate=useNavigate()
     
   }
 
-  const handleLabelField = () => {
-    fetch(`https://localhost:44372/api/GetData/GetDataById`, {
+
 
   const handleModalMenu = () => {
     const modelData = {
@@ -1450,7 +1449,8 @@ const navigate=useNavigate()
               })}
             </Grid>
           </Grid>
-
+        </Grid>
+        ):''}
       
 {showCalculactionModal?(
 <div style={{display:showCalculactionModal?"none !important":"block"}} class="modal fade" id="exampleModalFormula" tabindex="-1" role="dialog" aria-labelledby="exampleModalFormulaLabel" aria-hidden="true">

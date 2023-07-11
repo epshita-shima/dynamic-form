@@ -15,9 +15,9 @@ import SidebarButton from "./component/modules/Sidebar/SidebarButton";
 function App() {
   return (
     <div >
-    <HeaderButton></HeaderButton>
-    <SidebarButton></SidebarButton>
-    {/* <Routes>
+    {/* <HeaderButton></HeaderButton>
+    <SidebarButton></SidebarButton> */}
+    <Routes>
       <Route path="/" element={<CreatePage></CreatePage>}></Route>
       <Route path="/generate-form" element={<GenerateForm></GenerateForm>}></Route>
       <Route path="/single-entry" element={<SingleEntryForm></SingleEntryForm>}></Route>
@@ -25,7 +25,7 @@ function App() {
       <Route path="/Mycomponent" element={<MyComponent></MyComponent>}></Route>
       <Route  path="/single-form" element={<SingleForm/>}></Route>
       <Route path="/slider" element={<Slider></Slider>}></Route>/
-    </Routes> */}
+    </Routes>
     </div>
   );
 }

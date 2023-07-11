@@ -1,7 +1,8 @@
 import React from "react";
 import "./SidebarColorButton.css";
 import SidebarHiddenButton from "./SidebarHiddenButton";
-const SidebarColorButton = ({setColorBlue,setColorOrange,setColorLightgray,setShowSidebar}) => {
+import Picker from "../../ColorPicker/Picker";
+const SidebarColorButton = ({colorOrange,setColorBlue,setColorOrange,setColorLightgray,setShowSidebar,currentColor, setCurrentColor}) => {
     const handleBackgroundOrange = () => {
         setColorOrange(true);
         setColorLightgray(false);
@@ -26,7 +27,7 @@ const SidebarColorButton = ({setColorBlue,setColorOrange,setColorLightgray,setSh
         }
       <div className="box ms-2">
         
-        <button className="btn-orange" onClick={() => {handleBackgroundOrange()}}></button>
+        <button className="btn-orange" onClick={() => {handleBackgroundOrange()}}>{colorOrange? (<Picker currentColor={currentColor} setCurrentColor={setCurrentColor}></Picker>):''}</button>
         <button className="btn-blue ms-2" onClick={() => {handleBackgroundBlue()}}></button>
         <button className="btn-lightgray ms-2" onClick={() => {handleBackgroundLightgray()}}></button>
       </div>

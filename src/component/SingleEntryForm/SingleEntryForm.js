@@ -22,6 +22,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
 
 import { json, useNavigate } from "react-router-dom";
+import Token from "../common/Token";
 
 
 const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
@@ -105,8 +106,7 @@ const navigate=useNavigate()
       MenuId: "1",
     },
   };
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiI5NzliYWMxMC05NDljLTQyZWQtOWY3MC1iMTE1NDVmN2NlYWIiLCJuYmYiOjE2ODg5NjA4NTYsImV4cCI6MTY4OTAwNDA1NiwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.uy3pxgL-G2Pbm2KM9_dm00l6y-Spy61P2TzrxBlbvc0";
+  const token =Token.token
 
 
   useEffect(() => {
@@ -486,7 +486,7 @@ const navigate=useNavigate()
   //   if (array.length == 0) {
   //     for (let i = 0; i < countLebel; i++) {
   //       var a = (
-  //         <th scope="col" class={`dropTh${i} border`} draggable="true">
+  //         <th scope="col" className={`dropTh${i} border`} draggable="true">
   //           <div className="d-flex justify-content-between align-items-center">
   //             <TextField
   //               id={`box${i}`}
@@ -510,17 +510,17 @@ const navigate=useNavigate()
   //               data-target={`#exampleModal${i}`}
   //             ></FontAwesomeIcon>
   //             <div
-  //               class="modal fade"
+  //               className="modal fade"
   //               id={`exampleModal${i}`}
   //               tabindex="-1"
   //               role="dialog"
   //               aria-labelledby={`exampleModal${i}Label`}
   //               // aria-hidden="true"
   //             >
-  //               <div class="modal-dialog" role="document">
-  //                 <div class="modal-content">
-  //                   <div class="modal-header">
-  //                     <h5 class="modal-title" id={`exampleModal${i}Label`}>
+  //               <div className="modal-dialog" role="document">
+  //                 <div className="modal-content">
+  //                   <div className="modal-header">
+  //                     <h5 className="modal-title" id={`exampleModal${i}Label`}>
   //                       What you like to replace this field with?
   //                     </h5>
   //                     <button type="button" data-dismiss="modal">
@@ -531,10 +531,10 @@ const navigate=useNavigate()
   //                       </span>
   //                     </button>
   //                   </div>
-  //                   <div class="modal-body">
-  //                     <div class="input-group">
-  //                       <div class="input-group-prepend">
-  //                         <div class="input-group-text">
+  //                   <div className="modal-body">
+  //                     <div className="input-group">
+  //                       <div className="input-group-prepend">
+  //                         <div className="input-group-text">
   //                           <input
   //                             type="radio"
   //                             value="input"
@@ -546,13 +546,13 @@ const navigate=useNavigate()
   //                       <input
   //                         id="inputField"
   //                         type="text"
-  //                         class="form-control"
+  //                         className="form-control"
   //                         aria-label="Text input with radio button"
   //                       />
   //                     </div>
-  //                     <div class="input-group  mt-2">
-  //                       <div class="input-group-prepend">
-  //                         <div class="input-group-text">
+  //                     <div className="input-group  mt-2">
+  //                       <div className="input-group-prepend">
+  //                         <div className="input-group-text">
   //                           <input
   //                             type="radio"
   //                             name="replaceField"
@@ -565,7 +565,7 @@ const navigate=useNavigate()
   //                         <div draggable="false">
   //                           <Select
   //                             id={`select${countOfInput}`}
-  //                             class="form-select"
+  //                             className="form-select"
   //                             className="w-[100%]"
   //                             aria-label="Default select example"
   //                             placeholder={test(`box${countOfInput}`)}
@@ -574,7 +574,7 @@ const navigate=useNavigate()
   //                           ></Select>
   //                         </div>
   //                         <div
-  //                           class="droptarget border"
+  //                           className="droptarget border"
   //                           style={{ display: "none" }}
   //                           draggable="false"
   //                         >
@@ -582,9 +582,9 @@ const navigate=useNavigate()
   //                         </div>
   //                       </div>
   //                     </div>
-  //                     <div class="input-group mt-2">
-  //                       <div class="input-group-prepend">
-  //                         <div class="input-group-text">
+  //                     <div className="input-group mt-2">
+  //                       <div className="input-group-prepend">
+  //                         <div className="input-group-text">
   //                           <input
   //                             type="radio"
   //                             value="checkbox"
@@ -603,9 +603,9 @@ const navigate=useNavigate()
   //                         />
   //                       </FormGroup>
   //                     </div>
-  //                     <div class="input-group mt-2">
-  //                       <div class="input-group-prepend">
-  //                         <div class="input-group-text">
+  //                     <div className="input-group mt-2">
+  //                       <div className="input-group-prepend">
+  //                         <div className="input-group-text">
   //                           <input
   //                             type="radio"
   //                             value="date"
@@ -622,10 +622,10 @@ const navigate=useNavigate()
   //                       />
   //                     </div>
   //                   </div>
-  //                   <div class="modal-footer">
+  //                   <div className="modal-footer">
   //                     <button
   //                       type="button"
-  //                       class="btn btn-primary close"
+  //                       className="btn btn-primary close"
   //                       data-dismiss="modal"
   //                       aria-label="Close"
   //                       onClick={(e) => {
@@ -640,7 +640,7 @@ const navigate=useNavigate()
   //             </div>
   //           </div>
   //           <div
-  //             class="droptargettd border"
+  //             className="droptargettd border"
   //             style={{ display: "none" }}
   //             draggable="false"
   //           >
@@ -656,7 +656,7 @@ const navigate=useNavigate()
   //     for (let i = 0; i < number; i++) {
   //       testArr.push([
   //         <td
-  //           class={`dropTh${countOfInput} border`}
+  //           className={`dropTh${countOfInput} border`}
   //           draggable="false"
   //           id={`item${randnum}${countOfInput}${i}`}
   //         >
@@ -704,7 +704,7 @@ const navigate=useNavigate()
   //             />
   //           </div>
   //           <div
-  //             class="droptarget1 border"
+  //             className="droptarget1 border"
   //             style={{ display: "none" }}
   //             draggable="false"
   //           >
@@ -717,7 +717,7 @@ const navigate=useNavigate()
   //     for (var i = 0; i < numberDDf; i++) {
   //       testArr.push([
   //         <td
-  //           class={`dropTh${countOfInput} border`}
+  //           className={`dropTh${countOfInput} border`}
   //           draggable="false" //change dragable true to work again
   //           id={`item${randnum}${countOfInput}${i}`}
   //         >
@@ -725,7 +725,7 @@ const navigate=useNavigate()
   //             {replaceFunction("dropdown", i)}
   //             <Select
   //               id={array.length}
-  //               class="form-select"
+  //               className="form-select"
   //               className="w-[100%] getValue"
   //               aria-label="Default select example"
   //               placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
@@ -748,7 +748,7 @@ const navigate=useNavigate()
   //             ></Select>
   //           </div>
   //           <div
-  //             class="droptarget1 border" // remove 1 for dragable work
+  //             className="droptarget1 border" // remove 1 for dragable work
   //             style={{ display: "none" }}
   //             draggable="false"
   //           >
@@ -761,7 +761,7 @@ const navigate=useNavigate()
   //     for (var i = 0; i < numberCheck; i++) {
   //       testArr.push([
   //         <td
-  //           class={`dropTh${countOfInput} border`}
+  //           className={`dropTh${countOfInput} border`}
   //           draggable="false" //change dragable true to work again
   //           id={`item${randnum}${countOfInput}${i}`}
   //         >
@@ -783,7 +783,7 @@ const navigate=useNavigate()
   //             </FormGroup>
   //           </div>
   //           <div
-  //             class="droptarget1 border" // remove 1 for dragable work
+  //             className="droptarget1 border" // remove 1 for dragable work
   //             style={{ display: "none" }}
   //             draggable="false"
   //           >
@@ -796,7 +796,7 @@ const navigate=useNavigate()
   //     for (var i = 0; i < numberDate; i++) {
   //       testArr.push([
   //         <td
-  //           class={`dropTh${countOfInput} border`}
+  //           className={`dropTh${countOfInput} border`}
   //           draggable="false" //change dragable true to work again
   //           id={`item${randnum}${countOfInput}${i}`}
   //         >
@@ -812,7 +812,7 @@ const navigate=useNavigate()
   //             />
   //           </div>
   //           <div
-  //             class="droptarget1 border" // remove 1 for dragable work
+  //             className="droptarget1 border" // remove 1 for dragable work
   //             style={{ display: "none" }}
   //             draggable="false"
   //           >
@@ -832,7 +832,7 @@ const navigate=useNavigate()
   //         console.log(countreplaceTemp);
   //         testArr.push([
   //           <td
-  //             class={`dropTh${countOfInput} border`}
+  //             className={`dropTh${countOfInput} border`}
   //             draggable="false" //change dragable true to work again
   //             id={`item${randnum}${countOfInput}${countreplaceTemp}`}
   //           >
@@ -863,7 +863,7 @@ const navigate=useNavigate()
   //               />
   //             </div>
   //             <div
-  //               class="droptarge1t border" // remove 1 for dragable work
+  //               className="droptarge1t border" // remove 1 for dragable work
   //               style={{ display: "none" }}
   //               draggable="false"
   //             >
@@ -876,7 +876,7 @@ const navigate=useNavigate()
   //       } else if (replacetempArray[countreplaceTemp] == "dropdown") {
   //         testArr.push([
   //           <td
-  //             class={`dropTh${countOfInput} border`}
+  //             className={`dropTh${countOfInput} border`}
   //             draggable="false" //change dragable true to work again
   //             // id={`item${randnum}${countOfInput}${countreplaceTemp}`}
   //             id={array.length}
@@ -884,7 +884,7 @@ const navigate=useNavigate()
   //             <div draggable="false">
   //               <Select
   //                 id={`select${countOfInput}`}
-  //                 class="form-select"
+  //                 className="form-select"
   //                 className="w-[100%] getValue"
   //                 aria-label="Default select example"
   //                 // placeholder={test(`box${countOfInput}`)}
@@ -907,7 +907,7 @@ const navigate=useNavigate()
   //               ></Select>
   //             </div>
   //             <div
-  //               class="droptarget1 border" // remove 1 for dragable work
+  //               className="droptarget1 border" // remove 1 for dragable work
   //               style={{ display: "none" }}
   //               draggable="false"
   //             >
@@ -919,7 +919,7 @@ const navigate=useNavigate()
   //       } else if (replacetempArray[countreplaceTemp] == "checkbox") {
   //         testArr.push([
   //           <td
-  //             class={`dropTh${countOfInput} border`}
+  //             className={`dropTh${countOfInput} border`}
   //             draggable="false" //change dragable true to work again
   //             id={`item${randnum}${countOfInput}${countreplaceTemp}`}
   //           >
@@ -940,7 +940,7 @@ const navigate=useNavigate()
   //               </FormGroup>
   //             </div>
   //             <div
-  //               class="droptarge1 border" // remove 1 for dragable work
+  //               className="droptarge1 border" // remove 1 for dragable work
   //               style={{ display: "none" }}
   //               draggable="false"
   //             >
@@ -953,7 +953,7 @@ const navigate=useNavigate()
   //       } else if (replacetempArray[countreplaceTemp] == "date") {
   //         testArr.push([
   //           <td
-  //             class={`dropTh${countOfInput} border`}
+  //             className={`dropTh${countOfInput} border`}
   //             draggable="false" //change dragable true to work again
   //             id={`item${randnum}${countOfInput}${i}`}
   //           >
@@ -968,7 +968,7 @@ const navigate=useNavigate()
   //               />
   //             </div>
   //             <div
-  //               class="droptarget1 border" // remove 1 for dragable work
+  //               className="droptarget1 border" // remove 1 for dragable work
   //               style={{ display: "none" }}
   //               draggable="false"
   //             >
@@ -1330,18 +1330,18 @@ const navigate=useNavigate()
                       ></FontAwesomeIcon>
 
                       <div
-                        class="modal fade"
+                        className="modal fade"
                         id={`exampleModal${name}`}
                         tabindex="-1"
                         role="dialog"
                         aria-labelledby={`exampleModal${name}Label`}
                         // aria-hidden="true"
                       >
-                        <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                            <div class="modal-header">
+                        <div className="modal-dialog" role="document">
+                          <div className="modal-content">
+                            <div className="modal-header">
                               <h5
-                                class="modal-title"
+                                className="modal-title"
                                 id={`exampleModal${name}Label`}
                               >
                                 Select Menu
@@ -1354,15 +1354,15 @@ const navigate=useNavigate()
                                 </span>
                               </button>
                             </div>
-                            <div class="modal-body">
+                            <div className="modal-body">
                               {modalSpecificData
                                 .filter(
                                   (person) => person.MenuName === "Master Entry"
                                 )
                                 .map((filteredPerson) => (
-                                  <div class="input-group">
-                                    <div class="input-group-prepend">
-                                      <div class="input-group-text">
+                                  <div className="input-group">
+                                    <div className="input-group-prepend">
+                                      <div className="input-group-text">
                                         <input
                                           type="radio"
                                           value={filteredPerson.SubMenuName}
@@ -1378,10 +1378,10 @@ const navigate=useNavigate()
                                   </div>
                                 ))}
 
-                              <div class="modal-footer">
+                              <div className="modal-footer">
                                 <button
                                   type="button"
-                                  class="btn btn-primary close"
+                                  className="btn btn-primary close"
                                   data-dismiss="modal"
                                   aria-label="Close"
                                   onClick={(e) => {
@@ -1453,18 +1453,18 @@ const navigate=useNavigate()
         ):''}
       
 {showCalculactionModal?(
-<div style={{display:showCalculactionModal?"none !important":"block"}} class="modal fade" id="exampleModalFormula" tabindex="-1" role="dialog" aria-labelledby="exampleModalFormulaLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalFormulaLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={()=>{
+<div style={{display:showCalculactionModal?"none !important":"block"}} className="modal fade" id="exampleModalFormula" tabindex="-1" role="dialog" aria-labelledby="exampleModalFormulaLabel" aria-hidden="true">
+  <div className="modal-dialog" role="document">
+    <div className="modal-content">
+      <div className="modal-header">
+        <h5 className="modal-title" id="exampleModalFormulaLabel">Modal title</h5>
+        <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={()=>{
           setShowCalculactionModal(false);
         }}>
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+      <div className="modal-body">
         ...
         <Select
                       class="form-select"
@@ -1597,11 +1597,11 @@ const navigate=useNavigate()
                     {fieldTargetValidation==0?<label className="" style={{color:"red"}}>Value can not be same as Field1 or Field2</label>:""}
                     </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={()=>{
+      <div className="modal-footer">
+        <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={()=>{
           setOpenModal(true)
         }}>Close</button>
-        <button type="button" class="btn btn-primary" onClick={()=>{   
+        <button type="button" className="btn btn-primary" onClick={()=>{   
           
           if(pageFormula[0]['Formula'][0]['FormulaType']==""){
             setFieldFormulaValidation(0)
@@ -1633,26 +1633,26 @@ const navigate=useNavigate()
 </div>
 
 ):''}
-{/* <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+{/* <div className="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={()=>{
+  <div className="modal-dialog" role="document">
+    <div className="modal-content">
+      <div className="modal-header">
+        <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={()=>{
           setOpenModal(true)
         }}>
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body">
+      <div className="modal-body">
         ...
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={()=>{
+      <div className="modal-footer">
+        <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={()=>{
           setOpenModal(true)
         }}>Close</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" onClick={()=>{
+        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={()=>{
          
             setOpenModal(true)
           

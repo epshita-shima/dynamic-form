@@ -14,11 +14,22 @@ import HeaderButton from "./component/modules/Header/HeaderButton";
 import SidebarButton from "./component/modules/Sidebar/SidebarButton";
 import SidebarColorButton from "./component/modules/Sidebar/SidebarColorButton";
 import { useState } from "react";
+import Footer from "./component/modules/Footer/Footer";
+import FooterShowButton from "./component/modules/Footer/FooterShowButton";
+
 function App() {
   const [showHeader, setShowHeader] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [showFooter,setShowFooter]=useState(false)
+  // const [currentColor,setCurrentColor]=useState("#D0021B")
+  // const handleOnChange=(color)=>{
+  //   // setCurrentColor(color)
+  //   console.log(color)
+  //   console.log('click')
+  // }
   return (
-    <div >
+    <div className="position-relative" style={{height:'649px'}}>
+
     <HeaderButton 
     showHeader={showHeader}
     setShowHeader={setShowHeader}
@@ -27,6 +38,10 @@ function App() {
     showSidebar={showSidebar}
     setShowSidebar={setShowSidebar}
     ></SidebarButton>
+    <FooterShowButton
+     showFooter={showFooter}
+     setShowFooter={setShowFooter}
+    ></FooterShowButton>
     {/* <Routes>
       <Route path="/" element={<CreatePage></CreatePage>}></Route>
       <Route path="/generate-form" element={<GenerateForm></GenerateForm>}></Route>

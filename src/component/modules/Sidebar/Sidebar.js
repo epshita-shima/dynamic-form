@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import SidebarColorButton from "./SidebarColorButton";
 import SidebarHiddenButton from "./SidebarHiddenButton";
+import Token from "../../common/Token";
+import "./SidebarButton.css"
 
 const Sidebar = ({ showSidebar, setShowSidebar }) => {
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [colorOrange, setColorOrange] = useState(false);
   const [colorBLue, setColorBlue] = useState(false);
   const [colorLightgray, setColorLightgray] = useState(false);
-
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiI5NzliYWMxMC05NDljLTQyZWQtOWY3MC1iMTE1NDVmN2NlYWIiLCJuYmYiOjE2ODg5NjA4NTYsImV4cCI6MTY4OTAwNDA1NiwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.uy3pxgL-G2Pbm2KM9_dm00l6y-Spy61P2TzrxBlbvc0";
+  const [currentColor, setCurrentColor] = useState("#D0021B")
+  const token =Token.token
   useEffect(() => {
     const modelData = {
       procedureName: "",
@@ -38,16 +39,18 @@ const Sidebar = ({ showSidebar, setShowSidebar }) => {
   return (
     <div>
       <aside
-        className={`main-sidebar sidebar-dark-primary elevation-4 ${
-          colorOrange ? "changeColor" : ""
-        } ${colorBLue ? "changeColorBlue" : ""} ${
+        className={`main-sidebar sidebar-dark-primary elevation-4 ${colorBLue ? "changeColorBlue" : ""} ${
           colorLightgray ? "changeColorLightgray" : ""
         }`}
+        style={{backgroundColor:`${currentColor.hex}`}}
       >
         {/* Brand Logo */}
-        <a className="brand-link">
+        <a className={`brand-link ${colorOrange? 'layout-navbar-fixed wrapper brand-link':''}`}>
           {
             <SidebarColorButton
+            currentColor={currentColor} 
+            setCurrentColor={setCurrentColor}
+            colorOrange={colorOrange}
               setColorBlue={setColorBlue}
               setColorOrange={setColorOrange}
               setColorLightgray={setColorLightgray}
@@ -97,7 +100,7 @@ const Sidebar = ({ showSidebar, setShowSidebar }) => {
                 </a>
                 <ul className="nav nav-treeview">
                   {modalSpecificData.map((item, i) => {
-                    return    <li className="nav-item">
+                    return    <li className="nav-item" key={i}>
                
                     <a
                       data-bs-toggle="collapse"
@@ -108,7 +111,7 @@ const Sidebar = ({ showSidebar, setShowSidebar }) => {
                       className="nav-link active"
                     >
                       <i className="far fa-circle nav-icon" />
-                      <p>
+                      <p className="fw-bold">
                        {item.MenuName}
                         <span>
                           <i className="fas fa-angle-down ml-2" />

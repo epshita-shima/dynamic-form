@@ -1,3 +1,11 @@
 .changeColor{
     background-color: orange;
 }
+.layout-navbar-fixed .wrapper .brand-link {
+    overflow: visible;
+    position: fixed;
+    top: 0;
+    transition: width .3s ease-in-out;
+    width: 250px;
+    z-index: 1035;
+}

@@ -15,13 +15,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowsRotate,
   faPlusCircle,
-  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
+
 import { json, useNavigate } from "react-router-dom";
+
 
 const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [array, setArray] = useState([]);
@@ -72,10 +73,27 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [selectedOption, setSelectedOption] = useState([]);
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [allModelDataTable, setAllModelDataTable] = useState([]);
-
   const [pageName, setPageName] = useState([]);
 
-  const [openModal, setOpenModal] = useState(true);
+  const [pageNameStatus, setPageNameStatus] = useState(2);
+  const [field1Validation, setField1Validation] = useState(2);
+  const [field2Validation, setField2Validation] = useState(2);
+  const [fieldTargetValidation, setFieldTargetValidation] = useState(2);
+  const [fieldFormulaValidation, setFieldFormulaValidation] = useState(2);
+const [openModal,setOpenModal]=useState(true)
+const [showCalculactionModal,setShowCalculactionModal]=useState(false)
+const [keyValue,setKeyValue]=useState([{
+  key:'qty',
+  type:'calcField'
+},{
+  key:'rate',
+  type:'calcField'
+},{
+  key:'amount',
+  type:'targetField'
+}]);
+
+
   const [labelPosition, setLabelPosition] = useState([]);
   const [selectedListName, setSelectedListName] = useState([]);
   const [showDeleteIcon, setShowDeleteIcon] = useState(false);
@@ -89,6 +107,7 @@ const navigate=useNavigate()
   };
   const token =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiI5NzliYWMxMC05NDljLTQyZWQtOWY3MC1iMTE1NDVmN2NlYWIiLCJuYmYiOjE2ODg5NjA4NTYsImV4cCI6MTY4OTAwNDA1NiwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.uy3pxgL-G2Pbm2KM9_dm00l6y-Spy61P2TzrxBlbvc0";
+
 
   useEffect(() => {
     const modelDataLabel = {
@@ -155,6 +174,185 @@ const navigate=useNavigate()
     }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
   }
 
+
+
+  function submitForm(){
+    const modelDataLabel = {
+      procedureName: "",
+      parameters: {},
+    };
+    modelDataLabel.procedureName = "InsertDynamicMenuTable";
+    modelDataLabel.parameters = {
+      DBName: "DynamicDemo",
+      TableName: "tblMenu",
+      ColumnData: "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo, TableName",
+      ValueData: "'Master Entry','"+pageName+"','/"+pageName.replace(' ','-')+"','1','0','12',getdate(),'','"+pageName.replace(/ /g, '')+"'"
+    };
+    
+    fetch("https://localhost:44372/api/GetData/GetDataById", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelDataLabel),
+    })
+    .then((res) => res.json())
+    .then((data) => {
+        console.log(JSON.stringify(data));
+        if (data.status == true) {
+          const tableData = JSON.parse(data.data);
+          var menuId = tableData[0]?.Column1
+        
+        var tableModelData = {
+          "tableNameMaster": "",
+          "tableNameChild": null,
+          "columnNamePrimary": null,
+          "columnNameForign": null,
+          "serialType": null,
+          "columnNameSerialNo": null,
+          "isFlag": null,
+          "data": "",
+          "detailsData": [],
+          "whereParams": null
+        }
+        tableModelData.detailsData = [];
+        tableModelData.tableNameChild = "PageInfo";
+    
+        var allInputValueDataLength = 0;
+        if(allInputValueData!=null){
+          allInputValueDataLength =  Object.keys(allInputValueData).length
+        }
+    
+        
+        var allCheckValueDataLength = 0;
+        if(allCheckValueData!=null){
+          allCheckValueDataLength =  Object.keys(allCheckValueData).length
+        }
+        
+        var allDateValueDataLength = 0;
+        if(allDateValueData!=null){
+          allDateValueDataLength =  Object.keys(allDateValueData).length
+        }
+    
+        var allDropValueDataLength = 0;
+        if(allDropValueData!=null){
+          allDropValueDataLength =  Object.keys(allDropValueData).length
+        }
+        var orderPosition = 0;
+    
+        for(let allInputValueDataCount = 0; allInputValueDataCount <allInputValueDataLength ; allInputValueDataCount++) {
+          orderPosition++;
+            var tabledataparams = {
+              PageId: 'newid()',
+              MenuId: menuId,
+              ColumnName: allInputValueData[allInputValueDataCount],
+              ColumnType: "textbox",
+              ColumnDataType: "",
+              SiteName: "DynamicSite",
+              CalculationType: calculationType,
+              CalculationKey: allInputValueData[allInputValueDataCount],
+              CalculationFormula: JSON.stringify(pageFormula),
+              RelatedTable: "",
+              Position: orderPosition,
+              IsDisable: formulaTarget==allInputValueData[allInputValueDataCount]?"1":"0",
+              
+            };
+            tableModelData.detailsData.push(tabledataparams);
+        }
+    
+        for(let allCheckValueDataCount = 0; allCheckValueDataCount < allCheckValueDataLength; allCheckValueDataCount++) {
+          orderPosition++;
+          var tabledataparams = {
+            PageId: 'newid()',
+            MenuId: menuId,
+            ColumnName: allCheckValueData[allCheckValueDataCount],
+            ColumnType: "checkbox",
+            ColumnDataType: "",
+            SiteName: "DynamicSite",
+            CalculationType: "Manual",
+            CalculationKey: "",
+            CalculationFormula: "",
+            RelatedTable: "",
+            Position: orderPosition,
+            IsDisable: "0",
+            
+          };
+          tableModelData.detailsData.push(tabledataparams);
+      }
+    
+      for(let allDateValueDataCount = 0; allDateValueDataCount < allDateValueDataLength; allDateValueDataCount++) {
+        orderPosition++;
+        var tabledataparams = {
+          PageId: 'newid()',
+          MenuId: menuId,
+          ColumnName: allDateValueData[allDateValueDataCount],
+          ColumnType: "datetime",
+          ColumnDataType: "",
+          SiteName: "DynamicSite",
+          CalculationType: "Manual",
+          CalculationKey: "",
+          CalculationFormula: "",
+          RelatedTable: "",
+          Position: orderPosition,
+          IsDisable: "0",
+          
+        };
+        tableModelData.detailsData.push(tabledataparams);
+    }
+    
+    for(let allDropValueDataCount = 0; allDropValueDataCount < allDropValueDataLength; allDropValueDataCount++) {
+      orderPosition++;
+      var tabledataparams = {
+        PageId: 'newid()',
+        MenuId: menuId,
+        ColumnName: allDropValueData[allDropValueDataCount],
+        ColumnType: "dropdown",
+        ColumnDataType: "",
+        SiteName: "DynamicSite",
+        CalculationType: "Manual",
+        CalculationKey: "",
+        CalculationFormula: "",
+        RelatedTable: "",
+        Position: orderPosition,
+        IsDisable: "0",
+        
+      };
+      tableModelData.detailsData.push(tabledataparams);
+    }
+    
+        console.log(allCheckValueData,allDropValueData,allDateValueData,allData);
+        fetch("https://localhost:44372/api/DoubleMasterEntry/InsertListData", {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${token}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(tableModelData),
+        })
+    
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status == true) {
+              
+            } else {
+              console.log(data);
+            }
+          });
+        
+        }
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    
+  }
+
+
+
   const handleModalMenu = () => {
     const modelData = {
       procedureName: "",
@@ -162,6 +360,7 @@ const navigate=useNavigate()
     };
     modelData.procedureName = "prc_GetMenuList";
     fetch("https://localhost:44372/api/GetData/GetInitialData", {
+
       method: "POST",
       headers: {
         authorization: `Bearer ${token}`,
@@ -172,8 +371,10 @@ const navigate=useNavigate()
       .then((res) => res.json())
       .then((data) => {
         if (data.status == true) {
+
           const allModalData = JSON.parse(data.data);
           setModalSpecificData(allModalData.Tables1);
+
         } else {
           console.log(data);
         }
@@ -237,6 +438,7 @@ const navigate=useNavigate()
     previousInputValueCheck.current = inputValueCheck;
     previousInputValueDate.current = inputValueDate;
   }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
+
 
 
 
@@ -812,8 +1014,10 @@ const navigate=useNavigate()
                 setPageName(e.target.value);
               }}
             />
+
           </Grid>
           </Grid>
+
           <Grid className="single-entry-form">
             <Grid>
               <label htmlFor="" className="text-style">
@@ -828,6 +1032,7 @@ const navigate=useNavigate()
                 defaultValue="0"
                 value={inputValue}
                 onChange={(e) => {
+                  
                   if (e.target.value < 0) {
                     swal({
                       title: "Not Possible!",
@@ -953,7 +1158,104 @@ const navigate=useNavigate()
                 style={{ marginLeft: "20px", marginTop: "20px" }}
                 data-toggle="modal"
                 data-target={`#exampleModalFormula`}
-                onClick={() => {}}
+
+                onClick={() => {                
+                  var foundKey = 0;
+                  var foundEmpty = 0;
+                  console.log(allInputValueData);
+                  var allInputValueDataLength = 0;
+                  if(inputValue!=''){
+                    allInputValueDataLength =  inputValue;
+                  }   
+                  var allCheckValueDataLength = 0;
+                  if(inputValueCheck!=''){
+                    allCheckValueDataLength =  inputValueCheck
+                  }
+                  
+                  var allDateValueDataLength = 0;
+                  if(inputValueDate!=''){
+                    allDateValueDataLength =  inputValueDate
+                  }
+              
+                  var allDropValueDataLength = 0;
+                  if(inputValueDDF!=''){
+                    allDropValueDataLength =  inputValueDDF
+                  }   
+                  var totalField = allCheckValueDataLength+allInputValueDataLength+allDateValueDataLength+allDropValueDataLength;
+                  
+                  if(pageName!=""){
+                    if(totalField>12){
+                      alert('There cannot be more than 12 input');
+                    }
+                    else{
+                      var totalValueField = 0;
+
+                      if(allInputValueData==null){
+                        totalValueField+=0;
+                      }
+                      else{
+                        totalValueField+=allInputValueData.length;
+                      }
+
+                      if(allCheckValueData==null){
+                        totalValueField+=0;
+                      }
+                      else{
+                        totalValueField+=allCheckValueData.length;
+                      }
+
+                      if(allDropValueData==null){
+                        totalValueField+=0;
+                      }
+                      else{
+                        totalValueField+=allDropValueData.length;
+                      }
+
+                      if(allDateValueData==null){
+                        totalValueField+=0;
+                      }
+                      else{
+                        totalValueField+=allDateValueData.length;
+                      }
+
+                      if(totalValueField<totalField){
+                        foundEmpty = 1;
+                      }
+                      if(foundEmpty==1){
+                          alert("Column Name field cannot be empty");
+                      }
+                      else{
+                        if(inputValue>2){
+                        
+                          for(let countKeyValue = 0; countKeyValue <allInputValueDataLength ; countKeyValue++) {
+                            if(keyValue.some(item => item.key === allInputValueData[countKeyValue])){
+                              foundKey = 1;
+                              
+                            }
+                            
+                          }
+                          if(foundKey==1){
+                              setShowCalculactionModal(true);
+                              
+                          }
+                          else{
+                            submitForm();
+                          }
+                          }
+                          else{
+                            submitForm();
+                          }
+                      }
+                      
+                    }
+                    
+                    
+                  }
+                  else{
+                    setPageNameStatus(0);
+                  }
+                }}
+
               >
                 Enter
               </Button>
@@ -1147,374 +1449,192 @@ const navigate=useNavigate()
               })}
             </Grid>
           </Grid>
-        </Grid>):''
-      }
-       
-       
-
-      <div
-        class="modal fade "
-        id="exampleModalFormula"
-        tabindex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalFormulaLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog modal-lg"  role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title fw-bold" id="exampleModalFormulaLabel">
-                Calculation
-              </h5>
-              <button
-                type="button"
-                data-dismiss="modal"
-                aria-label="Close"
-                className="btn-close bg-danger"
-                style={{borderRadius:'50px',padding:'10px'}}
-                onClick={() => {
-                  setOpenModal(true);
-                }}
-              >
-                {/* <span aria-hidden="true">&times;</span> */}
-              </button>
-            </div>
-            <div class="modal-body modal-height ">
-              <div className="w-50">
-              <label className="fw-bold" htmlFor="">Calculation Type</label>
-              <Select
-                class="form-select"
-                className="w-[100%] mt-2"
-                aria-label="Default select example"
-                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                options={[
-                  {
-                    label: "Manual",
-                    value: "Manual",
-                  },
-                  {
-                    label: "Auto",
-                    value: "Auto",
-                  },
-                ]}
-                id={`dropValue`}
-                onChange={(e) => {
-                  setCalculationType(e.value);
-                  if (e.value == "Auto") {
-                    setDisplayFormulaAuto(true);
-                  }
-                }}
-              ></Select>
-              </div>
-
-              <div
-                className={`d-flex justify-content-between ${
-                  displayFormulaAuto ? "d-visible" : "d-hidden"
-                } mt-4`}
-              >
-                <div className="w-100">
-                  <label className="fw-bold" htmlFor="">
-                    Field1
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaData}
-                    id={`dropValueField1`}
-                    onChange={(e) => {
-                      console.log(e.value);
-                      pageFormula[0]["Formula"][0]["Field1"] = e.value;
-                    }}
-                  ></Select>
-                </div>
-
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Formula
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={[
-                      {
-                        label: "+",
-                        value: "+",
-                      },
-                      {
-                        label: "-",
-                        value: "-",
-                      },
-                      {
-                        label: "*",
-                        value: "*",
-                      },
-                      {
-                        label: "/",
-                        value: "/",
-                      },
-                    ]}
-                    id={`dropValueFormula`}
-                    onChange={(e) => {
-                      console.log(e.value);
-                      pageFormula[0]["Formula"][0]["FormulaType"] = e.value;
-                    }}
-                  ></Select>
-                </div>
-
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Field2
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaData}
-                    id={`dropValueField2`}
-                    onChange={(e) => {
-                      console.log(e.value);
-
-                      pageFormula[0]["Formula"][0]["Field2"] = e.value;
-                    }}
-                  ></Select>
-                </div>
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Target
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaData}
-                    id={`dropValueFieldTarget`}
-                    onChange={(e) => {
-                      console.log(e.value);
-                      setFormulaTarget(e.value);
-                      pageFormula[0]["Target"] = e.value;
-                    }}
-                  ></Select>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              
-              <Button
-                variant="contained"
-                data-dismiss="modal"
-                style={{ marginLeft: "10px", background: "purple" }}
-                className="text-white"
-                onClick={() => {
-                  // addList();
-                  const modelDataLabel = {
-                    procedureName: "",
-                    parameters: {},
-                  };
-                  modelDataLabel.procedureName = "InsertDynamicTable";
-                  modelDataLabel.parameters = {
-                    DBName: "DynamicDemo",
-                    TableName: "tblMenu",
-                    ColumnData:
-                      "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo, TableName",
-                    ValueData:
-                      "'Master Entry','" +
-                      pageName +
-                      "','/" +
-                      pageName.replace(" ", "-") +
-                      "','1','0','12',getdate(),'','" +
-                      pageName.replace(/ /g, "") +
-                      "'",
-                  };
-
-                  fetch("http://localhost:53601/DBCommand/Insert", {
-                    method: "POST",
-                    headers: {
-                      "content-type": "application/json",
-                    },
-                    body: JSON.stringify(modelDataLabel.parameters),
-                  })
-                    .then((res) => {
-                      console.log(res);
-
-                      var tableModelData = {
-                        tableNameMaster: "",
-                        tableNameChild: null,
-                        columnNamePrimary: null,
-                        columnNameForign: null,
-                        serialType: null,
-                        columnNameSerialNo: null,
-                        isFlag: null,
-                        data: "",
-                        detailsData: [],
-                        whereParams: null,
-                      };
-                      tableModelData.detailsData = [];
-                      tableModelData.tableNameChild = "PageInfo";
-
-                      var allInputValueDataLength = 0;
-                      if (allInputValueData != null) {
-                        allInputValueDataLength =
-                          Object.keys(allInputValueData).length;
-                      }
-
-                      var allCheckValueDataLength = 0;
-                      if (allCheckValueData != null) {
-                        allCheckValueDataLength =
-                          Object.keys(allCheckValueData).length;
-                      }
-
-                      var allDateValueDataLength = 0;
-                      if (allDateValueData != null) {
-                        allDateValueDataLength =
-                          Object.keys(allDateValueData).length;
-                      }
-
-                      var allDropValueDataLength = 0;
-                      if (allDropValueData != null) {
-                        allDropValueDataLength =
-                          Object.keys(allDropValueData).length;
-                      }
-
-                      for (
-                        let allInputValueDataCount = 0;
-                        allInputValueDataCount < allInputValueDataLength;
-                        allInputValueDataCount++
-                      ) {
-                        var tabledataparams = {
-                          PageId: "newid()",
-                          MenuId: "2",
-                          ColumnName: allInputValueData[allInputValueDataCount],
-                          ColumnType: "textbox",
-                          ColumnDataType: "",
-                          SiteName: "DynamicSite",
-                          CalculationType: calculationType,
-                          CalculationKey:
-                            allInputValueData[allInputValueDataCount],
-                          CalculationFormula: JSON.stringify(pageFormula),
-                          RelatedTable: "",
-                          Position: "",
-                          IsDisable:
-                            formulaTarget ==
-                            allInputValueData[allInputValueDataCount]
-                              ? "1"
-                              : "0",
-                        };
-                        tableModelData.detailsData.push(tabledataparams);
-                      }
-
-                      for (
-                        let allCheckValueDataCount = 0;
-                        allCheckValueDataCount < allCheckValueDataLength;
-                        allCheckValueDataCount++
-                      ) {
-                        var tabledataparams = {
-                          PageId: "newid()",
-                          MenuId: "2",
-                          ColumnName: allCheckValueData[allCheckValueDataCount],
-                          ColumnType: "checkbox",
-                          ColumnDataType: "",
-                          SiteName: "DynamicSite",
-                          CalculationType: "Manual",
-                          CalculationKey: "",
-                          CalculationFormula: "",
-                          RelatedTable: "",
-                          Position: "",
-                          IsDisable: "0",
-                        };
-                        tableModelData.detailsData.push(tabledataparams);
-                      }
-
-                      for (
-                        let allDateValueDataCount = 0;
-                        allDateValueDataCount < allDateValueDataLength;
-                        allDateValueDataCount++
-                      ) {
-                        var tabledataparams = {
-                          PageId: "newid()",
-                          MenuId: "2",
-                          ColumnName: allDateValueData[allDateValueDataCount],
-                          ColumnType: "datetime",
-                          ColumnDataType: "",
-                          SiteName: "DynamicSite",
-                          CalculationType: "Manual",
-                          CalculationKey: "",
-                          CalculationFormula: "",
-                          RelatedTable: "",
-                          Position: "",
-                          IsDisable: "0",
-                        };
-                        tableModelData.detailsData.push(tabledataparams);
-                      }
-
-                      for (
-                        let allDropValueDataCount = 0;
-                        allDropValueDataCount < allDropValueDataLength;
-                        allDropValueDataCount++
-                      ) {
-                        var tabledataparams = {
-                          PageId: "newid()",
-                          MenuId: "2",
-                          ColumnName: allDropValueData[allDropValueDataCount],
-                          ColumnType: "dropdown",
-                          ColumnDataType: "",
-                          SiteName: "DynamicSite",
-                          CalculationType: "Manual",
-                          CalculationKey: "",
-                          CalculationFormula: "",
-                          RelatedTable: "",
-                          Position: "",
-                          IsDisable: "0",
-                        };
-                        tableModelData.detailsData.push(tabledataparams);
-                      }
-
-                      console.log(
-                        allCheckValueData,
-                        allDropValueData,
-                        allDateValueData,
-                        allData
-                      );
-                      fetch(
-                        "https://localhost:44372/api/DoubleMasterEntry/InsertListData",
-                        {
-                          method: "POST",
-                          headers: {
-                            authorization: `Bearer ${token}`,
-                            "content-type": "application/json",
-                          },
-                          body: JSON.stringify(tableModelData),
-                        }
-                      )
-                        .then((res) => res.json())
-                        .then((data) => {
-                          if (data.status == true) {
-                          } else {
-                            console.log(data);
-                          }
-                        });
-                    })
-                    .then((data) => {
-                      console.log(data);
-                    })
-                    .catch((err) => {
-                      console.log(err);
-                    });
-                    navigate('/single-entry-data')
-                }}
-              >
-                Save changes
-              </Button>
-            </div>
-          </div>
-        </div>
+        </Grid>
+        ):''}
+      
+{showCalculactionModal?(
+<div style={{display:showCalculactionModal?"none !important":"block"}} class="modal fade" id="exampleModalFormula" tabindex="-1" role="dialog" aria-labelledby="exampleModalFormulaLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalFormulaLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={()=>{
+          setShowCalculactionModal(false);
+        }}>
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      {/* <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-body">
+        ...
+        <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={[{
+                        label:"Manual",
+                        value:"Manual"
+                      },
+                      {
+                        label:"Auto",
+                        value:"Auto"
+                      }]}
+                      id={`dropValue`}
+                      onChange={(e) => {
+                        console.log(e.value);
+                        setCalculationType(e.value);
+                        if(e.value=="Auto"){
+                          setDisplayFormulaAuto(true)
+                        }
+                        else{
+                          setDisplayFormulaAuto(false)
+                        }
+                      }}
+                    ></Select>
+
+                    <div className={`${displayFormulaAuto?"d-visible":"d-hidden"}`}>
+                    <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={allInputValueForFormulaData}
+                      id={`dropValueField1`}
+                      onChange={(e) => {
+                        console.log(e.value,pageFormula);
+                        if(pageFormula[0]['Formula'][0]['Field2']==e.value){
+                          setField1Validation(0)
+                        }
+                        else if(pageFormula[0]['Target']==e.value){
+                          setField1Validation(0)
+                        }
+                        else{
+                          setField1Validation(1)
+                          pageFormula[0]['Formula'][0]['Field1'] = e.value;
+                        }
+                      }}
+                    ></Select>
+                    {field1Validation==0?<label className="" style={{color:"red"}}>Value can not be same as Field2 or Target</label>:""}
+                    <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={[{
+                        label:'+',
+                        value:'+'
+                      },{
+                        label:'-',
+                        value:'-'
+                      },{
+                        label:'*',
+                        value:'*'
+                      },{
+                        label:'/',
+                        value:'/'
+                      }]}
+                      id={`dropValueFormula`}
+                      onChange={(e) => {
+                        console.log(e.value);
+                        pageFormula[0]['Formula'][0]['FormulaType'] = e.value;
+                        if(e.value!=""){
+                          setFieldFormulaValidation(1);
+                        }
+                        else{                         
+                          setFieldFormulaValidation(0);
+                        }
+                      }}
+                    ></Select>
+                    {fieldFormulaValidation==0?<label className="" style={{color:"red"}}>Value can not be empty</label>:""}
+                    
+                    
+                  <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={allInputValueForFormulaData}
+                      id={`dropValueField2`}
+                      onChange={(e) => {
+                        console.log(e.value);
+                        if(pageFormula[0]['Formula'][0]['Field1']==e.value){
+                          setField2Validation(0)
+                        }
+                        else if(pageFormula[0]['Target']==e.value){
+                          setField2Validation(0)
+                        }
+                        else{
+                          setField2Validation(1)
+                          pageFormula[0]['Formula'][0]['Field2'] = e.value;
+                        }
+                      }}
+                    ></Select>
+                    {field2Validation==0?<label className="" style={{color:"red"}}>Value can not be same as Field1 or Target</label>:""}
+                    <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={allInputValueForFormulaData}
+                      id={`dropValueFieldTarget`}
+                      onChange={(e) => {
+                        if(pageFormula[0]['Formula'][0]['Field1']==e.value){
+                          setFieldTargetValidation(0)
+                        }
+                        else if(pageFormula[0]['Formula'][0]['Field2']==e.value){
+                          setFieldTargetValidation(0)
+                        }
+                        else{
+                          console.log(e.value);
+                       setFormulaTarget(e.value);
+                          setFieldTargetValidation(1)
+                          pageFormula[0]['Target'] = e.value;
+                        }
+                        
+                        
+                      }}
+                    ></Select>
+                    {fieldTargetValidation==0?<label className="" style={{color:"red"}}>Value can not be same as Field1 or Field2</label>:""}
+                    </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={()=>{
+          setOpenModal(true)
+        }}>Close</button>
+        <button type="button" class="btn btn-primary" onClick={()=>{   
+          
+          if(pageFormula[0]['Formula'][0]['FormulaType']==""){
+            setFieldFormulaValidation(0)
+          }   
+          if(pageFormula[0]['Formula'][0]['Field2']==""){
+            setField1Validation(0)
+          }  
+          if(pageFormula[0]['Formula'][0]['Field1']==""){
+            setField1Validation(0)
+          }  
+          if(pageFormula[0]['Formula'][0]['FormulaType']==""){
+            setFieldFormulaValidation(0)
+          }  
+          if(pageFormula[0]['Formula'][0]['Target']==""){
+            setFieldTargetValidation(0)
+          }  
+          if(field1Validation!=1 || field2Validation!=1 || fieldFormulaValidation!=1 || fieldTargetValidation!=1){
+
+          } 
+          else{
+// addList();
+              submitForm();
+          }
+           
+        }}>Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+):''}
+{/* <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -1543,7 +1663,6 @@ const navigate=useNavigate()
   </div>
 </div> */}
 
-      {/* )} */}
     </Grid>
   );
 };

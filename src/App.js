@@ -12,6 +12,7 @@ import SingleEntryData from "./component/SingleEntryData/SingleEntryData";
 
 import HeaderButton from "./component/modules/Header/HeaderButton";
 import SidebarButton from "./component/modules/Sidebar/SidebarButton";
+
 function App() {
   return (
     <div >

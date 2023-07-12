@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import { Formik, FieldArray } from "formik";
+import { Formik, FieldArray, ErrorMessage } from "formik";
 import Swal from "sweetalert2";
 import Select from "react-select";
 import "./SingleEntryForm.css";
@@ -22,6 +22,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
 import { json, useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
+import * as Yup from 'yup';
 
 const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [array, setArray] = useState([]);
@@ -45,14 +46,25 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [dropdownData, setDropdownData] = useState([]);
   const [checkboxData, setCheckboxData] = useState([]);
   const [dateData, setDateData] = useState([]);
+  const [showDropDownModal,setShowDropDownModal] = useState(false);
+  const [currentDropSelected,setCurrentDropSelected] = useState('0');
+  
   var arrayInput = [];
   var arrayDropdown = [];
   var arrayCheck = [];
   var arrayDate = [];
-  const [allInputValueData, setAllInputValueData] = useState(null);
-  const [allDropValueData, setAllDropValueData] = useState(null);
-  const [allCheckValueData, setAllCheckValueData] = useState(null);
-  const [allDateValueData, setAllDateValueData] = useState(null);
+  const [allInputValueData, setAllInputValueData] = useState({});
+  const [allDropValueData, setAllDropValueData] = useState({});
+  const [allCheckValueData, setAllCheckValueData] = useState({});
+  const [allDateValueData, setAllDateValueData] = useState({});
+  const[dynamicSchema,setDynamicSchema] = useState(null);
+  const[inputSchema,setInputSchema] = useState(null);
+  const[dropSchema,setDropSchema] = useState(null);
+  const[checkSchema,setCheckSchema] = useState(null);
+  const[dateSchema,setDateSchema] = useState(null);
+  const[pageSchema,setPageSchema] = useState(null);
+  const[showErrorModal,setShowErrorModal] = useState(false);
+  const[errorMessageString,setErrorMessageString] = useState("");
 
   const [allInputValueForFormulaData, setAllInputValueForFormulaData] =
     useState([]);
@@ -72,7 +84,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [selectedOption, setSelectedOption] = useState([]);
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [allModelDataTable, setAllModelDataTable] = useState([]);
-  const [pageName, setPageName] = useState([]);
+  const [pageName, setPageName] = useState("");
 
   const [pageNameStatus, setPageNameStatus] = useState(2);
   const [field1Validation, setField1Validation] = useState(2);
@@ -100,6 +112,13 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [selectedListName, setSelectedListName] = useState([]);
   const [showDeleteIcon, setShowDeleteIcon] = useState(false);
   const handleClose = () => setShowCalculactionModal(false);
+  const handleDropClose = () => setShowDropDownModal(false);
+  const handleErrorClose = () => setShowErrorModal(false);
+  const [errorsPage, setErrorsPage] = useState([]);
+  const [errorsInput, setInputErrors] = useState([]);
+  const [errorsDropDown, setErrorsDropDown] = useState([]);
+  const [errorsDate, setErrorsDate] = useState([]);
+  const [errorsCheck, setErrorsCheck] = useState([]);
   const navigate = useNavigate();
   const modelData = {
     procedureName: "prc_GetPageInfo",
@@ -108,7 +127,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     },
   };
   const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiJjMGUxNTAwMS00ZGJkLTRkNDEtYTZiOC00MjJhNmZkYmUzYTIiLCJuYmYiOjE2ODg5NjA2NzgsImV4cCI6MTY4OTAwMzg3OCwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.2TnsA2PvTi5RAYbg6yJTB6oqZCPJyEHF-RrxfwN_cuM";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiI2N2VjNjA4YS01Nzc5LTRhZmQtOTVmYy01ZGY4ZjVkNmE1ZTgiLCJuYmYiOjE2ODkxMzMzMzIsImV4cCI6MTY4OTE3NjUzMiwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.cSkwvFVBmWxsY3waq2gYIP-JqTfy3pNJ15cKP2Y913c";
 
   useEffect(() => {
     const modelDataLabel = {
@@ -134,7 +153,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
         }
       });
   }, []);
-
+  
   const insertField = (modelDataParams) => {
     fetch("http://localhost:53601/DBCommand/Insert", {
       method: "POST",
@@ -167,13 +186,17 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     for (let i = 0; i < inputValueDate; i++) {
       arrayDate.push([i]);
     }
+   
     useEffect(() => {
       setInputData(arrayInput);
       setDropdownData(arrayDropdown);
       setCheckboxData(arrayCheck);
       setDateData(arrayDate);
     }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
+    
   }
+
+  
 
   function submitForm() {
     const modelDataLabel = {
@@ -362,6 +385,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
             .then((res) => res.json())
             .then((data) => {
               if (data.status == true) {
+                navigate('/single-entry-data')
               } else {
                 console.log(data);
               }
@@ -401,10 +425,18 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       });
   };
   const handleDropdownValue = (i) => {
-    console.log(i);
-    var radioName = document.querySelector(
+    
+    console.log(document.querySelector(
       'input[name="dropValueField"]:checked',
-    ).value;
+    ));
+    var radioName = 0;
+    if(document.querySelector(
+      'input[name="dropValueField"]:checked',
+    )!=null){
+      radioName = document.querySelector(
+        'input[name="dropValueField"]:checked',
+      ).value;
+    }
     console.log(radioName);
     setSelectedListName(radioName);
     var dataTable = [];
@@ -427,10 +459,9 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
           if (allDropValueData != null) {
             allDropValueDataLength = Object.keys(allDropValueData).length;
           }
-
           setAllDropValueData({
             ...allDropValueData,
-            [allDropValueDataLength]: radioName,
+            [i]: radioName,
           });
         });
       }
@@ -440,6 +471,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       temp__details[i] = dataMenuArr;
       return temp__details;
     });
+    setShowDropDownModal(false)
   };
   var dropData = [
     {
@@ -459,23 +491,56 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     previousInputValueDate.current = inputValueDate;
   }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
 
+  function validationOutsideSchema(){
+    var allInputValueDataLength = 0;
+    if (allInputValueData != null) {
+      allInputValueDataLength = Object.keys(allInputValueData).length;
+    }
+    if(allInputValueDataLength>0){
+      var schemaForInput = createDynamicSchema(allInputValueData);
+      setInputSchema(schemaForInput);
+      validateInputFields(schemaForInput);
+    }  
+
+    
+    var schemaForPage = createPageSchema(pageName);
+      setPageSchema(schemaForPage);
+      validatePageNameFields(schemaForPage);
+
+    var allDropValueDataLength = 0;
+    if (allDropValueData != null) {
+      allDropValueDataLength = Object.keys(allDropValueData).length;
+    }
+    if(allDropValueDataLength>0){
+      var schemaForDrop = createDynamicSchemaForDrop(allDropValueData);
+      setDropSchema(schemaForDrop);
+      validateDropFields(schemaForDrop);
+    }   
+    var allCheckValueDataLength = 0;
+    if (allCheckValueData != null) {
+      allCheckValueDataLength = Object.keys(allCheckValueData).length;
+    }
+    if(allCheckValueDataLength>0){
+      var schemaForCheck = createDynamicSchemaForCheck(allCheckValueData);
+      setCheckSchema(schemaForCheck);
+      validateCheckFields(schemaForCheck);
+    }
+
+    var allDateValueDataLength = 0;
+    if (allDateValueData != null) {
+      allDateValueDataLength = Object.keys(allDateValueData).length;
+    }
+    if(allDateValueDataLength>0){
+      var schemaForDate = createDynamicSchemaForDate(allDateValueData);
+      setDateSchema(schemaForDate);
+      validateDateFields(schemaForDate);
+    }
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-    var forms = document.querySelectorAll('.needs-validation')
-
-  // Loop over them and prevent submission
-  Array.prototype.slice.call(forms)
-    .forEach(function (form) {
-      
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-        }
-        
-        form.classList.add('was-validated')
-      }, false)
-    })
+    
+    validationOutsideSchema();
     var foundKey = 0;
     var foundEmpty = 0;
     console.log(allInputValueData);
@@ -502,42 +567,63 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       allInputValueDataLength +
       allDateValueDataLength +
       allDropValueDataLength;
-
+    
     if (pageName != "") {
+      console.log(totalField)
       if (totalField > 12) {
-        alert("There cannot be more than 12 input");
-      } else {
+        setErrorMessageString("There cannot be more than 12 input");
+        showErrorModal(true);
+      } 
+      else if(totalField==0){
+        setErrorMessageString("There need to be more than 0 input");
+        setShowErrorModal(true);
+      }
+      else {
         var totalValueField = 0;
 
-        if (allInputValueData == null) {
-          totalValueField += 0;
-        } else {
-          totalValueField += allInputValueData.length;
+        var errorstatus = 0;
+        var allInputValueDataLength = 0;
+        if (allInputValueData != null) {
+          allInputValueDataLength = Object.keys(allInputValueData).length;
+        }
+        for(var allInputCount=0;allInputCount<allInputValueDataLength;allInputCount++) {
+            if(allInputValueData[allInputCount]==""){
+              foundEmpty = 1;
+            }
         }
 
-        if (allCheckValueData == null) {
-          totalValueField += 0;
-        } else {
-          totalValueField += allCheckValueData.length;
+        var allCheckValueDataLength = 0;
+        if (allCheckValueData != null) {
+          allCheckValueDataLength = Object.keys(allCheckValueData).length;
+        }
+        for(var allInputCount=0;allInputCount<allInputValueDataLength;allInputCount++) {
+            if(allInputValueData[allInputCount]==""){
+              foundEmpty = 1;
+            }
         }
 
-        if (allDropValueData == null) {
-          totalValueField += 0;
-        } else {
-          totalValueField += allDropValueData.length;
+        var allDropValueDataLength = 0;
+        if (allDropValueData != null) {
+          allDropValueDataLength = Object.keys(allDropValueData).length;
         }
-
-        if (allDateValueData == null) {
-          totalValueField += 0;
-        } else {
-          totalValueField += allDateValueData.length;
+        for(var allDropCount=0;allDropCount<allDropValueDataLength;allDropCount++) {
+          console.log(allDropValueData[allDropCount]);
+            if(allDropValueData[allDropCount]==""){
+              foundEmpty = 1;
+            }
         }
-
-        if (totalValueField < totalField) {
-          foundEmpty = 1;
+        
+        var allDateValueDataLength = 0;
+        if (allDateValueData != null) {
+          allDateValueDataLength = Object.keys(allDateValueData).length;
+        }
+        for(var allDateCount=0;allDateCount<allDateValueDataLength;allDateCount++) {
+            if(allDateValueData[allDateCount]==""){
+              foundEmpty = 1;
+            }
         }
         if (foundEmpty == 1) {
-          alert("Column Name field cannot be empty");
+          
         } else {
           if (inputValue > 2) {
             for (
@@ -554,8 +640,6 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
               }
             }
             if (foundKey == 1) {
-              alert(foundKey);
-
               setShowCalculactionModal(true);
             } else {
               submitForm();
@@ -566,13 +650,179 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
         }
       }
     } else {
-      setPageNameStatus(0);
+      
     }
   }
+  const createPageSchema = (fields) => {
+    const schemaFields = {};
+    
+    // schemaFields =  Yup.string().required();
+    // console.log(schemaFields);
+    return Yup.string().required();
+  };
+  const createDynamicSchema = (fields) => {
+    const schemaFields = {};
+    
+    var countFieldLength = Object.keys(fields).length;
+    for(var countField = 0;countField < countFieldLength;countField++){
+      schemaFields[countField] =  Yup.string().required();
+    }
+    console.log(schemaFields);
+    return Yup.object().shape(schemaFields);
+  };
 
+  const createDynamicSchemaForDrop = (fields) => {
+    const schemaFields = {};
+    var countFieldLength = Object.keys(fields).length;
+    for(var countField = 0;countField < countFieldLength;countField++){
+      schemaFields[countField] =  Yup.string().required();
+    }
+    console.log(schemaFields);
+    return Yup.object().shape(schemaFields);
+  };
+
+  const createDynamicSchemaForCheck = (fields) => {
+    const schemaFields = {};
+    var countFieldLength = Object.keys(fields).length;
+    for(var countField = 0;countField < countFieldLength;countField++){
+      schemaFields[countField] =  Yup.string().required();
+    }
+    return Yup.object().shape(schemaFields);
+  };
+
+  const createDynamicSchemaForDate = (fields) => {
+    const schemaFields = {};
+    var countFieldLength = Object.keys(fields).length;
+    for(var countField = 0;countField < countFieldLength;countField++){
+      schemaFields[countField] =  Yup.string().required();
+    }
+    console.log(schemaFields);
+    return Yup.object().shape(schemaFields);
+  };
+  
+  // const validateField = async (field,index) => {
+  //   console.log(field);
+  //   try {
+
+  //     await Yup.object().shape({
+  //       inputData: field({
+  //         value: Yup.string().required(),
+  //       }),
+  //     }).validate(field, { abortEarly: false });
+
+  //     setErrors((prevErrors) => prevErrors.filter((err) => err.index !== index));
+  //   } catch (validationErrors) {
+  //     // Validation failed for the field
+  //     console.log(validationErrors)
+  //     setErrors((prevErrors) => [
+  //       "value cannot be empty"
+  //     ]);
+  //   }
+  // };
+  const validatePageNameFields = async (schema) => {
+    try {
+      await schema.validate(pageName, { abortEarly: false });
+      
+      // All fields passed validation
+      setErrorsPage([]);
+    } catch (validationErrors) {
+      // Some fields failed validation
+      
+      setErrorsPage(        
+        validationErrors.inner.map((err) => ({
+          
+          index: 0,
+          message: err.message,
+        }))
+      );
+    }
+  };
+  const validateInputFields = async (schema) => {
+    try {
+      console.log(schema);
+      await schema.validate(allInputValueData, { abortEarly: false });
+      
+      // All fields passed validation
+      setInputErrors([]);
+    } catch (validationErrors) {
+      // Some fields failed validation
+      console.log(validationErrors)
+      setInputErrors(        
+        validationErrors.inner.map((err) => ({
+          
+          index: err.path!='' ? parseInt(err.path, 9) : -1,
+          message: err.message,
+        }))
+      );
+    }
+  };
+
+  const validateDropFields = async (schema) => {
+    try {
+      console.log(allDropValueData);
+      await schema.validate(allDropValueData, { abortEarly: false });
+
+      // All fields passed validation
+      setErrorsDropDown([]);
+      
+    } catch (validationErrors) {
+      console.log(validationErrors);
+      setErrorsDropDown(
+        
+        validationErrors.inner.map((err) => ({
+          
+          index: err.path!='' ? parseInt(err.path, 9) : -1,
+          message: err.message,
+        }))
+      );
+    }
+  };
+
+  const validateCheckFields = async (schema) => {
+    try {
+      
+      await schema.validate(allCheckValueData, { abortEarly: false });
+
+      // All fields passed validation
+      setErrorsCheck([]);
+    } catch (validationErrors) {
+      // Some fields failed validation
+      console.log(validationErrors)
+      setErrorsCheck(
+        validationErrors.inner.map((err) => ({
+          
+          index: err.path!='' ? parseInt(err.path, 9) : -1,
+          message: err.message,
+        }))
+      );
+    }
+  };
+
+  const validateDateFields = async (schema) => {
+    try {
+      
+      await schema.validate(allDateValueData, { abortEarly: false });
+
+      // All fields passed validation
+      setErrorsDate([]);
+    } catch (validationErrors) {
+      // Some fields failed validation
+      console.log(validationErrors)
+      setErrorsDate(
+        validationErrors.inner.map((err) => ({
+          
+          index: err.path!='' ? parseInt(err.path, 9) : -1,
+          message: err.message,
+        }))
+      );
+    }
+  };
+  
+  
+   
   return (
-    <form class="bg-white shadow-lg rounded-md p-5 md:p-10 flex flex-col w-11/12 max-w-lg"
-    novalidate onSubmit={(e) => handleSubmit(e)} >
+    <form name="myForms" noValidate class="bg-white shadow-lg rounded-md p-5 md:p-10 flex flex-col w-11/12 max-w-lg"
+     onSubmit={(e) => handleSubmit(e)} >
       <Grid>
         {openModal ? (
           <Grid>
@@ -591,23 +841,12 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                   onChange={(e) => {
                     setPageName(e.target.value);
                   }}
-                />
-                <label for="email" class="mb-5">
-                  <span>Email</span>
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    class="... peer"
-                    placeholder=" "
-                    required
-                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                  />
-                  <span class="mt-2 hidden text-sm text-red-500 peer-[&:not(:placeholder-shown):not(:focus):invalid]:block">
-                    Please enter a valid email address
-                  </span>
-                </label>
-                
+                />    
+                    {errorsPage
+                      .filter((err) => err.index === 0)
+                      .map((err, i) => (
+                        <div style={{color:"#FF0000"}} key={i}>This Field is required</div>
+                      ))}        
               </Grid>
             </Grid>
 
@@ -635,15 +874,23 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                       return;
                     }
 
-                    let a = 0;
+                    let targetValue = 0;
                     if (e.target.value == "") {
-                      a = 0;
+                      targetValue = 0;
                     } else {
-                      a = parseInt(e.target.value);
+                      targetValue = parseInt(e.target.value);
                     }
-                    setInputValue(a);
+                    setAllInputValueData((prev) => {
+                      const temp__details = {};
+                      for(var inputLength = 0;inputLength < targetValue;inputLength++) {
+                          temp__details[inputLength] = "";
+                      }
+                      return temp__details;
+                    });
+                    setInputValue(targetValue);
                   }}
                 />
+                
               </Grid>
               <Grid style={{ marginLeft: "5px" }}>
                 <label htmlFor="" className="text-style">
@@ -667,13 +914,22 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                       });
                       return;
                     }
-                    let b = 0;
+                    let targetValue = 0;
                     if (e.target.value == "") {
-                      b = 0;
+                      targetValue = 0;
                     } else {
-                      b = parseInt(e.target.value);
+                      targetValue = parseInt(e.target.value);
                     }
-                    setInputValueDDF(b);
+                    
+                    setAllDropValueData((prev) => {
+                      const temp__details = {};
+                      console.log(temp__details);
+                      for(var inputLength = 0;inputLength < targetValue;inputLength++) {
+                          temp__details[inputLength] = "";
+                      }
+                      return temp__details;
+                    });
+                    setInputValueDDF(targetValue);
                   }}
                 />
               </Grid>
@@ -699,14 +955,21 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                       });
                       return;
                     }
-                    let c = 0;
+                    let targetValue = 0;
                     if (e.target.value == "") {
-                      c = 0;
+                      targetValue = 0;
                     } else {
-                      c = parseInt(e.target.value);
-                      console.log(typeof c);
+                      targetValue = parseInt(e.target.value);
                     }
-                    setInputValueCheck(c);
+                    setAllCheckValueData((prev) => {
+                      const temp__details = {};
+                      console.log(temp__details);
+                      for(var inputLength = 0;inputLength < targetValue;inputLength++) {
+                          temp__details[inputLength] = "";
+                      }
+                      return temp__details;
+                    });
+                    setInputValueCheck(targetValue);
                   }}
                 />
               </Grid>
@@ -732,15 +995,20 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                       });
                       return;
                     }
-                    let d = 0;
+                    let targetValue = 0;
                     if (e.target.value == "") {
-                      d = 0;
+                      targetValue = 0;
                     } else {
-                      d = parseInt(e.target.value);
-                      console.log(typeof d);
+                      targetValue = parseInt(e.target.value);
                     }
-                    console.log(d);
-                    setInputValueDate(d);
+                    setAllCheckValueData((prev) => {
+                      const temp__details = {};
+                      for(var inputLength = 0;inputLength < targetValue;inputLength++) {
+                          temp__details[inputLength] = "";
+                      }
+                      return temp__details;
+                    });
+                    setInputValueDate(targetValue);
                   }}
                 />
               </Grid>
@@ -766,10 +1034,11 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                     <div style={{ marginLeft: "180px" }}>
                       <input
                         type="text"
-                        name={name}
+                        name={`input${name}`}
                         id={name}
                         className="getInputValue mt-2"
                         required
+                        
                         onChange={(e) => {
                           // setAllData(e.target.value, labelType, labelName);
                           // setAllData({
@@ -777,6 +1046,14 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                           //   [labelName]: e.target.value,
                           //   [labelType]: e.target.type,
                           // });
+                          // if(e.target.value==""){
+                          //   document.getElementsByName(`input${name}`)[0].style.borderColor="red";
+                          //   document.getElementsByName(`input${name}validity`)[0].style.display="block";
+                          // }
+                          // else{
+                          //   document.getElementsByName(`input${name}`)[0].style.borderColor="black";
+                          //   document.getElementsByName(`input${name}validity`)[0].style.display="none";
+                          // }
 
                           setAllInputValueData({
                             ...allInputValueData,
@@ -794,9 +1071,12 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                           console.log(allInputValueForFormulaData);
                         }}
                       />
-                      <div class="invalid-feedback">
-                        Field Cannot be empty.
-                      </div>
+                      {errorsInput
+                      .filter((err) => err.index === name)
+                      .map((err, i) => (
+                        <div style={{color:"#FF0000"}} key={i}>This Field is required</div>
+                      ))}
+                      
                     </div>
                   );
                 })}
@@ -810,12 +1090,18 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                       <Select
                         class="form-select"
                         className="w-[100%] mt-2"
+                        name={`drop${name}`}
                         aria-label="Default select example"
-                        // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
                         options={selectedOption[name]}
                         id={`dropValue${name}`}
                         onChange={(e) => {}}
+                        required
                       ></Select>
+                       {errorsDropDown
+                      .filter((err) => err.index === name)
+                      .map((err, i) => (
+                        <div style={{color:"#FF0000"}} key={i}>This Field is required</div>
+                      ))}
                       <div className="ms-2">
                         <FontAwesomeIcon
                           icon={faPlusCircle}
@@ -825,76 +1111,10 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                           data-id={name}
                           onClick={() => {
                             handleModalMenu();
+                            setCurrentDropSelected(name);
+                            setShowDropDownModal(true);
                           }}
-                        ></FontAwesomeIcon>
-
-                        <div
-                          class="modal fade"
-                          id={`exampleModal${name}`}
-                          tabindex="-1"
-                          role="dialog"
-                          aria-labelledby={`exampleModal${name}Label`}
-                          // aria-hidden="true"
-                        >
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h5
-                                  class="modal-title"
-                                  id={`exampleModal${name}Label`}
-                                >
-                                  Select Menu
-                                </h5>
-                                <button type="button" data-dismiss="modal">
-                                  <span
-                                  //  aria-hidden="true"
-                                  >
-                                    &times;
-                                  </span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                {modalSpecificData
-                                  .filter(
-                                    (person) =>
-                                      person.MenuName === "Master Entry",
-                                  )
-                                  .map((filteredPerson) => (
-                                    <div class="input-group">
-                                      <div class="input-group-prepend">
-                                        <div class="input-group-text">
-                                          <input
-                                            type="radio"
-                                            value={filteredPerson.SubMenuName}
-                                            name="dropValueField"
-                                            aria-label="Radio button for following text input"
-                                            onClick={(e) => {}}
-                                          />
-                                        </div>
-                                      </div>
-                                      <h4 className="ms-2">
-                                        {filteredPerson.SubMenuName}
-                                      </h4>
-                                    </div>
-                                  ))}
-
-                                <div class="modal-footer">
-                                  <button
-                                    type="button"
-                                    class="btn btn-primary close"
-                                    data-dismiss="modal"
-                                    aria-label="Close"
-                                    onClick={(e) => {
-                                      handleDropdownValue(name);
-                                    }}
-                                  >
-                                    Save changes
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        ></FontAwesomeIcon>                            
                       </div>
                     </div>
                   );
@@ -920,6 +1140,11 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                           });
                         }}
                       />
+                      {errorsCheck
+                      .filter((err) => err.index === name)
+                      .map((err, i) => (
+                        <div style={{color:"#FF0000"}} key={i}>This Field is required</div>
+                      ))}
                     </div>
                   );
                 })}
@@ -944,6 +1169,11 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                           });
                         }}
                       />
+                      {errorsDate
+                      .filter((err) => err.index === name)
+                      .map((err, i) => (
+                        <div style={{color:"#FF0000"}} key={i}>This Field is required</div>
+                      ))}
                     </div>
                   );
                 })}
@@ -1234,6 +1464,74 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
             </button>
           </Modal.Footer>
         </Modal>
+        <Modal
+                                show={showDropDownModal}
+                                onHide={handleDropClose}
+                                backdrop="true"
+                                keyboard={false}
+                              >
+                                <Modal.Header closeButton>
+                                  <Modal.Title>Select Menu</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                {modalSpecificData
+                                  .filter(
+                                    (person) =>
+                                      person.MenuName === "Master Entry",
+                                  )
+                                  .map((filteredPerson) => (
+                                    <div class="input-group">
+                                      <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                          <input
+                                            type="radio"
+                                            value={filteredPerson.SubMenuName}
+                                            name="dropValueField"
+                                            aria-label="Radio button for following text input"
+                                            onClick={(e) => {
+                                              
+                                            }}
+                                          />
+                                        </div>
+                                      </div>
+                                      <h4 className="ms-2">
+                                        {filteredPerson.SubMenuName}
+                                      </h4>
+                                    </div>
+                                  ))}
+
+                               </Modal.Body>
+                               <Modal.Footer>
+                                  <button
+                                    type="button"
+                                     class="btn btn-primary"
+                                    data-dismiss="modal"
+                                    aria-label="Close"
+                                    onClick={(e) => {
+                                      handleDropdownValue(currentDropSelected);
+                                    }}
+                                  >
+                                    Save changes
+                                  </button>
+                                
+                                </Modal.Footer>
+                              </Modal>
+
+
+                              <Modal
+                                show={showErrorModal}
+                                onHide={handleErrorClose}
+                                backdrop="true"
+                                keyboard={false}
+                              >
+                                <Modal.Header closeButton>
+                                  <Modal.Title><h5>Warning!</h5></Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                <label>{errorMessageString}</label>
+
+                               </Modal.Body>
+                              </Modal>
       </Grid>
     </form>
   );

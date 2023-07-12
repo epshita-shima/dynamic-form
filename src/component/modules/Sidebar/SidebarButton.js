@@ -3,20 +3,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react'
 import Sidebar from './Sidebar';
 
-const SidebarButton = ({showSidebar,setShowSidebar}) => {
+const SidebarButton = ({showHeader,showSidebar,setShowSidebar}) => {
     
   return (
     <div>
     {showSidebar ? (
      <Sidebar 
+     showHeader={showHeader}
      showSidebar={showSidebar}
      setShowSidebar={setShowSidebar}
      ></Sidebar>
     ) : (
-    <div style={{ marginTop:'250px'}}>
+    <div style={{ marginTop:'250px'}} data-toggle="tooltip" data-placement="top" title="Open Sidebar">
         <FontAwesomeIcon
           icon={faPlus}
-          className="bg-primary rounded fs-4 p-2"
+          className="text-white fs-4 p-2"
+          style={{backgroundColor:'#FFC300',width:"30px",height:'30px', borderRadius:'50px'}}
           onClick={() => {
             setShowSidebar(true);
           }}

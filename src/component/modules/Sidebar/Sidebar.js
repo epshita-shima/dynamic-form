@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import SidebarColorButton from "./SidebarColorButton";
 import SidebarHiddenButton from "./SidebarHiddenButton";
 import Token from "../../common/Token";
-import "./SidebarButton.css"
+import "./SidebarButton.css";
 
-const Sidebar = ({ showSidebar, setShowSidebar }) => {
-  const [modalSpecificData, setModalSpecificData] = useState([]);
-  const [colorOrange, setColorOrange] = useState(false);
-  const [colorBLue, setColorBlue] = useState(false);
-  const [colorLightgray, setColorLightgray] = useState(false);
-  const [currentColor, setCurrentColor] = useState("#D0021B")
-  const token =Token.token
+const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
+  const [backgroundColor, setBackgroundColor] = useState(false);
+  const [fontColor, setFontColor] = useState(false);
+  const [fontColorBtn, setFontColorBtn] = useState(false);
+  const [currentColor, setCurrentColor] = useState("#D0021B");
+  const [parentMenu, setParentMenu] = useState([]);
+  const [childMenu, setChildMenu] = useState([]);
+  const token = Token.token;
   useEffect(() => {
     const modelData = {
       procedureName: "",
@@ -29,31 +30,43 @@ const Sidebar = ({ showSidebar, setShowSidebar }) => {
       .then((data) => {
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
-          setModalSpecificData(allModalData.Tables1);
+          console.log(allModalData);
+          setParentMenu(allModalData.Tables1);
+          setChildMenu(allModalData.Tables2);
         } else {
           console.log(data);
         }
       });
   }, []);
 
+  const thirdArray = childMenu.filter((elem) => {
+    return parentMenu.some((ele) => {
+      console.log(ele);
+      return elem.MenuName === ele.MenuName;
+    });
+  });
+  console.log(thirdArray);
   return (
     <div>
       <aside
-        className={`main-sidebar sidebar-dark-primary elevation-4 ${colorBLue ? "changeColorBlue" : ""} ${
-          colorLightgray ? "changeColorLightgray" : ""
-        }`}
-        style={{backgroundColor:`${currentColor.hex}`}}
+        className={`main-sidebar sidebar-dark-primary elevation-4`}
+        style={{ backgroundColor: `${currentColor.hex}` }}
       >
         {/* Brand Logo */}
-        <a className={`brand-link ${colorOrange? 'layout-navbar-fixed wrapper brand-link':''}`}>
+        <a
+          className={`brand-link`}
+          style={{ backgroundColor: `${currentColor.hex}` }}
+        >
           {
             <SidebarColorButton
-            currentColor={currentColor} 
-            setCurrentColor={setCurrentColor}
-            colorOrange={colorOrange}
-              setColorBlue={setColorBlue}
-              setColorOrange={setColorOrange}
-              setColorLightgray={setColorLightgray}
+              backgroundColor={backgroundColor}
+              setBackgroundColor={setBackgroundColor}
+              fontColor={fontColor}
+              setFontColor={setFontColor}
+              fontColorBtn={fontColorBtn}
+              setFontColorBtn={setFontColorBtn}
+              currentColor={currentColor}
+              setCurrentColor={setCurrentColor}
               setShowSidebar={setShowSidebar}
             ></SidebarColorButton>
           }
@@ -65,23 +78,27 @@ const Sidebar = ({ showSidebar, setShowSidebar }) => {
         {/* Sidebar */}
         <div className="sidebar">
           {/* Sidebar user panel (optional) */}
-          <div className="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div className="image">
-              <img
-                src="dist/img/user2-160x160.jpg"
-                className="img-circle elevation-2"
-                alt="User Image"
-              />
+          {showHeader ? (
+            " "
+          ) : (
+            <div className="user-panel mt-4 pb-3 mb-3 d-flex">
+              <div className="image">
+                <img
+                  src="dist/img/user2-160x160.jpg"
+                  className="img-circle elevation-2"
+                  alt="User Image"
+                />
+              </div>
+              <div className="info">
+                <a href="#" className="d-block">
+                  Alexander Pierce
+                </a>
+              </div>
             </div>
-            <div className="info">
-              <a href="#" className="d-block">
-                Alexander Pierce
-              </a>
-            </div>
-          </div>
+          )}
 
           {/* Sidebar Menu */}
-          <nav className="mt-2">
+          <nav className="mt-4">
             <ul
               className="nav nav-pills nav-sidebar flex-column"
               data-widget="treeview"
@@ -91,7 +108,11 @@ const Sidebar = ({ showSidebar, setShowSidebar }) => {
               {/* Add icons to the links using the .nav-icon class
          with font-awesome or any other icon font library */}
               <li className="nav-item menu-open">
-                <a href="#" className="nav-link active">
+                <a
+                  href="#"
+                  className="nav-link"
+                  style={{ backgroundColor: "#FFC300" }}
+                >
                   <i className="nav-icon fas fa-tachometer-alt" />
                   <p>
                     Dashboard
@@ -99,47 +120,61 @@ const Sidebar = ({ showSidebar, setShowSidebar }) => {
                   </p>
                 </a>
                 <ul className="nav nav-treeview">
-                  {modalSpecificData.map((item, i) => {
-                    return    <li className="nav-item" key={i}>
-               
-                    <a
-                      data-bs-toggle="collapse"
-                      href={"#collapseExample" +i}
-                      role="button"
-                      aria-expanded="false"
-                      aria-controls="collapseExample"
-                      className="nav-link active"
-                    >
-                      <i className="far fa-circle nav-icon" />
-                      <p className="fw-bold">
-                       {item.MenuName}
-                        <span>
-                          <i className="fas fa-angle-down ml-2" />
-                        </span>
-                      </p>
-                    </a>
-                    <ul
-                      className={`nav collapse side-dropdown  `}
-                      id={"collapseExample" +i}
-                    >
-                      <li className="nav-item ">
+                  {parentMenu.map((item, i) => {
+                    return (
+                      <li className="nav-item" key={i}>
                         <a
-                          href={`/dashboard`}
-                          style={{ fontSize: "15px" }}
-                          className="nav-link"
+                          data-bs-toggle="collapse"
+                          href={"#collapseExample" + i}
+                          role="button"
+                          aria-expanded="false"
+                          aria-controls="collapseExample"
+                          className="nav-link active"
+                          style={{ color: `${fontColor.hex}` }}
                         >
-                          <i className={`text-[#581C87]`} />
-                          &nbsp;
-                          <p className="ml-2 text-[#581C87]">Item Info</p>
+                          <i className="far fa-circle nav-icon" />
+                          <p className="fw-bold">
+                            {item.MenuName}
+                            <span>
+                              <i className="fas fa-angle-down ml-2" />
+                            </span>
+                          </p>
                         </a>
+                        <ul
+                          className={`nav collapse side-dropdown  `}
+                          id={"collapseExample" + i}
+                        >
+                          {thirdArray.map((item, i) => {
+                            return (
+                              // <li className="nav-item ">
+                              //   <a
+                              //     href=""
+                              //     style={{ fontSize: "15px" }}
+                              //     className="nav-link"
+                              //   >
+                              //     <i className={`text-[#581C87]`} />
+                              //     &nbsp;
+                              //     <p className="ml-2 text-[#581C87]">
+                              //       {item.SubMenuName}
+                              //     </p>
+                              //   </a>
+                              // </li>
+                              <li className="nav-item ">
+                    <a href="" className="nav-link bg-success">
+                      <i className="far fa-circle nav-icon" />
+                      <p>{item.SubMenuName}</p>
+                    </a>
+                  </li>
+                            );
+                          })}
+                        </ul>
                       </li>
-                    </ul>
-                  </li>;
+                    );
                   })}
                 </ul>
               </li>
 
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <a href="#" className="nav-link">
                   <i className="nav-icon fas fa-copy" />
                   <p>
@@ -218,8 +253,7 @@ const Sidebar = ({ showSidebar, setShowSidebar }) => {
                     </a>
                   </li>
                 </ul>
-              </li>
-
+              </li> */}
             </ul>
           </nav>
           {/* /.sidebar-menu */}

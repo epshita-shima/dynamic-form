@@ -21,6 +21,7 @@ function App() {
   const [showHeader, setShowHeader] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   const [showFooter,setShowFooter]=useState(false)
+ 
   // const [currentColor,setCurrentColor]=useState("#D0021B")
   // const handleOnChange=(color)=>{
   //   // setCurrentColor(color)
@@ -31,10 +32,12 @@ function App() {
     <div className="position-relative" style={{height:'649px'}}>
 
     <HeaderButton 
+  
     showHeader={showHeader}
     setShowHeader={setShowHeader}
     ></HeaderButton>
     <SidebarButton
+showHeader={showHeader}
     showSidebar={showSidebar}
     setShowSidebar={setShowSidebar}
     ></SidebarButton>

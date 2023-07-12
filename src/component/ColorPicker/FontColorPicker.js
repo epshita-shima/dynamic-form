@@ -1,20 +1,19 @@
-
 import { SketchPicker } from "react-color";
- const Picker=({currentColor, setCurrentColor,colorPickerPosition})=> {
-  
-  const handleChangeComplete = (color) => {
-    setCurrentColor(color);
-  };
-
+import './ColorPicker.css'
+function FontColorPicker({fontColor,setFontColor,colorPickerPosition}) {
+    const handleChangeComplete = (color) => {
+       setFontColor(color)
+      };
   return (
     <div className="d-flex justify-content-center mt-4">
     <div className={`${colorPickerPosition ? 'pickerPosition':''}`}>
       <SketchPicker
-        color={currentColor}
+        color={fontColor}
         onChangeComplete={handleChangeComplete}
       />
     </div>
     </div>
-  );
+  )
 }
-export default Picker
+
+export default FontColorPicker

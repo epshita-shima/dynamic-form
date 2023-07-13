@@ -12,13 +12,20 @@ import SingleEntryData from "./component/SingleEntryData/SingleEntryData";
 import $ from 'jquery';
 import HeaderButton from "./component/modules/Header/HeaderButton";
 import SidebarButton from "./component/modules/Sidebar/SidebarButton";
+
 import SidebarColorButton from "./component/modules/Sidebar/SidebarColorButton";
 import { useState } from "react";
+
 function App() {
   const [showHeader, setShowHeader] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   return (
     <div >
+
+    {/* <HeaderButton></HeaderButton>
+    <SidebarButton></SidebarButton> */}
+    <Routes>
+
     <HeaderButton 
     showHeader={showHeader}
     setShowHeader={setShowHeader}
@@ -28,6 +35,7 @@ function App() {
     setShowSidebar={setShowSidebar}
     ></SidebarButton>
     {/* <Routes>
+
       <Route path="/" element={<CreatePage></CreatePage>}></Route>
       <Route path="/generate-form" element={<GenerateForm></GenerateForm>}></Route>
       <Route path="/single-entry" element={<SingleEntryForm></SingleEntryForm>}></Route>
@@ -35,7 +43,7 @@ function App() {
       <Route path="/Mycomponent" element={<MyComponent></MyComponent>}></Route>
       <Route  path="/single-form" element={<SingleForm/>}></Route>
       <Route path="/slider" element={<Slider></Slider>}></Route>/
-    </Routes> */}
+    </Routes>
     </div>
   );
 }

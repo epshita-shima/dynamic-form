@@ -10,12 +10,14 @@ const HeaderButton = ({showHeader,setShowHeader, backgroundColor,
   fontColorBtn,
   setFontColorBtn,
   currentColor,
-  setCurrentColor}) => {
+  setCurrentColor,
+  headerBackgroundColor}) => {
  
   return (
     <div>
       {showHeader ? (
         <Header
+        headerBackgroundColor={headerBackgroundColor}
         backgroundColor={backgroundColor} 
         setBackgroundColor={setBackgroundColor}
         fontColor={fontColor}

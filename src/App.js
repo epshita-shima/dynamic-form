@@ -20,19 +20,14 @@ import FooterShowButton from "./component/modules/Footer/FooterShowButton";
 function App() {
   const [showHeader, setShowHeader] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
-  const [showFooter,setShowFooter]=useState(false)
- 
-  // const [currentColor,setCurrentColor]=useState("#D0021B")
-  // const handleOnChange=(color)=>{
-  //   // setCurrentColor(color)
-  //   console.log(color)
-  //   console.log('click')
-  // }
+  const [showFooter,setShowFooter]=useState(false);
+  const headerBackgroundColor=sessionStorage.getItem("headerBackgroundColor")
+
   return (
     <div className="position-relative" style={{height:'649px'}}>
 
     <HeaderButton 
-  
+  headerBackgroundColor={headerBackgroundColor}
     showHeader={showHeader}
     setShowHeader={setShowHeader}
     ></HeaderButton>

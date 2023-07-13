@@ -4,60 +4,109 @@ import Picker from "../../ColorPicker/Picker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import FontColorPicker from "../../ColorPicker/FontColorPicker";
+import { SketchPicker } from "react-color";
+import "./Footer.css";
 
 const Footer = ({ setShowFooter }) => {
   const [backgroundColor, setBackgroundColor] = useState(false);
-  const [colorPickerPosition,setColorPickerPosition]=useState(false)
-  const [fontColor,setFontColor]=useState(false)
-  const [fontColorBtn,setFontColorBtn]=useState(false)
+  const [colorPickerPosition, setColorPickerPosition] = useState(false);
+  const [fontColor, setFontColor] = useState(false);
+  const [fontColorBtn, setFontColorBtn] = useState(false);
   const [currentColor, setCurrentColor] = useState("#D0021B");
-
+  const footerBackground = sessionStorage.getItem("footerBackground");
+  const footerText = sessionStorage.getItem("footerText");
+  const getFooterTextColor = sessionStorage.getItem("footerTextColor");
+const footerBackgroundColor=sessionStorage.getItem('footerBackgroundColor')
   const handleBackground = () => {
     setBackgroundColor(!backgroundColor);
-    setColorPickerPosition(true)
-    sessionStorage.setItem("footerBackgroundColor",currentColor.hex)
+    setColorPickerPosition(true);
   };
-const handleFontColor=()=>{
-setFontColorBtn(!fontColorBtn)
-setColorPickerPosition(true)
-}
-  
+
+  const handleFontColor = () => {
+    setFontColorBtn(!fontColorBtn);
+    setColorPickerPosition(true);
+  };
+  const handleChangeComplete = (color) => {
+    setCurrentColor(color);
+    sessionStorage.setItem("footerBackgroundColor", color.hex);
+    sessionStorage.setItem("footerBackground", 1);
+  };
+  const handleChangeFontComplete = (color) => {
+    setFontColor(color);
+    sessionStorage.setItem("footerTextColor", color.hex);
+    sessionStorage.setItem("footerText", 1);
+  };
+
   return (
     <footer
-      class={`main-footer position-absolute bottom-0`}
-      style={{ width: "1290px", backgroundColor: `${currentColor.hex}` }}
+      class={`main-footer position-absolute bottom-0 footerColor`}
+      style={{ width: "1290px", backgroundColor:footerBackground? `${footerBackgroundColor}` : `${currentColor.hex}` }}
     >
-      <strong style={{color:`${fontColor.hex}`}}>Copyright &copy; 2022-2023 </strong>
+      <strong style={{ color:footerText=="1" ? `${getFooterTextColor}` : `${fontColor.hex}` }}>
+        Copyright &copy; 2022-2023{" "}
+      </strong>
       <div class="float-right d-none d-sm-inline-block">
-      <div className="d-flex justify-content-center align-items-center" >
-      <button style={{ border: "none", background: "transparent" }}>
-          <FooterHiddenButon setShowFooter={setShowFooter}></FooterHiddenButon>
-        </button>
-        <button
-        className="btn-orange text-white"
-        data-toggle="tooltip" data-placement="top" title="Background Color"
-        onClick={() => {
-          handleBackground();
-        }}
-      >{backgroundColor? (<FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>) : (<FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>)}{backgroundColor ? (<Picker
-        colorPickerPosition={colorPickerPosition}
-        currentColor={currentColor}
-        setCurrentColor={setCurrentColor}
-      ></Picker>):''} 
-      </button>
-      <button
-        className="btn-orange text-white ms-2"
-        data-toggle="tooltip" data-placement="top" title="Text Color"
-        onClick={() => {
-          handleFontColor();
-        }}
-      >{fontColorBtn? (<FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>) : (<FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>)}{fontColorBtn ? (<FontColorPicker
-        colorPickerPosition={colorPickerPosition}
-        fontColor={fontColor}
-        setFontColor={setFontColor}
-      ></FontColorPicker>):''} </button>
-      </div>
-       
+        <div className="d-flex justify-content-center align-items-center">
+          <button style={{ border: "none", background: "transparent" }}>
+            <FooterHiddenButon
+              setShowFooter={setShowFooter}
+            ></FooterHiddenButon>
+          </button>
+          <button
+            className="btn-orange text-white"
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Background Color"
+            onClick={() => {
+              handleBackground();
+            }}
+          >
+            {backgroundColor ? (
+              <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
+            ) : (
+              <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
+            )}
+            {backgroundColor ? (
+              <div className="d-flex justify-content-center mt-4">
+              <div className={`${colorPickerPosition ? 'pickerPosition':''}`}>
+                <SketchPicker
+                  color={currentColor}
+                  onChangeComplete={handleChangeComplete}
+                />
+              </div>
+              </div>
+            ) : (
+              ""
+            )}
+          </button>
+          <button
+            className="btn-orange text-white ms-2"
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Text Color"
+            onClick={() => {
+              handleFontColor();
+            }}
+          >
+            {fontColorBtn ? (
+              <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
+            ) : (
+              <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
+            )}
+            {fontColorBtn ? (
+              <div className="d-flex justify-content-center mt-4">
+              <div className={`${colorPickerPosition ? 'pickerPosition':''}`}>
+                <SketchPicker
+                  color={fontColor}
+                  onChangeComplete={handleChangeFontComplete}
+                />
+              </div>
+              </div>
+            ) : (
+              ""
+            )}{" "}
+          </button>
+        </div>
       </div>
     </footer>
   );

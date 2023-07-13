@@ -11,6 +11,12 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   const [currentColor, setCurrentColor] = useState("#D0021B");
   const [parentMenu, setParentMenu] = useState([]);
   const [childMenu, setChildMenu] = useState([]);
+  const sidebarBackground = sessionStorage.getItem("sidebarBackground");
+  const sidebarText = sessionStorage.getItem("sidebarText");
+  const getSidebarTextColor = sessionStorage.getItem("sidebarTextColor");
+  const sidebarBackgroundColor = sessionStorage.getItem(
+    "sidebarBackgroundColor"
+  );
   const token = Token.token;
   useEffect(() => {
     const modelData = {
@@ -45,17 +51,27 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
       return elem.MenuName === ele.MenuName;
     });
   });
-  console.log(thirdArray);
+
   return (
     <div>
       <aside
-        className={`main-sidebar sidebar-dark-primary elevation-4`}
-        style={{ backgroundColor: `${currentColor.hex}` }}
+        className={`main-sidebar sidebar-dark-primary sidebarColor elevation-4`}
+        style={{
+          backgroundColor:
+            sidebarBackground == "1"
+              ? `${sidebarBackgroundColor}`
+              : `${currentColor.hex}`,
+        }}
       >
         {/* Brand Logo */}
         <a
           className={`brand-link`}
-          style={{ backgroundColor: `${currentColor.hex}` }}
+          style={{
+            backgroundColor:
+              sidebarBackground == "1"
+                ? `${sidebarBackgroundColor}`
+                : `${currentColor.hex}`,
+          }}
         >
           {
             <SidebarColorButton
@@ -90,7 +106,11 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                 />
               </div>
               <div className="info">
-                <a href="#" className="d-block">
+                <a
+                  href="#"
+                  className="d-block"
+                  style={{ textDecoration: "none" }}
+                >
                   Alexander Pierce
                 </a>
               </div>
@@ -105,8 +125,6 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
               role="menu"
               data-accordion="false"
             >
-              {/* Add icons to the links using the .nav-icon class
-         with font-awesome or any other icon font library */}
               <li className="nav-item menu-open">
                 <a
                   href="#"
@@ -130,7 +148,12 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                           aria-expanded="false"
                           aria-controls="collapseExample"
                           className="nav-link active"
-                          style={{ color: `${fontColor.hex}` }}
+                          style={{
+                            color: sidebarText
+                              ? `${getSidebarTextColor}`
+                              : `${fontColor.hex}`,
+                            backgroundColor: "#FFD966",
+                          }}
                         >
                           <i className="far fa-circle nav-icon" />
                           <p className="fw-bold">
@@ -146,25 +169,20 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                         >
                           {thirdArray.map((item, i) => {
                             return (
-                              // <li className="nav-item ">
-                              //   <a
-                              //     href=""
-                              //     style={{ fontSize: "15px" }}
-                              //     className="nav-link"
-                              //   >
-                              //     <i className={`text-[#581C87]`} />
-                              //     &nbsp;
-                              //     <p className="ml-2 text-[#581C87]">
-                              //       {item.SubMenuName}
-                              //     </p>
-                              //   </a>
-                              // </li>
                               <li className="nav-item ">
-                    <a href="" className="nav-link bg-success">
-                      <i className="far fa-circle nav-icon" />
-                      <p>{item.SubMenuName}</p>
-                    </a>
-                  </li>
+                                <a
+                                  href=""
+                                  className="nav-link"
+                                  style={{
+                                    backgroundColor: "#FFD966",
+                                    color: "#778686",
+                                    fontWeight: "600",
+                                  }}
+                                >
+                                  <i className="far fa-circle nav-icon" />
+                                  <p>{item.SubMenuName}</p>
+                                </a>
+                              </li>
                             );
                           })}
                         </ul>
@@ -173,87 +191,6 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                   })}
                 </ul>
               </li>
-
-              {/* <li className="nav-item">
-                <a href="#" className="nav-link">
-                  <i className="nav-icon fas fa-copy" />
-                  <p>
-                    Layout Options
-                    <i className="fas fa-angle-left right" />
-                    <span className="badge badge-info right">6</span>
-                  </p>
-                </a>
-                <ul className="nav nav-treeview">
-                  <li className="nav-item">
-                    <a href="pages/layout/top-nav.html" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>Top Navigation</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      href="pages/layout/top-nav-sidebar.html"
-                      className="nav-link"
-                    >
-                      <i className="far fa-circle nav-icon" />
-                      <p>Top Navigation + Sidebar</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="pages/layout/boxed.html" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>Boxed</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      href="pages/layout/fixed-sidebar.html"
-                      className="nav-link"
-                    >
-                      <i className="far fa-circle nav-icon" />
-                      <p>Fixed Sidebar</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      href="pages/layout/fixed-sidebar-custom.html"
-                      className="nav-link"
-                    >
-                      <i className="far fa-circle nav-icon" />
-                      <p>
-                        Fixed Sidebar <small>+ Custom Area</small>
-                      </p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      href="pages/layout/fixed-topnav.html"
-                      className="nav-link"
-                    >
-                      <i className="far fa-circle nav-icon" />
-                      <p>Fixed Navbar</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      href="pages/layout/fixed-footer.html"
-                      className="nav-link"
-                    >
-                      <i className="far fa-circle nav-icon" />
-                      <p>Fixed Footer</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      href="pages/layout/collapsed-sidebar.html"
-                      className="nav-link"
-                    >
-                      <i className="far fa-circle nav-icon" />
-                      <p>Collapsed Sidebar</p>
-                    </a>
-                  </li>
-                </ul>
-              </li> */}
             </ul>
           </nav>
           {/* /.sidebar-menu */}

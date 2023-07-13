@@ -3,12 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react'
 import Sidebar from './Sidebar';
 
-const SidebarButton = () => {
-    const [showSidebar, setShowSidebar] = useState(false);
+const SidebarButton = ({showSidebar,setShowSidebar}) => {
+    
   return (
     <div>
     {showSidebar ? (
-     <Sidebar></Sidebar>
+     <Sidebar 
+     showSidebar={showSidebar}
+     setShowSidebar={setShowSidebar}
+     ></Sidebar>
     ) : (
     <div style={{ marginTop:'250px'}}>
         <FontAwesomeIcon

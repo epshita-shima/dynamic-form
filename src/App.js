@@ -12,10 +12,13 @@ import SingleEntryData from "./component/SingleEntryData/SingleEntryData";
 import $ from 'jquery';
 import HeaderButton from "./component/modules/Header/HeaderButton";
 import SidebarButton from "./component/modules/Sidebar/SidebarButton";
+
 import SidebarColorButton from "./component/modules/Sidebar/SidebarColorButton";
 import { useState } from "react";
+
 import Footer from "./component/modules/Footer/Footer";
 import FooterShowButton from "./component/modules/Footer/FooterShowButton";
+
 
 function App() {
   const [showHeader, setShowHeader] = useState(false);
@@ -24,7 +27,12 @@ function App() {
   const headerBackgroundColor=sessionStorage.getItem("headerBackgroundColor")
 
   return (
+
     <div className="position-relative" style={{height:'649px'}}>
+
+    <div >
+
+
 
     <HeaderButton 
   headerBackgroundColor={headerBackgroundColor}
@@ -41,6 +49,7 @@ showHeader={showHeader}
      setShowFooter={setShowFooter}
     ></FooterShowButton>
     {/* <Routes>
+
       <Route path="/" element={<CreatePage></CreatePage>}></Route>
       <Route path="/generate-form" element={<GenerateForm></GenerateForm>}></Route>
       <Route path="/single-entry" element={<SingleEntryForm></SingleEntryForm>}></Route>
@@ -48,7 +57,7 @@ showHeader={showHeader}
       <Route path="/Mycomponent" element={<MyComponent></MyComponent>}></Route>
       <Route  path="/single-form" element={<SingleForm/>}></Route>
       <Route path="/slider" element={<Slider></Slider>}></Route>/
-    </Routes> */}
+    </Routes>
     </div>
   );
 }

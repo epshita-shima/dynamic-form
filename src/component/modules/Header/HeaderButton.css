@@ -1,5 +1,9 @@
-.changeColor{
-    background-color: orange;
+.headerColor{
+  background:  #FFD966;
+  color:white;
+}
+.hearderTextColor{
+    color:white
 }
 .changeColorBlue{
     background-color: blue;
@@ -11,13 +15,11 @@
     text-decoration: none;
     transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
 }
-.changeColorLightgray{
-    background-color: lightgray;
-}
+
 .btn-orange{
-    height: 25px;
-    width: 25px;
-    background-color: orange;
+    height: 30px;
+    width: 30px;
+    background-color: #FFC300;
     border-radius: 50%;
     border: none;
 }

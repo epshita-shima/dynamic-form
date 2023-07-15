@@ -7,7 +7,9 @@ const SidebarHiddenButton = ({showSidebar,setShowSidebar}) => {
     <div>
       <FontAwesomeIcon
           icon={faMinus}
-          className="bg-primary rounded fs-5 p-2"
+          className="fs-5 p-2"
+          data-toggle="tooltip" data-placement="top" title="Close Sidebar"
+          style={{backgroundColor:'#900C3E',width:"25px",height:'25px', borderRadius:'50px'}}
           onClick={() => {
             setShowSidebar(false);
           }}

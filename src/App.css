@@ -3,7 +3,9 @@
   text-align: center;
   
 }
-
+body{
+  font-family: 'Merriweather', serif !important;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

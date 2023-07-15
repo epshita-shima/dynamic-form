@@ -23,6 +23,7 @@ import swal from "sweetalert";
 import { json, useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import * as Yup from 'yup';
+import Token from "../common/Token";
 
 const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [array, setArray] = useState([]);
@@ -126,11 +127,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       MenuId: "1",
     },
   };
-  const token =
-
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiI5NzliYWMxMC05NDljLTQyZWQtOWY3MC1iMTE1NDVmN2NlYWIiLCJuYmYiOjE2ODg5NjA4NTYsImV4cCI6MTY4OTAwNDA1NiwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.uy3pxgL-G2Pbm2KM9_dm00l6y-Spy61P2TzrxBlbvc0";
-
-
+const token =Token.token
 
   useEffect(() => {
     const modelDataLabel = {

@@ -16,25 +16,35 @@ import SidebarButton from "./component/modules/Sidebar/SidebarButton";
 import SidebarColorButton from "./component/modules/Sidebar/SidebarColorButton";
 import { useState } from "react";
 
+import Footer from "./component/modules/Footer/Footer";
+import FooterShowButton from "./component/modules/Footer/FooterShowButton";
+
+
 function App() {
   const [showHeader, setShowHeader] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [showFooter,setShowFooter]=useState(false);
+  const headerBackgroundColor=sessionStorage.getItem("headerBackgroundColor")
+
   return (
-    <div >
 
-    {/* <HeaderButton></HeaderButton>
-    <SidebarButton></SidebarButton> */}
-  
-
-    <HeaderButton 
+    <div className="position-relative" style={{height:'649px'}}>
+<HeaderButton 
+  headerBackgroundColor={headerBackgroundColor}
     showHeader={showHeader}
     setShowHeader={setShowHeader}
     ></HeaderButton>
     <SidebarButton
+showHeader={showHeader}
     showSidebar={showSidebar}
     setShowSidebar={setShowSidebar}
     ></SidebarButton>
-    {/* <Routes>
+    <FooterShowButton
+     showFooter={showFooter}
+     setShowFooter={setShowFooter}
+    ></FooterShowButton>
+
+     {/* <Routes>
 
       <Route path="/" element={<CreatePage></CreatePage>}></Route>
       <Route path="/generate-form" element={<GenerateForm></GenerateForm>}></Route>
@@ -45,6 +55,7 @@ function App() {
       <Route path="/slider" element={<Slider></Slider>}></Route>/
     </Routes> */}
     </div>
+
   );
 }
 

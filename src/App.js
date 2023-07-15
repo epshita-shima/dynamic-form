@@ -24,7 +24,7 @@ function App() {
 
     {/* <HeaderButton></HeaderButton>
     <SidebarButton></SidebarButton> */}
-    <Routes>
+  
 
     <HeaderButton 
     showHeader={showHeader}
@@ -43,7 +43,7 @@ function App() {
       <Route path="/Mycomponent" element={<MyComponent></MyComponent>}></Route>
       <Route  path="/single-form" element={<SingleForm/>}></Route>
       <Route path="/slider" element={<Slider></Slider>}></Route>/
-    </Routes>
+    </Routes> */}
     </div>
   );
 }

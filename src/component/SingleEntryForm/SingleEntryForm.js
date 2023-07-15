@@ -22,7 +22,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
 import { json, useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
-import * as Yup from 'yup';
+import * as Yup from "yup";
 import Token from "../common/Token";
 
 const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
@@ -47,9 +47,9 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [dropdownData, setDropdownData] = useState([]);
   const [checkboxData, setCheckboxData] = useState([]);
   const [dateData, setDateData] = useState([]);
-  const [showDropDownModal,setShowDropDownModal] = useState(false);
-  const [currentDropSelected,setCurrentDropSelected] = useState('0');
-  
+  const [showDropDownModal, setShowDropDownModal] = useState(false);
+  const [currentDropSelected, setCurrentDropSelected] = useState("0");
+
   var arrayInput = [];
   var arrayDropdown = [];
   var arrayCheck = [];
@@ -58,14 +58,14 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [allDropValueData, setAllDropValueData] = useState({});
   const [allCheckValueData, setAllCheckValueData] = useState({});
   const [allDateValueData, setAllDateValueData] = useState({});
-  const[dynamicSchema,setDynamicSchema] = useState(null);
-  const[inputSchema,setInputSchema] = useState(null);
-  const[dropSchema,setDropSchema] = useState(null);
-  const[checkSchema,setCheckSchema] = useState(null);
-  const[dateSchema,setDateSchema] = useState(null);
-  const[pageSchema,setPageSchema] = useState(null);
-  const[showErrorModal,setShowErrorModal] = useState(false);
-  const[errorMessageString,setErrorMessageString] = useState("");
+  const [dynamicSchema, setDynamicSchema] = useState(null);
+  const [inputSchema, setInputSchema] = useState(null);
+  const [dropSchema, setDropSchema] = useState(null);
+  const [checkSchema, setCheckSchema] = useState(null);
+  const [dateSchema, setDateSchema] = useState(null);
+  const [pageSchema, setPageSchema] = useState(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessageString, setErrorMessageString] = useState("");
 
   const [allInputValueForFormulaData, setAllInputValueForFormulaData] =
     useState([]);
@@ -127,7 +127,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       MenuId: "1",
     },
   };
-const token =Token.token
+  const token = Token.token;
 
   useEffect(() => {
     const modelDataLabel = {
@@ -153,7 +153,7 @@ const token =Token.token
         }
       });
   }, []);
-  
+
   const insertField = (modelDataParams) => {
     fetch("http://localhost:53601/DBCommand/Insert", {
       method: "POST",
@@ -186,17 +186,14 @@ const token =Token.token
     for (let i = 0; i < inputValueDate; i++) {
       arrayDate.push([i]);
     }
-   
+
     useEffect(() => {
       setInputData(arrayInput);
       setDropdownData(arrayDropdown);
       setCheckboxData(arrayCheck);
       setDateData(arrayDate);
     }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
-    
   }
-
-  
 
   function submitForm() {
     const modelDataLabel = {
@@ -369,7 +366,7 @@ const token =Token.token
             allCheckValueData,
             allDropValueData,
             allDateValueData,
-            allData,
+            allData
           );
           fetch(
             "https://localhost:44372/api/DoubleMasterEntry/InsertListData",
@@ -380,12 +377,12 @@ const token =Token.token
                 "content-type": "application/json",
               },
               body: JSON.stringify(tableModelData),
-            },
+            }
           )
             .then((res) => res.json())
             .then((data) => {
               if (data.status == true) {
-                navigate('/single-entry-data')
+                navigate("/single-entry-data");
               } else {
                 console.log(data);
               }
@@ -425,16 +422,13 @@ const token =Token.token
       });
   };
   const handleDropdownValue = (i) => {
-    
-    console.log(document.querySelector(
-      'input[name="dropValueField"]:checked',
-    ));
+    console.log(document.querySelector('input[name="dropValueField"]:checked'));
     var radioName = 0;
-    if(document.querySelector(
-      'input[name="dropValueField"]:checked',
-    )!=null){
+    if (
+      document.querySelector('input[name="dropValueField"]:checked') != null
+    ) {
       radioName = document.querySelector(
-        'input[name="dropValueField"]:checked',
+        'input[name="dropValueField"]:checked'
       ).value;
     }
     console.log(radioName);
@@ -471,7 +465,7 @@ const token =Token.token
       temp__details[i] = dataMenuArr;
       return temp__details;
     });
-    setShowDropDownModal(false)
+    setShowDropDownModal(false);
   };
   var dropData = [
     {
@@ -491,36 +485,35 @@ const token =Token.token
     previousInputValueDate.current = inputValueDate;
   }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
 
-  function validationOutsideSchema(){
+  function validationOutsideSchema() {
     var allInputValueDataLength = 0;
     if (allInputValueData != null) {
       allInputValueDataLength = Object.keys(allInputValueData).length;
     }
-    if(allInputValueDataLength>0){
+    if (allInputValueDataLength > 0) {
       var schemaForInput = createDynamicSchema(allInputValueData);
       setInputSchema(schemaForInput);
       validateInputFields(schemaForInput);
-    }  
+    }
 
-    
     var schemaForPage = createPageSchema(pageName);
-      setPageSchema(schemaForPage);
-      validatePageNameFields(schemaForPage);
+    setPageSchema(schemaForPage);
+    validatePageNameFields(schemaForPage);
 
     var allDropValueDataLength = 0;
     if (allDropValueData != null) {
       allDropValueDataLength = Object.keys(allDropValueData).length;
     }
-    if(allDropValueDataLength>0){
+    if (allDropValueDataLength > 0) {
       var schemaForDrop = createDynamicSchemaForDrop(allDropValueData);
       setDropSchema(schemaForDrop);
       validateDropFields(schemaForDrop);
-    }   
+    }
     var allCheckValueDataLength = 0;
     if (allCheckValueData != null) {
       allCheckValueDataLength = Object.keys(allCheckValueData).length;
     }
-    if(allCheckValueDataLength>0){
+    if (allCheckValueDataLength > 0) {
       var schemaForCheck = createDynamicSchemaForCheck(allCheckValueData);
       setCheckSchema(schemaForCheck);
       validateCheckFields(schemaForCheck);
@@ -530,7 +523,7 @@ const token =Token.token
     if (allDateValueData != null) {
       allDateValueDataLength = Object.keys(allDateValueData).length;
     }
-    if(allDateValueDataLength>0){
+    if (allDateValueDataLength > 0) {
       var schemaForDate = createDynamicSchemaForDate(allDateValueData);
       setDateSchema(schemaForDate);
       validateDateFields(schemaForDate);
@@ -539,7 +532,7 @@ const token =Token.token
 
   function handleSubmit(e) {
     e.preventDefault();
-    
+
     validationOutsideSchema();
     var foundKey = 0;
     var foundEmpty = 0;
@@ -567,18 +560,16 @@ const token =Token.token
       allInputValueDataLength +
       allDateValueDataLength +
       allDropValueDataLength;
-    
+
     if (pageName != "") {
-      console.log(totalField)
+      console.log(totalField);
       if (totalField > 12) {
         setErrorMessageString("There cannot be more than 12 input");
         showErrorModal(true);
-      } 
-      else if(totalField==0){
+      } else if (totalField == 0) {
         setErrorMessageString("There need to be more than 0 input");
         setShowErrorModal(true);
-      }
-      else {
+      } else {
         var totalValueField = 0;
 
         var errorstatus = 0;
@@ -586,44 +577,59 @@ const token =Token.token
         if (allInputValueData != null) {
           allInputValueDataLength = Object.keys(allInputValueData).length;
         }
-        for(var allInputCount=0;allInputCount<allInputValueDataLength;allInputCount++) {
-            if(allInputValueData[allInputCount]==""){
-              foundEmpty = 1;
-            }
+        for (
+          var allInputCount = 0;
+          allInputCount < allInputValueDataLength;
+          allInputCount++
+        ) {
+          if (allInputValueData[allInputCount] == "") {
+            foundEmpty = 1;
+          }
         }
 
         var allCheckValueDataLength = 0;
         if (allCheckValueData != null) {
           allCheckValueDataLength = Object.keys(allCheckValueData).length;
         }
-        for(var allInputCount=0;allInputCount<allInputValueDataLength;allInputCount++) {
-            if(allInputValueData[allInputCount]==""){
-              foundEmpty = 1;
-            }
+        for (
+          var allInputCount = 0;
+          allInputCount < allInputValueDataLength;
+          allInputCount++
+        ) {
+          if (allInputValueData[allInputCount] == "") {
+            foundEmpty = 1;
+          }
         }
 
         var allDropValueDataLength = 0;
         if (allDropValueData != null) {
           allDropValueDataLength = Object.keys(allDropValueData).length;
         }
-        for(var allDropCount=0;allDropCount<allDropValueDataLength;allDropCount++) {
+        for (
+          var allDropCount = 0;
+          allDropCount < allDropValueDataLength;
+          allDropCount++
+        ) {
           console.log(allDropValueData[allDropCount]);
-            if(allDropValueData[allDropCount]==""){
-              foundEmpty = 1;
-            }
+          if (allDropValueData[allDropCount] == "") {
+            foundEmpty = 1;
+          }
         }
-        
+
         var allDateValueDataLength = 0;
         if (allDateValueData != null) {
           allDateValueDataLength = Object.keys(allDateValueData).length;
         }
-        for(var allDateCount=0;allDateCount<allDateValueDataLength;allDateCount++) {
-            if(allDateValueData[allDateCount]==""){
-              foundEmpty = 1;
-            }
+        for (
+          var allDateCount = 0;
+          allDateCount < allDateValueDataLength;
+          allDateCount++
+        ) {
+          if (allDateValueData[allDateCount] == "") {
+            foundEmpty = 1;
+          }
         }
         if (foundEmpty == 1) {
-          
         } else {
           if (inputValue > 2) {
             for (
@@ -633,7 +639,7 @@ const token =Token.token
             ) {
               if (
                 keyValue.some(
-                  (item) => item.key === allInputValueData[countKeyValue],
+                  (item) => item.key === allInputValueData[countKeyValue]
                 )
               ) {
                 foundKey = 1;
@@ -650,22 +656,21 @@ const token =Token.token
         }
       }
     } else {
-      
     }
   }
   const createPageSchema = (fields) => {
     const schemaFields = {};
-    
+
     // schemaFields =  Yup.string().required();
     // console.log(schemaFields);
     return Yup.string().required();
   };
   const createDynamicSchema = (fields) => {
     const schemaFields = {};
-    
+
     var countFieldLength = Object.keys(fields).length;
-    for(var countField = 0;countField < countFieldLength;countField++){
-      schemaFields[countField] =  Yup.string().required();
+    for (var countField = 0; countField < countFieldLength; countField++) {
+      schemaFields[countField] = Yup.string().required();
     }
     console.log(schemaFields);
     return Yup.object().shape(schemaFields);
@@ -674,8 +679,8 @@ const token =Token.token
   const createDynamicSchemaForDrop = (fields) => {
     const schemaFields = {};
     var countFieldLength = Object.keys(fields).length;
-    for(var countField = 0;countField < countFieldLength;countField++){
-      schemaFields[countField] =  Yup.string().required();
+    for (var countField = 0; countField < countFieldLength; countField++) {
+      schemaFields[countField] = Yup.string().required();
     }
     console.log(schemaFields);
     return Yup.object().shape(schemaFields);
@@ -684,8 +689,8 @@ const token =Token.token
   const createDynamicSchemaForCheck = (fields) => {
     const schemaFields = {};
     var countFieldLength = Object.keys(fields).length;
-    for(var countField = 0;countField < countFieldLength;countField++){
-      schemaFields[countField] =  Yup.string().required();
+    for (var countField = 0; countField < countFieldLength; countField++) {
+      schemaFields[countField] = Yup.string().required();
     }
     return Yup.object().shape(schemaFields);
   };
@@ -693,13 +698,13 @@ const token =Token.token
   const createDynamicSchemaForDate = (fields) => {
     const schemaFields = {};
     var countFieldLength = Object.keys(fields).length;
-    for(var countField = 0;countField < countFieldLength;countField++){
-      schemaFields[countField] =  Yup.string().required();
+    for (var countField = 0; countField < countFieldLength; countField++) {
+      schemaFields[countField] = Yup.string().required();
     }
     console.log(schemaFields);
     return Yup.object().shape(schemaFields);
   };
-  
+
   // const validateField = async (field,index) => {
   //   console.log(field);
   //   try {
@@ -722,15 +727,14 @@ const token =Token.token
   const validatePageNameFields = async (schema) => {
     try {
       await schema.validate(pageName, { abortEarly: false });
-      
+
       // All fields passed validation
       setErrorsPage([]);
     } catch (validationErrors) {
       // Some fields failed validation
-      
-      setErrorsPage(        
+
+      setErrorsPage(
         validationErrors.inner.map((err) => ({
-          
           index: 0,
           message: err.message,
         }))
@@ -741,16 +745,15 @@ const token =Token.token
     try {
       console.log(schema);
       await schema.validate(allInputValueData, { abortEarly: false });
-      
+
       // All fields passed validation
       setInputErrors([]);
     } catch (validationErrors) {
       // Some fields failed validation
-      console.log(validationErrors)
-      setInputErrors(        
+      console.log(validationErrors);
+      setInputErrors(
         validationErrors.inner.map((err) => ({
-          
-          index: err.path!='' ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path, 9) : -1,
           message: err.message,
         }))
       );
@@ -764,14 +767,11 @@ const token =Token.token
 
       // All fields passed validation
       setErrorsDropDown([]);
-      
     } catch (validationErrors) {
       console.log(validationErrors);
       setErrorsDropDown(
-        
         validationErrors.inner.map((err) => ({
-          
-          index: err.path!='' ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path, 9) : -1,
           message: err.message,
         }))
       );
@@ -780,18 +780,16 @@ const token =Token.token
 
   const validateCheckFields = async (schema) => {
     try {
-      
       await schema.validate(allCheckValueData, { abortEarly: false });
 
       // All fields passed validation
       setErrorsCheck([]);
     } catch (validationErrors) {
       // Some fields failed validation
-      console.log(validationErrors)
+      console.log(validationErrors);
       setErrorsCheck(
         validationErrors.inner.map((err) => ({
-          
-          index: err.path!='' ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path, 9) : -1,
           message: err.message,
         }))
       );
@@ -800,31 +798,37 @@ const token =Token.token
 
   const validateDateFields = async (schema) => {
     try {
-      
       await schema.validate(allDateValueData, { abortEarly: false });
 
       // All fields passed validation
       setErrorsDate([]);
     } catch (validationErrors) {
       // Some fields failed validation
-      console.log(validationErrors)
+      console.log(validationErrors);
       setErrorsDate(
         validationErrors.inner.map((err) => ({
-          
-          index: err.path!='' ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path, 9) : -1,
           message: err.message,
         }))
       );
     }
   };
-  
-  
-   
+
   return (
-    <form name="myForms" noValidate class="bg-white shadow-lg rounded-md p-5 md:p-10 flex flex-col w-11/12 max-w-lg"
-     onSubmit={(e) => handleSubmit(e)} >
+    <form
+      name="myForms"
+      noValidate
+      class="bg-white shadow-lg rounded-md p-5 md:p-10 flex flex-col w-11/12 max-w-lg"
+      onSubmit={(e) => handleSubmit(e)}
+    >
       <Grid>
-        {openModal ? (
+        <div>
+          <div className="header">
+            {/*Content before waves*/}
+            <div className="inner-header flex p-5">
+              {/*Just the logo.. Don't mind this*/}
+             
+              {openModal ? (
           <Grid>
             <Grid className="single-entry-form">
               <Grid>
@@ -841,12 +845,14 @@ const token =Token.token
                   onChange={(e) => {
                     setPageName(e.target.value);
                   }}
-                />    
-                    {errorsPage
-                      .filter((err) => err.index === 0)
-                      .map((err, i) => (
-                        <div style={{color:"#FF0000"}} key={i}>This Field is required</div>
-                      ))}        
+                />
+                {errorsPage
+                  .filter((err) => err.index === 0)
+                  .map((err, i) => (
+                    <div style={{ color: "#FF0000" }} key={i}>
+                      This Field is required
+                    </div>
+                  ))}
               </Grid>
             </Grid>
 
@@ -882,15 +888,18 @@ const token =Token.token
                     }
                     setAllInputValueData((prev) => {
                       const temp__details = {};
-                      for(var inputLength = 0;inputLength < targetValue;inputLength++) {
-                          temp__details[inputLength] = "";
+                      for (
+                        var inputLength = 0;
+                        inputLength < targetValue;
+                        inputLength++
+                      ) {
+                        temp__details[inputLength] = "";
                       }
                       return temp__details;
                     });
                     setInputValue(targetValue);
                   }}
                 />
-                
               </Grid>
               <Grid style={{ marginLeft: "5px" }}>
                 <label htmlFor="" className="text-style">
@@ -920,12 +929,16 @@ const token =Token.token
                     } else {
                       targetValue = parseInt(e.target.value);
                     }
-                    
+
                     setAllDropValueData((prev) => {
                       const temp__details = {};
                       console.log(temp__details);
-                      for(var inputLength = 0;inputLength < targetValue;inputLength++) {
-                          temp__details[inputLength] = "";
+                      for (
+                        var inputLength = 0;
+                        inputLength < targetValue;
+                        inputLength++
+                      ) {
+                        temp__details[inputLength] = "";
                       }
                       return temp__details;
                     });
@@ -964,8 +977,12 @@ const token =Token.token
                     setAllCheckValueData((prev) => {
                       const temp__details = {};
                       console.log(temp__details);
-                      for(var inputLength = 0;inputLength < targetValue;inputLength++) {
-                          temp__details[inputLength] = "";
+                      for (
+                        var inputLength = 0;
+                        inputLength < targetValue;
+                        inputLength++
+                      ) {
+                        temp__details[inputLength] = "";
                       }
                       return temp__details;
                     });
@@ -1003,8 +1020,12 @@ const token =Token.token
                     }
                     setAllCheckValueData((prev) => {
                       const temp__details = {};
-                      for(var inputLength = 0;inputLength < targetValue;inputLength++) {
-                          temp__details[inputLength] = "";
+                      for (
+                        var inputLength = 0;
+                        inputLength < targetValue;
+                        inputLength++
+                      ) {
+                        temp__details[inputLength] = "";
                       }
                       return temp__details;
                     });
@@ -1031,14 +1052,13 @@ const token =Token.token
                   var labelName = "labelName";
                   var labelType = "labelType";
                   return (
-                    <div style={{ marginLeft: "180px" }}>
+                    <div style={{ marginLeft: "20px" }}>
                       <input
                         type="text"
                         name={`input${name}`}
                         id={name}
                         className="getInputValue mt-2"
                         required
-                        
                         onChange={(e) => {
                           // setAllData(e.target.value, labelType, labelName);
                           // setAllData({
@@ -1072,11 +1092,12 @@ const token =Token.token
                         }}
                       />
                       {errorsInput
-                      .filter((err) => err.index === name)
-                      .map((err, i) => (
-                        <div style={{color:"#FF0000"}} key={i}>This Field is required</div>
-                      ))}
-                      
+                        .filter((err) => err.index === name)
+                        .map((err, i) => (
+                          <div style={{ color: "#FF0000" }} key={i}>
+                            This Field is required
+                          </div>
+                        ))}
                     </div>
                   );
                 })}
@@ -1087,8 +1108,9 @@ const token =Token.token
                   var labelType = "labelType";
                   return (
                     <div className="ps-5 d-flex align-items-center ">
+                      <div>
                       <Select
-                        class="form-select"
+                        class="form-select w-100"
                         className="w-[100%] mt-2"
                         name={`drop${name}`}
                         aria-label="Default select example"
@@ -1097,15 +1119,18 @@ const token =Token.token
                         onChange={(e) => {}}
                         required
                       ></Select>
-                       {errorsDropDown
-                      .filter((err) => err.index === name)
-                      .map((err, i) => (
-                        <div style={{color:"#FF0000"}} key={i}>This Field is required</div>
-                      ))}
+                      {errorsDropDown
+                        .filter((err) => err.index === name)
+                        .map((err, i) => (
+                          <div style={{ color: "#FF0000" }} key={i}>
+                            This Field is required
+                          </div>
+                        ))}
+                      </div>
                       <div className="ms-2">
                         <FontAwesomeIcon
                           icon={faPlusCircle}
-                          className="text-success"
+                          className="text-white"
                           data-toggle="modal"
                           data-target={`#exampleModal${name}`}
                           data-id={name}
@@ -1114,7 +1139,7 @@ const token =Token.token
                             setCurrentDropSelected(name);
                             setShowDropDownModal(true);
                           }}
-                        ></FontAwesomeIcon>                            
+                        ></FontAwesomeIcon>
                       </div>
                     </div>
                   );
@@ -1123,7 +1148,7 @@ const token =Token.token
               <Grid>
                 {checkboxData.map((item, name) => {
                   return (
-                    <div className="ps-5">
+                    <div className="ps-5 ms-4">
                       <input
                         type="text"
                         name=""
@@ -1141,10 +1166,12 @@ const token =Token.token
                         }}
                       />
                       {errorsCheck
-                      .filter((err) => err.index === name)
-                      .map((err, i) => (
-                        <div style={{color:"#FF0000"}} key={i}>This Field is required</div>
-                      ))}
+                        .filter((err) => err.index === name)
+                        .map((err, i) => (
+                          <div style={{ color: "#FF0000" }} key={i}>
+                            This Field is required
+                          </div>
+                        ))}
                     </div>
                   );
                 })}
@@ -1170,10 +1197,12 @@ const token =Token.token
                         }}
                       />
                       {errorsDate
-                      .filter((err) => err.index === name)
-                      .map((err, i) => (
-                        <div style={{color:"#FF0000"}} key={i}>This Field is required</div>
-                      ))}
+                        .filter((err) => err.index === name)
+                        .map((err, i) => (
+                          <div style={{ color: "#FF0000" }} key={i}>
+                            This Field is required
+                          </div>
+                        ))}
                     </div>
                   );
                 })}
@@ -1183,6 +1212,56 @@ const token =Token.token
         ) : (
           ""
         )}
+            </div>
+            {/*Waves Container*/}
+            <div>
+              <svg
+                className="waves"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlnsXlink="http://www.w3.org/1999/xlink"
+                viewBox="0 24 150 28"
+                preserveAspectRatio="none"
+                shapeRendering="auto"
+              >
+                <defs>
+                  <path
+                    id="gentle-wave"
+                    d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+                  />
+                </defs>
+                <g className="parallax">
+                  <use
+                    xlinkHref="#gentle-wave"
+                    x={48}
+                    y={0}
+                    fill="rgba(255,255,255,0.7"
+                  />
+                  <use
+                    xlinkHref="#gentle-wave"
+                    x={48}
+                    y={3}
+                    fill="rgba(255,255,255,0.5)"
+                  />
+                  <use
+                    xlinkHref="#gentle-wave"
+                    x={48}
+                    y={5}
+                    fill="rgba(255,255,255,0.3)"
+                  />
+                  <use xlinkHref="#gentle-wave" x={48} y={7} fill="#fff" />
+                </g>
+              </svg>
+            </div>
+            {/*Waves end*/}
+          </div>
+          {/*Header ends*/}
+          {/*Content starts*/}
+          <div className="content flex">
+            <p>By.SHIMA | Free to use </p>
+          </div>
+        </div>
+
+        
 
         {/* {showCalculactionModal ? (
           <div
@@ -1465,73 +1544,67 @@ const token =Token.token
           </Modal.Footer>
         </Modal>
         <Modal
-                                show={showDropDownModal}
-                                onHide={handleDropClose}
-                                backdrop="true"
-                                keyboard={false}
-                              >
-                                <Modal.Header closeButton>
-                                  <Modal.Title>Select Menu</Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body>
-                                {modalSpecificData
-                                  .filter(
-                                    (person) =>
-                                      person.MenuName === "Master Entry",
-                                  )
-                                  .map((filteredPerson) => (
-                                    <div class="input-group">
-                                      <div class="input-group-prepend">
-                                        <div class="input-group-text">
-                                          <input
-                                            type="radio"
-                                            value={filteredPerson.SubMenuName}
-                                            name="dropValueField"
-                                            aria-label="Radio button for following text input"
-                                            onClick={(e) => {
-                                              
-                                            }}
-                                          />
-                                        </div>
-                                      </div>
-                                      <h4 className="ms-2">
-                                        {filteredPerson.SubMenuName}
-                                      </h4>
-                                    </div>
-                                  ))}
+          show={showDropDownModal}
+          onHide={handleDropClose}
+          backdrop="true"
+          keyboard={false}
+        >
+          <Modal.Header>
+            <Modal.Title className="text-teal">Select Menu</Modal.Title>
+            <button type="button" class="btn-close" aria-label="Close" onClick={handleDropClose}>X</button>
+          </Modal.Header>
+          
+          <Modal.Body>
+            {modalSpecificData
+              .filter((person) => person.MenuName === "Master Entry")
+              .map((filteredPerson) => (
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">
+                      <input
+                        type="radio"
+                        value={filteredPerson.SubMenuName}
+                        name="dropValueField"
+                        aria-label="Radio button for following text input"
+                        onClick={(e) => {}}
+                      />
+                    </div>
+                  </div>
+                  <h4 className="text-purple ms-2 fs-5">{filteredPerson.SubMenuName}</h4>
+                </div>
+              ))}
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+            style={{backgroundColor:'#0A9DBF'}}
+              type="button"
+              class="btn btn-primary"
+              data-dismiss="modal"
+              aria-label="Close"
+              onClick={(e) => {
+                handleDropdownValue(currentDropSelected);
+              }}
+            >
+              Save changes
+            </button>
+          </Modal.Footer>
+        </Modal>
 
-                               </Modal.Body>
-                               <Modal.Footer>
-                                  <button
-                                    type="button"
-                                     class="btn btn-primary"
-                                    data-dismiss="modal"
-                                    aria-label="Close"
-                                    onClick={(e) => {
-                                      handleDropdownValue(currentDropSelected);
-                                    }}
-                                  >
-                                    Save changes
-                                  </button>
-                                
-                                </Modal.Footer>
-                              </Modal>
-
-
-                              <Modal
-                                show={showErrorModal}
-                                onHide={handleErrorClose}
-                                backdrop="true"
-                                keyboard={false}
-                              >
-                                <Modal.Header closeButton>
-                                  <Modal.Title><h5>Warning!</h5></Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body>
-                                <label>{errorMessageString}</label>
-
-                               </Modal.Body>
-                              </Modal>
+        <Modal
+          show={showErrorModal}
+          onHide={handleErrorClose}
+          backdrop="true"
+          keyboard={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <h5>Warning!</h5>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <label>{errorMessageString}</label>
+          </Modal.Body>
+        </Modal>
       </Grid>
     </form>
   );

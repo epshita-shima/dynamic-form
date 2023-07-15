@@ -63,7 +63,6 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
               : `${currentColor.hex}`,
         }}
       >
-        {/* Brand Logo */}
         <a
           className={`brand-link`}
           style={{
@@ -87,13 +86,10 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
             ></SidebarColorButton>
           }
         </a>
-        {/* <a className="brand-link">
-        {}
-        </a> */}
+       
 
         {/* Sidebar */}
         <div className="sidebar">
-          {/* Sidebar user panel (optional) */}
           {showHeader ? (
             " "
           ) : (
@@ -126,19 +122,9 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
               data-accordion="false"
             >
               <li className="nav-item menu-open">
-                <a
-                  href="#"
-                  className="nav-link"
-                  style={{ backgroundColor: "#FFC300" }}
-                >
-                  <i className="nav-icon fas fa-tachometer-alt" />
-                  <p>
-                    Dashboard
-                    <i className="right fas fa-angle-left" />
-                  </p>
-                </a>
                 <ul className="nav nav-treeview">
-                  {parentMenu.map((item, i) => {
+                  {parentMenu.map((items, i) => {
+                    console.log(items)
                     return (
                       <li className="nav-item" key={i}>
                         <a
@@ -152,12 +138,12 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                             color: sidebarText
                               ? `${getSidebarTextColor}`
                               : `${fontColor.hex}`,
-                            backgroundColor: "#FFD966",
+                            backgroundColor: "#FFC300",
                           }}
                         >
                           <i className="far fa-circle nav-icon" />
                           <p className="fw-bold">
-                            {item.MenuName}
+                            {items.MenuName}
                             <span>
                               <i className="fas fa-angle-down ml-2" />
                             </span>
@@ -168,6 +154,8 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                           id={"collapseExample" + i}
                         >
                           {thirdArray.map((item, i) => {
+                            console.log(item)
+                        if(items.MenuName==item.MenuName)
                             return (
                               <li className="nav-item ">
                                 <a
@@ -175,8 +163,9 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                                   className="nav-link"
                                   style={{
                                     backgroundColor: "#FFD966",
-                                    color: "#778686",
+                                    color: 'teal',
                                     fontWeight: "600",
+                                    fontSize:'15px'
                                   }}
                                 >
                                   <i className="far fa-circle nav-icon" />
@@ -193,9 +182,7 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
               </li>
             </ul>
           </nav>
-          {/* /.sidebar-menu */}
         </div>
-        {/* /.sidebar */}
       </aside>
     </div>
   );

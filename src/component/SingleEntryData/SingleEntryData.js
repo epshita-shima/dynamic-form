@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate, faXmark } from '@fortawesome/free-solid-svg-icons';
 import swal from "sweetalert";
 import Swal from "sweetalert2";
+import Token from '../common/Token';
 const SingleEntryData = () => {
     const [openModal, setOpenModal] = useState(true);
     const [labelPosition, setLabelPosition] = useState([]);
@@ -60,8 +61,7 @@ useEffect(() => {
           MenuId: "1",
         },
       };
-      const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiI5NzliYWMxMC05NDljLTQyZWQtOWY3MC1iMTE1NDVmN2NlYWIiLCJuYmYiOjE2ODg5NjA4NTYsImV4cCI6MTY4OTAwNDA1NiwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.uy3pxgL-G2Pbm2KM9_dm00l6y-Spy61P2TzrxBlbvc0";
+      const token =Token.token
     const handleLabelField = () => {
         
         fetch(`https://localhost:44372/api/GetData/GetDataById`, {
@@ -237,7 +237,7 @@ useEffect(() => {
         if (item.ColumnType == "textbox") {
           return (
             <td
-              class={`dropTh${countOfInput} border`}
+              className={`dropTh${countOfInput} border`}
               draggable="false"
               // id={`item${randnum}${countOfInput}${i}`}
             >
@@ -285,7 +285,7 @@ useEffect(() => {
                 />
               </div>
               <div
-                class="droptarget1 border"
+                className="droptarget1 border"
                 style={{ display: "none" }}
                 draggable="false"
               >
@@ -297,7 +297,7 @@ useEffect(() => {
         if (item.ColumnType == "dropdown") {
           return (
             <td
-              class={`dropTh${countOfInput} border`}
+              className={`dropTh${countOfInput} border`}
               draggable="false" //change dragable true to work again
               // id={`item${randnum}${countOfInput}${i}`}
             >
@@ -306,8 +306,8 @@ useEffect(() => {
                 <Select
                   id={`${i}drop`}
                   name={`${i}drop`}
-                  class="form-select"
-                  className="w-[100%] getValue"
+                  className="form-select"
+                  class="w-[100%] getValue"
                   aria-label="Default select example"
                   // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
                   options={selectedOption[countOfInput]}
@@ -328,7 +328,7 @@ useEffect(() => {
                 ></Select>
               </div>
               <div
-                class="droptarget1 border" // remove 1 for dragable work
+                className="droptarget1 border" // remove 1 for dragable work
                 style={{ display: "none" }}
                 draggable="false"
               >
@@ -340,7 +340,7 @@ useEffect(() => {
         if (item.ColumnType == "checkbox") {
           return (
             <td
-              class={`dropTh${countOfInput} border`}
+              className={`dropTh${countOfInput} border`}
               draggable="false" //change dragable true to work again
               // id={`item${randnum}${countOfInput}${i}`}
             >
@@ -382,7 +382,7 @@ useEffect(() => {
                 </FormGroup>
               </div>
               <div
-                class="droptarget1 border" // remove 1 for dragable work
+                className="droptarget1 border" // remove 1 for dragable work
                 style={{ display: "none" }}
                 draggable="false"
               >
@@ -394,7 +394,7 @@ useEffect(() => {
         if (item.ColumnType == "radiobutton") {
           return (
             <td
-              class={`dropTh${countOfInput} border`}
+              className={`dropTh${countOfInput} border`}
               draggable="false"
               // id={`item${randnum}${countOfInput}${i}`}
             >
@@ -403,9 +403,9 @@ useEffect(() => {
                 className="d-flex justify-content-between align-items-center"
               >
                 {/* {replaceFunction("input", countOfInput)} */}
-                <div class="form-check">
+                <div className="form-check">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="radio"
                     name={`radio`}
                     id={`radio${i}`}
@@ -441,13 +441,13 @@ useEffect(() => {
                       }
                     }}
                   />
-                  <label class="form-check-label" for={`radio${i}`}>
+                  <label className="form-check-label" for={`radio${i}`}>
                     Radio
                   </label>
                 </div>
               </div>
               <div
-                class="droptarget1 border"
+                className="droptarget1 border"
                 style={{ display: "none" }}
                 draggable="false"
               >
@@ -459,7 +459,7 @@ useEffect(() => {
         if (item.ColumnType == "datetime") {
           return (
             <td
-              class={`dropTh${countOfInput} border`}
+              className={`dropTh${countOfInput} border`}
               draggable="false" //change dragable true to work again
               // id={`item${randnum}${countOfInput}${i}`}
             >
@@ -511,7 +511,7 @@ useEffect(() => {
                 />
               </div>
               <div
-                class="droptarget1 border" // remove 1 for dragable work
+                className="droptarget1 border" // remove 1 for dragable work
                 style={{ display: "none" }}
                 draggable="false"
               >
@@ -1169,7 +1169,7 @@ useEffect(() => {
                     render={(arrayHelpers) => {
                       return (
                         <>
-                          <table class="table  mt-4">
+                          <table className="table  mt-4">
                             <thead className="border ">
                               <tr>
                                 {labelData.map((item, i) => {
@@ -1180,7 +1180,7 @@ useEffect(() => {
                                       return (
                                         <th
                                           scope="col"
-                                          class={`dropTh${index} border`}
+                                          className={`dropTh${index} border`}
                                           draggable="true"
                                         >
                                           <div className="d-flex justify-content-between align-items-center">
@@ -1279,7 +1279,7 @@ useEffect(() => {
                                             )}
 
                                             <div
-                                              class="modal fade"
+                                              className="modal fade"
                                               id={`exampleModal${index}`}
                                               tabindex="-1"
                                               role="dialog"
@@ -1288,13 +1288,13 @@ useEffect(() => {
                                             >
                                               {/* {openModal ? ( */}
                                               <div
-                                                class="modal-dialog"
+                                                className="modal-dialog"
                                                 role="document"
                                               >
-                                                <div class="modal-content">
-                                                  <div class="modal-header">
+                                                <div className="modal-content">
+                                                  <div className="modal-header">
                                                     <h5
-                                                      class="modal-title"
+                                                      className="modal-title"
                                                       id={`exampleModal${index}Label`}
                                                     >
                                                       What you like to replace
@@ -1311,10 +1311,10 @@ useEffect(() => {
                                                       </span>
                                                     </button>
                                                   </div>
-                                                  <div class="modal-body">
-                                                    <div class="input-group">
-                                                      <div class="input-group-prepend">
-                                                        <div class="input-group-text">
+                                                  <div className="modal-body">
+                                                    <div className="input-group">
+                                                      <div className="input-group-prepend">
+                                                        <div className="input-group-text">
                                                           <input
                                                             type="radio"
                                                             value="textbox"
@@ -1327,13 +1327,13 @@ useEffect(() => {
                                                         id="inputField"
                                                         type="text"
                                                         placeholder="textbox"
-                                                        class="form-control"
+                                                        className="form-control"
                                                         aria-label="Text input with radio button"
                                                       />
                                                     </div>
-                                                    <div class="input-group  mt-2">
-                                                      <div class="input-group-prepend">
-                                                        <div class="input-group-text">
+                                                    <div className="input-group  mt-2">
+                                                      <div className="input-group-prepend">
+                                                        <div className="input-group-text">
                                                           <input
                                                             type="radio"
                                                             name="replaceField"
@@ -1352,13 +1352,13 @@ useEffect(() => {
                                                       <div className="w-75">
                                                         <div draggable="false">
                                                           <Select
-                                                            class="form-select"
-                                                            className="w-[100%]"
+                                                            className="form-select"
+                                                            class="w-[100%]"
                                                             aria-label="Default select example"
                                                           ></Select>
                                                         </div>
                                                         <div
-                                                          class="droptarget border"
+                                                          className="droptarget border"
                                                           style={{
                                                             display: "none",
                                                           }}
@@ -1368,9 +1368,9 @@ useEffect(() => {
                                                         </div>
                                                       </div>
                                                     </div>
-                                                    <div class="input-group mt-2">
-                                                      <div class="input-group-prepend">
-                                                        <div class="input-group-text">
+                                                    <div className="input-group mt-2">
+                                                      <div className="input-group-prepend">
+                                                        <div className="input-group-text">
                                                           <input
                                                             type="radio"
                                                             value="checkbox"
@@ -1395,9 +1395,9 @@ useEffect(() => {
                                                         />
                                                       </FormGroup>
                                                     </div>
-                                                    <div class="input-group mt-2">
-                                                      <div class="input-group-prepend">
-                                                        <div class="input-group-text">
+                                                    <div className="input-group mt-2">
+                                                      <div className="input-group-prepend">
+                                                        <div className="input-group-text">
                                                           <input
                                                             type="radio"
                                                             value="radiobutton"
@@ -1410,16 +1410,16 @@ useEffect(() => {
                                                         type="text"
                                                         name={`radio`}
                                                         placeholder="Radio"
-                                                        class="form-control"
+                                                        className="form-control"
                                                         style={{
                                                           marginLeft: "3px",
                                                         }}
                                                         onChange={(e) => {}}
                                                       />
                                                     </div>
-                                                    <div class="input-group mt-2">
-                                                      <div class="input-group-prepend">
-                                                        <div class="input-group-text">
+                                                    <div className="input-group mt-2">
+                                                      <div className="input-group-prepend">
+                                                        <div className="input-group-text">
                                                           <input
                                                             type="radio"
                                                             value="datetime"
@@ -1436,10 +1436,10 @@ useEffect(() => {
                                                       />
                                                     </div>
                                                   </div>
-                                                  <div class="modal-footer">
+                                                  <div className="modal-footer">
                                                     <button
                                                       type="button"
-                                                      class="btn btn-primary close"
+                                                      className="btn btn-primary close"
                                                       data-dismiss="modal"
                                                       aria-label="Close"
                                                       onClick={(e) => {
@@ -1462,7 +1462,7 @@ useEffect(() => {
                                           </div>
 
                                           <div
-                                            class="droptargettd border"
+                                            className="droptargettd border"
                                             style={{ display: "none" }}
                                             draggable="false"
                                           >
@@ -1489,7 +1489,7 @@ useEffect(() => {
                                         index
                                       );
                                     })}
-                                    <td class="border">
+                                    <td className="border">
                                       <Button
                                         id={`delete${index}`}
                                         variant="contained"
@@ -1518,25 +1518,25 @@ useEffect(() => {
                                       </Button>
                                     </td>
                                     <div
-                                      class="modal fade"
+                                      className="modal fade"
                                       id="exampleModal"
                                       tabindex="-1"
                                       role="dialog"
                                       aria-labelledby="exampleModalLabel"
                                       aria-hidden="true"
                                     >
-                                      <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
+                                      <div className="modal-dialog" role="document">
+                                        <div className="modal-content">
+                                          <div className="modal-header">
                                             <h5
-                                              class="modal-title"
+                                              className="modal-title"
                                               id="exampleModalLabel"
                                             >
                                               Modal title
                                             </h5>
                                             <button
                                               type="button"
-                                              class="close"
+                                              className="close"
                                               data-dismiss="modal"
                                               aria-label="Close"
                                               onClick={() => {
@@ -1548,7 +1548,7 @@ useEffect(() => {
                                               </span>
                                             </button>
                                           </div>
-                                          <div class="modal-body">
+                                          <div className="modal-body">
                                             {modalSpecificData
                                               .filter(
                                                 (person) =>
@@ -1556,9 +1556,9 @@ useEffect(() => {
                                                   "Master Entry"
                                               )
                                               .map((filteredPerson) => (
-                                                <div class="input-group">
-                                                  <div class="input-group-prepend">
-                                                    <div class="input-group-text">
+                                                <div className="input-group">
+                                                  <div className="input-group-prepend">
+                                                    <div className="input-group-text">
                                                       <input
                                                         type="radio"
                                                         value={
@@ -1576,10 +1576,10 @@ useEffect(() => {
                                                 </div>
                                               ))}
                                           </div>
-                                          <div class="modal-footer">
+                                          <div className="modal-footer">
                                             <button
                                               type="button"
-                                              class="btn btn-secondary"
+                                              className="btn btn-secondary"
                                               data-dismiss="modal"
                                               onClick={() => {
                                                 setOpenModal(true);
@@ -1589,7 +1589,7 @@ useEffect(() => {
                                             </button>
                                             <button
                                               type="button"
-                                              class="btn btn-primary"
+                                              className="btn btn-primary"
                                               data-dismiss="modal"
                                               onClick={() => {
                                                 handleDropdownValue(

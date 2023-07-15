@@ -21,8 +21,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
 import { json, useNavigate } from "react-router-dom";
+
+import Token from "../common/Token";
+
 import Modal from "react-bootstrap/Modal";
 import * as Yup from 'yup';
+
 
 const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [array, setArray] = useState([]);
@@ -126,9 +130,13 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       MenuId: "1",
     },
   };
+
+  const token =Token.token
+
   const token =
 
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiI5NzliYWMxMC05NDljLTQyZWQtOWY3MC1iMTE1NDVmN2NlYWIiLCJuYmYiOjE2ODg5NjA4NTYsImV4cCI6MTY4OTAwNDA1NiwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.uy3pxgL-G2Pbm2KM9_dm00l6y-Spy61P2TzrxBlbvc0";
+
 
 
 
@@ -674,6 +682,505 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     return Yup.object().shape(schemaFields);
   };
 
+
+  //   if (array.length == 0) {
+  //     for (let i = 0; i < countLebel; i++) {
+  //       var a = (
+  //         <th scope="col" className={`dropTh${i} border`} draggable="true">
+  //           <div className="d-flex justify-content-between align-items-center">
+  //             <TextField
+  //               id={`box${i}`}
+  //               name="L"
+  //               label={`${allData[i]}`}
+  //               variant="standard"
+  //               disabled
+  //               InputLabelProps={{
+  //                 className: "textField_label",
+  //               }}
+  //               className={`box${i}`}
+  //               style={{ marginLeft: "15px" }}
+  //               onChange={(e) => {
+  //                 handleGroupInput(e, i);
+  //               }}
+  //             />
+
+  //             <FontAwesomeIcon
+  //               icon={faArrowsRotate}
+  //               data-toggle="modal"
+  //               data-target={`#exampleModal${i}`}
+  //             ></FontAwesomeIcon>
+  //             <div
+  //               className="modal fade"
+  //               id={`exampleModal${i}`}
+  //               tabindex="-1"
+  //               role="dialog"
+  //               aria-labelledby={`exampleModal${i}Label`}
+  //               // aria-hidden="true"
+  //             >
+  //               <div className="modal-dialog" role="document">
+  //                 <div className="modal-content">
+  //                   <div className="modal-header">
+  //                     <h5 className="modal-title" id={`exampleModal${i}Label`}>
+  //                       What you like to replace this field with?
+  //                     </h5>
+  //                     <button type="button" data-dismiss="modal">
+  //                       <span
+  //                       //  aria-hidden="true"
+  //                       >
+  //                         &times;
+  //                       </span>
+  //                     </button>
+  //                   </div>
+  //                   <div className="modal-body">
+  //                     <div className="input-group">
+  //                       <div className="input-group-prepend">
+  //                         <div className="input-group-text">
+  //                           <input
+  //                             type="radio"
+  //                             value="input"
+  //                             name="replaceField"
+  //                             aria-label="Radio button for following text input"
+  //                           />
+  //                         </div>
+  //                       </div>
+  //                       <input
+  //                         id="inputField"
+  //                         type="text"
+  //                         className="form-control"
+  //                         aria-label="Text input with radio button"
+  //                       />
+  //                     </div>
+  //                     <div className="input-group  mt-2">
+  //                       <div className="input-group-prepend">
+  //                         <div className="input-group-text">
+  //                           <input
+  //                             type="radio"
+  //                             name="replaceField"
+  //                             value="dropdown"
+  //                             aria-label="Default select example"
+  //                           />
+  //                         </div>
+  //                       </div>
+  //                       <div className="w-75">
+  //                         <div draggable="false">
+  //                           <Select
+  //                             id={`select${countOfInput}`}
+  //                             className="form-select"
+  //                             className="w-[100%]"
+  //                             aria-label="Default select example"
+  //                             placeholder={test(`box${countOfInput}`)}
+  //                             required
+  //                             name={`box${countOfInput}`}
+  //                           ></Select>
+  //                         </div>
+  //                         <div
+  //                           className="droptarget border"
+  //                           style={{ display: "none" }}
+  //                           draggable="false"
+  //                         >
+  //                           Drop
+  //                         </div>
+  //                       </div>
+  //                     </div>
+  //                     <div className="input-group mt-2">
+  //                       <div className="input-group-prepend">
+  //                         <div className="input-group-text">
+  //                           <input
+  //                             type="radio"
+  //                             value="checkbox"
+  //                             name="replaceField"
+  //                             aria-label="Radio button for following text input"
+  //                           />
+  //                         </div>
+  //                       </div>
+  //                       <FormGroup>
+  //                         <FormControlLabel
+  //                           id="checkboxField"
+  //                           name={`item.${i}.check`}
+  //                           style={{ marginTop: "3px" }}
+  //                           control={<Checkbox defaultChecked />}
+  //                           label="Label"
+  //                         />
+  //                       </FormGroup>
+  //                     </div>
+  //                     <div className="input-group mt-2">
+  //                       <div className="input-group-prepend">
+  //                         <div className="input-group-text">
+  //                           <input
+  //                             type="radio"
+  //                             value="date"
+  //                             name="replaceField"
+  //                             aria-label="Radio button for following text input"
+  //                           />
+  //                         </div>
+  //                       </div>
+  //                       <TextField
+  //                         id="date"
+  //                         type="date"
+  //                         defaultValue={startDate}
+  //                         size="small"
+  //                       />
+  //                     </div>
+  //                   </div>
+  //                   <div className="modal-footer">
+  //                     <button
+  //                       type="button"
+  //                       className="btn btn-primary close"
+  //                       data-dismiss="modal"
+  //                       aria-label="Close"
+  //                       onClick={(e) => {
+  //                         replaceFieldColumn(e, i, randnum);
+  //                       }}
+  //                     >
+  //                       Save changes
+  //                     </button>
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //           <div
+  //             className="droptargettd border"
+  //             style={{ display: "none" }}
+  //             draggable="false"
+  //           >
+  //             Drop
+  //           </div>
+  //         </th>
+  //       );
+  //       testArray.push(a);
+  //     }
+  //   }
+
+  //   if (array.length < 1) {
+  //     for (let i = 0; i < number; i++) {
+  //       testArr.push([
+  //         <td
+  //           className={`dropTh${countOfInput} border`}
+  //           draggable="false"
+  //           id={`item${randnum}${countOfInput}${i}`}
+  //         >
+  //           <div
+  //             draggable="false"
+  //             className="d-flex justify-content-between align-items-center"
+  //           >
+  //             {replaceFunction("input", countOfInput)}
+  //             <input
+  //               type="text"
+  //               draggable="false"
+  //               id={`${array.length}`}
+  //               // id={`${allInputValueData[countOfInput]}`}
+  //               size="small"
+  //               selectedIndex={`${array.length}`}
+  //               style={{ marginTop: "3px" }}
+  //               placeholder={`${allInputValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+  //               className="getValue form-control"
+  //               data-animal-type={`box${countOfInput}`}
+  //               name={`box${countOfInput}`}
+  //               onChange={(e) => {
+  //                 const { name, value, placeholder } = e.target;
+  //                 if (isNaN(placeholder)) {
+  //                   inputTestData[placeholder] = value;
+  //                   setInputTestData({ ...inputTestData });
+  //                 }
+  //                 singleData[e.target.id] = inputTestData;
+  //                 // singleData.push(inputTestData)
+  //                 // if(singleData.length==''){
+  //                 // }
+  //                 // else{
+  //                 //   console.log(countOfInput)
+  //                 //   singleData[countOfInput] = inputTestData;
+  //                 // }
+  //                 // setInputTestData({
+  //                 //   ...inputTestData,
+  //                 //   [name]: e.target.value,
+  //                 // });
+  //                 // setFieldValue(`${allInputValueData[countOfInput]}`,e.target.value)
+  //                 for (let i = 0; i < array.length; i++) {
+  //                   // handleInputValue(e, i);
+  //                   // showDetails(e)
+  //                 }
+  //               }}
+  //             />
+  //           </div>
+  //           <div
+  //             className="droptarget1 border"
+  //             style={{ display: "none" }}
+  //             draggable="false"
+  //           >
+  //             Drop
+  //           </div>
+  //         </td>,
+  //       ]);
+  //       countOfInput = countOfInput + 1;
+  //     }
+  //     for (var i = 0; i < numberDDf; i++) {
+  //       testArr.push([
+  //         <td
+  //           className={`dropTh${countOfInput} border`}
+  //           draggable="false" //change dragable true to work again
+  //           id={`item${randnum}${countOfInput}${i}`}
+  //         >
+  //           <div draggable="false">
+  //             {replaceFunction("dropdown", i)}
+  //             <Select
+  //               id={array.length}
+  //               className="form-select"
+  //               className="w-[100%] getValue"
+  //               aria-label="Default select example"
+  //               placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+  //               required
+  //               name={`box${countOfInput}`}
+  //               options={dropData}
+  //               // value={dropData.find((x) => x.value == category.groupId)}
+  //               onChange={(e, event, id) => {
+  //                 // const optionElementId = optionsElement.getAttribute('id');
+  //                 const { name, value, placeholder } = e;
+  //                 console.log(e, event);
+  //                 if (isNaN(placeholder)) {
+  //                   inputTestData[placeholder] = value;
+  //                   setInputTestData({ ...inputTestData });
+  //                 }
+  //                 singleData[e.id] = inputTestData;
+  //                 console.log(e.value);
+  //                 // category.groupId = e.value;
+  //               }}
+  //             ></Select>
+  //           </div>
+  //           <div
+  //             className="droptarget1 border" // remove 1 for dragable work
+  //             style={{ display: "none" }}
+  //             draggable="false"
+  //           >
+  //             Drop
+  //           </div>
+  //         </td>,
+  //       ]);
+  //       countOfInput = countOfInput + 1;
+  //     }
+  //     for (var i = 0; i < numberCheck; i++) {
+  //       testArr.push([
+  //         <td
+  //           className={`dropTh${countOfInput} border`}
+  //           draggable="false" //change dragable true to work again
+  //           id={`item${randnum}${countOfInput}${i}`}
+  //         >
+  //           <div draggable="false">
+  //             {replaceFunction("checkbox", i)}
+  //             <FormGroup>
+  //               <FormControlLabel
+  //                 name={`box${countOfInput}`}
+  //                 id={`check${countOfInput}`}
+  //                 style={{ marginTop: "3px" }}
+  //                 control={<Checkbox />}
+  //                 label="Label"
+  //                 onChange={(e) => {
+  //                   // const {value,name}=e.checked
+  //                   const { value, checked } = e.target;
+  //                   console.log(checked);
+  //                 }}
+  //               />
+  //             </FormGroup>
+  //           </div>
+  //           <div
+  //             className="droptarget1 border" // remove 1 for dragable work
+  //             style={{ display: "none" }}
+  //             draggable="false"
+  //           >
+  //             Drop
+  //           </div>
+  //         </td>,
+  //       ]);
+  //       countOfInput = countOfInput + 1;
+  //     }
+  //     for (var i = 0; i < numberDate; i++) {
+  //       testArr.push([
+  //         <td
+  //           className={`dropTh${countOfInput} border`}
+  //           draggable="false" //change dragable true to work again
+  //           id={`item${randnum}${countOfInput}${i}`}
+  //         >
+  //           <div draggable="false">
+  //             {replaceFunction("date", i)}
+  //             <TextField
+  //               name={`box${countOfInput}`}
+  //               id={`date${countOfInput}`}
+  //               type="date"
+  //               className="getValue"
+  //               defaultValue={startDate}
+  //               size="small"
+  //             />
+  //           </div>
+  //           <div
+  //             className="droptarget1 border" // remove 1 for dragable work
+  //             style={{ display: "none" }}
+  //             draggable="false"
+  //           >
+  //             Drop
+  //           </div>
+  //         </td>,
+  //       ]);
+  //       countOfInput = countOfInput + 1;
+  //     }
+  //   } else {
+  //     for (
+  //       var countreplaceTemp = 0;
+  //       countreplaceTemp < replacetempArray.length;
+  //       countreplaceTemp++
+  //     ) {
+  //       if (replacetempArray[countreplaceTemp] == "input") {
+  //         console.log(countreplaceTemp);
+  //         testArr.push([
+  //           <td
+  //             className={`dropTh${countOfInput} border`}
+  //             draggable="false" //change dragable true to work again
+  //             id={`item${randnum}${countOfInput}${countreplaceTemp}`}
+  //           >
+  //             <div
+  //               draggable="false"
+  //               className="d-flex justify-content-between align-items-center"
+  //             >
+  //               <input
+  //                 type="text"
+  //                 draggable="false"
+  //                 id={`${array.length}`}
+  //                 // id={`${allInputValueData[countOfInput]}`}
+  //                 size="small"
+  //                 style={{ marginTop: "3px" }}
+  //                 placeholder={`${allInputValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+  //                 className="form-control getValue"
+  //                 // value={`${allInputValueData[countOfInput]}`}
+  //                 name={`box${countOfInput}`}
+  //                 data-animal-type={`box${countOfInput}`}
+  //                 onChange={(e) => {
+  //                   const { name, value, placeholder } = e.target;
+  //                   if (isNaN(placeholder)) {
+  //                     inputTestData[placeholder] = value;
+  //                     setInputTestData({ ...inputTestData });
+  //                   }
+  //                   singleData[e.target.id] = inputTestData;
+  //                 }}
+  //               />
+  //             </div>
+  //             <div
+  //               className="droptarge1t border" // remove 1 for dragable work
+  //               style={{ display: "none" }}
+  //               draggable="false"
+  //             >
+  //               Drop
+  //             </div>
+  //           </td>,
+  //         ]);
+  //         countOfInput = countOfInput + 1;
+  //         setCount(count + 1);
+  //       } else if (replacetempArray[countreplaceTemp] == "dropdown") {
+  //         testArr.push([
+  //           <td
+  //             className={`dropTh${countOfInput} border`}
+  //             draggable="false" //change dragable true to work again
+  //             // id={`item${randnum}${countOfInput}${countreplaceTemp}`}
+  //             id={array.length}
+  //           >
+  //             <div draggable="false">
+  //               <Select
+  //                 id={`select${countOfInput}`}
+  //                 className="form-select"
+  //                 className="w-[100%] getValue"
+  //                 aria-label="Default select example"
+  //                 // placeholder={test(`box${countOfInput}`)}
+  //                 placeholder={`${allDropValueData[countOfInput]}`}
+  //                 required
+  //                 name={`box${countOfInput}`}
+  //                 options={dropData}
+  //                 // value={dropData.find((x) => x.value == category.groupId)}
+  //                 onChange={(e) => {
+  //                   const { name, value, placeholder } = e;
+  //                   console.log(e);
+  //                   if (isNaN(placeholder)) {
+  //                     inputTestData[placeholder] = value;
+  //                     setInputTestData({ ...inputTestData });
+  //                   }
+  //                   singleData[e.id] = inputTestData;
+  //                   console.log(e.value);
+  //                   // category.groupId = e.value;
+  //                 }}
+  //               ></Select>
+  //             </div>
+  //             <div
+  //               className="droptarget1 border" // remove 1 for dragable work
+  //               style={{ display: "none" }}
+  //               draggable="false"
+  //             >
+  //               Drop
+  //             </div>
+  //           </td>,
+  //         ]);
+  //         countOfInput = countOfInput + 1;
+  //       } else if (replacetempArray[countreplaceTemp] == "checkbox") {
+  //         testArr.push([
+  //           <td
+  //             className={`dropTh${countOfInput} border`}
+  //             draggable="false" //change dragable true to work again
+  //             id={`item${randnum}${countOfInput}${countreplaceTemp}`}
+  //           >
+  //             <div draggable="false">
+  //               <FormGroup>
+  //                 <FormControlLabel
+  //                   name={`box${countOfInput}`}
+  //                   id={`check${countOfInput}`}
+  //                   style={{ marginTop: "3px" }}
+  //                   control={<Checkbox />}
+  //                   label="Label"
+  //                   onChange={(e) => {
+  //                     const { value, checked } = e.target;
+  //                     console.log(checked);
+  //                     // const {value,name}=e.target
+  //                   }}
+  //                 />
+  //               </FormGroup>
+  //             </div>
+  //             <div
+  //               className="droptarge1 border" // remove 1 for dragable work
+  //               style={{ display: "none" }}
+  //               draggable="false"
+  //             >
+  //               Drop
+  //             </div>
+  //           </td>,
+  //           //add else if condition for date
+  //         ]);
+  //         countOfInput = countOfInput + 1;
+  //       } else if (replacetempArray[countreplaceTemp] == "date") {
+  //         testArr.push([
+  //           <td
+  //             className={`dropTh${countOfInput} border`}
+  //             draggable="false" //change dragable true to work again
+  //             id={`item${randnum}${countOfInput}${i}`}
+  //           >
+  //             <div draggable="false">
+  //               <TextField
+  //                 name={`box${countOfInput}`}
+  //                 id={`date${countOfInput}`}
+  //                 type="date"
+  //                 className="getValue"
+  //                 defaultValue={startDate}
+  //                 size="small"
+  //               />
+  //             </div>
+  //             <div
+  //               className="droptarget1 border" // remove 1 for dragable work
+  //               style={{ display: "none" }}
+  //               draggable="false"
+  //             >
+  //               Drop
+  //             </div>
+  //           </td>,
+  //         ]);
+  //         countOfInput = countOfInput + 1;
+  //       }
+  //     }
+  //   }
+
   const createDynamicSchemaForDrop = (fields) => {
     const schemaFields = {};
     var countFieldLength = Object.keys(fields).length;
@@ -706,6 +1213,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   // const validateField = async (field,index) => {
   //   console.log(field);
   //   try {
+
 
   //     await Yup.object().shape({
   //       inputData: field({
@@ -1432,6 +1940,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
               Close
             </Button>
 
+
             <button
               type="button"
               class="btn btn-primary"
@@ -1496,12 +2005,286 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                                             }}
                                           />
                                         </div>
+
                                       </div>
                                       <h4 className="ms-2">
                                         {filteredPerson.SubMenuName}
                                       </h4>
                                     </div>
                                   ))}
+
+                              
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </Grid>
+            <Grid>
+              {checkboxData.map((item, name) => {
+                return (
+                  <div className="ps-5">
+                    <input
+                      type="text"
+                      name=""
+                      id=""
+                      className="getInputValue mt-2"
+                      onChange={(e) => {
+                        setAllData({
+                          ...allData,
+                          [allData.length]: e.target.value,
+                        });
+                        setAllCheckValueData({
+                          ...allCheckValueData,
+                          [name]: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </Grid>
+            <Grid>
+              {dateData.map((item, name) => {
+                return (
+                  <div className="ps-5">
+                    <input
+                      type="text"
+                      name=""
+                      id=""
+                      className="getInputValue mt-2"
+                      onChange={(e) => {
+                        setAllData({
+                          ...allData,
+                          [allData.length]: e.target.value,
+                        });
+                        setAllDateValueData({
+                          ...allDateValueData,
+                          [name]: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </Grid>
+          </Grid>
+        </Grid>
+        ):''}
+      
+{showCalculactionModal?(
+<div style={{display:showCalculactionModal?"none !important":"block"}} className="modal fade" id="exampleModalFormula" tabindex="-1" role="dialog" aria-labelledby="exampleModalFormulaLabel" aria-hidden="true">
+  <div className="modal-dialog" role="document">
+    <div className="modal-content">
+      <div className="modal-header">
+        <h5 className="modal-title" id="exampleModalFormulaLabel">Modal title</h5>
+        <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={()=>{
+          setShowCalculactionModal(false);
+        }}>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div className="modal-body">
+        ...
+        <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={[{
+                        label:"Manual",
+                        value:"Manual"
+                      },
+                      {
+                        label:"Auto",
+                        value:"Auto"
+                      }]}
+                      id={`dropValue`}
+                      onChange={(e) => {
+                        console.log(e.value);
+                        setCalculationType(e.value);
+                        if(e.value=="Auto"){
+                          setDisplayFormulaAuto(true)
+                        }
+                        else{
+                          setDisplayFormulaAuto(false)
+                        }
+                      }}
+                    ></Select>
+
+                    <div className={`${displayFormulaAuto?"d-visible":"d-hidden"}`}>
+                    <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={allInputValueForFormulaData}
+                      id={`dropValueField1`}
+                      onChange={(e) => {
+                        console.log(e.value,pageFormula);
+                        if(pageFormula[0]['Formula'][0]['Field2']==e.value){
+                          setField1Validation(0)
+                        }
+                        else if(pageFormula[0]['Target']==e.value){
+                          setField1Validation(0)
+                        }
+                        else{
+                          setField1Validation(1)
+                          pageFormula[0]['Formula'][0]['Field1'] = e.value;
+                        }
+                      }}
+                    ></Select>
+                    {field1Validation==0?<label className="" style={{color:"red"}}>Value can not be same as Field2 or Target</label>:""}
+                    <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={[{
+                        label:'+',
+                        value:'+'
+                      },{
+                        label:'-',
+                        value:'-'
+                      },{
+                        label:'*',
+                        value:'*'
+                      },{
+                        label:'/',
+                        value:'/'
+                      }]}
+                      id={`dropValueFormula`}
+                      onChange={(e) => {
+                        console.log(e.value);
+                        pageFormula[0]['Formula'][0]['FormulaType'] = e.value;
+                        if(e.value!=""){
+                          setFieldFormulaValidation(1);
+                        }
+                        else{                         
+                          setFieldFormulaValidation(0);
+                        }
+                      }}
+                    ></Select>
+                    {fieldFormulaValidation==0?<label className="" style={{color:"red"}}>Value can not be empty</label>:""}
+                    
+                    
+                  <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={allInputValueForFormulaData}
+                      id={`dropValueField2`}
+                      onChange={(e) => {
+                        console.log(e.value);
+                        if(pageFormula[0]['Formula'][0]['Field1']==e.value){
+                          setField2Validation(0)
+                        }
+                        else if(pageFormula[0]['Target']==e.value){
+                          setField2Validation(0)
+                        }
+                        else{
+                          setField2Validation(1)
+                          pageFormula[0]['Formula'][0]['Field2'] = e.value;
+                        }
+                      }}
+                    ></Select>
+                    {field2Validation==0?<label className="" style={{color:"red"}}>Value can not be same as Field1 or Target</label>:""}
+                    <Select
+                      class="form-select"
+                      className="w-[100%] mt-2"
+                      aria-label="Default select example"
+                      // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                      options={allInputValueForFormulaData}
+                      id={`dropValueFieldTarget`}
+                      onChange={(e) => {
+                        if(pageFormula[0]['Formula'][0]['Field1']==e.value){
+                          setFieldTargetValidation(0)
+                        }
+                        else if(pageFormula[0]['Formula'][0]['Field2']==e.value){
+                          setFieldTargetValidation(0)
+                        }
+                        else{
+                          console.log(e.value);
+                       setFormulaTarget(e.value);
+                          setFieldTargetValidation(1)
+                          pageFormula[0]['Target'] = e.value;
+                        }
+                        
+                        
+                      }}
+                    ></Select>
+                    {fieldTargetValidation==0?<label className="" style={{color:"red"}}>Value can not be same as Field1 or Field2</label>:""}
+                    </div>
+      </div>
+      <div className="modal-footer">
+        <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={()=>{
+          setOpenModal(true)
+        }}>Close</button>
+        <button type="button" className="btn btn-primary" onClick={()=>{   
+          
+          if(pageFormula[0]['Formula'][0]['FormulaType']==""){
+            setFieldFormulaValidation(0)
+          }   
+          if(pageFormula[0]['Formula'][0]['Field2']==""){
+            setField1Validation(0)
+          }  
+          if(pageFormula[0]['Formula'][0]['Field1']==""){
+            setField1Validation(0)
+          }  
+          if(pageFormula[0]['Formula'][0]['FormulaType']==""){
+            setFieldFormulaValidation(0)
+          }  
+          if(pageFormula[0]['Formula'][0]['Target']==""){
+            setFieldTargetValidation(0)
+          }  
+          if(field1Validation!=1 || field2Validation!=1 || fieldFormulaValidation!=1 || fieldTargetValidation!=1){
+
+          } 
+          else{
+// addList();
+              submitForm();
+          }
+           
+        }}>Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+):''}
+{/* <div className="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+  <div className="modal-dialog" role="document">
+    <div className="modal-content">
+      <div className="modal-header">
+        <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={()=>{
+          setOpenModal(true)
+        }}>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div className="modal-body">
+        ...
+      </div>
+      <div className="modal-footer">
+        <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={()=>{
+          setOpenModal(true)
+        }}>Close</button>
+        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={()=>{
+         
+            setOpenModal(true)
+          
+          
+        }}>Save changes</button>
+      </div>
+    </div>
+  </div>
+</div> */}
 
                                </Modal.Body>
                                <Modal.Footer>
@@ -1532,6 +2315,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                                 </Modal.Header>
                                 <Modal.Body>
                                 <label>{errorMessageString}</label>
+
 
                                </Modal.Body>
                               </Modal>

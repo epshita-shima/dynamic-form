@@ -1,3 +1,17 @@
+.sidebarColor{
+    background-color:#FFF2CC; color: purple; font-weight: 600;
+}
+.sidebarListColor{
+    background-color: #FFD966; color: #778686; font-weight: 600;
+}
 .changeColor{
     background-color: orange;
+}
+.layout-navbar-fixed .wrapper .brand-link {
+    overflow: visible;
+    position: fixed;
+    top: 0;
+    transition: width .3s ease-in-out;
+    width: 250px;
+    z-index: 1035;
 }

@@ -16,24 +16,38 @@ import SidebarButton from "./component/modules/Sidebar/SidebarButton";
 import SidebarColorButton from "./component/modules/Sidebar/SidebarColorButton";
 import { useState } from "react";
 
+import Footer from "./component/modules/Footer/Footer";
+import FooterShowButton from "./component/modules/Footer/FooterShowButton";
+
+
 function App() {
   const [showHeader, setShowHeader] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [showFooter,setShowFooter]=useState(false);
+  const headerBackgroundColor=sessionStorage.getItem("headerBackgroundColor")
+
   return (
+
+    <div className="position-relative" style={{height:'649px'}}>
+
     <div >
 
-    {/* <HeaderButton></HeaderButton>
-    <SidebarButton></SidebarButton> */}
-    <Routes>
+
 
     <HeaderButton 
+  headerBackgroundColor={headerBackgroundColor}
     showHeader={showHeader}
     setShowHeader={setShowHeader}
     ></HeaderButton>
     <SidebarButton
+showHeader={showHeader}
     showSidebar={showSidebar}
     setShowSidebar={setShowSidebar}
     ></SidebarButton>
+    <FooterShowButton
+     showFooter={showFooter}
+     setShowFooter={setShowFooter}
+    ></FooterShowButton>
     {/* <Routes>
 
       <Route path="/" element={<CreatePage></CreatePage>}></Route>

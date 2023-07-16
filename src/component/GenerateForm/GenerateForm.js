@@ -4,6 +4,8 @@ import "./GenerateForm.css";
 import SingleEntryForm from "../SingleEntryForm/SingleEntryForm";
 import MyComponent from "../Test/MyComponent";
 import CreateMasterEntry from "../CreateMasterEntry/CreateMasterEntry";
+import Token from "../common/Token";
+import { useNavigate } from "react-router-dom";
 
 const GenerateForm = ({formGenerate}) => {
   const [open, setOpen] = useState(false);
@@ -11,8 +13,9 @@ const GenerateForm = ({formGenerate}) => {
   const [singleEntryOpen, setSingleEntryOpen] = useState(false);
   const [openPage,setOpenPage]=useState(false)
   const [modalSpecificData, setModalSpecificData] = useState([]);
-  const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQHN1bnNoaW5lLmNvbSIsIlVzZXJJZCI6IjJhNzJlNDA2LTE1YTktNGJiNS05ODNiLWE0NGNiMGJkNzMyMyIsIlVzZXJOYW1lIjoic3Vuc2hpbmUtMDEiLCJqdGkiOiI0YTdiMTNmNS1mMzBlLTQ2NGUtOWJhZC05YzQ2NGQyNGZkNGMiLCJuYmYiOjE2ODg3ODc3NjksImV4cCI6MTY4ODgzMDk2OSwiaXNzIjoic2h1dmEuY29tIiwiYXVkIjoic2h1dmEuY29tIn0.FEqfnfG2mX7VFs7NNqpxYenyVqJI36EEfXv3toxUVrc";
+  const token = Token.token;
+  const navigate=useNavigate()
+ 
 
 
 const handlePageValidation=()=>{
@@ -62,6 +65,7 @@ const handlePageValidation=()=>{
           onClick={() => {
             setSingleEntryOpen(true);
             handlePageValidation()
+            navigate('/single-entry')
           }}
         >
           {/* <Link to="single-entry" style={{color:'white', textDecoration:'none' }}>Single Form Entry</Link> */}

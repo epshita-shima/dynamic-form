@@ -3,55 +3,60 @@ import SidebarColorButton from "./SidebarColorButton";
 import SidebarHiddenButton from "./SidebarHiddenButton";
 import Token from "../../common/Token";
 import "./SidebarButton.css";
+import useParentMenu from "../../customHooks/useParentMenu";
+import useChildMenu from "../../customHooks/useChildMenu";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 
 const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   const [backgroundColor, setBackgroundColor] = useState(false);
   const [fontColor, setFontColor] = useState(false);
   const [fontColorBtn, setFontColorBtn] = useState(false);
   const [currentColor, setCurrentColor] = useState("#D0021B");
-  const [parentMenu, setParentMenu] = useState([]);
-  const [childMenu, setChildMenu] = useState([]);
+  const [parentMenu, setParentMenu] = useParentMenu([]);
+  const [childMenu, setChildMenu] = useChildMenu([]);
+  const token=Token.token;
   const sidebarBackground = sessionStorage.getItem("sidebarBackground");
   const sidebarText = sessionStorage.getItem("sidebarText");
   const getSidebarTextColor = sessionStorage.getItem("sidebarTextColor");
   const sidebarBackgroundColor = sessionStorage.getItem(
     "sidebarBackgroundColor"
   );
-  const token = Token.token;
-  useEffect(() => {
-    const modelData = {
-      procedureName: "",
-      parameters: {},
-    };
-    modelData.procedureName = "prc_GetMenuList";
-    fetch("https://localhost:44372/api/GetData/GetInitialData", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == true) {
-          const allModalData = JSON.parse(data.data);
-          console.log(allModalData);
-          setParentMenu(allModalData.Tables1);
-          setChildMenu(allModalData.Tables2);
-        } else {
-          console.log(data);
-        }
-      });
-  }, []);
 
   const thirdArray = childMenu.filter((elem) => {
     return parentMenu.some((ele) => {
-      console.log(ele);
       return elem.MenuName === ele.MenuName;
     });
   });
-
+ 
+  const modelData = {
+    procedureName: "",
+    parameters: {},
+  };
+  modelData.procedureName = "prc_GetMenuList";
+  const  handleParentMenu=()=>{
+  
+      fetch("https://localhost:44372/api/GetData/GetInitialData", {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(modelData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status == true) {
+            const allModalData = JSON.parse(data.data);
+            console.log(allModalData);
+            setParentMenu(allModalData.Tables1);
+            setChildMenu(allModalData.Tables2)
+          } else {
+            console.log(data);
+          }
+        });
+   
+  }
   return (
     <div>
       <aside
@@ -90,6 +95,11 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
 
         {/* Sidebar */}
         <div className="sidebar">
+        <div className="mt-4">
+        <button className="btn btn-success" onClick={()=>{
+          handleParentMenu()
+        }}><FontAwesomeIcon icon={faRefresh}></FontAwesomeIcon></button>
+       </div>
           {showHeader ? (
             " "
           ) : (
@@ -157,19 +167,18 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                             console.log(item)
                         if(items.MenuName==item.MenuName)
                             return (
-                              <li className="nav-item ">
+                              <li className="nav-item">
                                 <a
                                   href=""
                                   className="nav-link"
                                   style={{
                                     backgroundColor: "#FFD966",
-                                    color: 'teal',
-                                    fontWeight: "600",
-                                    fontSize:'15px'
+                                    color:'teal',
+                                    fontSize:'16px'
                                   }}
                                 >
                                   <i className="far fa-circle nav-icon" />
-                                  <p>{item.SubMenuName}</p>
+                                  <p className="text-teal fw-normal">{item.SubMenuName}</p>
                                 </a>
                               </li>
                             );

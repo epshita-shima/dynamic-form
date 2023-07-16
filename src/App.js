@@ -20,6 +20,7 @@ import Footer from "./component/modules/Footer/Footer";
 import FooterShowButton from "./component/modules/Footer/FooterShowButton";
 
 
+
 function App() {
   const [showHeader, setShowHeader] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
@@ -28,8 +29,8 @@ function App() {
 
   return (
 
-    <div className="position-relative" style={{height:'649px'}}>
-{/* <HeaderButton 
+    <div style={{height:'649px'}}>
+<HeaderButton 
   headerBackgroundColor={headerBackgroundColor}
     showHeader={showHeader}
     setShowHeader={setShowHeader}
@@ -42,9 +43,9 @@ showHeader={showHeader}
     <FooterShowButton
      showFooter={showFooter}
      setShowFooter={setShowFooter}
-    ></FooterShowButton> */}
+    ></FooterShowButton>
 
-     <Routes>
+     {/* <Routes>
       <Route path="/" element={<CreatePage></CreatePage>}></Route>
       <Route path="/generate-form" element={<GenerateForm></GenerateForm>}></Route>
       <Route path="/single-entry" element={<SingleEntryForm></SingleEntryForm>}></Route>
@@ -52,7 +53,7 @@ showHeader={showHeader}
       <Route path="/Mycomponent" element={<MyComponent></MyComponent>}></Route>
       <Route  path="/single-form" element={<SingleForm/>}></Route>
       <Route path="/slider" element={<Slider></Slider>}></Route>/
-    </Routes>
+    </Routes> */}
     </div>
 
   );

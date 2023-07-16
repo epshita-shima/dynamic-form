@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import "./HeaderButton.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
-
 import HeaderHiddenButton from "./HeaderHiddenButton";
-import Picker from "../../ColorPicker/Picker";
+
 
 import { SketchPicker } from "react-color";
 const Header = ({ showHeader, setShowHeader }) => {
- 
   const [backgroundColors, setBackgroundColors] = useState(false);
   const [fontColor, setFontColor] = useState(false);
   const [fontColorBtn, setFontColorBtn] = useState(false);
@@ -16,8 +14,8 @@ const Header = ({ showHeader, setShowHeader }) => {
   const headerBackground = sessionStorage.getItem("headerBackground");
   const headerText = sessionStorage.getItem("headerText");
   const getHeaderTextColor = sessionStorage.getItem("headerTextColor");
-const headerBackgroundColor=sessionStorage.getItem('headerBackgroundColor')
-  console.log(currentColor.hex)
+  const headerBackgroundColor=sessionStorage.getItem('headerBackgroundColor')
+
 
   const handleBackground = () => {
     setBackgroundColors(!backgroundColors);
@@ -65,99 +63,19 @@ const headerBackgroundColor=sessionStorage.getItem('headerBackgroundColor')
             <i className="fas fa-bars" />
           </a>
         </li>
-        <li className="nav-item d-none d-sm-inline-block">
-          <a
-            href=""
-            className="nav-link hearderTextColor"
-            style={{
-              fontWeight: "bold",
-              color:
-                headerText == "1"
-                  ? `${getHeaderTextColor}`
-                  : `${fontColor.hex}`,
-            }}
-          >
-            Home
-          </a>
-        </li>
-        <li className="nav-item d-none d-sm-inline-block">
-          <a
-            href="#"
-            className="nav-link hearderTextColor"
-            style={{
-              fontWeight: "bold",
-              color:
-                headerText == "1"
-                  ? `${getHeaderTextColor}`
-                  : `${fontColor.hex}`,
-            }}
-          >
-            Contact
-          </a>
-        </li>
+      
+        
       </ul>
 
       {/* Right navbar links */}
       <ul className="navbar-nav">
-        <button
-          className="btn-orange text-white"
-          data-toggle="tooltip"
-          data-placement="top"
-          title="Background Color"
-          onClick={() => {
-            handleBackground();
-          }}
-        >
-          {backgroundColors ? (
-            <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
-          ) : (
-            <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
-          )}
-          {backgroundColors ? (
-              <div className="d-flex justify-content-center mt-4">
-              <div>
-                <SketchPicker
-                  color={currentColor}
-                  onChangeComplete={handleBackgroundComplete}
-                />
-              </div>
-            </div>
-          ) : (
-            ""
-          )}
-        </button>
+        
       </ul>
       <ul className="navbar-nav ms-2">
-        <button
-          className="btn-orange text-white"
-          data-toggle="tooltip"
-          data-placement="top"
-          title="Text Color"
-          onClick={() => {
-            handleFontColor();
-          }}
-        >
-          {fontColorBtn ? (
-            <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
-          ) : (
-            <FontAwesomeIcon icon={faPlus} onClick={() => {}}></FontAwesomeIcon>
-          )}
-          {fontColorBtn ? (
-            <div className="d-flex justify-content-center mt-4">
-              <div>
-                <SketchPicker
-                  color={fontColor}
-                  onChangeComplete={handleChangeComplete}
-                />
-              </div>
-            </div>
-          ) : (
-            ""
-          )}
-        </button>
+       
       </ul>
-      <ul className="navbar-nav ml-auto">
-        <li className="nav-item dropdown">
+      <ul className="navbar-nav ml-auto d-flex justify-content-end align-items-center">
+        {/* <li className="nav-item dropdown">
           <a className="nav-link" data-toggle="dropdown" href="#">
             <button className="btn badge badge-danger navbar-badge bg-transparent w-44 headerColor">
               <img src="" className="w-6 h-6 mx-auto" alt="" />
@@ -187,11 +105,68 @@ const headerBackgroundColor=sessionStorage.getItem('headerBackgroundColor')
               </a>
             </button>
           </div>
-        </li>
-        <HeaderHiddenButton
+        </li> */}
+      
+        <button
+          className="btn-orange text-white"
+          data-toggle="tooltip"
+          data-placement="top"
+          title="Background Color"
+          onClick={() => {
+            handleBackground();
+          }}
+        >
+          {backgroundColors ? (
+            <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
+          ) : (
+            <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
+          )}
+          {backgroundColors ? (
+              <div className="d-flex justify-content-center mt-4">
+              <div>
+                <SketchPicker
+                  color={currentColor}
+                  onChangeComplete={handleBackgroundComplete}
+                />
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
+        </button>
+         <button
+          className="btn-orange text-white ms-2"
+          data-toggle="tooltip"
+          data-placement="top"
+          title="Text Color"
+          onClick={() => {
+            handleFontColor();
+          }}
+        >
+          {fontColorBtn ? (
+            <FontAwesomeIcon icon={faMinus}></FontAwesomeIcon>
+          ) : (
+            <FontAwesomeIcon icon={faPlus} onClick={() => {}}></FontAwesomeIcon>
+          )}
+          {fontColorBtn ? (
+            <div className="d-flex justify-content-center mt-4">
+              <div>
+                <SketchPicker
+                  color={fontColor}
+                  onChangeComplete={handleChangeComplete}
+                />
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
+        </button>
+       <div className="ms-2">
+       <HeaderHiddenButton
           showHeader={showHeader}
           setShowHeader={setShowHeader}
         ></HeaderHiddenButton>
+       </div>
       </ul>
     </nav>
   );

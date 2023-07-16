@@ -1,10 +1,10 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap');
 .App {
   text-align: center;
   
 }
 body{
-  font-family: 'Merriweather', serif !important;
+  font-family: 'Kanit', sans-serif;
 }
 .App-logo {
   height: 40vmin;

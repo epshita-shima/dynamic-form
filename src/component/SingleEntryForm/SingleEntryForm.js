@@ -14,6 +14,7 @@ import "./SingleEntryForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowsRotate,
+  faPlus,
   faPlusCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -24,15 +25,14 @@ import { json, useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import * as Yup from "yup";
 import Token from "../common/Token";
+import useParentMenu from "../customHooks/useParentMenu";
+import useParentDropdown from "../customHooks/useParentDropdown";
 
 const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
-  const [array, setArray] = useState([]);
-  const [startDate, setStartDate] = useState(new Date());
   const [inputValue, setInputValue] = useState("");
   const [inputValueDDF, setInputValueDDF] = useState("");
   const [inputValueCheck, setInputValueCheck] = useState("");
   const [inputValueDate, setInputValueDate] = useState("");
-  const [count, setCount] = useState(0);
   const previousInputValue = useRef("");
   const previousInputValueDDF = useRef("");
   const previousInputValueCheck = useRef("");
@@ -40,16 +40,12 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [displayFormulaAuto, setDisplayFormulaAuto] = useState(false);
   const [calculationType, setCalculationType] = useState("Manual");
   const [formulaTarget, setFormulaTarget] = useState("");
-  const [testArray, setTestArray] = useState([]);
-  const [replacetempArray, setreplacetempArray] = useState([]);
-  const replaceArray = [];
   const [inputData, setInputData] = useState([]);
   const [dropdownData, setDropdownData] = useState([]);
   const [checkboxData, setCheckboxData] = useState([]);
   const [dateData, setDateData] = useState([]);
   const [showDropDownModal, setShowDropDownModal] = useState(false);
   const [currentDropSelected, setCurrentDropSelected] = useState("0");
-
   var arrayInput = [];
   var arrayDropdown = [];
   var arrayCheck = [];
@@ -58,7 +54,6 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [allDropValueData, setAllDropValueData] = useState({});
   const [allCheckValueData, setAllCheckValueData] = useState({});
   const [allDateValueData, setAllDateValueData] = useState({});
-  const [dynamicSchema, setDynamicSchema] = useState(null);
   const [inputSchema, setInputSchema] = useState(null);
   const [dropSchema, setDropSchema] = useState(null);
   const [checkSchema, setCheckSchema] = useState(null);
@@ -66,28 +61,16 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [pageSchema, setPageSchema] = useState(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessageString, setErrorMessageString] = useState("");
-
   const [allInputValueForFormulaData, setAllInputValueForFormulaData] =
     useState([]);
-
   const [pageFormula, setPageFormula] = useState([
     { Formula: [{ Field1: "", FormulaType: "", Field2: "" }], Target: {} },
   ]);
-
   const [allData, setAllData] = useState([]);
-  const [singleData, setSingleData] = useState([]);
-  const [inputTestData, setInputTestData] = useState({});
-  const [labelData, setLabelData] = useState([]);
-  const [columnValues, setColumnValues] = useState([]);
-  const [labelDataCopy, setLabelDataCopy] = useState([]);
-  const [getDate, setGetDate] = useState([]);
-  const [twoDimensionData, setTwoDimentionData] = useState([[]]);
   const [selectedOption, setSelectedOption] = useState([]);
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [allModelDataTable, setAllModelDataTable] = useState([]);
   const [pageName, setPageName] = useState("");
-
-  const [pageNameStatus, setPageNameStatus] = useState(2);
   const [field1Validation, setField1Validation] = useState(2);
   const [field2Validation, setField2Validation] = useState(2);
   const [fieldTargetValidation, setFieldTargetValidation] = useState(2);
@@ -108,10 +91,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       type: "targetField",
     },
   ]);
-
-  const [labelPosition, setLabelPosition] = useState([]);
   const [selectedListName, setSelectedListName] = useState([]);
-  const [showDeleteIcon, setShowDeleteIcon] = useState(false);
   const handleClose = () => setShowCalculactionModal(false);
   const handleDropClose = () => setShowDropDownModal(false);
   const handleErrorClose = () => setShowErrorModal(false);
@@ -120,14 +100,16 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [errorsDropDown, setErrorsDropDown] = useState([]);
   const [errorsDate, setErrorsDate] = useState([]);
   const [errorsCheck, setErrorsCheck] = useState([]);
+  const [parentDropdownMenu, setParentDropdownMenu] = useParentDropdown([]);
+  const token = Token.token;
   const navigate = useNavigate();
+  console.log(inputData);
   const modelData = {
     procedureName: "prc_GetPageInfo",
     parameters: {
       MenuId: "1",
     },
   };
-  const token = Token.token;
 
   useEffect(() => {
     const modelDataLabel = {
@@ -820,6 +802,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       noValidate
       class="bg-white shadow-lg rounded-md p-5 md:p-10 flex flex-col w-11/12 max-w-lg"
       onSubmit={(e) => handleSubmit(e)}
+      
     >
       <Grid>
         <div>
@@ -827,391 +810,422 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
             {/*Content before waves*/}
             <div className="inner-header flex p-5">
               {/*Just the logo.. Don't mind this*/}
-             
+
               {openModal ? (
-          <Grid>
-            <Grid className="single-entry-form">
-              <Grid>
-                <label className="mb-2 fw-bold fs-4">Page Name</label>
-                <br></br>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  type="text"
-                  size="small"
-                  required
-                  value={pageName}
-                  class="peer border border-slate-400"
-                  onChange={(e) => {
-                    setPageName(e.target.value);
-                  }}
-                />
-                {errorsPage
-                  .filter((err) => err.index === 0)
-                  .map((err, i) => (
-                    <div style={{ color: "#FF0000" }} key={i}>
-                      This Field is required
-                    </div>
-                  ))}
-              </Grid>
-            </Grid>
+                <Grid>
+                  <Grid className="single-entry-form">
+                    <Grid className="justify-content-start">
+                      <Grid className="d-flex justify-content-between">
+                        <label htmlFor="" className="text-style">
+                         Parent Menu
+                        </label>
+                        <Grid className="d-flex align-items-center">
+                        <div className="w-100">
+                          <Select
+                            class="form-select text-white"
+                            className="w-100 text-white"
+                            name={`drop`}
+                            aria-label="Default select example"
+                            options={parentDropdownMenu}
+                            id={`dropValue}`}
+                            onChange={(e) => {}}
+                            required
+                          ></Select>
+                        </div>
+                        <FontAwesomeIcon icon={faPlusCircle} className="fs-4 ms-1"></FontAwesomeIcon>
+                        </Grid>
+                      </Grid>
+                      <Grid className="d-flex justify-content-between  mt-2">
+                      <label htmlFor="" className="text-style">Page Name</label>
+                        <TextField
+                          id="outlined-basic"
+                          variant="outlined"
+                          type="text"
+                          required
+                          value={pageName}
+                          inputProps={{
+                            style: {
+                              height: "5px",
+                            },
+                          }}
+                          class="peer border border-slate-400 ms-2"
+                          onChange={(e) => {
+                            setPageName(e.target.value);
+                          }}
+                        />
+                        {errorsPage
+                          .filter((err) => err.index === 0)
+                          .map((err, i) => (
+                            <div style={{ color: "#FF0000" }} key={i}>
+                              This Field is required
+                            </div>
+                          ))}
+                      </Grid>
+                    </Grid>
+                  </Grid>
 
-            <Grid className="single-entry-form">
-              <Grid>
-                <label htmlFor="" className="text-style">
-                  Text Field
-                </label>
-                <br></br>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  type="number"
-                  size="small"
-                  defaultValue="0"
-                  value={inputValue}
-                  onChange={(e) => {
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-                    setAllInputValueData((prev) => {
-                      const temp__details = {};
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValue(targetValue);
-                  }}
-                />
-              </Grid>
-              <Grid style={{ marginLeft: "5px" }}>
-                <label htmlFor="" className="text-style">
-                  DropDown Field
-                </label>
-                <br></br>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  type="number"
-                  size="small"
-                  defaultValue="0"
-                  value={inputValueDDF}
-                  onChange={(e) => {
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-
-                    setAllDropValueData((prev) => {
-                      const temp__details = {};
-                      console.log(temp__details);
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValueDDF(targetValue);
-                  }}
-                />
-              </Grid>
-              <Grid style={{ marginLeft: "5px" }}>
-                <label htmlFor="" className="text-style">
-                  Checkbox Field
-                </label>
-                <br></br>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  type="number"
-                  size="small"
-                  defaultValue="0"
-                  value={inputValueCheck}
-                  onChange={(e) => {
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-                    setAllCheckValueData((prev) => {
-                      const temp__details = {};
-                      console.log(temp__details);
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValueCheck(targetValue);
-                  }}
-                />
-              </Grid>
-              <Grid style={{ marginLeft: "5px" }}>
-                <label htmlFor="" className="text-style">
-                  Date Field
-                </label>
-                <br></br>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  type="number"
-                  size="small"
-                  defaultValue="0"
-                  value={inputValueDate}
-                  onChange={(e) => {
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-                    setAllCheckValueData((prev) => {
-                      const temp__details = {};
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValueDate(targetValue);
-                  }}
-                />
-              </Grid>
-              <Grid>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  style={{ marginLeft: "20px", marginTop: "20px" }}
-
-                  // data-toggle="modal"
-                  // data-target={`#exampleModalFormula`}
-                >
-                  Enter
-                </Button>
-              </Grid>
-            </Grid>
-            <Grid className="d-flex  align-items-center">
-              <Grid>
-                {inputData?.map((item, name) => {
-                  var labelName = "labelName";
-                  var labelType = "labelType";
-                  return (
-                    <div style={{ marginLeft: "20px" }}>
-                      <input
-                        type="text"
-                        name={`input${name}`}
-                        id={name}
-                        className="getInputValue mt-2"
-                        required
+                  <Grid className="single-entry-form">
+                    <Grid>
+                      <label htmlFor="" className="text-style">
+                        Text Field
+                      </label>
+                      <br></br>
+                      <TextField
+                        id="outlined-basic"
+                        variant="outlined"
+                        type="number"
+                        size="small"
+                        defaultValue="0"
+                        value={inputValue}
                         onChange={(e) => {
-                          // setAllData(e.target.value, labelType, labelName);
-                          // setAllData({
-                          //   ...allData,
-                          //   [labelName]: e.target.value,
-                          //   [labelType]: e.target.type,
-                          // });
-                          // if(e.target.value==""){
-                          //   document.getElementsByName(`input${name}`)[0].style.borderColor="red";
-                          //   document.getElementsByName(`input${name}validity`)[0].style.display="block";
-                          // }
-                          // else{
-                          //   document.getElementsByName(`input${name}`)[0].style.borderColor="black";
-                          //   document.getElementsByName(`input${name}validity`)[0].style.display="none";
-                          // }
+                          if (e.target.value < 0) {
+                            swal({
+                              title: "Not Possible!",
+                              text: "Please select positive number",
+                              icon: "warning",
+                              button: "OK",
+                            });
+                            return;
+                          }
 
-                          setAllInputValueData({
-                            ...allInputValueData,
-                            [name]: e.target.value,
-                          });
-                          var tempValue = {
-                            label: e.target.value,
-                            value: e.target.value,
-                          };
-                          allInputValueForFormulaData[name] = tempValue;
-                          setAllInputValueForFormulaData((prev) => {
-                            const temp__details = [...prev];
+                          let targetValue = 0;
+                          if (e.target.value == "") {
+                            targetValue = 0;
+                          } else {
+                            targetValue = parseInt(e.target.value);
+                          }
+                          setAllInputValueData((prev) => {
+                            const temp__details = {};
+                            for (
+                              var inputLength = 0;
+                              inputLength < targetValue;
+                              inputLength++
+                            ) {
+                              temp__details[inputLength] = "";
+                            }
                             return temp__details;
                           });
-                          console.log(allInputValueForFormulaData);
+                          console.log(targetValue);
+                          setInputValue(targetValue);
                         }}
                       />
-                      {errorsInput
-                        .filter((err) => err.index === name)
-                        .map((err, i) => (
-                          <div style={{ color: "#FF0000" }} key={i}>
-                            This Field is required
-                          </div>
-                        ))}
-                    </div>
-                  );
-                })}
-              </Grid>
-              <Grid>
-                {dropdownData.map((item, name) => {
-                  var labelName = "labelName";
-                  var labelType = "labelType";
-                  return (
-                    <div className="ps-5 d-flex align-items-center ">
-                      <div>
-                      <Select
-                        class="form-select w-100"
-                        className="w-[100%] mt-2"
-                        name={`drop${name}`}
-                        aria-label="Default select example"
-                        options={selectedOption[name]}
-                        id={`dropValue${name}`}
-                        onChange={(e) => {}}
-                        required
-                      ></Select>
-                      {errorsDropDown
-                        .filter((err) => err.index === name)
-                        .map((err, i) => (
-                          <div style={{ color: "#FF0000" }} key={i}>
-                            This Field is required
-                          </div>
-                        ))}
-                      </div>
-                      <div className="ms-2">
-                        <FontAwesomeIcon
-                          icon={faPlusCircle}
-                          className="text-white"
-                          data-toggle="modal"
-                          data-target={`#exampleModal${name}`}
-                          data-id={name}
-                          onClick={() => {
-                            handleModalMenu();
-                            setCurrentDropSelected(name);
-                            setShowDropDownModal(true);
-                          }}
-                        ></FontAwesomeIcon>
-                      </div>
-                    </div>
-                  );
-                })}
-              </Grid>
-              <Grid>
-                {checkboxData.map((item, name) => {
-                  return (
-                    <div className="ps-5 ms-4">
-                      <input
-                        type="text"
-                        name=""
-                        id=""
-                        className="getInputValue mt-2"
+                      <Grid className="d-flex align-items-center">
+                        <Grid>
+                          {inputData?.map((item, name) => {
+                            return (
+                              <div style={{ marginLeft: "20px" }}>
+                                <input
+                                  type="text"
+                                  name={`input${name}`}
+                                  id={name}
+                                  className="getInputValue mt-2"
+                                  required
+                                  onChange={(e) => {
+                                    // setAllData(e.target.value, labelType, labelName);
+                                    // setAllData({
+                                    //   ...allData,
+                                    //   [labelName]: e.target.value,
+                                    //   [labelType]: e.target.type,
+                                    // });
+                                    // if(e.target.value==""){
+                                    //   document.getElementsByName(`input${name}`)[0].style.borderColor="red";
+                                    //   document.getElementsByName(`input${name}validity`)[0].style.display="block";
+                                    // }
+                                    // else{
+                                    //   document.getElementsByName(`input${name}`)[0].style.borderColor="black";
+                                    //   document.getElementsByName(`input${name}validity`)[0].style.display="none";
+                                    // }
+
+                                    setAllInputValueData({
+                                      ...allInputValueData,
+                                      [name]: e.target.value,
+                                    });
+                                    var tempValue = {
+                                      label: e.target.value,
+                                      value: e.target.value,
+                                    };
+                                    allInputValueForFormulaData[name] =
+                                      tempValue;
+                                    setAllInputValueForFormulaData((prev) => {
+                                      const temp__details = [...prev];
+                                      return temp__details;
+                                    });
+                                    console.log(allInputValueForFormulaData);
+                                  }}
+                                />
+                                {errorsInput
+                                  .filter((err) => err.index === name)
+                                  .map((err, i) => (
+                                    <div style={{ color: "#FF0000" }} key={i}>
+                                      This Field is required
+                                    </div>
+                                  ))}
+                              </div>
+                            );
+                          })}
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid style={{ marginLeft: "5px" }}>
+                      <label htmlFor="" className="text-style">
+                        DropDown Field
+                      </label>
+                      <br></br>
+                      <TextField
+                        id="outlined-basic"
+                        variant="outlined"
+                        type="number"
+                        size="small"
+                        defaultValue="0"
+                        value={inputValueDDF}
                         onChange={(e) => {
-                          setAllData({
-                            ...allData,
-                            [allData.length]: e.target.value,
+                          if (e.target.value < 0) {
+                            swal({
+                              title: "Not Possible!",
+                              text: "Please select positive number",
+                              icon: "warning",
+                              button: "OK",
+                            });
+                            return;
+                          }
+                          let targetValue = 0;
+                          if (e.target.value == "") {
+                            targetValue = 0;
+                          } else {
+                            targetValue = parseInt(e.target.value);
+                          }
+
+                          setAllDropValueData((prev) => {
+                            const temp__details = {};
+                            console.log(temp__details);
+                            for (
+                              var inputLength = 0;
+                              inputLength < targetValue;
+                              inputLength++
+                            ) {
+                              temp__details[inputLength] = "";
+                            }
+                            return temp__details;
                           });
-                          setAllCheckValueData({
-                            ...allCheckValueData,
-                            [name]: e.target.value,
-                          });
+                          setInputValueDDF(targetValue);
                         }}
                       />
-                      {errorsCheck
-                        .filter((err) => err.index === name)
-                        .map((err, i) => (
-                          <div style={{ color: "#FF0000" }} key={i}>
-                            This Field is required
-                          </div>
-                        ))}
-                    </div>
-                  );
-                })}
-              </Grid>
-              <Grid>
-                {dateData.map((item, name) => {
-                  return (
-                    <div className="ps-5">
-                      <input
-                        type="text"
-                        name=""
-                        id=""
-                        className="getInputValue mt-2"
+                      <Grid className="d-flex align-items-center">
+                        <Grid>
+                          {dropdownData.map((item, name) => {
+                            return (
+                              <div className="ps-5 d-flex align-items-center ">
+                                <div>
+                                  <Select
+                                    class="form-select w-100"
+                                    className="w-[100%] mt-2"
+                                    name={`drop${name}`}
+                                    aria-label="Default select example"
+                                    options={selectedOption[name]}
+                                    id={`dropValue${name}`}
+                                    onChange={(e) => {}}
+                                    required
+                                  ></Select>
+                                  {errorsDropDown
+                                    .filter((err) => err.index === name)
+                                    .map((err, i) => (
+                                      <div style={{ color: "#FF0000" }} key={i}>
+                                        This Field is required
+                                      </div>
+                                    ))}
+                                </div>
+                                <div className="ms-2">
+                                  <FontAwesomeIcon
+                                    icon={faPlusCircle}
+                                    className="text-white"
+                                    data-toggle="modal"
+                                    data-target={`#exampleModal${name}`}
+                                    data-id={name}
+                                    onClick={() => {
+                                      handleModalMenu();
+                                      setCurrentDropSelected(name);
+                                      setShowDropDownModal(true);
+                                    }}
+                                  ></FontAwesomeIcon>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid style={{ marginLeft: "5px" }}>
+                      <label htmlFor="" className="text-style">
+                        Checkbox Field
+                      </label>
+                      <br></br>
+                      <TextField
+                        id="outlined-basic"
+                        variant="outlined"
+                        type="number"
+                        size="small"
+                        defaultValue="0"
+                        value={inputValueCheck}
                         onChange={(e) => {
-                          setAllData({
-                            ...allData,
-                            [allData.length]: e.target.value,
+                          if (e.target.value < 0) {
+                            swal({
+                              title: "Not Possible!",
+                              text: "Please select positive number",
+                              icon: "warning",
+                              button: "OK",
+                            });
+                            return;
+                          }
+                          let targetValue = 0;
+                          if (e.target.value == "") {
+                            targetValue = 0;
+                          } else {
+                            targetValue = parseInt(e.target.value);
+                          }
+                          setAllCheckValueData((prev) => {
+                            const temp__details = {};
+                            console.log(temp__details);
+                            for (
+                              var inputLength = 0;
+                              inputLength < targetValue;
+                              inputLength++
+                            ) {
+                              temp__details[inputLength] = "";
+                            }
+                            return temp__details;
                           });
-                          setAllDateValueData({
-                            ...allDateValueData,
-                            [name]: e.target.value,
-                          });
+                          setInputValueCheck(targetValue);
                         }}
                       />
-                      {errorsDate
-                        .filter((err) => err.index === name)
-                        .map((err, i) => (
-                          <div style={{ color: "#FF0000" }} key={i}>
-                            This Field is required
-                          </div>
-                        ))}
-                    </div>
-                  );
-                })}
-              </Grid>
-            </Grid>
-          </Grid>
-        ) : (
-          ""
-        )}
+                      <Grid className="d-flex align-items-center">
+                        <Grid>
+                          {checkboxData.map((item, name) => {
+                            return (
+                              <div className="">
+                                <input
+                                  type="text"
+                                  name=""
+                                  id=""
+                                  className="getInputValue mt-2"
+                                  onChange={(e) => {
+                                    setAllData({
+                                      ...allData,
+                                      [allData.length]: e.target.value,
+                                    });
+                                    setAllCheckValueData({
+                                      ...allCheckValueData,
+                                      [name]: e.target.value,
+                                    });
+                                  }}
+                                />
+                                {errorsCheck
+                                  .filter((err) => err.index === name)
+                                  .map((err, i) => (
+                                    <div style={{ color: "#FF0000" }} key={i}>
+                                      This Field is required
+                                    </div>
+                                  ))}
+                              </div>
+                            );
+                          })}
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid style={{ marginLeft: "5px" }}>
+                      <label htmlFor="" className="text-style">
+                        Date Field
+                      </label>
+                      <br></br>
+                      <TextField
+                        id="outlined-basic"
+                        variant="outlined"
+                        type="number"
+                        size="small"
+                        defaultValue="0"
+                        value={inputValueDate}
+                        onChange={(e) => {
+                          if (e.target.value < 0) {
+                            swal({
+                              title: "Not Possible!",
+                              text: "Please select positive number",
+                              icon: "warning",
+                              button: "OK",
+                            });
+                            return;
+                          }
+                          let targetValue = 0;
+                          if (e.target.value == "") {
+                            targetValue = 0;
+                          } else {
+                            targetValue = parseInt(e.target.value);
+                          }
+                          setAllCheckValueData((prev) => {
+                            const temp__details = {};
+                            for (
+                              var inputLength = 0;
+                              inputLength < targetValue;
+                              inputLength++
+                            ) {
+                              temp__details[inputLength] = "";
+                            }
+                            return temp__details;
+                          });
+                          setInputValueDate(targetValue);
+                        }}
+                      />
+                      <br />
+                      <Grid className="d-flex  align-items-center">
+                        <Grid>
+                          {dateData.map((item, name) => {
+                            return (
+                              <div className="">
+                                <input
+                                  type="text"
+                                  name=""
+                                  id=""
+                                  className="getInputValue mt-2"
+                                  onChange={(e) => {
+                                    setAllData({
+                                      ...allData,
+                                      [allData.length]: e.target.value,
+                                    });
+                                    setAllDateValueData({
+                                      ...allDateValueData,
+                                      [name]: e.target.value,
+                                    });
+                                  }}
+                                />
+                                {errorsDate
+                                  .filter((err) => err.index === name)
+                                  .map((err, i) => (
+                                    <div style={{ color: "#FF0000" }} key={i}>
+                                      This Field is required
+                                    </div>
+                                  ))}
+                              </div>
+                            );
+                          })}
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        style={{ marginLeft: "20px", marginTop: "20px" }}
+
+                        // data-toggle="modal"
+                        // data-target={`#exampleModalFormula`}
+                      >
+                        Enter
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  <Grid className="d-flex  align-items-center"></Grid>
+                </Grid>
+              ) : (
+                ""
+              )}
             </div>
             {/*Waves Container*/}
             <div>
@@ -1256,12 +1270,10 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
           </div>
           {/*Header ends*/}
           {/*Content starts*/}
-          <div className="content flex">
-            <p>By.SHIMA | Free to use </p>
+          <div className="content d-flex justify-content-center align-items-center">
+            <p className="text-white fw-bold">By.SHIMA | Free to use </p>
           </div>
         </div>
-
-        
 
         {/* {showCalculactionModal ? (
           <div
@@ -1551,9 +1563,16 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
         >
           <Modal.Header>
             <Modal.Title className="text-teal">Select Menu</Modal.Title>
-            <button type="button" class="btn-close" aria-label="Close" onClick={handleDropClose}>X</button>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              onClick={handleDropClose}
+            >
+              X
+            </button>
           </Modal.Header>
-          
+
           <Modal.Body>
             {modalSpecificData
               .filter((person) => person.MenuName === "Master Entry")
@@ -1570,13 +1589,15 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                       />
                     </div>
                   </div>
-                  <h4 className="text-purple ms-2 fs-5">{filteredPerson.SubMenuName}</h4>
+                  <h4 className="text-black ms-2 fs-5">
+                    {filteredPerson.SubMenuName}
+                  </h4>
                 </div>
               ))}
           </Modal.Body>
           <Modal.Footer>
             <button
-            style={{backgroundColor:'#0A9DBF'}}
+              style={{ backgroundColor: "#0A9DBF" }}
               type="button"
               class="btn btn-primary"
               data-dismiss="modal"

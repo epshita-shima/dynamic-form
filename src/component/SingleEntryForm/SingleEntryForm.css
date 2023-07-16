@@ -4,10 +4,11 @@ font-size: 20px;
 font-weight: bold;
 text-align: center;
 }
+
 .close ::before{
   content: 'X';
   visibility: visible;
-  color: "black";
+  color: "white";
   font-weight: bold;
 }
 
@@ -16,7 +17,6 @@ text-align: center;
 }
 
 .close{
-  /*background-color: red; */
   visibility: hidden;
   position: absolute;
   right: 32px;
@@ -35,18 +35,25 @@ text-align: center;
  border-radius: 50px;
  font-size:20px
 }
+
+.btn-close:hover{
+  color: white;
+}
+
 .single-entry-form{
     margin-top: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .grid-container {
     margin-top: 20px;
     display: grid;
     grid-template-columns: repeat(10, minmax(0, 1fr));
     padding: 10px;
-  }
+}
+
 .grid-containers {
     margin-top: 15px;
     display: grid;
@@ -54,19 +61,20 @@ text-align: center;
     padding: 10px;
   }
  
-  .grid-item {
+.grid-item {
     overflow: hidden;
     background-color: rgba(255, 255, 255, 0.8);
     /* border: 1px solid rgba(0, 0, 0, 0.8); */
     padding: 10px;
     font-size: 20px;
     text-align: center;
-  } 
+} 
   /* .list-container{
     display:flex;
     justify-content: center;
     align-items: center;
   } */
+
 .field-title{
     margin-top: 5px;
 }
@@ -101,24 +109,20 @@ text-align: center;
   color: white;
   border: none;
 }
-@import url(//fonts.googleapis.com/css?family=Lato:300:400);
+/* @import url(//fonts.googleapis.com/css?family=Lato:300:400); */
 
-body {
-  margin:0;
-}
+/* h1 {
 
-h1 {
-  font-family: 'Lato', sans-serif;
+  
   font-weight:300;
   letter-spacing: 2px;
   font-size:48px;
 }
 p {
-  font-family: 'Lato', sans-serif;
   letter-spacing: 1px;
   font-size:14px;
   color: #333333;
-}
+} */
 
 .header {
   position:relative;
@@ -126,27 +130,18 @@ p {
   background: linear-gradient(60deg, rgba(84,58,183,1) 0%, rgba(0,172,193,1) 100%);
   color:white;
 }
-.logo {
-  width:50px;
-  fill:white;
-  padding-right:15px;
-  display:inline-block;
-  vertical-align: middle;
-}
 
 .inner-header {
-  height:65vh;
+  height:60vh;
   width:100%;
-  margin: 0;
-  padding: 0;
 }
 
-.flex { /*Flexbox for containers*/
+/* .flex { 
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-}
+} */
 
 .waves {
   position:relative;
@@ -158,10 +153,11 @@ p {
 }
 
 .content {
-  position:relative;
+  /* position:reive; */
   height:20vh;
   text-align:center;
-  background-color: white;
+  color: white;
+  background-color: rgb(182, 16, 16);
 }
 
 /* Animation */
@@ -202,7 +198,7 @@ p {
   .content {
     height:30vh;
   }
-  h1 {
+  .content h1 {
     font-size:24px;
   }
 }

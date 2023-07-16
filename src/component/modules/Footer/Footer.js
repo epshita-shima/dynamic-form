@@ -39,21 +39,17 @@ const footerBackgroundColor=sessionStorage.getItem('footerBackgroundColor')
 
   return (
     <footer
-      class={`main-footer position-absolute bottom-0 footerColor`}
-      style={{ width: "1290px", backgroundColor:footerBackground? `${footerBackgroundColor}` : `${currentColor.hex}` }}
+      class={`d-flex justify-content-end align-items-center text-center position-absolute bottom-0  footerColor`}
+      style={{height:'55px',width:'100%', backgroundColor:footerBackground? `${footerBackgroundColor}` : `${currentColor.hex}` }}
     >
       <strong style={{ color:footerText=="1" ? `${getFooterTextColor}` : `${fontColor.hex}` }}>
-        Copyright &copy; 2022-2023{" "}
+       All are reserved by Team
       </strong>
       <div class="float-right d-none d-sm-inline-block">
         <div className="d-flex justify-content-center align-items-center">
-          <button style={{ border: "none", background: "transparent" }}>
-            <FooterHiddenButon
-              setShowFooter={setShowFooter}
-            ></FooterHiddenButon>
-          </button>
+          
           <button
-            className="btn-orange text-white"
+            className="btn-orange text-white ms-2"
             data-toggle="tooltip"
             data-placement="top"
             title="Background Color"
@@ -105,6 +101,11 @@ const footerBackgroundColor=sessionStorage.getItem('footerBackgroundColor')
             ) : (
               ""
             )}{" "}
+          </button>
+          <button style={{ border: "none", background: "transparent" }}>
+            <FooterHiddenButon
+              setShowFooter={setShowFooter}
+            ></FooterHiddenButon>
           </button>
         </div>
       </div>

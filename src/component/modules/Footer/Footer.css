@@ -1,4 +1,11 @@
 .footerColor{
-    background:  #62aa12;
-    color:white;
+    background:  #fff;
+    color:#878A99;
   }
+  .btn-plus{
+    background-color:#F06548;
+    width:30px;
+    height:30px;
+     border-radius:50px;
+    border: none;
+}

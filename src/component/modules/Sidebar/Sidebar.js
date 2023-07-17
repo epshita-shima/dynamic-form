@@ -22,7 +22,7 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   const sidebarBackgroundColor = sessionStorage.getItem(
     "sidebarBackgroundColor"
   );
-
+console.log(childMenu)
   const thirdArray = childMenu.filter((elem) => {
     return parentMenu.some((ele) => {
       return elem.MenuName === ele.MenuName;
@@ -35,7 +35,6 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   };
   modelData.procedureName = "prc_GetMenuList";
   const  handleParentMenu=()=>{
-  
       fetch("https://localhost:44372/api/GetData/GetInitialData", {
         method: "POST",
         headers: {
@@ -69,12 +68,13 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
         }}
       >
         <a
-          className={`brand-link`}
+          className={`brand-link `}
           style={{
-            backgroundColor:
-              sidebarBackground == "1"
-                ? `${sidebarBackgroundColor}`
-                : `${currentColor.hex}`,
+            backgroundColor:'#F3F3F9'
+            // backgroundColor:
+            //   sidebarBackground == "1"
+            //     ? `${sidebarBackgroundColor}`
+            //     : `${currentColor.hex}`,
           }}
         >
           {
@@ -96,7 +96,7 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
         {/* Sidebar */}
         <div className="sidebar">
         <div className="mt-4">
-        <button className="btn btn-success" onClick={()=>{
+        <button className="btn" style={{backgroundColor:'#F06548',color:'white'}} onClick={()=>{
           handleParentMenu()
         }}><FontAwesomeIcon icon={faRefresh}></FontAwesomeIcon></button>
        </div>
@@ -134,7 +134,6 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
               <li className="nav-item menu-open">
                 <ul className="nav nav-treeview">
                   {parentMenu.map((items, i) => {
-                    console.log(items)
                     return (
                       <li className="nav-item" key={i}>
                         <a
@@ -148,11 +147,11 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                             color: sidebarText
                               ? `${getSidebarTextColor}`
                               : `${fontColor.hex}`,
-                            backgroundColor: "#FFC300",
+                            backgroundColor: "white",
                           }}
                         >
                           <i className="far fa-circle nav-icon" />
-                          <p className="fw-bold">
+                          <p className="fw-bold hearderTextColor">
                             {items.MenuName}
                             <span>
                               <i className="fas fa-angle-down ml-2" />
@@ -169,16 +168,16 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                             return (
                               <li className="nav-item">
                                 <a
-                                  href=""
+                                  href={`${item.UiLink}`}
                                   className="nav-link"
                                   style={{
-                                    backgroundColor: "#FFD966",
-                                    color:'teal',
+                                    backgroundColor: "#66CBFF",
+                                    color:'white',
                                     fontSize:'16px'
                                   }}
                                 >
                                   <i className="far fa-circle nav-icon" />
-                                  <p className="text-teal fw-normal">{item.SubMenuName}</p>
+                                  <p className="text-white fw-normal">{item.SubMenuName}</p>
                                 </a>
                               </li>
                             );

@@ -1,5 +1,5 @@
 .sidebarColor{
-    background-color:#62aa12; color: purple; font-weight: 600;
+    background-color:#5a6691; color: purple; font-weight: 600;
 }
 .sidebarListColor{
     background-color: #FFD966; color: #778686; font-weight: 600;
@@ -14,4 +14,12 @@
     transition: width .3s ease-in-out;
     width: 250px;
     z-index: 1035;
+}
+
+.layout-navbar-fixed .wrapper .main-header{
+    left: 0;
+    position: sticky;
+    right: 0;
+    top: 0;
+    z-index: 1037;
 }

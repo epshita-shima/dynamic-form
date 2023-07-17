@@ -800,9 +800,9 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     <form
       name="myForms"
       noValidate
-      class="bg-white shadow-lg rounded-md p-5 md:p-10 flex flex-col w-11/12 max-w-lg"
+      class="bg-white shadow-lg  p-5"
       onSubmit={(e) => handleSubmit(e)}
-      
+       
     >
       <Grid>
         <div>
@@ -905,7 +905,6 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                             }
                             return temp__details;
                           });
-                          console.log(targetValue);
                           setInputValue(targetValue);
                         }}
                       />
@@ -1270,9 +1269,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
           </div>
           {/*Header ends*/}
           {/*Content starts*/}
-          <div className="content d-flex justify-content-center align-items-center">
-            <p className="text-white fw-bold">By.SHIMA | Free to use </p>
-          </div>
+         
         </div>
 
         {/* {showCalculactionModal ? (

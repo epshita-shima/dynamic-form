@@ -17,8 +17,8 @@ const SidebarButton = ({showHeader,showSidebar,setShowSidebar}) => {
     <div style={{ marginTop:'250px'}} data-toggle="tooltip" data-placement="top" title="Open Sidebar">
         <FontAwesomeIcon
           icon={faPlus}
-          className="text-white fs-4 p-2"
-          style={{backgroundColor:'#FFC300',width:"30px",height:'30px', borderRadius:'50px'}}
+          className="btn-plus text-white fs-4 p-2"
+          // style={{backgroundColor:'#FFC300',width:"30px",height:'30px', borderRadius:'50px'}}
           onClick={() => {
             setShowSidebar(true);
           }}

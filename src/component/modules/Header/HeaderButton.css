@@ -1,9 +1,10 @@
 .headerColor{
-  background:  #62aa12;
-  color:white;
+  background:  #FFF;
+  color:#FBFFB1;
 }
 .hearderTextColor{
-    color:white
+    /* color:#878A99 */
+    color:#5A6691;
 }
 .changeColorBlue{
     background-color: blue;
@@ -19,15 +20,16 @@
 .btn-orange{
     height: 30px;
     width: 30px;
-    background-color: #FFC300;
+    /* background-color: #2385BA; */
+    background-color: #5A6691;
     border-radius: 50%;
     border: none;
 }
-.btn-blue{
-    height: 25px;
-    width: 25px;
-    background-color: blue;
-    border-radius: 50%;
+.btn-plus{
+    background-color:#5A6691;
+    width:30px;
+    height:30px;
+     border-radius:50px;
     border: none;
 }
 .btn-lightgray{

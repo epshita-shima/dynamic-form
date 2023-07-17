@@ -9,46 +9,33 @@ import Slider from "./component/SliderView/Slider";
 import MyComponent from "./component/Test/MyComponent";
 import CreatePage from "./component/CreatePage/CreatePage";
 import SingleEntryData from "./component/SingleEntryData/SingleEntryData";
-import $ from 'jquery';
-import HeaderButton from "./component/modules/Header/HeaderButton";
-import SidebarButton from "./component/modules/Sidebar/SidebarButton";
 
-import SidebarColorButton from "./component/modules/Sidebar/SidebarColorButton";
-import { useState } from "react";
 
-import Footer from "./component/modules/Footer/Footer";
-import FooterShowButton from "./component/modules/Footer/FooterShowButton";
+import Dashboard from "./component/Dashboard/Dashboard";
+import SingleDasboard from "./component/Dashboard/SingleDasboard";
+import CreateMenu from "./component/CreateMenu/CreateMenu";
 
 
 
 function App() {
-  const [showHeader, setShowHeader] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false);
-  const [showFooter,setShowFooter]=useState(false);
-  const headerBackgroundColor=sessionStorage.getItem("headerBackgroundColor")
+
 
   return (
 
-    <div style={{height:'649px'}}>
-<HeaderButton 
-  headerBackgroundColor={headerBackgroundColor}
-    showHeader={showHeader}
-    setShowHeader={setShowHeader}
-    ></HeaderButton>
-    <SidebarButton
-showHeader={showHeader}
-    showSidebar={showSidebar}
-    setShowSidebar={setShowSidebar}
-    ></SidebarButton>
-    <FooterShowButton
-     showFooter={showFooter}
-     setShowFooter={setShowFooter}
-    ></FooterShowButton>
-
+    <div style={{height:'649px',backgroundColor:'#F3F3F9'}}>
+{/* 
+    */}
+<Routes>
+  <Route path="/" element={<Dashboard></Dashboard>}>
+    <Route index element={<SingleDasboard></SingleDasboard>}></Route>
+    <Route path="/master-menu" element={<CreateMenu></CreateMenu>}></Route>
+    
+  </Route>
+  </Routes> 
      {/* <Routes>
       <Route path="/" element={<CreatePage></CreatePage>}></Route>
       <Route path="/generate-form" element={<GenerateForm></GenerateForm>}></Route>
-      <Route path="/single-entry" element={<SingleEntryForm></SingleEntryForm>}></Route>
+     <Route path="single-entry" element={<SingleEntryForm></SingleEntryForm>}></Route>
       <Route path="/single-entry-data" element={<SingleEntryData></SingleEntryData>}></Route>
       <Route path="/Mycomponent" element={<MyComponent></MyComponent>}></Route>
       <Route  path="/single-form" element={<SingleForm/>}></Route>

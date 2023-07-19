@@ -10,7 +10,7 @@ const Dashboard = () => {
     const [showFooter,setShowFooter]=useState(false);
     const headerBackgroundColor=sessionStorage.getItem("headerBackgroundColor")
   return (
-    <div>
+    <div >
       <HeaderButton 
   headerBackgroundColor={headerBackgroundColor}
     showHeader={showHeader}

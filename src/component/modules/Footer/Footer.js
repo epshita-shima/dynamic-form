@@ -39,7 +39,7 @@ const footerBackgroundColor=sessionStorage.getItem('footerBackgroundColor')
 
   return (
     <footer
-      class={`d-flex justify-content-end align-items-center text-center position-absolute bottom-0  footerColor`}
+      class={`d-flex justify-content-end align-items-center text-center position-fixed bottom-0  footerColor`}
       style={{height:'55px',width:'100%', backgroundColor:footerBackground? `${footerBackgroundColor}` : `${currentColor.hex}` }}
     >
       <strong style={{ color:footerText=="1" ? `${getFooterTextColor}` : `${fontColor.hex}` }}>

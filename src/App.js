@@ -14,22 +14,22 @@ import SingleEntryData from "./component/SingleEntryData/SingleEntryData";
 import Dashboard from "./component/Dashboard/Dashboard";
 import SingleDasboard from "./component/Dashboard/SingleDasboard";
 import CreateMenu from "./component/CreateMenu/CreateMenu";
+import './App.css'
+import CreateChildMenu from "./component/CreateMenu/CreateChildMenu/CreateChildMenu";
 
 
 
 function App() {
 
-
   return (
 
-    <div style={{height:'649px',backgroundColor:'#F3F3F9'}}>
-{/* 
-    */}
+    <div>
+
 <Routes>
   <Route path="/" element={<Dashboard></Dashboard>}>
     <Route index element={<SingleDasboard></SingleDasboard>}></Route>
     <Route path="/master-menu" element={<CreateMenu></CreateMenu>}></Route>
-    
+    <Route path="/child-menu" element={<CreateChildMenu></CreateChildMenu>}></Route>
   </Route>
   </Routes> 
      {/* <Routes>

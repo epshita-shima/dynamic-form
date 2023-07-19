@@ -13,7 +13,7 @@ function FooterShowButton({showFooter,setShowFooter}) {
        setShowFooter={setShowFooter}
        ></Footer>
       ) : (
-        <div className="d-flex justify-content-center align-items-end pt-2 position-absolute bottom-0 start-50"
+        <div className="d-flex justify-content-center align-items-end pt-2 position-fixed bottom-0 start-50"
         data-toggle="tooltip" data-placement="top" title="Open Footer">
           <FontAwesomeIcon
             icon={faPlus}

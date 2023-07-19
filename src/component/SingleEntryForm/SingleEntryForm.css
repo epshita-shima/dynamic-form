@@ -3,6 +3,9 @@ margin-bottom: 5px;
 font-size: 20px;
 font-weight: bold;
 text-align: center;
+color:#878A99;
+letter-spacing: 1px;
+text-align: center;
 }
 
 .close ::before{
@@ -125,7 +128,6 @@ p {
 } */
 
 .header {
- 
   text-align:center;
   background: linear-gradient(60deg, rgba(84,58,183,1) 0%, rgba(0,172,193,1) 100%);
   color:white;

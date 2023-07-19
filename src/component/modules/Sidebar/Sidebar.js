@@ -7,6 +7,7 @@ import useParentMenu from "../../customHooks/useParentMenu";
 import useChildMenu from "../../customHooks/useChildMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   const [backgroundColor, setBackgroundColor] = useState(false);
@@ -22,7 +23,7 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   const sidebarBackgroundColor = sessionStorage.getItem(
     "sidebarBackgroundColor"
   );
-console.log(childMenu)
+  console.log(childMenu)
   const thirdArray = childMenu.filter((elem) => {
     return parentMenu.some((ele) => {
       return elem.MenuName === ele.MenuName;
@@ -47,7 +48,6 @@ console.log(childMenu)
         .then((data) => {
           if (data.status == true) {
             const allModalData = JSON.parse(data.data);
-            console.log(allModalData);
             setParentMenu(allModalData.Tables1);
             setChildMenu(allModalData.Tables2)
           } else {
@@ -163,12 +163,11 @@ console.log(childMenu)
                           id={"collapseExample" + i}
                         >
                           {thirdArray.map((item, i) => {
-                            console.log(item)
                         if(items.MenuName==item.MenuName)
                             return (
                               <li className="nav-item">
-                                <a
-                                  href={`${item.UiLink}`}
+                                <Link
+                                  to={`${item.UiLink}`}
                                   className="nav-link"
                                   style={{
                                     backgroundColor: "#66CBFF",
@@ -178,7 +177,7 @@ console.log(childMenu)
                                 >
                                   <i className="far fa-circle nav-icon" />
                                   <p className="text-white fw-normal">{item.SubMenuName}</p>
-                                </a>
+                                </Link>
                               </li>
                             );
                           })}

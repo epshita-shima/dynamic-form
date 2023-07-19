@@ -39,7 +39,7 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
       value={filterText}
       onChange={onFilter}
     />
-    <ClearButton onClick={onClear} className='text-red-900 font-bold'>X</ClearButton>
+    <ClearButton onClick={onClear} className='bg-transparent text-red fw-bold'>X</ClearButton>
   </>
 );
 

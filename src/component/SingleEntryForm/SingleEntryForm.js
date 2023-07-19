@@ -7,8 +7,6 @@ import {
   TextField,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import { Formik, FieldArray, ErrorMessage } from "formik";
-import Swal from "sweetalert2";
 import Select from "react-select";
 import "./SingleEntryForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -800,71 +798,13 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     <form
       name="myForms"
       noValidate
-      class="bg-white shadow-lg  p-5"
+      class="bg-white shadow-lg  p-5 mt-4"
       onSubmit={(e) => handleSubmit(e)}
        
     >
       <Grid>
-        <div>
-          <div className="header">
-            {/*Content before waves*/}
-            <div className="inner-header flex p-5">
-              {/*Just the logo.. Don't mind this*/}
-
-              {openModal ? (
-                <Grid>
-                  <Grid className="single-entry-form">
-                    <Grid className="justify-content-start">
-                      <Grid className="d-flex justify-content-between">
-                        <label htmlFor="" className="text-style">
-                         Parent Menu
-                        </label>
-                        <Grid className="d-flex align-items-center">
-                        <div className="w-100">
-                          <Select
-                            class="form-select text-white"
-                            className="w-100 text-white"
-                            name={`drop`}
-                            aria-label="Default select example"
-                            options={parentDropdownMenu}
-                            id={`dropValue}`}
-                            onChange={(e) => {}}
-                            required
-                          ></Select>
-                        </div>
-                        <FontAwesomeIcon icon={faPlusCircle} className="fs-4 ms-1"></FontAwesomeIcon>
-                        </Grid>
-                      </Grid>
-                      <Grid className="d-flex justify-content-between  mt-2">
-                      <label htmlFor="" className="text-style">Page Name</label>
-                        <TextField
-                          id="outlined-basic"
-                          variant="outlined"
-                          type="text"
-                          required
-                          value={pageName}
-                          inputProps={{
-                            style: {
-                              height: "5px",
-                            },
-                          }}
-                          class="peer border border-slate-400 ms-2"
-                          onChange={(e) => {
-                            setPageName(e.target.value);
-                          }}
-                        />
-                        {errorsPage
-                          .filter((err) => err.index === 0)
-                          .map((err, i) => (
-                            <div style={{ color: "#FF0000" }} key={i}>
-                              This Field is required
-                            </div>
-                          ))}
-                      </Grid>
-                    </Grid>
-                  </Grid>
-
-                  <Grid className="single-entry-form">
+      
+        <Grid className="single-entry-form">
                     <Grid>
                       <label htmlFor="" className="text-style">
                         Text Field
@@ -1220,13 +1160,73 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                       </Button>
                     </Grid>
                   </Grid>
+                  
+          {/* <div className="header">
+           
+            <div className="inner-header flex p-5">
+            
+
+              {openModal ? (
+                <Grid>
+                  <Grid className="single-entry-form">
+                    <Grid className="justify-content-start">
+                      <Grid className="d-flex justify-content-between">
+                        <label htmlFor="" className="text-style">
+                         Parent Menu
+                        </label>
+                        <Grid className="d-flex align-items-center">
+                        <div className="w-100">
+                          <Select
+                            class="form-select text-white"
+                            className="w-100 text-white"
+                            name={`drop`}
+                            aria-label="Default select example"
+                            options={parentDropdownMenu}
+                            id={`dropValue}`}
+                            onChange={(e) => {}}
+                            required
+                          ></Select>
+                        </div>
+                        <FontAwesomeIcon icon={faPlusCircle} className="fs-4 ms-1"></FontAwesomeIcon>
+                        </Grid>
+                      </Grid>
+                      <Grid className="d-flex justify-content-between  mt-2">
+                      <label htmlFor="" className="text-style">Page Name</label>
+                        <TextField
+                          id="outlined-basic"
+                          variant="outlined"
+                          type="text"
+                          required
+                          value={pageName}
+                          inputProps={{
+                            style: {
+                              height: "5px",
+                            },
+                          }}
+                          class="peer border border-slate-400 ms-2"
+                          onChange={(e) => {
+                            setPageName(e.target.value);
+                          }}
+                        />
+                        {errorsPage
+                          .filter((err) => err.index === 0)
+                          .map((err, i) => (
+                            <div style={{ color: "#FF0000" }} key={i}>
+                              This Field is required
+                            </div>
+                          ))}
+                      </Grid>
+                    </Grid>
+                  </Grid>
+
+                  
                   <Grid className="d-flex  align-items-center"></Grid>
                 </Grid>
               ) : (
                 ""
               )}
             </div>
-            {/*Waves Container*/}
+          
             <div>
               <svg
                 className="waves"
@@ -1265,12 +1265,11 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                 </g>
               </svg>
             </div>
-            {/*Waves end*/}
-          </div>
-          {/*Header ends*/}
-          {/*Content starts*/}
+     
+          </div> */}
+      
          
-        </div>
+      
 
         {/* {showCalculactionModal ? (
           <div

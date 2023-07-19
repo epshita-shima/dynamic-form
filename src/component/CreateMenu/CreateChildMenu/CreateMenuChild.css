@@ -1,0 +1,21 @@
+.modal-dialog {
+    position: relative;
+    width: 75%;
+    margin: .5rem;
+    pointer-events: none;
+}
+@media screen and (min-width: 576px){
+    .modal-dialog {
+        /* max-width: 500px; */
+        margin: 1.75rem auto;
+    }
+}
+
+@media screen and (max-width: 576px){
+
+    .modal-dialog {
+        /* max-width: 500px; */
+        margin: 1.75rem auto;
+        width: 75%;
+    }
+}

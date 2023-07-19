@@ -22,7 +22,6 @@ const useChildMenu = () => {
       .then((data) => {
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
-          console.log(allModalData);
           setChildMenu(allModalData.Tables2);
         } else {
           console.log(data);

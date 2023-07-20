@@ -510,9 +510,9 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     }
   }
 
-  function handleSubmit(e) {
+ const handleSubmit=(e)=> {
+   console.log(e)
     e.preventDefault();
-
     validationOutsideSchema();
     var foundKey = 0;
     var foundEmpty = 0;
@@ -625,7 +625,9 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
                 foundKey = 1;
               }
             }
+            alert(foundKey)
             if (foundKey == 1) {
+              
               setShowCalculactionModal(true);
             } else {
               submitForm();
@@ -799,369 +801,400 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       name="myForms"
       noValidate
       class="bg-white shadow-lg  p-5 mt-4"
-      onSubmit={(e) => handleSubmit(e)}
-       
+      onSubmit={ handleSubmit}
     >
       <Grid>
-      
-        <Grid className="single-entry-form">
-                    <Grid>
-                      <label htmlFor="" className="text-style">
-                        Text Field
-                      </label>
-                      <br></br>
-                      <TextField
-                        id="outlined-basic"
-                        variant="outlined"
-                        type="number"
-                        size="small"
-                        defaultValue="0"
-                        value={inputValue}
-                        onChange={(e) => {
-                          if (e.target.value < 0) {
-                            swal({
-                              title: "Not Possible!",
-                              text: "Please select positive number",
-                              icon: "warning",
-                              button: "OK",
-                            });
-                            return;
-                          }
+        <Grid>
+          <button
+            type="submit"
+            className="btn-createMenu"
+            style={{ background: "#0A58CA" }}
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            variant="contained"
+            className="btn-createMenu"
+            style={{ marginLeft: "10px", background: "#F06548" }}
+            onClick={() => {}}
+          >
+            Clear
+          </button>
+        </Grid>
+        <div class="container-fluid mt-4">
+          <div class="row shadow-lg p-4">
+            <div class="col">
+              <label htmlFor="" className="text-style d-block mx-auto">
+                Text Field
+              </label>
+              <TextField
+                id="outlined-basic"
+                variant="outlined"
+                type="number"
+                size="small"
+                defaultValue="0"
+                value={inputValue}
+                onChange={(e) => {
+                  if (e.target.value < 0) {
+                    swal({
+                      title: "Not Possible!",
+                      text: "Please select positive number",
+                      icon: "warning",
+                      button: "OK",
+                    });
+                    return;
+                  }
 
-                          let targetValue = 0;
-                          if (e.target.value == "") {
-                            targetValue = 0;
-                          } else {
-                            targetValue = parseInt(e.target.value);
-                          }
-                          setAllInputValueData((prev) => {
-                            const temp__details = {};
-                            for (
-                              var inputLength = 0;
-                              inputLength < targetValue;
-                              inputLength++
-                            ) {
-                              temp__details[inputLength] = "";
-                            }
-                            return temp__details;
-                          });
-                          setInputValue(targetValue);
-                        }}
-                      />
-                      <Grid className="d-flex align-items-center">
-                        <Grid>
-                          {inputData?.map((item, name) => {
-                            return (
-                              <div style={{ marginLeft: "20px" }}>
-                                <input
-                                  type="text"
-                                  name={`input${name}`}
-                                  id={name}
-                                  className="getInputValue mt-2"
-                                  required
-                                  onChange={(e) => {
-                                    // setAllData(e.target.value, labelType, labelName);
-                                    // setAllData({
-                                    //   ...allData,
-                                    //   [labelName]: e.target.value,
-                                    //   [labelType]: e.target.type,
-                                    // });
-                                    // if(e.target.value==""){
-                                    //   document.getElementsByName(`input${name}`)[0].style.borderColor="red";
-                                    //   document.getElementsByName(`input${name}validity`)[0].style.display="block";
-                                    // }
-                                    // else{
-                                    //   document.getElementsByName(`input${name}`)[0].style.borderColor="black";
-                                    //   document.getElementsByName(`input${name}validity`)[0].style.display="none";
-                                    // }
+                  let targetValue = 0;
+                  if (e.target.value == "") {
+                    targetValue = 0;
+                  } else {
+                    targetValue = parseInt(e.target.value);
+                  }
+                  setAllInputValueData((prev) => {
+                    const temp__details = {};
+                    for (
+                      var inputLength = 0;
+                      inputLength < targetValue;
+                      inputLength++
+                    ) {
+                      temp__details[inputLength] = "";
+                    }
+                    return temp__details;
+                  });
+                  setInputValue(targetValue);
+                }}
+              />
+            </div>
+            <div class="col">
+              <label htmlFor="" className="text-style d-block mx-auto">
+                DropDown Field
+              </label>
+              <TextField
+                id="outlined-basic"
+                variant="outlined"
+                type="number"
+                size="small"
+                defaultValue="0"
+                value={inputValueDDF}
+                onChange={(e) => {
+                  if (e.target.value < 0) {
+                    swal({
+                      title: "Not Possible!",
+                      text: "Please select positive number",
+                      icon: "warning",
+                      button: "OK",
+                    });
+                    return;
+                  }
+                  let targetValue = 0;
+                  if (e.target.value == "") {
+                    targetValue = 0;
+                  } else {
+                    targetValue = parseInt(e.target.value);
+                  }
 
-                                    setAllInputValueData({
-                                      ...allInputValueData,
-                                      [name]: e.target.value,
-                                    });
-                                    var tempValue = {
-                                      label: e.target.value,
-                                      value: e.target.value,
-                                    };
-                                    allInputValueForFormulaData[name] =
-                                      tempValue;
-                                    setAllInputValueForFormulaData((prev) => {
-                                      const temp__details = [...prev];
-                                      return temp__details;
-                                    });
-                                    console.log(allInputValueForFormulaData);
-                                  }}
-                                />
-                                {errorsInput
-                                  .filter((err) => err.index === name)
-                                  .map((err, i) => (
-                                    <div style={{ color: "#FF0000" }} key={i}>
-                                      This Field is required
-                                    </div>
-                                  ))}
-                              </div>
-                            );
-                          })}
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid style={{ marginLeft: "5px" }}>
-                      <label htmlFor="" className="text-style">
-                        DropDown Field
-                      </label>
-                      <br></br>
-                      <TextField
-                        id="outlined-basic"
-                        variant="outlined"
-                        type="number"
-                        size="small"
-                        defaultValue="0"
-                        value={inputValueDDF}
-                        onChange={(e) => {
-                          if (e.target.value < 0) {
-                            swal({
-                              title: "Not Possible!",
-                              text: "Please select positive number",
-                              icon: "warning",
-                              button: "OK",
-                            });
-                            return;
-                          }
-                          let targetValue = 0;
-                          if (e.target.value == "") {
-                            targetValue = 0;
-                          } else {
-                            targetValue = parseInt(e.target.value);
-                          }
+                  setAllDropValueData((prev) => {
+                    const temp__details = {};
+                    console.log(temp__details);
+                    for (
+                      var inputLength = 0;
+                      inputLength < targetValue;
+                      inputLength++
+                    ) {
+                      temp__details[inputLength] = "";
+                    }
+                    return temp__details;
+                  });
+                  setInputValueDDF(targetValue);
+                }}
+              />
+            </div>
+            <div class="col">
+              <label htmlFor="" className="text-style d-block mx-auto">
+                Checkbox Field
+              </label>
+              <TextField
+                id="outlined-basic"
+                variant="outlined"
+                type="number"
+                size="small"
+                defaultValue="0"
+                value={inputValueCheck}
+                onChange={(e) => {
+                  if (e.target.value < 0) {
+                    swal({
+                      title: "Not Possible!",
+                      text: "Please select positive number",
+                      icon: "warning",
+                      button: "OK",
+                    });
+                    return;
+                  }
+                  let targetValue = 0;
+                  if (e.target.value == "") {
+                    targetValue = 0;
+                  } else {
+                    targetValue = parseInt(e.target.value);
+                  }
+                  setAllCheckValueData((prev) => {
+                    const temp__details = {};
+                    console.log(temp__details);
+                    for (
+                      var inputLength = 0;
+                      inputLength < targetValue;
+                      inputLength++
+                    ) {
+                      temp__details[inputLength] = "";
+                    }
+                    return temp__details;
+                  });
+                  setInputValueCheck(targetValue);
+                }}
+              />
+            </div>
+            <div class="col">
+              <label htmlFor="" className="text-style d-block mx-auto">
+                Date Field
+              </label>
+              <TextField
+                id="outlined-basic"
+                variant="outlined"
+                type="number"
+                size="small"
+                defaultValue="0"
+                value={inputValueDate}
+                onChange={(e) => {
+                  if (e.target.value < 0) {
+                    swal({
+                      title: "Not Possible!",
+                      text: "Please select positive number",
+                      icon: "warning",
+                      button: "OK",
+                    });
+                    return;
+                  }
+                  let targetValue = 0;
+                  if (e.target.value == "") {
+                    targetValue = 0;
+                  } else {
+                    targetValue = parseInt(e.target.value);
+                  }
+                  setAllCheckValueData((prev) => {
+                    const temp__details = {};
+                    for (
+                      var inputLength = 0;
+                      inputLength < targetValue;
+                      inputLength++
+                    ) {
+                      temp__details[inputLength] = "";
+                    }
+                    return temp__details;
+                  });
+                  setInputValueDate(targetValue);
+                }}
+              />
+            </div>
+            <div class="w-100"></div>
+            <div class="col">
+              {inputData?.map((item, name) => {
+                return (
+                  <div>
+                    <TextField
+                      type="text"
+                      name={`input${name}`}
+                      id={name}
+                      variant="outlined"
+                      size="small"
+                      placeholder="Text Field"
+                      className="getInputValue mt-2"
+                      required
+                      onChange={(e) => {
+                        // setAllData(e.target.value, labelType, labelName);
+                        // setAllData({
+                        //   ...allData,
+                        //   [labelName]: e.target.value,
+                        //   [labelType]: e.target.type,
+                        // });
+                        // if(e.target.value==""){
+                        //   document.getElementsByName(`input${name}`)[0].style.borderColor="red";
+                        //   document.getElementsByName(`input${name}validity`)[0].style.display="block";
+                        // }
+                        // else{
+                        //   document.getElementsByName(`input${name}`)[0].style.borderColor="black";
+                        //   document.getElementsByName(`input${name}validity`)[0].style.display="none";
+                        // }
 
-                          setAllDropValueData((prev) => {
-                            const temp__details = {};
-                            console.log(temp__details);
-                            for (
-                              var inputLength = 0;
-                              inputLength < targetValue;
-                              inputLength++
-                            ) {
-                              temp__details[inputLength] = "";
-                            }
-                            return temp__details;
-                          });
-                          setInputValueDDF(targetValue);
+                        setAllInputValueData({
+                          ...allInputValueData,
+                          [name]: e.target.value,
+                        });
+                        var tempValue = {
+                          label: e.target.value,
+                          value: e.target.value,
+                        };
+                        allInputValueForFormulaData[name] = tempValue;
+                        setAllInputValueForFormulaData((prev) => {
+                          const temp__details = [...prev];
+                          return temp__details;
+                        });
+                        console.log(allInputValueForFormulaData);
+                      }}
+                    />
+                    {errorsInput
+                      .filter((err) => err.index === name)
+                      .map((err, i) => (
+                        <div style={{ color: "#FF0000" }} key={i}>
+                          This Field is required
+                        </div>
+                      ))}
+                  </div>
+                );
+              })}
+            </div>
+            <div class="col">
+              {dropdownData.map((item, name) => {
+                return (
+                  <div className="d-flex align-items-center ">
+                    <div className="w-100">
+                      <Select
+                        class="form-select w-100"
+                        className="w-[100%] mt-2"
+                        name={`drop${name}`}
+                        aria-label="Default select example"
+                        options={selectedOption[name]}
+                        id={`dropValue${name}`}
+                        onChange={(e) => {}}
+                        required
+                      ></Select>
+                      {errorsDropDown
+                        .filter((err) => err.index === name)
+                        .map((err, i) => (
+                          <div style={{ color: "#FF0000" }} key={i}>
+                            This Field is required
+                          </div>
+                        ))}
+                    </div>
+                    <div className="ms-2">
+                      <FontAwesomeIcon
+                        icon={faPlusCircle}
+                        className="footerColor"
+                        data-toggle="modal"
+                        data-target={`#exampleModal${name}`}
+                        data-id={name}
+                        onClick={() => {
+                          handleModalMenu();
+                          setCurrentDropSelected(name);
+                          setShowDropDownModal(true);
                         }}
-                      />
-                      <Grid className="d-flex align-items-center">
-                        <Grid>
-                          {dropdownData.map((item, name) => {
-                            return (
-                              <div className="ps-5 d-flex align-items-center ">
-                                <div>
-                                  <Select
-                                    class="form-select w-100"
-                                    className="w-[100%] mt-2"
-                                    name={`drop${name}`}
-                                    aria-label="Default select example"
-                                    options={selectedOption[name]}
-                                    id={`dropValue${name}`}
-                                    onChange={(e) => {}}
-                                    required
-                                  ></Select>
-                                  {errorsDropDown
-                                    .filter((err) => err.index === name)
-                                    .map((err, i) => (
-                                      <div style={{ color: "#FF0000" }} key={i}>
-                                        This Field is required
-                                      </div>
-                                    ))}
-                                </div>
-                                <div className="ms-2">
-                                  <FontAwesomeIcon
-                                    icon={faPlusCircle}
-                                    className="text-white"
-                                    data-toggle="modal"
-                                    data-target={`#exampleModal${name}`}
-                                    data-id={name}
-                                    onClick={() => {
-                                      handleModalMenu();
-                                      setCurrentDropSelected(name);
-                                      setShowDropDownModal(true);
-                                    }}
-                                  ></FontAwesomeIcon>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid style={{ marginLeft: "5px" }}>
-                      <label htmlFor="" className="text-style">
-                        Checkbox Field
-                      </label>
-                      <br></br>
-                      <TextField
-                        id="outlined-basic"
-                        variant="outlined"
-                        type="number"
-                        size="small"
-                        defaultValue="0"
-                        value={inputValueCheck}
-                        onChange={(e) => {
-                          if (e.target.value < 0) {
-                            swal({
-                              title: "Not Possible!",
-                              text: "Please select positive number",
-                              icon: "warning",
-                              button: "OK",
-                            });
-                            return;
-                          }
-                          let targetValue = 0;
-                          if (e.target.value == "") {
-                            targetValue = 0;
-                          } else {
-                            targetValue = parseInt(e.target.value);
-                          }
-                          setAllCheckValueData((prev) => {
-                            const temp__details = {};
-                            console.log(temp__details);
-                            for (
-                              var inputLength = 0;
-                              inputLength < targetValue;
-                              inputLength++
-                            ) {
-                              temp__details[inputLength] = "";
-                            }
-                            return temp__details;
-                          });
-                          setInputValueCheck(targetValue);
-                        }}
-                      />
-                      <Grid className="d-flex align-items-center">
-                        <Grid>
-                          {checkboxData.map((item, name) => {
-                            return (
-                              <div className="">
-                                <input
-                                  type="text"
-                                  name=""
-                                  id=""
-                                  className="getInputValue mt-2"
-                                  onChange={(e) => {
-                                    setAllData({
-                                      ...allData,
-                                      [allData.length]: e.target.value,
-                                    });
-                                    setAllCheckValueData({
-                                      ...allCheckValueData,
-                                      [name]: e.target.value,
-                                    });
-                                  }}
-                                />
-                                {errorsCheck
-                                  .filter((err) => err.index === name)
-                                  .map((err, i) => (
-                                    <div style={{ color: "#FF0000" }} key={i}>
-                                      This Field is required
-                                    </div>
-                                  ))}
-                              </div>
-                            );
-                          })}
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid style={{ marginLeft: "5px" }}>
-                      <label htmlFor="" className="text-style">
-                        Date Field
-                      </label>
-                      <br></br>
-                      <TextField
-                        id="outlined-basic"
-                        variant="outlined"
-                        type="number"
-                        size="small"
-                        defaultValue="0"
-                        value={inputValueDate}
-                        onChange={(e) => {
-                          if (e.target.value < 0) {
-                            swal({
-                              title: "Not Possible!",
-                              text: "Please select positive number",
-                              icon: "warning",
-                              button: "OK",
-                            });
-                            return;
-                          }
-                          let targetValue = 0;
-                          if (e.target.value == "") {
-                            targetValue = 0;
-                          } else {
-                            targetValue = parseInt(e.target.value);
-                          }
-                          setAllCheckValueData((prev) => {
-                            const temp__details = {};
-                            for (
-                              var inputLength = 0;
-                              inputLength < targetValue;
-                              inputLength++
-                            ) {
-                              temp__details[inputLength] = "";
-                            }
-                            return temp__details;
-                          });
-                          setInputValueDate(targetValue);
-                        }}
-                      />
-                      <br />
-                      <Grid className="d-flex  align-items-center">
-                        <Grid>
-                          {dateData.map((item, name) => {
-                            return (
-                              <div className="">
-                                <input
-                                  type="text"
-                                  name=""
-                                  id=""
-                                  className="getInputValue mt-2"
-                                  onChange={(e) => {
-                                    setAllData({
-                                      ...allData,
-                                      [allData.length]: e.target.value,
-                                    });
-                                    setAllDateValueData({
-                                      ...allDateValueData,
-                                      [name]: e.target.value,
-                                    });
-                                  }}
-                                />
-                                {errorsDate
-                                  .filter((err) => err.index === name)
-                                  .map((err, i) => (
-                                    <div style={{ color: "#FF0000" }} key={i}>
-                                      This Field is required
-                                    </div>
-                                  ))}
-                              </div>
-                            );
-                          })}
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        style={{ marginLeft: "20px", marginTop: "20px" }}
+                      ></FontAwesomeIcon>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div class="col">
+              {checkboxData.map((item, name) => {
+                return (
+                  <div className="">
+                    <TextField
+                      type="text"
+                      name={`check${name}`}
+                      id={name}
+                      variant="outlined"
+                      size="small"
+                      className="getInputValue mt-2"
+                      placeholder="Checkbox Field"
+                      onChange={(e) => {
+                        setAllData({
+                          ...allData,
+                          [allData.length]: e.target.value,
+                        });
+                        setAllCheckValueData({
+                          ...allCheckValueData,
+                          [name]: e.target.value,
+                        });
+                      }}
+                    />
+                    {errorsCheck
+                      .filter((err) => err.index === name)
+                      .map((err, i) => (
+                        <div style={{ color: "#FF0000" }} key={i}>
+                          This Field is required
+                        </div>
+                      ))}
+                  </div>
+                );
+              })}
+            </div>
+            <div class="col">
+              {dateData.map((item, name) => {
+                return (
+                  <div className="">
+                    <TextField
+                      type="text"
+                      name={`input${name}`}
+                      id={name}
+                      variant="outlined"
+                      size="small"
+                      placeholder="Date Field"
+                      className="getInputValue mt-2"
+                      onChange={(e) => {
+                        setAllData({
+                          ...allData,
+                          [allData.length]: e.target.value,
+                        });
+                        setAllDateValueData({
+                          ...allDateValueData,
+                          [name]: e.target.value,
+                        });
+                      }}
+                    />
+                    {errorsDate
+                      .filter((err) => err.index === name)
+                      .map((err, i) => (
+                        <div style={{ color: "#FF0000" }} key={i}>
+                          This Field is required
+                        </div>
+                      ))}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+        {/* <Grid className="single-entry-form">
+          <Grid>
+           
+          </Grid>
+          <Grid style={{ marginLeft: "5px" }}>
+           
+          </Grid>
+          <Grid style={{ marginLeft: "5px" }}>
+            
+          </Grid>
+          <Grid style={{ marginLeft: "5px" }}>
+            
+          </Grid>
+        </Grid> */}
 
-                        // data-toggle="modal"
-                        // data-target={`#exampleModalFormula`}
-                      >
-                        Enter
-                      </Button>
-                    </Grid>
-                  </Grid>
-                  
-          {/* <div className="header">
+        {/* <Grid className="d-flex justify-content-between">
+          <Grid>
+           
+          </Grid>
+          <Grid className="w-25">
+           
+          </Grid>
+          <Grid >
+            
+          </Grid>
+          <Grid>
+            
+          </Grid>
+        </Grid> */}
+
+        {/* <div className="header">
            
             <div className="inner-header flex p-5">
             
@@ -1267,9 +1300,6 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
             </div>
      
           </div> */}
-      
-         
-      
 
         {/* {showCalculactionModal ? (
           <div

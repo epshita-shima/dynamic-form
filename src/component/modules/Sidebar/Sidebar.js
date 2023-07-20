@@ -23,7 +23,7 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   const sidebarBackgroundColor = sessionStorage.getItem(
     "sidebarBackgroundColor"
   );
-  console.log(childMenu)
+  console.log(parentMenu)
   const thirdArray = childMenu.filter((elem) => {
     return parentMenu.some((ele) => {
       return elem.MenuName === ele.MenuName;

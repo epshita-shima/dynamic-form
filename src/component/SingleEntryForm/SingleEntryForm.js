@@ -26,7 +26,7 @@ import Token from "../common/Token";
 import useParentMenu from "../customHooks/useParentMenu";
 import useParentDropdown from "../customHooks/useParentDropdown";
 
-const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
+const SingleEntryForm = ({ parentMenuName,childMenuName }) => {
   const [inputValue, setInputValue] = useState("");
   const [inputValueDDF, setInputValueDDF] = useState("");
   const [inputValueCheck, setInputValueCheck] = useState("");
@@ -101,13 +101,17 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
   const [parentDropdownMenu, setParentDropdownMenu] = useParentDropdown([]);
   const token = Token.token;
   const navigate = useNavigate();
-  console.log(inputData);
+ 
+  console.log(parentMenuName,childMenuName,allCheckValueData)
+ 
   const modelData = {
     procedureName: "prc_GetPageInfo",
     parameters: {
       MenuId: "1",
     },
   };
+  
+  
 
   useEffect(() => {
     const modelDataLabel = {
@@ -174,26 +178,22 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       setDateData(arrayDate);
     }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
   }
-
-  function submitForm() {
+  
+  const submitForm=()=> {
     const modelDataLabel = {
       procedureName: "",
       parameters: {},
     };
+    var pageUrl = childMenuName.SubMenuName+'';
+    pageUrl = pageUrl.replace(" ", "-");
     modelDataLabel.procedureName = "InsertDynamicMenuTable";
     modelDataLabel.parameters = {
       DBName: "DynamicDemo",
       TableName: "tblMenu",
       ColumnData:
-        "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo, TableName",
+        "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo",
       ValueData:
-        "'Master Entry','" +
-        pageName +
-        "','/" +
-        pageName.replace(" ", "-") +
-        "','1','0','12',getdate(),'','" +
-        pageName.replace(/ /g, "") +
-        "'",
+      `'${parentMenuName.MenuName}','${childMenuName.SubMenuName}','/${pageUrl}','1','0','13',getdate(),'logo'`,
     };
 
     fetch("https://localhost:44372/api/GetData/GetDataById", {
@@ -342,12 +342,6 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
             tableModelData.detailsData.push(tabledataparams);
           }
 
-          console.log(
-            allCheckValueData,
-            allDropValueData,
-            allDateValueData,
-            allData
-          );
           fetch(
             "https://localhost:44372/api/DoubleMasterEntry/InsertListData",
             {
@@ -395,7 +389,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       .then((data) => {
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
-          setModalSpecificData(allModalData.Tables1);
+          setModalSpecificData(allModalData.Tables2);
         } else {
           console.log(data);
         }
@@ -411,7 +405,6 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
         'input[name="dropValueField"]:checked'
       ).value;
     }
-    console.log(radioName);
     setSelectedListName(radioName);
     var dataTable = [];
     for (var modelArrayPosition in allModelDataTable)
@@ -419,10 +412,8 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
         modelArrayPosition,
         allModelDataTable[modelArrayPosition],
       ]);
-    console.log(allModelDataTable);
     var dataMenuArr = [];
     dataTable.map((element) => {
-      console.log(element);
       if (element[1][0].title == radioName) {
         element[1].map((member) => {
           var dataMenuArrLength = dataMenuArr.length;
@@ -432,6 +423,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
           var allDropValueDataLength = 0;
           if (allDropValueData != null) {
             allDropValueDataLength = Object.keys(allDropValueData).length;
+            console.log(allDropValueDataLength)
           }
           setAllDropValueData({
             ...allDropValueData,
@@ -447,16 +439,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     });
     setShowDropDownModal(false);
   };
-  var dropData = [
-    {
-      value: "1",
-      label: "test1",
-    },
-    {
-      value: "2",
-      label: "test2",
-    },
-  ];
+
 
   useEffect(() => {
     previousInputValue.current = inputValue;
@@ -521,6 +504,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
     if (inputValue != "") {
       allInputValueDataLength = inputValue;
     }
+  
     var allCheckValueDataLength = 0;
     if (inputValueCheck != "") {
       allCheckValueDataLength = inputValueCheck;
@@ -541,8 +525,8 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
       allDateValueDataLength +
       allDropValueDataLength;
 
-    if (pageName != "") {
       console.log(totalField);
+      
       if (totalField > 12) {
         setErrorMessageString("There cannot be more than 12 input");
         showErrorModal(true);
@@ -637,8 +621,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
           }
         }
       }
-    } else {
-    }
+    
   }
   const createPageSchema = (fields) => {
     const schemaFields = {};
@@ -762,6 +745,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
 
   const validateCheckFields = async (schema) => {
     try {
+      console.log(allCheckValueData);
       await schema.validate(allCheckValueData, { abortEarly: false });
 
       // All fields passed validation
@@ -1164,35 +1148,6 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
             </div>
           </div>
         </div>
-        {/* <Grid className="single-entry-form">
-          <Grid>
-           
-          </Grid>
-          <Grid style={{ marginLeft: "5px" }}>
-           
-          </Grid>
-          <Grid style={{ marginLeft: "5px" }}>
-            
-          </Grid>
-          <Grid style={{ marginLeft: "5px" }}>
-            
-          </Grid>
-        </Grid> */}
-
-        {/* <Grid className="d-flex justify-content-between">
-          <Grid>
-           
-          </Grid>
-          <Grid className="w-25">
-           
-          </Grid>
-          <Grid >
-            
-          </Grid>
-          <Grid>
-            
-          </Grid>
-        </Grid> */}
 
         {/* <div className="header">
            
@@ -1348,15 +1303,24 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
         <Modal
           show={showCalculactionModal}
           onHide={handleClose}
+          size="lg"
           backdrop="static"
           keyboard={false}
         >
-          <Modal.Header closeButton>
-            <Modal.Title>Modal title</Modal.Title>
+          <Modal.Header>
+            <Modal.Title style={{color:'#000',fontWeight:'bold'}}>Calculation </Modal.Title>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              onClick={handleClose}
+            >
+              X
+            </button>
           </Modal.Header>
           <Modal.Body>
             <div className="w-50">
-              <label className="fw-bold" htmlFor="">
+              <label className="fw-bold" style={{color:'#000'}} htmlFor="">
                 Calculation Type
               </label>
               <Select
@@ -1538,17 +1502,11 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              class="btn btn-secondary"
-              variant="secondary"
-              onClick={handleClose}
-            >
-              Close
-            </Button>
-
+          
             <button
               type="button"
-              class="btn btn-primary"
+              class="btn"
+              style={{backgroundColor:"#34C38F",color:'white'}}
               onClick={() => {
                 if (pageFormula[0]["Formula"][0]["FormulaType"] == "") {
                   setFieldFormulaValidation(0);
@@ -1588,7 +1546,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
           keyboard={false}
         >
           <Modal.Header>
-            <Modal.Title className="text-teal">Select Menu</Modal.Title>
+            <Modal.Title className="text-black fw-bold">Select Menu</Modal.Title>
             <button
               type="button"
               class="btn-close"
@@ -1623,7 +1581,7 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
           </Modal.Body>
           <Modal.Footer>
             <button
-              style={{ backgroundColor: "#0A9DBF" }}
+              style={{ backgroundColor:"#34C38F",border:'none' }}
               type="button"
               class="btn btn-primary"
               data-dismiss="modal"
@@ -1643,10 +1601,19 @@ const SingleEntryForm = ({ opens, setOpens, setOpen }) => {
           backdrop="true"
           keyboard={false}
         >
-          <Modal.Header closeButton>
+          <Modal.Header >
             <Modal.Title>
-              <h5>Warning!</h5>
+              <h5 className="fw-bold">Warning!</h5>
+              
             </Modal.Title>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              onClick={handleErrorClose}
+            >
+              X
+            </button>
           </Modal.Header>
           <Modal.Body>
             <label>{errorMessageString}</label>

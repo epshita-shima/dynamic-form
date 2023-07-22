@@ -155,7 +155,7 @@ const CreateChildMenu = () => {
             </>
             <Grid
               className="d-flex justify-content-between align-items-center mt-3"
-              style={{ width: "80%" }}
+              style={{ width: "54%" }}
             >
               <label
                 style={{
@@ -178,7 +178,7 @@ const CreateChildMenu = () => {
                 }}
               ></TextField>
 
-              <div class="custom-control custom-switch custom-switch-md">
+              {/* <div class="custom-control custom-switch custom-switch-md">
                 <input
                   type="checkbox"
                   class="custom-control-input"
@@ -197,9 +197,9 @@ const CreateChildMenu = () => {
                     showSaveData=='1' ? 'Child Menu' : "Parent Menu"
                   }
                 </label>
-              </div>
+              </div> */}
             </Grid>
-            {
+            {/* {
                showSaveData=='0'? (<Grid className="mt-4">
                 <button
                   type="submit"
@@ -220,16 +220,16 @@ const CreateChildMenu = () => {
              Clear
             </button>
               </Grid>):''
-            }
+            } */}
             
           </form>
-          {
-                showSaveData=='1' ? (
+          {/* {
+                showSaveData=='1' ? ( */}
                     <Grid>
-                        <SingleEntryForm></SingleEntryForm>
+                        <SingleEntryForm parentMenuName={parentMenuName} childMenuName={childMenuName}></SingleEntryForm>
                     </Grid>
-                ):''
-            }
+                {/* ):''
+            } */}
         </Grid>
         
       </Grid>

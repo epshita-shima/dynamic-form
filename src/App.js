@@ -30,6 +30,7 @@ function App() {
     <Route index element={<SingleDasboard></SingleDasboard>}></Route>
     <Route path="/master-menu" element={<CreateMenu></CreateMenu>}></Route>
     <Route path="/child-menu" element={<CreateChildMenu></CreateChildMenu>}></Route>
+    <Route path="/single-entry-data" element={<SingleEntryData></SingleEntryData>}></Route>
   </Route>
   </Routes> 
      {/* <Routes>
@@ -39,7 +40,7 @@ function App() {
       <Route path="/single-entry-data" element={<SingleEntryData></SingleEntryData>}></Route>
       <Route path="/Mycomponent" element={<MyComponent></MyComponent>}></Route>
       <Route  path="/single-form" element={<SingleForm/>}></Route>
-      <Route path="/slider" element={<Slider></Slider>}></Route>/
+      <Route path="/slider" element={<Slider></Slider>}></Route>
     </Routes> */}
     </div>
 

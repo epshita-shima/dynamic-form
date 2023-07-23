@@ -7,7 +7,8 @@ import useParentMenu from "../../customHooks/useParentMenu";
 import useChildMenu from "../../customHooks/useChildMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import SingleEntryData from "../../SingleEntryData/SingleEntryData";
 
 const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   const [backgroundColor, setBackgroundColor] = useState(false);
@@ -23,7 +24,8 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   const sidebarBackgroundColor = sessionStorage.getItem(
     "sidebarBackgroundColor"
   );
-  console.log(parentMenu)
+
+  const navigate=useNavigate()
   const thirdArray = childMenu.filter((elem) => {
     return parentMenu.some((ele) => {
       return elem.MenuName === ele.MenuName;
@@ -56,8 +58,18 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
         });
    
   }
+  
+  const handleLinkClick = event => {
+    childMenu.map(item=>{
+      let link=item.UiLink+`/:${item.MenuId}`
+      console.log(link)
+      return navigate(`${link}`)
+    })
+  };
+
   return (
     <div>
+      
       <aside
         className={`main-sidebar sidebar-dark-primary sidebarColor elevation-4`}
         style={{
@@ -167,12 +179,12 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                             return (
                               <li className="nav-item">
                                 <Link
-                                  to={`${item.UiLink}`}
+                                  to={`${item.UiLink}/${item.MenuId}`}
                                   className="nav-link"
                                   style={{
                                     backgroundColor: "#66CBFF",
                                     color:'white',
-                                    fontSize:'16px'
+                                    fontSize:'16px',
                                   }}
                                 >
                                   <i className="far fa-circle nav-icon" />

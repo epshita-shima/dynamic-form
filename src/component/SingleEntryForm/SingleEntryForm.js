@@ -25,7 +25,7 @@ import * as Yup from "yup";
 import Token from "../common/Token";
 import useParentMenu from "../customHooks/useParentMenu";
 import useParentDropdown from "../customHooks/useParentDropdown";
-
+import useChildMenu from './../customHooks/useChildMenu';
 const SingleEntryForm = ({ parentMenuName,childMenuName }) => {
   const [inputValue, setInputValue] = useState("");
   const [inputValueDDF, setInputValueDDF] = useState("");
@@ -99,9 +99,10 @@ const SingleEntryForm = ({ parentMenuName,childMenuName }) => {
   const [errorsDate, setErrorsDate] = useState([]);
   const [errorsCheck, setErrorsCheck] = useState([]);
   const [parentDropdownMenu, setParentDropdownMenu] = useParentDropdown([]);
+  const[childMenue,setChildMenu]=useChildMenu([])
   const token = Token.token;
   const navigate = useNavigate();
- 
+
   console.log(parentMenuName,childMenuName,allCheckValueData)
  
   const modelData = {
@@ -210,7 +211,7 @@ const SingleEntryForm = ({ parentMenuName,childMenuName }) => {
         if (data.status == true) {
           const tableData = JSON.parse(data.data);
           var menuId = tableData[0]?.Column1;
-
+          
           var tableModelData = {
             tableNameMaster: "",
             tableNameChild: null,
@@ -356,7 +357,7 @@ const SingleEntryForm = ({ parentMenuName,childMenuName }) => {
             .then((res) => res.json())
             .then((data) => {
               if (data.status == true) {
-                navigate("/single-entry-data");
+              //  navigate(`/single-entry-data/${menuId}`)
               } else {
                 console.log(data);
               }
@@ -1261,6 +1262,7 @@ const SingleEntryForm = ({ parentMenuName,childMenuName }) => {
             style={{
               display: showCalculactionModal ? "none !important" : "block",
             }}
+
             class="modal fade"
             id="exampleModalFormula"
             tabindex="-1"

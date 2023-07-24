@@ -24,22 +24,23 @@ console.log(childMenu)
       <Routes>
         <Route path="/" element={<Dashboard></Dashboard>}>
           <Route index element={<SingleDasboard></SingleDasboard>}></Route>
-          <Route
-            path="/master-menu"
-            element={<CreateMenu></CreateMenu>}
-          ></Route>
-          <Route
-            path="/child-menu"
-            element={<CreateChildMenu></CreateChildMenu>}
-          ></Route>
+          
           {
              childMenu.map(item=>{
-              console.log(item.UiLink+"/:"+item.MenuId)
+              const pageType=item.PageType
               return(
-               <Route
-            path={item.UiLink+"/:"+item.MenuId}
-            element={<SingleEntryData></SingleEntryData>}
-          ></Route> 
+                <>
+                {
+                  pageType=='doubleEntryPage' ?  (<Route
+                     path={item.UiLink+"/:"+item.MenuId}
+                   element={<SingleEntryData></SingleEntryData>}
+                  ></Route> ): (
+                  <Route
+                    path="/child-menu"
+                    element={<CreateChildMenu></CreateChildMenu>}
+                  ></Route>)
+                }
+                </>
               )
              })
           }

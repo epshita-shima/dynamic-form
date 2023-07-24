@@ -19,7 +19,10 @@ const CreateChildMenu = () => {
   const handleShow = () => setShow(true);
   const [parentMenuName,setParentMenuName]=useState({ MenuName: "" })
   const [ childMenuName,setChildMenuName]=useState({ SubMenuName: "" })
- 
+ const [singleEntry,setSingleEntry]=useState({singlePage:''})
+ const [doubleEntry,setDoubleEntry]=useState({doubleEntry:''})
+ const [pageEntry,setPageEntry]=useState({pageEntry:'doubleEntryPage'})
+console.log(pageEntry.pageEntry)
   const token=Token.token;
   const modelData = {
     procedureName: "",
@@ -36,8 +39,8 @@ const CreateChildMenu = () => {
     DBName: "DynamicDemo",
     TableName: "tblMenu",
     ColumnData:
-      "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo",
-    ValueData: `'${parentMenuName.MenuName}','${childMenuName.SubMenuName}','#','1','1','13',getdate(),'logo'`,
+      "MenuName, SubMenuName,PageType, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo",
+    ValueData: `'${parentMenuName.MenuName}','${childMenuName.SubMenuName}','${pageEntry.pageEntry}',#','1','1','13',getdate(),'logo'`,
   };
 
   const handleSubmit=(e)=>{
@@ -155,7 +158,7 @@ const CreateChildMenu = () => {
             </>
             <Grid
               className="d-flex justify-content-between align-items-center mt-3"
-              style={{ width: "54%" }}
+              style={{ width: "81%" }}
             >
               <label
                 style={{
@@ -178,7 +181,7 @@ const CreateChildMenu = () => {
                 }}
               ></TextField>
 
-              {/* <div class="custom-control custom-switch custom-switch-md">
+              <div class="custom-control custom-switch custom-switch-md">
                 <input
                   type="checkbox"
                   class="custom-control-input"
@@ -186,18 +189,20 @@ const CreateChildMenu = () => {
                   onClick={(e) => {
                     const { value, checked } = e.target;
                     if (checked) {
-                      setShowSaveData(1);
+                      setShowSaveData(1)
+                      setPageEntry({...pageEntry,["pageEntry"]:'singleEnrtyPage'})
                     } else {
-                      setShowSaveData(0);
+                      setShowSaveData(0)
+                      setPageEntry({...pageEntry,["pageEntry"]:'doubleEntryPage'})
                     }
                   }}
                 />
                 <label class="custom-control-label" for="customSwitch1" style={{fontSize:'20px',color: showSaveData=='1' ? "#F06548" :"#01F9C6"}}>
                   {
-                    showSaveData=='1' ? 'Child Menu' : "Parent Menu"
+                    showSaveData=='1' ? 'Single Entry' : "Doubble Entry"
                   }
                 </label>
-              </div> */}
+              </div> 
             </Grid>
             {/* {
                showSaveData=='0'? (<Grid className="mt-4">
@@ -226,7 +231,7 @@ const CreateChildMenu = () => {
           {/* {
                 showSaveData=='1' ? ( */}
                     <Grid>
-                        <SingleEntryForm parentMenuName={parentMenuName} childMenuName={childMenuName}></SingleEntryForm>
+                        <SingleEntryForm parentMenuName={parentMenuName} childMenuName={childMenuName} pageEntry={pageEntry}></SingleEntryForm>
                     </Grid>
                 {/* ):''
             } */}

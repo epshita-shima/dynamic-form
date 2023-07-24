@@ -26,7 +26,7 @@ import Token from "../common/Token";
 import useParentMenu from "../customHooks/useParentMenu";
 import useParentDropdown from "../customHooks/useParentDropdown";
 import useChildMenu from './../customHooks/useChildMenu';
-const SingleEntryForm = ({ parentMenuName,childMenuName }) => {
+const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
   const [inputValue, setInputValue] = useState("");
   const [inputValueDDF, setInputValueDDF] = useState("");
   const [inputValueCheck, setInputValueCheck] = useState("");
@@ -192,9 +192,9 @@ const SingleEntryForm = ({ parentMenuName,childMenuName }) => {
       DBName: "DynamicDemo",
       TableName: "tblMenu",
       ColumnData:
-        "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo",
+        "MenuName, SubMenuName,PageType, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo",
       ValueData:
-      `'${parentMenuName.MenuName}','${childMenuName.SubMenuName}','/${pageUrl}','1','0','13',getdate(),'logo'`,
+      `'${parentMenuName.MenuName}','${childMenuName.SubMenuName}','${pageEntry.pageEntry}','/${pageUrl}','1','0','13',getdate(),'logo'`,
     };
 
     fetch("https://localhost:44372/api/GetData/GetDataById", {

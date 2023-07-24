@@ -16,6 +16,9 @@ import swal from "sweetalert";
 import Swal from "sweetalert2";
 import Token from "../common/Token";
 import { useLocation, useParams } from "react-router-dom";
+import "./SingleEntryData.css";
+import SingleEntryList from "./SingleEntryList";
+import SingleEntyAddRow, { handleAddRow } from "./SingleEntyAddRow";
 const SingleEntryData = () => {
   const [openModal, setOpenModal] = useState(true);
   const [labelPosition, setLabelPosition] = useState([]);
@@ -34,12 +37,14 @@ const SingleEntryData = () => {
   const [allDateValueData, setAllDateValueData] = useState(null);
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
+  const [showTable, setShowTable] = useState(false);
+  console.log(selectedOption);
   const token = Token.token;
- 
-  const search = useLocation()
-  console.log(search)
-  const link=search.pathname.split('/')
-  let id=link[2]
+
+  const search = useLocation();
+  console.log(search);
+  const link = search.pathname.split("/");
+  let id = link[2];
   console.log(labelData);
   useEffect(() => {
     const modelDataLabel = {
@@ -73,6 +78,7 @@ const SingleEntryData = () => {
   };
 
   const handleLabelField = () => {
+    setShowTable(true);
     fetch(`https://localhost:44372/api/GetData/GetDataById`, {
       method: "POST",
       headers: {
@@ -260,10 +266,10 @@ const SingleEntryData = () => {
               draggable="false"
               id={`item${i}`}
               size="small"
-              disabled={
-                labelData[i][countOfInput]["IsDisable"]?.toLowerCase?.() ===
-                "true"
-              }
+              // disabled={
+              //   labelData[i][countOfInput]["IsDisable"]?.toLowerCase?.() ===
+              //   "true"
+              // }
               name={`${i}input`}
               style={{ marginTop: "3px" }}
               value={labelData[i][countOfInput]["ColumnValue"]}
@@ -530,109 +536,6 @@ const SingleEntryData = () => {
       );
     }
   };
-  const handleReplaceCoulmn = (element, i, columnPos) => {
-    var radioName = document.querySelector(
-      'input[name="replaceField"]:checked'
-    ).value;
-    console.log(radioName);
-    labelData.map((e, pos) => {
-      e.map((el, position) => {
-        if (position == i) {
-          var wheredata = el.PageId;
-
-          console.log(e, element);
-
-          var updateColumnModel = {
-            dbName: "DynamicDemo",
-            tableName: "PageInfo",
-            columnData: "ColumnType",
-            valueData: radioName,
-            whereColumnNameData: "PageId",
-            whereData: wheredata + "",
-          };
-          var updateTableModel = {
-            dbName: "DynamicDemo",
-            tableName: "PageInfo",
-            columnData: "RelatedTable",
-            valueData: selectedListName,
-            whereColumnNameData: "PageId",
-            whereData: wheredata + "",
-          };
-
-          el.ColumnType = radioName;
-          if (updateColumnModel.valueData == "datetime") {
-            el.ColumnValue = new Date().toLocaleDateString("fr-CA");
-          } else {
-            el.ColumnValue = "";
-          }
-
-          fetch("http://localhost:53601/DBCommand/Update", {
-            method: "POST",
-            headers: {
-              "content-type": "application/json",
-            },
-            body: JSON.stringify(updateColumnModel),
-          })
-            .then((res) => {
-              console.log(res);
-              res.json();
-            })
-            .then((data) => {
-              console.log(data);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-
-          if (radioName == "dropdown") {
-            fetch("http://localhost:53601/DBCommand/Update", {
-              method: "POST",
-              headers: {
-                "content-type": "application/json",
-              },
-              body: JSON.stringify(updateTableModel),
-            })
-              .then((res) => {
-                console.log(res);
-                res.json();
-              })
-              .then((data) => {
-                console.log(data);
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          }
-        }
-      });
-    });
-
-    setLabelData(labelData);
-    setLabelData((prevArr) => {
-      const result = [...prevArr];
-      // result.ColumnValue=new Date().toLocaleDateString('fr-CA')
-      return result;
-    });
-
-    labelDataCopy.map((e, pos) => {
-      e.map((el, position) => {
-        if (position == i) {
-          el.ColumnType = radioName;
-          if (radioName == "datetime") {
-            el.ColumnValue = new Date().toLocaleDateString("fr-CA");
-          } else {
-            el.ColumnValue = "";
-          }
-        }
-      });
-    });
-
-    setLabelDataCopy(labelDataCopy);
-    setLabelDataCopy((prevArr) => {
-      const result = [...prevArr];
-      return result;
-    });
-  };
 
   const handleDropdownValue = (i) => {
     console.log(i);
@@ -675,30 +578,7 @@ const SingleEntryData = () => {
       return temp__details;
     });
   };
-  const handleModalMenu = () => {
-    const modelData = {
-      procedureName: "",
-      parameters: {},
-    };
-    modelData.procedureName = "prc_GetMenuList";
-    fetch("https://localhost:44372/api/GetData/GetInitialData", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == true) {
-          const allModalData = JSON.parse(data.data);
-          setModalSpecificData(allModalData.Tables1);
-        } else {
-          console.log(data);
-        }
-      });
-  };
+
   const handleSubmit = (e, i) => {
     e.preventDefault();
     const modelPurchase = {
@@ -1092,9 +972,9 @@ const SingleEntryData = () => {
     //   element.parentNode.insertBefore(newNode[i], element.nextSibling);
     // });
   }
-console.log(labelData)
+  console.log(labelData);
   return (
-    <Grid  className="shadow-lg p-4">
+    <Grid className="shadow-lg p-4">
       <Formik
         initialValues={{}}
         render={({ values, setFieldValue }) => {
@@ -1107,505 +987,99 @@ console.log(labelData)
                   color: "purple",
                 }}
               >
-               {allModelDataTable.MenuName}
+                {allModelDataTable.MenuName}
               </h2>
-             <div className="mt-4">
-             <Button
-                variant="contained"
-                type="submit"
-                onClick={(e, index) => {
-                  handleSubmit(e, index);
-                }}
-              >
-                Save
-              </Button>
+              <div className="mt-4">
+                <Button
+                  variant="contained"
+                  type="button"
+                  style={{ marginLeft: "5px", background: "#5A6691" }}
+                  onClick={(e, index) => {
+                    handleLabelField();
+                  }}
+                >
+                  Show Data
+                </Button>
+                {showTable ? (
+                  <>
+                    <Button
+                      variant="contained"
+                      className="ms-2"
+                      type="submit"
+                      onClick={(e, index) => {
+                        handleSubmit(e, index);
+                      }}
+                    >
+                      Save
+                    </Button>
 
-              <Button
-                type="button"
-                variant="contained"
-                style={{ marginLeft: "5px", background: "#F06548" }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  columnValues[columnValues.length] = {};
-                  setGetDate([...getDate, new Date()]);
-                  twoDimensionData[twoDimensionData.length] = [];
-                  setLabelData((prevArr) => {
-                    const result = [...prevArr];
+                    <Button
+                      type="button"
+                      variant="contained"
+                      style={{ marginLeft: "5px", background: "#66CBFF" }}
+                      onClick={(e) => {
+                        handleAddRow({
+                          columnValues,
+                          setGetDate,
+                          getDate,
+                          twoDimensionData,
+                          setLabelData,
+                          labelDataCopy,
+                          setTwoDimentionData,
+                        });
+                      }}
+                    >
+                      Add row
+                    </Button>
 
-                    result[0].map((element, i) => {
-                      if (element.ColumnType == "datetime") {
-                        twoDimensionData[twoDimensionData.length - 1][i] =
-                          new Date();
-                      }
-                      columnValues[columnValues.length - 1][
-                        element.ColumnName
-                      ] = "";
-                    });
-
-                    var tempdatanewrow = JSON.parse(
-                      JSON.stringify(labelDataCopy[0])
-                    );
-                    result.push(tempdatanewrow);
-                    console.log(result);
-                    return result;
-                  });
-                  setTwoDimentionData(twoDimensionData);
-                }}
-              >
-                Add row
-              </Button>
-              <Button
-                variant="contained"
-                type="button"
-                style={{ marginLeft: "5px", background: "#01F9C6" }}
-                onClick={(e, index) => {
-                  handleLabelField();
-                }}
-              >
-                Show Data
-              </Button>
-              <Button
-                variant="contained"
-                type="button"
-                style={{ marginLeft: "5px", background: "red" }}
-                onClick={(e, index) => {
-                  setShowDeleteIcon(true);
-                }}
-              >
-                Delete Column
-              </Button>
-             </div>
+                    <Button
+                      variant="contained"
+                      type="button"
+                      style={{ marginLeft: "5px", background: "red" }}
+                      onClick={(e, index) => {
+                        if (showDeleteIcon == false) {
+                          setShowDeleteIcon(true);
+                        } else {
+                          setShowDeleteIcon(false);
+                        }
+                      }}
+                    >
+                      Delete Column
+                    </Button>
+                  </>
+                ) : (
+                  ""
+                )}
+              </div>
               <br />
               <FieldArray
                 render={(arrayHelpers) => {
                   return (
-                    <div div className="shadow-lg p-4">
-                      <table className="table ">
-                        <thead className="border ">
-                          <tr>
-                            {labelData.map((item, i) => {
-                              if (i == 0) {
-                                return item.map((element, index) => {
-                                  const str = element.ColumnName;
-                                  const str2 =
-                                    str.charAt(0).toUpperCase() + str.slice(1);
-                                  return (
-                                    <th
-                                      scope="col"
-                                      className={`dropTh${index} border`}
-                                      draggable="true"
-                                    >
-                                      <div className="d-flex justify-content-between align-items-center">
-                                        <TextField
-                                          id={`box${index}`}
-                                          name="L"
-                                          label={`${str2}`}
-                                          variant="standard"
-                                          disabled
-                                          InputLabelProps={{
-                                            className: `textField_label `,
-                                          }}
-                                          className={`box${index} `}
-                                          style={{ marginLeft: "15px" }}
-                                          onChange={(e) => {}}
-                                        />
-
-                                        <FontAwesomeIcon
-                                          icon={faArrowsRotate}
-                                          data-toggle="modal"
-                                          data-target={`#exampleModal${index}`}
-                                          data-id={index}
-                                          onClick={() => {
-                                            setLabelPosition(index);
-                                          }}
-                                        ></FontAwesomeIcon>
-                                        {showDeleteIcon ? (
-                                          <FontAwesomeIcon
-                                            icon={faXmark}
-                                            className="ms-2 bg-danger p-1 text-white"
-                                            style={{
-                                              borderRadius: "50px",
-                                              padding: "10px",
-                                            }}
-                                            onClick={() => {
-                                              swal({
-                                                title: "Are you sure?",
-                                                text: "Once deleted, you will not be able to recover this record",
-                                                icon: "warning",
-                                                buttons: true,
-                                                dangerMode: true,
-                                              }).then((willDelete) => {
-                                                if (willDelete) {
-                                                  setColumnValues((prev) => {
-                                                    const temp__details = [
-                                                      ...prev,
-                                                    ];
-                                                    // temp__details.splice(1, 1);
-                                                    temp__details.map(
-                                                      (item) => {
-                                                        delete item[
-                                                          element.ColumnName
-                                                        ];
-                                                      }
-                                                    );
-                                                    return temp__details;
-                                                  });
-                                                  setLabelData((prev) => {
-                                                    const temp__details = [
-                                                      ...prev,
-                                                    ];
-                                                    temp__details.map(
-                                                      (item) => {
-                                                        item.splice(index, 1);
-                                                      }
-                                                    );
-                                                    return temp__details;
-                                                  });
-                                                  setLabelDataCopy((prev) => {
-                                                    const temp__details = [
-                                                      ...prev,
-                                                    ];
-                                                    temp__details.map(
-                                                      (item) => {
-                                                        item.splice(index, 1);
-                                                      }
-                                                    );
-                                                    return temp__details;
-                                                  });
-                                                  swal("Delete success", {
-                                                    icon: "success",
-                                                  });
-                                                  setShowDeleteIcon(false);
-                                                }
-                                              });
-                                            }}
-                                          ></FontAwesomeIcon>
-                                        ) : (
-                                          ""
-                                        )}
-
-                                        <div
-                                          className="modal fade"
-                                          id={`exampleModal${index}`}
-                                          tabindex="-1"
-                                          role="dialog"
-                                          aria-labelledby={`exampleModal${index}Label`}
-                                          // aria-hidden="true"
-                                        >
-                                          {/* {openModal ? ( */}
-                                          <div
-                                            className="modal-dialog"
-                                            role="document"
-                                          >
-                                            <div className="modal-content">
-                                              <div className="modal-header">
-                                                <h5
-                                                  className="modal-title"
-                                                  id={`exampleModal${index}Label`}
-                                                >
-                                                  What you like to replace this
-                                                  field with?
-                                                </h5>
-                                                <button
-                                                  type="button"
-                                                  data-dismiss="modal"
-                                                >
-                                                  <span
-                                                  //  aria-hidden="true"
-                                                  >
-                                                    &times;
-                                                  </span>
-                                                </button>
-                                              </div>
-                                              <div className="modal-body">
-                                                <div className="input-group">
-                                                  <div className="input-group-prepend">
-                                                    <div className="input-group-text">
-                                                      <input
-                                                        type="radio"
-                                                        value="textbox"
-                                                        name="replaceField"
-                                                        aria-label="Radio button for following text input"
-                                                      />
-                                                    </div>
-                                                  </div>
-                                                  <input
-                                                    id="inputField"
-                                                    type="text"
-                                                    placeholder="textbox"
-                                                    className="form-control"
-                                                    aria-label="Text input with radio button"
-                                                  />
-                                                </div>
-                                                <div className="input-group  mt-2">
-                                                  <div className="input-group-prepend">
-                                                    <div className="input-group-text">
-                                                      <input
-                                                        type="radio"
-                                                        name="replaceField"
-                                                        value="dropdown"
-                                                        data-toggle="modal"
-                                                        data-target="#exampleModal"
-                                                        onClick={() => {
-                                                          handleModalMenu();
-                                                          setOpenModal(false);
-                                                        }}
-                                                      ></input>
-                                                    </div>
-                                                  </div>
-                                                  <div className="w-75">
-                                                    <div draggable="false">
-                                                      <Select
-                                                        className="form-select"
-                                                        class="w-[100%]"
-                                                        aria-label="Default select example"
-                                                      ></Select>
-                                                    </div>
-                                                    <div
-                                                      className="droptarget border"
-                                                      style={{
-                                                        display: "none",
-                                                      }}
-                                                      draggable="false"
-                                                    >
-                                                      Drop
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                <div className="input-group mt-2">
-                                                  <div className="input-group-prepend">
-                                                    <div className="input-group-text">
-                                                      <input
-                                                        type="radio"
-                                                        value="checkbox"
-                                                        name="replaceField"
-                                                        aria-label="Radio button for following text input"
-                                                      />
-                                                    </div>
-                                                  </div>
-                                                  <FormGroup>
-                                                    <FormControlLabel
-                                                      id="checkboxField"
-                                                      name={`item.${i}.check`}
-                                                      style={{
-                                                        marginTop: "3px",
-                                                      }}
-                                                      control={
-                                                        <Checkbox
-                                                          defaultChecked
-                                                        />
-                                                      }
-                                                      label="Label"
-                                                    />
-                                                  </FormGroup>
-                                                </div>
-                                                <div className="input-group mt-2">
-                                                  <div className="input-group-prepend">
-                                                    <div className="input-group-text">
-                                                      <input
-                                                        type="radio"
-                                                        value="radiobutton"
-                                                        name="replaceField"
-                                                        aria-label="Radio button for following text input"
-                                                      />
-                                                    </div>
-                                                  </div>
-                                                  <input
-                                                    type="text"
-                                                    name={`radio`}
-                                                    placeholder="Radio"
-                                                    className="form-control"
-                                                    style={{
-                                                      marginLeft: "3px",
-                                                    }}
-                                                    onChange={(e) => {}}
-                                                  />
-                                                </div>
-                                                <div className="input-group mt-2">
-                                                  <div className="input-group-prepend">
-                                                    <div className="input-group-text">
-                                                      <input
-                                                        type="radio"
-                                                        value="datetime"
-                                                        name="replaceField"
-                                                        aria-label="Radio button for following text input"
-                                                      />
-                                                    </div>
-                                                  </div>
-                                                  <TextField
-                                                    id="date"
-                                                    type="date"
-                                                    defaultValue={startDate}
-                                                    size="small"
-                                                  />
-                                                </div>
-                                              </div>
-                                              <div className="modal-footer">
-                                                <button
-                                                  type="button"
-                                                  className="btn btn-primary close"
-                                                  data-dismiss="modal"
-                                                  aria-label="Close"
-                                                  onClick={(e) => {
-                                                    handleReplaceCoulmn(
-                                                      item,
-                                                      index,
-                                                      i
-                                                    );
-                                                  }}
-                                                >
-                                                  Save changes
-                                                </button>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          {/* ) : (
-                                              ""
-                                            )} */}
-                                        </div>
-                                      </div>
-
-                                      <div
-                                        className="droptargettd border"
-                                        style={{ display: "none" }}
-                                        draggable="false"
-                                      >
-                                        Drop
-                                      </div>
-                                    </th>
-                                  );
-                                });
-                              }
-                            })}
-                            <th scope="col">Action</th>
-                          </tr>
-                        </thead>
-
-                        <tbody>
-                          {labelData.map((item, index) => {
-                            console.log(index);
-                            return (
-                              <tr id={`tr${index}`}>
-                                {item.map((element, i) => {
-                                  return handleInputValue(element, i, index);
-                                })}
-                                <td className="border">
-                                  <Button
-                                    id={`delete${index}`}
-                                    variant="contained"
-                                    style={{
-                                      background: "red",
-                                      marginTop: "3px",
-                                      borderRadius: "50px",
-                                      textAlign: "center",
-                                    }}
-                                    onClick={(e) => {
-                                      console.log(index);
-                                      setColumnValues((prev) => {
-                                        const temp__details = [...prev];
-                                        temp__details.splice(index, 1);
-                                        return temp__details;
-                                      });
-                                      setLabelData((prev) => {
-                                        const temp__details = [...prev];
-                                        console.log(temp__details);
-                                        temp__details.splice(index, 1);
-                                        return temp__details;
-                                      });
-                                    }}
-                                  >
-                                    X
-                                  </Button>
-                                </td>
-                                <div
-                                  className="modal fade"
-                                  id="exampleModal"
-                                  tabindex="-1"
-                                  role="dialog"
-                                  aria-labelledby="exampleModalLabel"
-                                  aria-hidden="true"
-                                >
-                                  <div className="modal-dialog" role="document">
-                                    <div className="modal-content">
-                                      <div className="modal-header">
-                                        <h5
-                                          className="modal-title"
-                                          id="exampleModalLabel"
-                                        >
-                                          Modal title
-                                        </h5>
-                                        <button
-                                          type="button"
-                                          className="close"
-                                          data-dismiss="modal"
-                                          aria-label="Close"
-                                          onClick={() => {
-                                            setOpenModal(true);
-                                          }}
-                                        >
-                                          <span aria-hidden="true">
-                                            &times;
-                                          </span>
-                                        </button>
-                                      </div>
-                                      <div className="modal-body">
-                                        {modalSpecificData
-                                          .filter(
-                                            (person) =>
-                                              person.MenuName === "Master Entry"
-                                          )
-                                          .map((filteredPerson) => (
-                                            <div className="input-group">
-                                              <div className="input-group-prepend">
-                                                <div className="input-group-text">
-                                                  <input
-                                                    type="radio"
-                                                    value={
-                                                      filteredPerson.SubMenuName
-                                                    }
-                                                    name="dropValueField"
-                                                    aria-label="Radio button for following text input"
-                                                    onClick={(e) => {}}
-                                                  />
-                                                </div>
-                                              </div>
-                                              <h4 className="ms-2">
-                                                {filteredPerson.SubMenuName}
-                                              </h4>
-                                            </div>
-                                          ))}
-                                      </div>
-                                      <div className="modal-footer">
-                                        <button
-                                          type="button"
-                                          className="btn btn-secondary"
-                                          data-dismiss="modal"
-                                          onClick={() => {
-                                            setOpenModal(true);
-                                          }}
-                                        >
-                                          Close
-                                        </button>
-                                        <button
-                                          type="button"
-                                          className="btn btn-primary"
-                                          data-dismiss="modal"
-                                          onClick={() => {
-                                            handleDropdownValue(labelPosition);
-                                            setOpenModal(true);
-                                          }}
-                                        >
-                                          Save changes
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
+                    <div
+                      div
+                      className={`shadow-lg p-4`}
+                      style={{ visibility: showTable ? "visible" : "hidden" }}
+                    >
+                      <SingleEntryList
+                        token={token}
+                        startDate={startDate}
+                        labelData={labelData}
+                        setLabelData={setLabelData}
+                        setLabelDataCopy={setLabelDataCopy}
+                        setLabelPosition={setLabelPosition}
+                        showDeleteIcon={showDeleteIcon}
+                        setColumnValues={setColumnValues}
+                        columnValues={columnValues}
+                        setShowDeleteIcon={setShowDeleteIcon}
+                        setModalSpecificData={setModalSpecificData}
+                        setOpenModal={setOpenModal}
+                        labelDataCopy={labelDataCopy}
+                        handleDropdownValue={handleDropdownValue}
+                        handleInputValue={handleInputValue}
+                        modalSpecificData={modalSpecificData}
+                        labelPosition={labelPosition}
+                        selectedListName={selectedListName}
+                      ></SingleEntryList>
                     </div>
                   );
                 }}

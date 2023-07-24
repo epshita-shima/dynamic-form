@@ -179,7 +179,7 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
                             return (
                               <li className="nav-item">
                                 <Link
-                                  to={`${item.UiLink}/${item.MenuId}`}
+                                  to={`${item.PageType=='doubleEntryPage' ? `${item.UiLink}/${item.MenuId}`: `${item.UiLink}`}`}
                                   className="nav-link"
                                   style={{
                                     backgroundColor: "#66CBFF",

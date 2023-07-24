@@ -6,7 +6,7 @@ color:#878A99;
 letter-spacing: 1px;
 }
 
-.close ::before{
+/* .close ::before{
   content: 'X';
   visibility: visible;
   color: "white";
@@ -25,7 +25,7 @@ letter-spacing: 1px;
   width: 20px;
   height: 20px;
   background-color: rgb(247, 12, 12, 0.5);
-}
+} */
 
 .btn-close {
  background:red;
@@ -79,7 +79,7 @@ letter-spacing: 1px;
 .field-title{
     margin-top: 5px;
 }
-.dispaly-visibility{
+.dispaly-hidden{
   visibility:hidden;
 }
 .display-show{

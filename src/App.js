@@ -31,7 +31,7 @@ console.log(childMenu)
               return(
                 <>
                 {
-                  pageType=='doubleEntryPage' ?  (<Route
+                  pageType=='singleEntryPage' ?  (<Route
                      path={item.UiLink+"/:"+item.MenuId}
                    element={<SingleEntryData></SingleEntryData>}
                   ></Route> ): (

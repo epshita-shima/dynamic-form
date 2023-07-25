@@ -25,8 +25,16 @@ import * as Yup from "yup";
 import Token from "../common/Token";
 import useParentMenu from "../customHooks/useParentMenu";
 import useParentDropdown from "../customHooks/useParentDropdown";
-import useChildMenu from './../customHooks/useChildMenu';
-const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
+import useChildMenu from "./../customHooks/useChildMenu";
+const SingleEntryForm = ({
+  setExist,
+  parentMenuName,
+  childMenuName,
+  pageEntry,
+  setParentMenuName,
+  setChildMenuName,
+  setPageEntry,
+}) => {
   const [inputValue, setInputValue] = useState("");
   const [inputValueDDF, setInputValueDDF] = useState("");
   const [inputValueCheck, setInputValueCheck] = useState("");
@@ -99,20 +107,22 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
   const [errorsDate, setErrorsDate] = useState([]);
   const [errorsCheck, setErrorsCheck] = useState([]);
   const [parentDropdownMenu, setParentDropdownMenu] = useParentDropdown([]);
-  const[childMenue,setChildMenu]=useChildMenu([])
+  const [childMenu, setChildMenu] = useChildMenu([]);
   const token = Token.token;
-  const navigate = useNavigate();
 
-  console.log(parentMenuName,childMenuName,allCheckValueData)
- 
-  const modelData = {
-    procedureName: "prc_GetPageInfo",
-    parameters: {
-      MenuId: "1",
-    },
-  };
-  
-  
+  const tableName = childMenuName.SubMenuName;
+  const spaceRemove = tableName.split(" ").join("");
+  const tableNameLowerCase = spaceRemove.toLowerCase();
+
+  var tableCreateData = "";
+  Object.entries(allInputValueData).forEach((entry) => {
+    const [key, value] = entry;
+    console.log(key, value);
+    const spaceRemove = value.split(" ").join("");
+    const convertLowerCase = spaceRemove.toLowerCase();
+    tableCreateData =
+      tableCreateData + convertLowerCase + " " + "varchar(250)" + ",";
+  });
 
   useEffect(() => {
     const modelDataLabel = {
@@ -179,13 +189,13 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
       setDateData(arrayDate);
     }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
   }
-  
-  const submitForm=()=> {
+
+  const submitForm = () => {
     const modelDataLabel = {
       procedureName: "",
       parameters: {},
     };
-    var pageUrl = childMenuName.SubMenuName+'';
+    var pageUrl = childMenuName.SubMenuName + "";
     pageUrl = pageUrl.replace(" ", "-");
     modelDataLabel.procedureName = "InsertDynamicMenuTable";
     modelDataLabel.parameters = {
@@ -193,184 +203,291 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
       TableName: "tblMenu",
       ColumnData:
         "MenuName, SubMenuName,PageType, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo",
-      ValueData:
-      `'${parentMenuName.MenuName}','${childMenuName.SubMenuName}','${pageEntry.pageEntry}','/${pageUrl}','1','0','13',getdate(),'logo'`,
+      ValueData: `'${parentMenuName.MenuName}','${childMenuName.SubMenuName}','${pageEntry.pageEntry}','/${pageUrl}','1','0','13',getdate(),'logo'`,
     };
+    const modelTableData = {
+      procedureName: "",
+      parameters: {},
+    };
+    modelTableData.parameters = {
+      DBName: "DynamicDemo",
+      TableName: tableNameLowerCase,
+      Data: `ID varchar(128),${tableCreateData} Makedate datetime,MakeBy varchar(128)`,
+      PKColumn: "ID",
+    };
+    modelTableData.procedureName = "CreateDynamicTable";
 
-    fetch("https://localhost:44372/api/GetData/GetDataById", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelDataLabel),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(JSON.stringify(data));
-        if (data.status == true) {
-          const tableData = JSON.parse(data.data);
-          var menuId = tableData[0]?.Column1;
-          
-          var tableModelData = {
-            tableNameMaster: "",
-            tableNameChild: null,
-            columnNamePrimary: null,
-            columnNameForign: null,
-            serialType: null,
-            columnNameSerialNo: null,
-            isFlag: null,
-            data: "",
-            detailsData: [],
-            whereParams: null,
-          };
-          tableModelData.detailsData = [];
-          tableModelData.tableNameChild = "PageInfo";
-
-          var allInputValueDataLength = 0;
-          if (allInputValueData != null) {
-            allInputValueDataLength = Object.keys(allInputValueData).length;
-          }
-
-          var allCheckValueDataLength = 0;
-          if (allCheckValueData != null) {
-            allCheckValueDataLength = Object.keys(allCheckValueData).length;
-          }
-
-          var allDateValueDataLength = 0;
-          if (allDateValueData != null) {
-            allDateValueDataLength = Object.keys(allDateValueData).length;
-          }
-
-          var allDropValueDataLength = 0;
-          if (allDropValueData != null) {
-            allDropValueDataLength = Object.keys(allDropValueData).length;
-          }
-          var orderPosition = 0;
-
-          for (
-            let allInputValueDataCount = 0;
-            allInputValueDataCount < allInputValueDataLength;
-            allInputValueDataCount++
-          ) {
-            orderPosition++;
-            var tabledataparams = {
-              PageId: "newid()",
-              MenuId: menuId,
-              ColumnName: allInputValueData[allInputValueDataCount],
-              ColumnType: "textbox",
-              ColumnDataType: "",
-              SiteName: "DynamicSite",
-              CalculationType: calculationType,
-              CalculationKey: allInputValueData[allInputValueDataCount],
-              CalculationFormula: JSON.stringify(pageFormula),
-              RelatedTable: "",
-              Position: orderPosition,
-              IsDisable:
-                formulaTarget == allInputValueData[allInputValueDataCount]
-                  ? "1"
-                  : "0",
-            };
-            tableModelData.detailsData.push(tabledataparams);
-          }
-
-          for (
-            let allCheckValueDataCount = 0;
-            allCheckValueDataCount < allCheckValueDataLength;
-            allCheckValueDataCount++
-          ) {
-            orderPosition++;
-            var tabledataparams = {
-              PageId: "newid()",
-              MenuId: menuId,
-              ColumnName: allCheckValueData[allCheckValueDataCount],
-              ColumnType: "checkbox",
-              ColumnDataType: "",
-              SiteName: "DynamicSite",
-              CalculationType: "Manual",
-              CalculationKey: "",
-              CalculationFormula: "",
-              RelatedTable: "",
-              Position: orderPosition,
-              IsDisable: "0",
-            };
-            tableModelData.detailsData.push(tabledataparams);
-          }
-
-          for (
-            let allDateValueDataCount = 0;
-            allDateValueDataCount < allDateValueDataLength;
-            allDateValueDataCount++
-          ) {
-            orderPosition++;
-            var tabledataparams = {
-              PageId: "newid()",
-              MenuId: menuId,
-              ColumnName: allDateValueData[allDateValueDataCount],
-              ColumnType: "datetime",
-              ColumnDataType: "",
-              SiteName: "DynamicSite",
-              CalculationType: "Manual",
-              CalculationKey: "",
-              CalculationFormula: "",
-              RelatedTable: "",
-              Position: orderPosition,
-              IsDisable: "0",
-            };
-            tableModelData.detailsData.push(tabledataparams);
-          }
-
-          for (
-            let allDropValueDataCount = 0;
-            allDropValueDataCount < allDropValueDataLength;
-            allDropValueDataCount++
-          ) {
-            orderPosition++;
-            var tabledataparams = {
-              PageId: "newid()",
-              MenuId: menuId,
-              ColumnName: allDropValueData[allDropValueDataCount],
-              ColumnType: "dropdown",
-              ColumnDataType: "",
-              SiteName: "DynamicSite",
-              CalculationType: "Manual",
-              CalculationKey: "",
-              CalculationFormula: "",
-              RelatedTable: "",
-              Position: orderPosition,
-              IsDisable: "0",
-            };
-            tableModelData.detailsData.push(tabledataparams);
-          }
-
-          fetch(
-            "https://localhost:44372/api/DoubleMasterEntry/InsertListData",
-            {
-              method: "POST",
-              headers: {
-                authorization: `Bearer ${token}`,
-                "content-type": "application/json",
-              },
-              body: JSON.stringify(tableModelData),
-            }
-          )
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.status == true) {
-              //  navigate(`/single-entry-data/${menuId}`)
-              } else {
-                console.log(data);
-              }
-            });
-        }
-      })
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err);
+    if (parentMenuName.MenuName == "" || childMenuName.SubMenuName == "") {
+      swal({
+        title: "Try again",
+        text: "Please take parent and child menu",
+        icon: "warning",
+        button: "OK",
       });
-  }
+      return;
+    } else {
+      const exists = childMenu.find(
+        (p) => p.SubMenuName === childMenuName.SubMenuName
+      );
+      console.log(exists);
+      if (exists) {
+        setExist(true);
+        swal({
+          title: "Try again",
+          text: "Child manu already exist",
+          icon: "warning",
+          button: "OK",
+        });
+        return;
+      } else if (exists === undefined) {
+        fetch("https://localhost:44372/api/GetData/GetDataById", {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${token}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(modelDataLabel),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(JSON.stringify(data));
+            if (data.status == true) {
+              const tableData = JSON.parse(data.data);
+              var menuId = tableData[0]?.Column1;
+
+              var tableModelData = {
+                tableNameMaster: "",
+                tableNameChild: null,
+                columnNamePrimary: null,
+                columnNameForign: null,
+                serialType: null,
+                columnNameSerialNo: null,
+                isFlag: null,
+                data: "",
+                detailsData: [],
+                whereParams: null,
+              };
+              tableModelData.detailsData = [];
+              tableModelData.tableNameChild = "PageInfo";
+
+              var allInputValueDataLength = 0;
+              if (allInputValueData != null) {
+                allInputValueDataLength = Object.keys(allInputValueData).length;
+              }
+
+              var allCheckValueDataLength = 0;
+              if (allCheckValueData != null) {
+                allCheckValueDataLength = Object.keys(allCheckValueData).length;
+              }
+
+              var allDateValueDataLength = 0;
+              if (allDateValueData != null) {
+                allDateValueDataLength = Object.keys(allDateValueData).length;
+              }
+
+              var allDropValueDataLength = 0;
+              if (allDropValueData != null) {
+                allDropValueDataLength = Object.keys(allDropValueData).length;
+              }
+              var orderPosition = 0;
+
+              for (
+                let allInputValueDataCount = 0;
+                allInputValueDataCount < allInputValueDataLength;
+                allInputValueDataCount++
+              ) {
+                orderPosition++;
+                var tabledataparams = {
+                  PageId: "newid()",
+                  MenuId: menuId,
+                  ColumnName: allInputValueData[allInputValueDataCount],
+                  ColumnType: "textbox",
+                  ColumnDataType: "",
+                  SiteName: "DynamicSite",
+                  CalculationType: calculationType,
+                  CalculationKey: allInputValueData[allInputValueDataCount],
+                  CalculationFormula: JSON.stringify(pageFormula),
+                  RelatedTable: "",
+                  Position: orderPosition,
+                  IsDisable:
+                    formulaTarget == allInputValueData[allInputValueDataCount]
+                      ? "1"
+                      : "0",
+                };
+                tableModelData.detailsData.push(tabledataparams);
+              }
+
+              for (
+                let allCheckValueDataCount = 0;
+                allCheckValueDataCount < allCheckValueDataLength;
+                allCheckValueDataCount++
+              ) {
+                orderPosition++;
+                var tabledataparams = {
+                  PageId: "newid()",
+                  MenuId: menuId,
+                  ColumnName: allCheckValueData[allCheckValueDataCount],
+                  ColumnType: "checkbox",
+                  ColumnDataType: "",
+                  SiteName: "DynamicSite",
+                  CalculationType: "Manual",
+                  CalculationKey: "",
+                  CalculationFormula: "",
+                  RelatedTable: "",
+                  Position: orderPosition,
+                  IsDisable: "0",
+                };
+                tableModelData.detailsData.push(tabledataparams);
+              }
+
+              for (
+                let allDateValueDataCount = 0;
+                allDateValueDataCount < allDateValueDataLength;
+                allDateValueDataCount++
+              ) {
+                orderPosition++;
+                var tabledataparams = {
+                  PageId: "newid()",
+                  MenuId: menuId,
+                  ColumnName: allDateValueData[allDateValueDataCount],
+                  ColumnType: "datetime",
+                  ColumnDataType: "",
+                  SiteName: "DynamicSite",
+                  CalculationType: "Manual",
+                  CalculationKey: "",
+                  CalculationFormula: "",
+                  RelatedTable: "",
+                  Position: orderPosition,
+                  IsDisable: "0",
+                };
+                tableModelData.detailsData.push(tabledataparams);
+              }
+
+              for (
+                let allDropValueDataCount = 0;
+                allDropValueDataCount < allDropValueDataLength;
+                allDropValueDataCount++
+              ) {
+                orderPosition++;
+                var tabledataparams = {
+                  PageId: "newid()",
+                  MenuId: menuId,
+                  ColumnName: allDropValueData[allDropValueDataCount],
+                  ColumnType: "dropdown",
+                  ColumnDataType: "",
+                  SiteName: "DynamicSite",
+                  CalculationType: "Manual",
+                  CalculationKey: "",
+                  CalculationFormula: "",
+                  RelatedTable: "",
+                  Position: orderPosition,
+                  IsDisable: "0",
+                };
+                tableModelData.detailsData.push(tabledataparams);
+              }
+
+              var TableInfoParams = {
+                TableName: "TableInfo",
+                detailsData: [],
+              };
+              TableInfoParams.detailsData = [];
+              TableInfoParams.TableName = "TableInfo";
+              TableInfoParams.detailsData.push({
+                TableId: "newid()",
+                TableName: tableNameLowerCase,
+              });
+              TableInfoParams.tableNameChild = "TableInfo";
+              fetch(
+                "https://localhost:44372/api/DoubleMasterEntry/InsertListData",
+                {
+                  method: "POST",
+                  headers: {
+                    authorization: `Bearer ${token}`,
+                    "content-type": "application/json",
+                  },
+                  body: JSON.stringify(tableModelData),
+                }
+              )
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.status == true) {
+                    fetch(
+                      "https://localhost:44372/api/DoubleMasterEntry/InsertListData",
+                      {
+                        method: "POST",
+                        headers: {
+                          authorization: `Bearer ${token}`,
+                          "content-type": "application/json",
+                        },
+                        body: JSON.stringify(TableInfoParams),
+                      })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      console.log(JSON.stringify(data));
+                      if (data.status == true) {
+                        swal({
+                          title: "Insert Table Data successfully",
+                          icon: "success",
+                          button: "OK",
+                        });
+                      } else {
+                        console.log(data);
+                      }
+                    });
+                    swal({
+                      title: "Create page successfully",
+                      icon: "success",
+                      button: "OK",
+                    });
+                    setParentMenuName("");
+                    setChildMenuName({
+                      ...childMenuName,
+                      ["SubMenuName"]: "",
+                    });
+                    setPageEntry("");
+                    setInputValue("");
+                    setInputValueDDF("");
+                    setInputValueCheck("");
+                    setInputValueDate("");
+                  } else {
+                    console.log(data);
+                  }
+                });
+
+              fetch("https://localhost:44372/api/GetData/GetDataById", {
+                method: "POST",
+                headers: {
+                  authorization: `Bearer ${token}`,
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify(modelTableData),
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  console.log(JSON.stringify(data));
+                  if (data.status == true) {
+                    
+                    swal({
+                      title: "Create table successfully",
+                      icon: "success",
+                      button: "OK",
+                    });
+                  } else {
+                    console.log(data);
+                  }
+                });
+                
+            }
+          })
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }
+  };
 
   const handleModalMenu = () => {
     const modelData = {
@@ -424,7 +541,7 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
           var allDropValueDataLength = 0;
           if (allDropValueData != null) {
             allDropValueDataLength = Object.keys(allDropValueData).length;
-            console.log(allDropValueDataLength)
+            console.log(allDropValueDataLength);
           }
           setAllDropValueData({
             ...allDropValueData,
@@ -440,7 +557,6 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
     });
     setShowDropDownModal(false);
   };
-
 
   useEffect(() => {
     previousInputValue.current = inputValue;
@@ -494,8 +610,8 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
     }
   }
 
- const handleSubmit=(e)=> {
-   console.log(e)
+  const handleSubmit = (e) => {
+    console.log(e);
     e.preventDefault();
     validationOutsideSchema();
     var foundKey = 0;
@@ -505,7 +621,7 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
     if (inputValue != "") {
       allInputValueDataLength = inputValue;
     }
-  
+
     var allCheckValueDataLength = 0;
     if (inputValueCheck != "") {
       allCheckValueDataLength = inputValueCheck;
@@ -526,104 +642,102 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
       allDateValueDataLength +
       allDropValueDataLength;
 
-      console.log(totalField);
-      
-      if (totalField > 12) {
-        setErrorMessageString("There cannot be more than 12 input");
-        showErrorModal(true);
-      } else if (totalField == 0) {
-        setErrorMessageString("There need to be more than 0 input");
-        setShowErrorModal(true);
+    console.log(totalField);
+
+    if (totalField > 12) {
+      setErrorMessageString("There cannot be more than 12 input");
+      showErrorModal(true);
+    } else if (totalField == 0) {
+      setErrorMessageString("There need to be more than 0 input");
+      setShowErrorModal(true);
+    } else {
+      var totalValueField = 0;
+
+      var errorstatus = 0;
+      var allInputValueDataLength = 0;
+      if (allInputValueData != null) {
+        allInputValueDataLength = Object.keys(allInputValueData).length;
+      }
+      for (
+        var allInputCount = 0;
+        allInputCount < allInputValueDataLength;
+        allInputCount++
+      ) {
+        if (allInputValueData[allInputCount] == "") {
+          foundEmpty = 1;
+        }
+      }
+
+      var allCheckValueDataLength = 0;
+      if (allCheckValueData != null) {
+        allCheckValueDataLength = Object.keys(allCheckValueData).length;
+      }
+      for (
+        var allInputCount = 0;
+        allInputCount < allInputValueDataLength;
+        allInputCount++
+      ) {
+        if (allInputValueData[allInputCount] == "") {
+          foundEmpty = 1;
+        }
+      }
+
+      var allDropValueDataLength = 0;
+      if (allDropValueData != null) {
+        allDropValueDataLength = Object.keys(allDropValueData).length;
+      }
+      for (
+        var allDropCount = 0;
+        allDropCount < allDropValueDataLength;
+        allDropCount++
+      ) {
+        console.log(allDropValueData[allDropCount]);
+        if (allDropValueData[allDropCount] == "") {
+          foundEmpty = 1;
+        }
+      }
+
+      var allDateValueDataLength = 0;
+      if (allDateValueData != null) {
+        allDateValueDataLength = Object.keys(allDateValueData).length;
+      }
+      for (
+        var allDateCount = 0;
+        allDateCount < allDateValueDataLength;
+        allDateCount++
+      ) {
+        if (allDateValueData[allDateCount] == "") {
+          foundEmpty = 1;
+        }
+      }
+      if (foundEmpty == 1) {
       } else {
-        var totalValueField = 0;
-
-        var errorstatus = 0;
-        var allInputValueDataLength = 0;
-        if (allInputValueData != null) {
-          allInputValueDataLength = Object.keys(allInputValueData).length;
-        }
-        for (
-          var allInputCount = 0;
-          allInputCount < allInputValueDataLength;
-          allInputCount++
-        ) {
-          if (allInputValueData[allInputCount] == "") {
-            foundEmpty = 1;
-          }
-        }
-
-        var allCheckValueDataLength = 0;
-        if (allCheckValueData != null) {
-          allCheckValueDataLength = Object.keys(allCheckValueData).length;
-        }
-        for (
-          var allInputCount = 0;
-          allInputCount < allInputValueDataLength;
-          allInputCount++
-        ) {
-          if (allInputValueData[allInputCount] == "") {
-            foundEmpty = 1;
-          }
-        }
-
-        var allDropValueDataLength = 0;
-        if (allDropValueData != null) {
-          allDropValueDataLength = Object.keys(allDropValueData).length;
-        }
-        for (
-          var allDropCount = 0;
-          allDropCount < allDropValueDataLength;
-          allDropCount++
-        ) {
-          console.log(allDropValueData[allDropCount]);
-          if (allDropValueData[allDropCount] == "") {
-            foundEmpty = 1;
-          }
-        }
-
-        var allDateValueDataLength = 0;
-        if (allDateValueData != null) {
-          allDateValueDataLength = Object.keys(allDateValueData).length;
-        }
-        for (
-          var allDateCount = 0;
-          allDateCount < allDateValueDataLength;
-          allDateCount++
-        ) {
-          if (allDateValueData[allDateCount] == "") {
-            foundEmpty = 1;
-          }
-        }
-        if (foundEmpty == 1) {
-        } else {
-          if (inputValue > 2) {
-            for (
-              let countKeyValue = 0;
-              countKeyValue < allInputValueDataLength;
-              countKeyValue++
+        if (inputValue > 2) {
+          for (
+            let countKeyValue = 0;
+            countKeyValue < allInputValueDataLength;
+            countKeyValue++
+          ) {
+            if (
+              keyValue.some(
+                (item) => item.key === allInputValueData[countKeyValue]
+              )
             ) {
-              if (
-                keyValue.some(
-                  (item) => item.key === allInputValueData[countKeyValue]
-                )
-              ) {
-                foundKey = 1;
-              }
+              foundKey = 1;
             }
-            alert(foundKey)
-            if (foundKey == 1) {
-              
-              setShowCalculactionModal(true);
-            } else {
-              submitForm();
-            }
+          }
+          alert(foundKey);
+          if (foundKey == 1) {
+            setShowCalculactionModal(true);
           } else {
             submitForm();
           }
+        } else {
+          submitForm();
         }
       }
-    
-  }
+    }
+  };
   const createPageSchema = (fields) => {
     const schemaFields = {};
 
@@ -786,7 +900,7 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
       name="myForms"
       noValidate
       class="bg-white shadow-lg  p-5 mt-4"
-      onSubmit={ handleSubmit}
+      onSubmit={handleSubmit}
     >
       <Grid>
         <Grid>
@@ -1310,7 +1424,9 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
           keyboard={false}
         >
           <Modal.Header>
-            <Modal.Title style={{color:'#000',fontWeight:'bold'}}>Calculation </Modal.Title>
+            <Modal.Title style={{ color: "#000", fontWeight: "bold" }}>
+              Calculation{" "}
+            </Modal.Title>
             <button
               type="button"
               class="btn-close"
@@ -1322,7 +1438,7 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
           </Modal.Header>
           <Modal.Body>
             <div className="w-50">
-              <label className="fw-bold" style={{color:'#000'}} htmlFor="">
+              <label className="fw-bold" style={{ color: "#000" }} htmlFor="">
                 Calculation Type
               </label>
               <Select
@@ -1504,11 +1620,10 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
             </div>
           </Modal.Body>
           <Modal.Footer>
-          
             <button
               type="button"
               class="btn"
-              style={{backgroundColor:"#34C38F",color:'white'}}
+              style={{ backgroundColor: "#34C38F", color: "white" }}
               onClick={() => {
                 if (pageFormula[0]["Formula"][0]["FormulaType"] == "") {
                   setFieldFormulaValidation(0);
@@ -1548,7 +1663,9 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
           keyboard={false}
         >
           <Modal.Header>
-            <Modal.Title className="text-black fw-bold">Select Menu</Modal.Title>
+            <Modal.Title className="text-black fw-bold">
+              Select Menu
+            </Modal.Title>
             <button
               type="button"
               class="btn-close"
@@ -1583,7 +1700,7 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
           </Modal.Body>
           <Modal.Footer>
             <button
-              style={{ backgroundColor:"#34C38F",border:'none' }}
+              style={{ backgroundColor: "#34C38F", border: "none" }}
               type="button"
               class="btn btn-primary"
               data-dismiss="modal"
@@ -1603,10 +1720,9 @@ const SingleEntryForm = ({ parentMenuName,childMenuName ,pageEntry}) => {
           backdrop="true"
           keyboard={false}
         >
-          <Modal.Header >
+          <Modal.Header>
             <Modal.Title>
               <h5 className="fw-bold">Warning!</h5>
-              
             </Modal.Title>
             <button
               type="button"

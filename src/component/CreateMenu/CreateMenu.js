@@ -46,7 +46,7 @@ const [menuId,setMenuId]=useState('')
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if(updateButton==false){
       if (userInput.MenuName == "") {
@@ -57,7 +57,8 @@ const [menuId,setMenuId]=useState('')
           button: "OK",
         });
         return;
-      } else {
+      } 
+      else {
         fetch("https://localhost:44372/api/GetData/GetDataById", {
           method: "POST",
           headers: {
@@ -189,10 +190,7 @@ const [menuId,setMenuId]=useState('')
         }
       });
   };
-const handleUpdateData=()=>{
 
-
-}
   const columns = [
     {
       name: "Sl.",
@@ -339,9 +337,13 @@ const handleUpdateData=()=>{
             onChange={handleChange}
           ></TextField>
           <button
+          type="button"
             variant="contained"
             className="btn-createMenu"
             style={{ background: "#34C38F", marginLeft: "40px" }}
+            onClick={()=>{
+              setUserInput({ ...userInput, ["MenuName"]: '' })
+            }}
           >
             Clear
           </button>
@@ -352,7 +354,7 @@ const handleUpdateData=()=>{
               className="btn-createMenu"
               style={{ marginLeft: "10px", background: "#F06548" }}
               onClick={()=>{
-                handleUpdateData()
+           
               }}
             >
               Update

@@ -197,7 +197,7 @@ const CreateChildMenu = () => {
                   if(exists){
                     setExist(true)
                   }
-                  else{
+                  else if(exists==undefined){
                     setExist(false)
                   }
                 }}

@@ -123,6 +123,7 @@ const SingleEntryForm = ({
     tableCreateData =
       tableCreateData + convertLowerCase + " " + "varchar(250)" + ",";
   });
+  // console.log(childMenu)
 
   useEffect(() => {
     const modelDataLabel = {
@@ -240,164 +241,180 @@ const SingleEntryForm = ({
         });
         return;
       } else if (exists === undefined) {
-        fetch("https://localhost:44372/api/GetData/GetDataById", {
-          method: "POST",
-          headers: {
-            authorization: `Bearer ${token}`,
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(modelDataLabel),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(JSON.stringify(data));
-            if (data.status == true) {
-              const tableData = JSON.parse(data.data);
-              var menuId = tableData[0]?.Column1;
+        const fatchGetDataById = async () => {
+          const response = await fetch(
+            "https://localhost:44372/api/GetData/GetDataById",
+            {
+              method: "POST",
+              headers: {
+                authorization: `Bearer ${token}`,
+                "content-type": "application/json",
+              },
+              body: JSON.stringify(modelDataLabel),
+            }
+          );
+          const data = await response.json();
+          console.log(JSON.stringify(data))
+          if (data.status == true) {
+            const tableData = JSON.parse(data.data);
+            var menuId = tableData[0]?.Column1;
 
-              var tableModelData = {
-                tableNameMaster: "",
-                tableNameChild: null,
-                columnNamePrimary: null,
-                columnNameForign: null,
-                serialType: null,
-                columnNameSerialNo: null,
-                isFlag: null,
-                data: "",
-                detailsData: [],
-                whereParams: null,
+            var tableModelData = {
+              tableNameMaster: "",
+              tableNameChild: null,
+              columnNamePrimary: null,
+              columnNameForign: null,
+              serialType: null,
+              columnNameSerialNo: null,
+              isFlag: null,
+              data: "",
+              detailsData: [],
+              whereParams: null,
+            };
+            tableModelData.detailsData = [];
+            tableModelData.tableNameChild = "PageInfo";
+
+            var allInputValueDataLength = 0;
+            if (allInputValueData != null) {
+              allInputValueDataLength = Object.keys(allInputValueData).length;
+            }
+
+            var allCheckValueDataLength = 0;
+            if (allCheckValueData != null) {
+              allCheckValueDataLength = Object.keys(allCheckValueData).length;
+            }
+
+            var allDateValueDataLength = 0;
+            if (allDateValueData != null) {
+              allDateValueDataLength = Object.keys(allDateValueData).length;
+            }
+
+            var allDropValueDataLength = 0;
+            if (allDropValueData != null) {
+              allDropValueDataLength = Object.keys(allDropValueData).length;
+            }
+            var orderPosition = 0;
+
+            for (
+              let allInputValueDataCount = 0;
+              allInputValueDataCount < allInputValueDataLength;
+              allInputValueDataCount++
+            ) {
+              orderPosition++;
+              var tabledataparams = {
+                PageId: "newid()",
+                MenuId: menuId,
+                ColumnName: allInputValueData[allInputValueDataCount],
+                ColumnType: "textbox",
+                ColumnDataType: "",
+                SiteName: "DynamicSite",
+                CalculationType: calculationType,
+                CalculationKey: allInputValueData[allInputValueDataCount],
+                CalculationFormula: JSON.stringify(pageFormula),
+                RelatedTable: "",
+                Position: orderPosition,
+                IsDisable:
+                  formulaTarget == allInputValueData[allInputValueDataCount]
+                    ? "1"
+                    : "0",
               };
-              tableModelData.detailsData = [];
-              tableModelData.tableNameChild = "PageInfo";
+              tableModelData.detailsData.push(tabledataparams);
+            }
 
-              var allInputValueDataLength = 0;
-              if (allInputValueData != null) {
-                allInputValueDataLength = Object.keys(allInputValueData).length;
-              }
-
-              var allCheckValueDataLength = 0;
-              if (allCheckValueData != null) {
-                allCheckValueDataLength = Object.keys(allCheckValueData).length;
-              }
-
-              var allDateValueDataLength = 0;
-              if (allDateValueData != null) {
-                allDateValueDataLength = Object.keys(allDateValueData).length;
-              }
-
-              var allDropValueDataLength = 0;
-              if (allDropValueData != null) {
-                allDropValueDataLength = Object.keys(allDropValueData).length;
-              }
-              var orderPosition = 0;
-
-              for (
-                let allInputValueDataCount = 0;
-                allInputValueDataCount < allInputValueDataLength;
-                allInputValueDataCount++
-              ) {
-                orderPosition++;
-                var tabledataparams = {
-                  PageId: "newid()",
-                  MenuId: menuId,
-                  ColumnName: allInputValueData[allInputValueDataCount],
-                  ColumnType: "textbox",
-                  ColumnDataType: "",
-                  SiteName: "DynamicSite",
-                  CalculationType: calculationType,
-                  CalculationKey: allInputValueData[allInputValueDataCount],
-                  CalculationFormula: JSON.stringify(pageFormula),
-                  RelatedTable: "",
-                  Position: orderPosition,
-                  IsDisable:
-                    formulaTarget == allInputValueData[allInputValueDataCount]
-                      ? "1"
-                      : "0",
-                };
-                tableModelData.detailsData.push(tabledataparams);
-              }
-
-              for (
-                let allCheckValueDataCount = 0;
-                allCheckValueDataCount < allCheckValueDataLength;
-                allCheckValueDataCount++
-              ) {
-                orderPosition++;
-                var tabledataparams = {
-                  PageId: "newid()",
-                  MenuId: menuId,
-                  ColumnName: allCheckValueData[allCheckValueDataCount],
-                  ColumnType: "checkbox",
-                  ColumnDataType: "",
-                  SiteName: "DynamicSite",
-                  CalculationType: "Manual",
-                  CalculationKey: "",
-                  CalculationFormula: "",
-                  RelatedTable: "",
-                  Position: orderPosition,
-                  IsDisable: "0",
-                };
-                tableModelData.detailsData.push(tabledataparams);
-              }
-
-              for (
-                let allDateValueDataCount = 0;
-                allDateValueDataCount < allDateValueDataLength;
-                allDateValueDataCount++
-              ) {
-                orderPosition++;
-                var tabledataparams = {
-                  PageId: "newid()",
-                  MenuId: menuId,
-                  ColumnName: allDateValueData[allDateValueDataCount],
-                  ColumnType: "datetime",
-                  ColumnDataType: "",
-                  SiteName: "DynamicSite",
-                  CalculationType: "Manual",
-                  CalculationKey: "",
-                  CalculationFormula: "",
-                  RelatedTable: "",
-                  Position: orderPosition,
-                  IsDisable: "0",
-                };
-                tableModelData.detailsData.push(tabledataparams);
-              }
-
-              for (
-                let allDropValueDataCount = 0;
-                allDropValueDataCount < allDropValueDataLength;
-                allDropValueDataCount++
-              ) {
-                orderPosition++;
-                var tabledataparams = {
-                  PageId: "newid()",
-                  MenuId: menuId,
-                  ColumnName: allDropValueData[allDropValueDataCount],
-                  ColumnType: "dropdown",
-                  ColumnDataType: "",
-                  SiteName: "DynamicSite",
-                  CalculationType: "Manual",
-                  CalculationKey: "",
-                  CalculationFormula: "",
-                  RelatedTable: "",
-                  Position: orderPosition,
-                  IsDisable: "0",
-                };
-                tableModelData.detailsData.push(tabledataparams);
-              }
-
-              var TableInfoParams = {
-                TableName: "TableInfo",
-                detailsData: [],
+            for (
+              let allCheckValueDataCount = 0;
+              allCheckValueDataCount < allCheckValueDataLength;
+              allCheckValueDataCount++
+            ) {
+              orderPosition++;
+              var tabledataparams = {
+                PageId: "newid()",
+                MenuId: menuId,
+                ColumnName: allCheckValueData[allCheckValueDataCount],
+                ColumnType: "checkbox",
+                ColumnDataType: "",
+                SiteName: "DynamicSite",
+                CalculationType: "Manual",
+                CalculationKey: "",
+                CalculationFormula: "",
+                RelatedTable: "",
+                Position: orderPosition,
+                IsDisable: "0",
               };
-              TableInfoParams.detailsData = [];
-              TableInfoParams.TableName = "TableInfo";
-              TableInfoParams.detailsData.push({
-                TableId: "newid()",
-                TableName: tableNameLowerCase,
-              });
-              TableInfoParams.tableNameChild = "TableInfo";
-              fetch(
+              tableModelData.detailsData.push(tabledataparams);
+            }
+
+            for (
+              let allDateValueDataCount = 0;
+              allDateValueDataCount < allDateValueDataLength;
+              allDateValueDataCount++
+            ) {
+              orderPosition++;
+              var tabledataparams = {
+                PageId: "newid()",
+                MenuId: menuId,
+                ColumnName: allDateValueData[allDateValueDataCount],
+                ColumnType: "datetime",
+                ColumnDataType: "",
+                SiteName: "DynamicSite",
+                CalculationType: "Manual",
+                CalculationKey: "",
+                CalculationFormula: "",
+                RelatedTable: "",
+                Position: orderPosition,
+                IsDisable: "0",
+              };
+              tableModelData.detailsData.push(tabledataparams);
+            }
+
+            for (
+              let allDropValueDataCount = 0;
+              allDropValueDataCount < allDropValueDataLength;
+              allDropValueDataCount++
+            ) {
+              orderPosition++;
+              var tabledataparams = {
+                PageId: "newid()",
+                MenuId: menuId,
+                ColumnName: allDropValueData[allDropValueDataCount],
+                ColumnType: "dropdown",
+                ColumnDataType: "",
+                SiteName: "DynamicSite",
+                CalculationType: "Manual",
+                CalculationKey: "",
+                CalculationFormula: "",
+                RelatedTable: "",
+                Position: orderPosition,
+                IsDisable: "0",
+              };
+              tableModelData.detailsData.push(tabledataparams);
+            }
+
+            var TableInfoParams = {
+              TableName: "TableInfo",
+              detailsData: [],
+            };
+            TableInfoParams.detailsData = [];
+            TableInfoParams.TableName = "TableInfo";
+            TableInfoParams.detailsData.push({
+              TableId: "newid()",
+              TableName: tableNameLowerCase,
+            });
+            TableInfoParams.tableNameChild = "TableInfo";
+            // var TableChildInfoParams = {
+            //   TableName: "ReferenceTableWithMenu",
+            //   detailsData: [],
+            // };
+            // TableInfoParams.detailsData = [];
+            // TableInfoParams.TableName = "ReferenceTableWithMenu";
+            // TableInfoParams.detailsData.push({
+            //   RefeenceId:'',
+            //   TableId: "newid()",
+            //   MenuId:''
+            // });
+            // TableInfoParams.tableNameChild = "ReferenceTableWithMenu";
+            const fatchListData = async () => {
+              const responseList = await fetch(
                 "https://localhost:44372/api/DoubleMasterEntry/InsertListData",
                 {
                   method: "POST",
@@ -407,84 +424,93 @@ const SingleEntryForm = ({
                   },
                   body: JSON.stringify(tableModelData),
                 }
-              )
-                .then((res) => res.json())
-                .then((data) => {
+              );
+              const data = await responseList.json();
+              if (data.status == true) {
+                const fatchTableInfo = async () => {
+                  const responseTable = await fetch(
+                    "https://localhost:44372/api/DoubleMasterEntry/InsertListData",
+                    {
+                      method: "POST",
+                      headers: {
+                        authorization: `Bearer ${token}`,
+                        "content-type": "application/json",
+                      },
+                      body: JSON.stringify(TableInfoParams),
+                    }
+                  );
+                  const data = await responseTable.json();
                   if (data.status == true) {
-                    fetch(
-                      "https://localhost:44372/api/DoubleMasterEntry/InsertListData",
-                      {
-                        method: "POST",
-                        headers: {
-                          authorization: `Bearer ${token}`,
-                          "content-type": "application/json",
-                        },
-                        body: JSON.stringify(TableInfoParams),
-                      })
-                    .then((res) => res.json())
-                    .then((data) => {
-                      console.log(JSON.stringify(data));
-                      if (data.status == true) {
-                        swal({
-                          title: "Insert Table Data successfully",
-                          icon: "success",
-                          button: "OK",
-                        });
-                      } else {
-                        console.log(data);
-                      }
-                    });
-                    swal({
-                      title: "Create page successfully",
+                    setTimeout(() => swal({
+                      title: "Insert Table Data successfully",
                       icon: "success",
                       button: "OK",
-                    });
-                    setParentMenuName("");
-                    setChildMenuName({
-                      ...childMenuName,
-                      ["SubMenuName"]: "",
-                    });
-                    setPageEntry("");
-                    setInputValue("");
-                    setInputValueDDF("");
-                    setInputValueCheck("");
-                    setInputValueDate("");
-                  } else {
-                    console.log(data);
-                  }
-                });
-
-              fetch("https://localhost:44372/api/GetData/GetDataById", {
-                method: "POST",
-                headers: {
-                  authorization: `Bearer ${token}`,
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify(modelTableData),
-              })
-                .then((res) => res.json())
-                .then((data) => {
-                  console.log(JSON.stringify(data));
-                  if (data.status == true) {
+                    }), 20000)
                     
-                    swal({
-                      title: "Create table successfully",
-                      icon: "success",
-                      button: "OK",
-                    });
                   } else {
                     console.log(data);
                   }
+                };
+                fatchTableInfo();
+                setTimeout(() => swal({
+                  
+                  title: "Create page successfully",
+                  icon: "success",
+                  button: "OK",
+                }) , 15000);
+               
+                setParentMenuName("");
+                setChildMenuName({
+                  ...childMenuName,
+                  ["SubMenuName"]: "",
                 });
-                
-            }
-          })
-          .then((data) => {
-            console.log(data);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+                setPageEntry("");
+                setInputValue("");
+                setInputValueDDF("");
+                setInputValueCheck("");
+                setInputValueDate("");
+              } else {
+                console.log(data);
+              }
+            };
+            fatchListData();
+
+            const fatchCreateTable = async () => {
+              const response = await fetch(
+                "https://localhost:44372/api/GetData/GetDataById",
+                {
+                  method: "POST",
+                  headers: {
+                    authorization: `Bearer ${token}`,
+                    "content-type": "application/json",
+                  },
+                  body: JSON.stringify(modelTableData),
+                }
+              );
+
+              const data = await response.json();
+              if (data.status == true) {
+                setTimeout(swal({
+                  title: "Create table successfully",
+                  icon: "success",
+                  button: "OK",
+                }), 10000);
+              } else {
+                console.log(data);
+              }
+            };
+            fatchCreateTable()
+          }
+        };
+
+        fatchGetDataById();
+
+        // .then((data) => {
+        //   console.log(data);
+        // })
+        // .catch((err) => {
+        //   console.log(err);
+        // });
       }
     }
   };

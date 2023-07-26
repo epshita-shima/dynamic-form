@@ -24,7 +24,7 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   const sidebarBackgroundColor = sessionStorage.getItem(
     "sidebarBackgroundColor"
   );
-
+console.log(childMenu)
   const navigate=useNavigate()
   const thirdArray = childMenu.filter((elem) => {
     return parentMenu.some((ele) => {
@@ -38,7 +38,8 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   };
   modelData.procedureName = "prc_GetMenuList";
   const  handleParentMenu=()=>{
-      fetch("https://localhost:44372/api/GetData/GetInitialData", {
+    const fatchAllMenuData=async()=>{
+    const response=await fetch("https://localhost:44372/api/GetData/GetInitialData", {
         method: "POST",
         headers: {
           authorization: `Bearer ${token}`,
@@ -46,16 +47,18 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
         },
         body: JSON.stringify(modelData),
       })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status == true) {
-            const allModalData = JSON.parse(data.data);
-            setParentMenu(allModalData.Tables1);
-            setChildMenu(allModalData.Tables2)
-          } else {
-            console.log(data);
-          }
-        });
+      const data= await response.json()
+      if (data.status == true) {
+        const allModalData = JSON.parse(data.data);
+        setParentMenu(allModalData.Tables1);
+        setChildMenu(allModalData.Tables2)
+      } else {
+        console.log(data);
+      }
+    }
+    fatchAllMenuData()
+      
+        
    
   }
   

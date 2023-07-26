@@ -249,6 +249,7 @@ const SingleEntryData = () => {
 
   const handleInputValue = (item, countOfInput, i) => {
     console.log(countOfInput, i);
+  
     if (item.ColumnType == "textbox") {
       return (
         <td
@@ -990,7 +991,9 @@ const SingleEntryData = () => {
                 {allModelDataTable.MenuName}
               </h2>
               <div className="mt-4">
-                <Button
+               {
+                showTable ? "" : (
+                  <Button
                   variant="contained"
                   type="button"
                   style={{ marginLeft: "5px", background: "#5A6691" }}
@@ -1000,6 +1003,8 @@ const SingleEntryData = () => {
                 >
                   Show Data
                 </Button>
+                )
+               }
                 {showTable ? (
                   <>
                     <Button

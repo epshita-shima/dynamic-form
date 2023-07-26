@@ -15,36 +15,38 @@ import CreateChildMenu from "./component/CreateMenu/CreateChildMenu/CreateChildM
 import useChildMenu from "./component/customHooks/useChildMenu";
 
 function App() {
-  const [childMenu,setChildMenu]=useChildMenu([])
-console.log(childMenu)
+  const [childMenu, setChildMenu] = useChildMenu([]);
 
- 
   return (
     <div>
       <Routes>
         <Route path="/" element={<Dashboard></Dashboard>}>
           <Route index element={<SingleDasboard></SingleDasboard>}></Route>
-          
-          {
-             childMenu.map(item=>{
-              const pageType=item.PageType
-              return(
-                <>
-                {
-                  pageType=='singleEntryPage' ?  (<Route
-                     path={item.UiLink+"/:"+item.MenuId}
-                   element={<SingleEntryData></SingleEntryData>}
-                  ></Route> ): (
+
+          {childMenu.map((item) => {
+            const pageType = item.PageType;
+            return (
+              <>
+                {pageType == "singleEntryPage" ? (
                   <Route
-                    path="/child-menu"
-                    element={<CreateChildMenu></CreateChildMenu>}
-                  ></Route>)
-                }
-                </>
-              )
-             })
-          }
-          
+                    path={item.UiLink + "/:" + item.MenuId}
+                    element={<SingleEntryData></SingleEntryData>}
+                  ></Route>
+                ) : (
+                  <>
+                    <Route
+                      path="/master-menu"
+                      element={<CreateMenu></CreateMenu>}
+                    ></Route>
+                    <Route
+                      path="/child-menu"
+                      element={<CreateChildMenu></CreateChildMenu>}
+                    ></Route>
+                  </>
+                )}
+              </>
+            );
+          })}
         </Route>
       </Routes>
       {/* <Routes>

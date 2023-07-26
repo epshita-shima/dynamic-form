@@ -139,6 +139,7 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
     <table className={`table`}>
     <thead className="border ">
       <tr>
+      <th scope="col" style={{width:'70px',textAlign:'center'}}>SL</th>
         {labelData.map((item, i) => {
           if (i == 0) {
             return item.map((element, index) => {
@@ -146,6 +147,7 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
               const str2 =
                 str.charAt(0).toUpperCase() + str.slice(1);
               return (
+                <>
                 <th
                   scope="col"
                   className={`dropTh${index} border`}
@@ -379,12 +381,12 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
                   >
                     Drop
                   </div>
-                </th>
+                </th></>
               );
             });
           }
         })}
-        <th scope="col">Action</th>
+        <th scope="col" className='text-center'>Action</th>
       </tr>
     </thead>
 
@@ -393,10 +395,11 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
         console.log(index);
         return (
           <tr id={`tr${index}`}>
+            <td className='text-center'>{index+1}</td>
             {item.map((element, i) => {
               return handleInputValue(element, i, index);
             })}
-            <td className="border">
+            <td className="border text-center">
               <Button
                 id={`delete${index}`}
                 variant="contained"
@@ -422,8 +425,7 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
                         return temp__details;
                       });
                   }
-                  
-                  
+  
                 }}
               >
                 X

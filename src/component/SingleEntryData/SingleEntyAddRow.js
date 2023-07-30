@@ -1,7 +1,7 @@
 import swal from "sweetalert";
 
 export const handleAddRow=({columnValues,setGetDate,getDate,twoDimensionData,setLabelData,labelDataCopy,setTwoDimentionData})=>{
-  console.log(columnValues)
+  console.log(labelDataCopy)
   columnValues[columnValues?.length] = {};
   setGetDate([...getDate, new Date()]);
   twoDimensionData[twoDimensionData.length] = [];

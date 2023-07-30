@@ -7,7 +7,7 @@ import Select from "react-select";
 import { handleDeleteColumn } from './SingleEntyAddRow';
 
 const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCopy,setLabelPosition,showDeleteIcon,setColumnValues,columnValues,setShowDeleteIcon,setModalSpecificData,setOpenModal,labelDataCopy,handleDropdownValue,handleInputValue,modalSpecificData,labelPosition,selectedListName}) => {
-
+console.log(labelData)
     const handleModalMenu = () => {
         const modelData = {
           procedureName: "",
@@ -135,15 +135,17 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
           return result;
         });
       };
+    
   return (
-    <table className={`table`}>
+  <div className='table-container'>
+      <table className={`table table-size`}>
     <thead className="border ">
       <tr>
       <th scope="col" style={{width:'70px',textAlign:'center'}}>SL</th>
-        {labelData.map((item, i) => {
+        {labelData?.map((item, i) => {
           if (i == 0) {
-            return item.map((element, index) => {
-              const str = element.ColumnName;
+            return item?.map((element, index) => {
+              const str = element?.ColumnName;
               const str2 =
                 str.charAt(0).toUpperCase() + str.slice(1);
               return (
@@ -390,9 +392,9 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
       </tr>
     </thead>
 
-    <tbody>
+    <tbody className=''>
       {labelData.map((item, index) => {
-        console.log(index);
+        
         return (
           <tr id={`tr${index}`}>
             <td className='text-center'>{index+1}</td>
@@ -407,7 +409,6 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
                   background: "red",
                   marginTop: "3px",
                   borderRadius: "50px",
-                  textAlign: "center",
                 }}
                 onClick={(e) => {
                     if(columnValues.length>1){
@@ -520,6 +521,7 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
       })}
     </tbody>
   </table>
+  </div>
   )
 }
 

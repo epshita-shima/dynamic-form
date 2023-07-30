@@ -5,7 +5,7 @@ import Select from "react-select";
 import useParentDropdown from "../../customHooks/useParentDropdown";
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import CreateMenu from "../CreateMenu";
+import CreateMenu from "../CreateParentMenu/CreateMenu";
 import SingleEntryForm from "../../SingleEntryForm/SingleEntryForm";
 import "./CreateMenuChild.css";
 import Token from "../../common/Token";
@@ -94,9 +94,10 @@ const CreateChildMenu = () => {
       setChildMenuName({ SubMenuName: "" });
     }
   };
+
   return (
     <Container>
-      <Grid className="shadow-lg p-4 mt-4">
+      <Grid className="shadow-lg px-4 py-2  mb-4">
         <Grid>
           <form
             noValidate
@@ -165,7 +166,7 @@ const CreateChildMenu = () => {
             </>
             <Grid
               className="d-flex justify-content-between align-items-center mt-3"
-              style={{ width: "85%" }}
+              style={{ width: "70%" }}
             >
             <div className="d-block">
             <div className="d-flex justify-content-between align-items-center">
@@ -173,7 +174,7 @@ const CreateChildMenu = () => {
                 style={{
                   color: "#878A99",
                   fontSize: "20px",
-                  marginRight: "30px",
+                  marginRight: "60px",
                 }}
               >
                 Create Child Menu:
@@ -244,31 +245,8 @@ const CreateChildMenu = () => {
                 </label>
               </div>
             </Grid>
-            {/* {
-               showSaveData=='0'? (<Grid className="mt-4">
-                <button
-                  type="submit"
-                  variant="contained"
-                  className="btn-createMenu"
-                  style={{ background: "#0A58CA" }}
-                >
-                  Save
-                </button>
-                <button
-              type="submit"
-              variant="contained"
-              className="btn-createMenu"
-              style={{ marginLeft: "10px", background: "#F06548" }}
-              onClick={()=>{
-              }}
-            >
-             Clear
-            </button>
-              </Grid>):''
-            } */}
+            
           </form>
-          {/* {
-                showSaveData=='1' ? ( */}
           <Grid>
             <SingleEntryForm
               parentMenuName={parentMenuName}
@@ -280,8 +258,6 @@ const CreateChildMenu = () => {
               setExist={setExist}
             ></SingleEntryForm>
           </Grid>
-          {/* ):''
-            } */}
         </Grid>
       </Grid>
     </Container>

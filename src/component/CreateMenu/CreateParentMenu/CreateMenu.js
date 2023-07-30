@@ -3,19 +3,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Grid, TextField } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
-import FilterComponent from "./FilterComponent";
+import FilterComponent from "../FilterComponent";
 import "./CreateMenu.css";
 import swal from "sweetalert";
-import Token from "../common/Token";
-import useParentMenu from "../customHooks/useParentMenu";
+import Token from "../../common/Token";
+import useParentMenu from "../../customHooks/useParentMenu";
 
-const CreateMenu = ({handleClose}) => {
+const CreateMenu = ({ handleClose }) => {
   const [data, setData] = useParentMenu([]);
   const [userInput, setUserInput] = useState({ MenuName: "" });
   const [updateButton, setUpdateButton] = useState(false);
   const [updateData, setUpdateData] = useState([]);
-const [menuId,setMenuId]=useState('')
-
+  const [menuId, setMenuId] = useState("");
 
   const token = Token.token;
   const modelData = {
@@ -33,8 +32,8 @@ const [menuId,setMenuId]=useState('')
     DBName: "DynamicDemo",
     TableName: "tblMenu",
     ColumnData:
-      "MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo",
-    ValueData: `'${userInput.MenuName}','${userInput.MenuName}','#','1','1','13',getdate(),'logo'`,
+      "MenuId,MenuName, SubMenuName, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo",
+    ValueData: `newId(),'${userInput.MenuName}','${userInput.MenuName}','#','1','1','13',getdate(),'logo'`,
   };
 
   const handleChange = (e) => {
@@ -42,13 +41,14 @@ const [menuId,setMenuId]=useState('')
     {
       updateButton
         ? setUpdateData({ ...updateData, ["MenuName"]: value })
-        : setUserInput({ ...userInput, ["MenuName"]: value })
+        : setUserInput({ ...userInput, ["MenuName"]: value });
     }
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if(updateButton==false){
+    console.log(modelDataLabel);
+    if (updateButton == false) {
       if (userInput.MenuName == "") {
         swal({
           title: "Not Possible!",
@@ -57,8 +57,7 @@ const [menuId,setMenuId]=useState('')
           button: "OK",
         });
         return;
-      } 
-      else {
+      } else {
         fetch("https://localhost:44372/api/GetData/GetDataById", {
           method: "POST",
           headers: {
@@ -70,7 +69,11 @@ const [menuId,setMenuId]=useState('')
           .then((res) => res.json())
           .then((data) => {
             if (data.status == true) {
-              handleClose()
+              swal({
+                title: "Create parent menu successfully",
+                icon: "success",
+                button: "OK",
+              });
               fetch("https://localhost:44372/api/GetData/GetInitialData", {
                 method: "POST",
                 headers: {
@@ -94,8 +97,7 @@ const [menuId,setMenuId]=useState('')
         // setData([...data, userInput]);
         setUserInput({ MenuName: "" });
       }
-    }
-    else{
+    } else {
       const modelUpdate = {
         tableName: "",
         columnNames: "",
@@ -104,8 +106,8 @@ const [menuId,setMenuId]=useState('')
       };
       modelUpdate.tableName = "tblMenu";
       modelUpdate.queryParams = { MenuName: updateData?.MenuName };
-      modelUpdate.whereParams = { MenuId: menuId};
-      console.log(modelUpdate)
+      modelUpdate.whereParams = { MenuId: menuId };
+      console.log(modelUpdate);
       fetch(`https://localhost:44372/api/MasterEntry/Update`, {
         method: "PUT",
         headers: {
@@ -114,47 +116,46 @@ const [menuId,setMenuId]=useState('')
         },
         body: JSON.stringify(modelUpdate),
       })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == true) {
-          swal({
-            title: "Update successfully",
-            icon: "success",
-            button: "Ok",
-          });
-          fetch("https://localhost:44372/api/GetData/GetInitialData", {
-            method: "POST",
-            headers: {
-              authorization: `Bearer ${token}`,
-              "content-type": "application/json",
-            },
-            body: JSON.stringify(modelData),
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              if (data.status == true) {
-                const allModalData = JSON.parse(data.data);
-                console.log(allModalData);
-                setData(allModalData.Tables1);
-              } else {
-                console.log(data);
-              }
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status == true) {
+            swal({
+              title: "Update successfully",
+              icon: "success",
+              button: "Ok",
             });
-        } else {
-          console.log(data);
-          swal({
-            title: "Try again",
-            text: "Something is worng",
-            icon: "warning",
-            button: "OK",
-          });
-        }
-      });
+            fetch("https://localhost:44372/api/GetData/GetInitialData", {
+              method: "POST",
+              headers: {
+                authorization: `Bearer ${token}`,
+                "content-type": "application/json",
+              },
+              body: JSON.stringify(modelData),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.status == true) {
+                  const allModalData = JSON.parse(data.data);
+                  console.log(allModalData);
+                  setData(allModalData.Tables1);
+                } else {
+                  console.log(data);
+                }
+              });
+          } else {
+            console.log(data);
+            swal({
+              title: "Try again",
+              text: "Something is worng",
+              icon: "warning",
+              button: "OK",
+            });
+          }
+        });
     }
-   
   };
   const handleGetUpdateData = (id) => {
-    setMenuId(id)
+    setMenuId(id);
     const modelGetUpdateData = {
       tableName: "",
       columnNames: "",
@@ -337,12 +338,12 @@ const [menuId,setMenuId]=useState('')
             onChange={handleChange}
           ></TextField>
           <button
-          type="button"
+            type="button"
             variant="contained"
             className="btn-createMenu"
             style={{ background: "#34C38F", marginLeft: "40px" }}
-            onClick={()=>{
-              setUserInput({ ...userInput, ["MenuName"]: '' })
+            onClick={() => {
+              setUserInput({ ...userInput, ["MenuName"]: "" });
             }}
           >
             Clear
@@ -353,9 +354,7 @@ const [menuId,setMenuId]=useState('')
               variant="contained"
               className="btn-createMenu"
               style={{ marginLeft: "10px", background: "#F06548" }}
-              onClick={()=>{
-           
-              }}
+              onClick={() => {}}
             >
               Update
             </button>
@@ -371,7 +370,7 @@ const [menuId,setMenuId]=useState('')
           )}
         </form>
       </Grid>
-      <Grid className="mt-4" >
+      <Grid className="mt-4">
         <DataTable
           //   title="Master Menu List"
           columns={columns}

@@ -23,3 +23,6 @@
     top: 0;
     z-index: 1037;
 }
+body {
+    overflow: hidden;
+  }

@@ -81,7 +81,6 @@ const SingleEntryForm = ({
   const [field2Validation, setField2Validation] = useState(2);
   const [fieldTargetValidation, setFieldTargetValidation] = useState(2);
   const [fieldFormulaValidation, setFieldFormulaValidation] = useState(2);
-  const [openModal, setOpenModal] = useState(true);
   const [showCalculactionModal, setShowCalculactionModal] = useState(false);
   const [keyValue, setKeyValue] = useState([
     {
@@ -106,10 +105,8 @@ const SingleEntryForm = ({
   const [errorsDropDown, setErrorsDropDown] = useState([]);
   const [errorsDate, setErrorsDate] = useState([]);
   const [errorsCheck, setErrorsCheck] = useState([]);
-  const [parentDropdownMenu, setParentDropdownMenu] = useParentDropdown([]);
   const [childMenu, setChildMenu] = useChildMenu([]);
   const token = Token.token;
-
   const tableName = childMenuName.SubMenuName;
   const spaceRemove = tableName.split(" ").join("");
   const tableNameLowerCase = spaceRemove.toLowerCase();
@@ -123,7 +120,6 @@ const SingleEntryForm = ({
     tableCreateData =
       tableCreateData + convertLowerCase + " " + "varchar(250)" + ",";
   });
-  // console.log(childMenu)
 
   useEffect(() => {
     const modelDataLabel = {
@@ -192,31 +188,10 @@ const SingleEntryForm = ({
   }
 
   const submitForm = () => {
-    const modelDataLabel = {
+    const modelCreatePage = {
       procedureName: "",
       parameters: {},
     };
-    var pageUrl = childMenuName.SubMenuName + "";
-    pageUrl = pageUrl.replace(" ", "-");
-    modelDataLabel.procedureName = "InsertDynamicMenuTable";
-    modelDataLabel.parameters = {
-      DBName: "DynamicDemo",
-      TableName: "tblMenu",
-      ColumnData:
-        "MenuName, SubMenuName,PageType, UiLink, isActive, ysnParent, OrderBy, MakeDate, MenuLogo",
-      ValueData: `'${parentMenuName.MenuName}','${childMenuName.SubMenuName}','${pageEntry.pageEntry}','/${pageUrl}','1','0','13',getdate(),'logo'`,
-    };
-    const modelTableData = {
-      procedureName: "",
-      parameters: {},
-    };
-    modelTableData.parameters = {
-      DBName: "DynamicDemo",
-      TableName: tableNameLowerCase,
-      Data: `ID varchar(128),${tableCreateData} Makedate datetime,MakeBy varchar(128)`,
-      PKColumn: "ID",
-    };
-    modelTableData.procedureName = "CreateDynamicTable";
 
     if (parentMenuName.MenuName == "" || childMenuName.SubMenuName == "") {
       swal({
@@ -241,6 +216,148 @@ const SingleEntryForm = ({
         });
         return;
       } else if (exists === undefined) {
+        var tableModelData = {
+          tableNameMaster: "",
+          tableNameChild: null,
+          columnNamePrimary: null,
+          columnNameForign: null,
+          serialType: null,
+          columnNameSerialNo: null,
+          isFlag: null,
+          data: "",
+          detailsData: [],
+          whereParams: null,
+        };
+        tableModelData.detailsData = [];
+        tableModelData.tableNameChild = "PageInfo";
+
+        var allInputValueDataLength = 0;
+        if (allInputValueData != null) {
+          allInputValueDataLength = Object.keys(allInputValueData).length;
+        }
+
+        var allCheckValueDataLength = 0;
+        if (allCheckValueData != null) {
+          allCheckValueDataLength = Object.keys(allCheckValueData).length;
+        }
+
+        var allDateValueDataLength = 0;
+        if (allDateValueData != null) {
+          allDateValueDataLength = Object.keys(allDateValueData).length;
+        }
+
+        var allDropValueDataLength = 0;
+        if (allDropValueData != null) {
+          allDropValueDataLength = Object.keys(allDropValueData).length;
+        }
+        var orderPosition = 0;
+
+        for (
+          let allInputValueDataCount = 0;
+          allInputValueDataCount < allInputValueDataLength;
+          allInputValueDataCount++
+        ) {
+          orderPosition++;
+          var tabledataparams = {
+            PageId: "PageID",
+            MenuId: "MenuID",
+            ColumnName: allInputValueData[allInputValueDataCount],
+            ColumnType: "textbox",
+            ColumnDataType: "",
+            SiteName: "DynamicSite",
+            CalculationType: calculationType,
+            CalculationKey: allInputValueData[allInputValueDataCount],
+            CalculationFormula: JSON.stringify(pageFormula),
+            RelatedTable: '',
+            Position: orderPosition,
+            IsDisable:
+              formulaTarget == allInputValueData[allInputValueDataCount]
+                ? "1"
+                : "0",
+          };
+          tableModelData.detailsData.push(tabledataparams);
+        }
+
+        for (
+          let allCheckValueDataCount = 0;
+          allCheckValueDataCount < allCheckValueDataLength;
+          allCheckValueDataCount++
+        ) {
+          orderPosition++;
+          var tabledataparams = {
+            PageId: "PageID",
+            MenuId: "MenuID",
+            ColumnName: allCheckValueData[allCheckValueDataCount],
+            ColumnType: "checkbox",
+            ColumnDataType: "",
+            SiteName: "DynamicSite",
+            CalculationType: "Manual",
+            CalculationKey: "",
+            CalculationFormula: "",
+            RelatedTable: '',
+            Position: orderPosition,
+            IsDisable: "0",
+          };
+          tableModelData.detailsData.push(tabledataparams);
+        }
+
+        for (
+          let allDateValueDataCount = 0;
+          allDateValueDataCount < allDateValueDataLength;
+          allDateValueDataCount++
+        ) {
+          orderPosition++;
+          var tabledataparams = {
+            PageId: "PageID",
+            MenuId: "MenuID",
+            ColumnName: allDateValueData[allDateValueDataCount],
+            ColumnType: "datetime",
+            ColumnDataType: "",
+            SiteName: "DynamicSite",
+            CalculationType: "Manual",
+            CalculationKey: "",
+            CalculationFormula: "",
+            RelatedTable:'',
+            Position: orderPosition,
+            IsDisable: "0",
+          };
+          tableModelData.detailsData.push(tabledataparams);
+        }
+
+        for (
+          let allDropValueDataCount = 0;
+          allDropValueDataCount < allDropValueDataLength;
+          allDropValueDataCount++
+        ) {
+          orderPosition++;
+          var tabledataparams = {
+            PageId: "PageID",
+            MenuId: "MenuID",
+            ColumnName: allDropValueData[allDropValueDataCount],
+            ColumnType: "dropdown",
+            ColumnDataType: "",
+            SiteName: "DynamicSite",
+            CalculationType: "Manual",
+            CalculationKey: "",
+            CalculationFormula: "",
+            RelatedTable:allDropValueData[allDropValueDataCount],
+            Position: orderPosition,
+            IsDisable: "0",
+          };
+          tableModelData.detailsData.push(tabledataparams);
+        }
+
+        modelCreatePage.procedureName = "createChildPage";
+        modelCreatePage.parameters = {
+          childPageName: childMenuName.SubMenuName,
+          childPageNameWithoutSpace: tableNameLowerCase,
+          tableColumn: `ID varchar(128),${tableCreateData} Makedate datetime,MakeBy varchar(128)`,
+          makeBy: "shima",
+          parentMenu: parentMenuName.MenuName,
+          menuLogo: "no logo",
+          pageType: pageEntry.pageEntry,
+          pageInfoJson: tableModelData.detailsData
+        };
         const fatchGetDataById = async () => {
           const response = await fetch(
             "https://localhost:44372/api/GetData/GetDataById",
@@ -250,267 +367,22 @@ const SingleEntryForm = ({
                 authorization: `Bearer ${token}`,
                 "content-type": "application/json",
               },
-              body: JSON.stringify(modelDataLabel),
+              body: JSON.stringify(modelCreatePage),
             }
           );
           const data = await response.json();
-          console.log(JSON.stringify(data))
+          console.log(JSON.stringify(data));
           if (data.status == true) {
-            const tableData = JSON.parse(data.data);
-            var menuId = tableData[0]?.Column1;
-
-            var tableModelData = {
-              tableNameMaster: "",
-              tableNameChild: null,
-              columnNamePrimary: null,
-              columnNameForign: null,
-              serialType: null,
-              columnNameSerialNo: null,
-              isFlag: null,
-              data: "",
-              detailsData: [],
-              whereParams: null,
-            };
-            tableModelData.detailsData = [];
-            tableModelData.tableNameChild = "PageInfo";
-
-            var allInputValueDataLength = 0;
-            if (allInputValueData != null) {
-              allInputValueDataLength = Object.keys(allInputValueData).length;
-            }
-
-            var allCheckValueDataLength = 0;
-            if (allCheckValueData != null) {
-              allCheckValueDataLength = Object.keys(allCheckValueData).length;
-            }
-
-            var allDateValueDataLength = 0;
-            if (allDateValueData != null) {
-              allDateValueDataLength = Object.keys(allDateValueData).length;
-            }
-
-            var allDropValueDataLength = 0;
-            if (allDropValueData != null) {
-              allDropValueDataLength = Object.keys(allDropValueData).length;
-            }
-            var orderPosition = 0;
-
-            for (
-              let allInputValueDataCount = 0;
-              allInputValueDataCount < allInputValueDataLength;
-              allInputValueDataCount++
-            ) {
-              orderPosition++;
-              var tabledataparams = {
-                PageId: "newid()",
-                MenuId: menuId,
-                ColumnName: allInputValueData[allInputValueDataCount],
-                ColumnType: "textbox",
-                ColumnDataType: "",
-                SiteName: "DynamicSite",
-                CalculationType: calculationType,
-                CalculationKey: allInputValueData[allInputValueDataCount],
-                CalculationFormula: JSON.stringify(pageFormula),
-                RelatedTable: "",
-                Position: orderPosition,
-                IsDisable:
-                  formulaTarget == allInputValueData[allInputValueDataCount]
-                    ? "1"
-                    : "0",
-              };
-              tableModelData.detailsData.push(tabledataparams);
-            }
-
-            for (
-              let allCheckValueDataCount = 0;
-              allCheckValueDataCount < allCheckValueDataLength;
-              allCheckValueDataCount++
-            ) {
-              orderPosition++;
-              var tabledataparams = {
-                PageId: "newid()",
-                MenuId: menuId,
-                ColumnName: allCheckValueData[allCheckValueDataCount],
-                ColumnType: "checkbox",
-                ColumnDataType: "",
-                SiteName: "DynamicSite",
-                CalculationType: "Manual",
-                CalculationKey: "",
-                CalculationFormula: "",
-                RelatedTable: "",
-                Position: orderPosition,
-                IsDisable: "0",
-              };
-              tableModelData.detailsData.push(tabledataparams);
-            }
-
-            for (
-              let allDateValueDataCount = 0;
-              allDateValueDataCount < allDateValueDataLength;
-              allDateValueDataCount++
-            ) {
-              orderPosition++;
-              var tabledataparams = {
-                PageId: "newid()",
-                MenuId: menuId,
-                ColumnName: allDateValueData[allDateValueDataCount],
-                ColumnType: "datetime",
-                ColumnDataType: "",
-                SiteName: "DynamicSite",
-                CalculationType: "Manual",
-                CalculationKey: "",
-                CalculationFormula: "",
-                RelatedTable: "",
-                Position: orderPosition,
-                IsDisable: "0",
-              };
-              tableModelData.detailsData.push(tabledataparams);
-            }
-
-            for (
-              let allDropValueDataCount = 0;
-              allDropValueDataCount < allDropValueDataLength;
-              allDropValueDataCount++
-            ) {
-              orderPosition++;
-              var tabledataparams = {
-                PageId: "newid()",
-                MenuId: menuId,
-                ColumnName: allDropValueData[allDropValueDataCount],
-                ColumnType: "dropdown",
-                ColumnDataType: "",
-                SiteName: "DynamicSite",
-                CalculationType: "Manual",
-                CalculationKey: "",
-                CalculationFormula: "",
-                RelatedTable: "",
-                Position: orderPosition,
-                IsDisable: "0",
-              };
-              tableModelData.detailsData.push(tabledataparams);
-            }
-
-            var TableInfoParams = {
-              TableName: "TableInfo",
-              detailsData: [],
-            };
-            TableInfoParams.detailsData = [];
-            TableInfoParams.TableName = "TableInfo";
-            TableInfoParams.detailsData.push({
-              TableId: "newid()",
-              TableName: tableNameLowerCase,
+            swal({
+              title: "Create page successfully",
+              icon: "success",
+              button: "OK",
             });
-            TableInfoParams.tableNameChild = "TableInfo";
-            // var TableChildInfoParams = {
-            //   TableName: "ReferenceTableWithMenu",
-            //   detailsData: [],
-            // };
-            // TableInfoParams.detailsData = [];
-            // TableInfoParams.TableName = "ReferenceTableWithMenu";
-            // TableInfoParams.detailsData.push({
-            //   RefeenceId:'',
-            //   TableId: "newid()",
-            //   MenuId:''
-            // });
-            // TableInfoParams.tableNameChild = "ReferenceTableWithMenu";
-            const fatchListData = async () => {
-              const responseList = await fetch(
-                "https://localhost:44372/api/DoubleMasterEntry/InsertListData",
-                {
-                  method: "POST",
-                  headers: {
-                    authorization: `Bearer ${token}`,
-                    "content-type": "application/json",
-                  },
-                  body: JSON.stringify(tableModelData),
-                }
-              );
-              const data = await responseList.json();
-              if (data.status == true) {
-                const fatchTableInfo = async () => {
-                  const responseTable = await fetch(
-                    "https://localhost:44372/api/DoubleMasterEntry/InsertListData",
-                    {
-                      method: "POST",
-                      headers: {
-                        authorization: `Bearer ${token}`,
-                        "content-type": "application/json",
-                      },
-                      body: JSON.stringify(TableInfoParams),
-                    }
-                  );
-                  const data = await responseTable.json();
-                  if (data.status == true) {
-                    setTimeout(() => swal({
-                      title: "Insert Table Data successfully",
-                      icon: "success",
-                      button: "OK",
-                    }), 20000)
-                    
-                  } else {
-                    console.log(data);
-                  }
-                };
-                fatchTableInfo();
-                setTimeout(() => swal({
-                  
-                  title: "Create page successfully",
-                  icon: "success",
-                  button: "OK",
-                }) , 15000);
-               
-                setParentMenuName("");
-                setChildMenuName({
-                  ...childMenuName,
-                  ["SubMenuName"]: "",
-                });
-                setPageEntry("");
-                setInputValue("");
-                setInputValueDDF("");
-                setInputValueCheck("");
-                setInputValueDate("");
-              } else {
-                console.log(data);
-              }
-            };
-            fatchListData();
-
-            const fatchCreateTable = async () => {
-              const response = await fetch(
-                "https://localhost:44372/api/GetData/GetDataById",
-                {
-                  method: "POST",
-                  headers: {
-                    authorization: `Bearer ${token}`,
-                    "content-type": "application/json",
-                  },
-                  body: JSON.stringify(modelTableData),
-                }
-              );
-
-              const data = await response.json();
-              if (data.status == true) {
-                setTimeout(swal({
-                  title: "Create table successfully",
-                  icon: "success",
-                  button: "OK",
-                }), 10000);
-              } else {
-                console.log(data);
-              }
-            };
-            fatchCreateTable()
+            
           }
         };
 
         fatchGetDataById();
-
-        // .then((data) => {
-        //   console.log(data);
-        // })
-        // .catch((err) => {
-        //   console.log(err);
-        // });
       }
     }
   };
@@ -549,13 +421,13 @@ const SingleEntryForm = ({
         'input[name="dropValueField"]:checked'
       ).value;
     }
-    setSelectedListName(radioName);
     var dataTable = [];
     for (var modelArrayPosition in allModelDataTable)
       dataTable.push([
         modelArrayPosition,
         allModelDataTable[modelArrayPosition],
       ]);
+      console.log(dataTable,allModelDataTable)
     var dataMenuArr = [];
     dataTable.map((element) => {
       if (element[1][0].title == radioName) {
@@ -564,11 +436,13 @@ const SingleEntryForm = ({
           dataMenuArr[dataMenuArrLength] = {};
           dataMenuArr[dataMenuArrLength]["label"] = member.label;
           dataMenuArr[dataMenuArrLength]["value"] = member.value;
+          console.log(dataMenuArrLength)
           var allDropValueDataLength = 0;
           if (allDropValueData != null) {
             allDropValueDataLength = Object.keys(allDropValueData).length;
             console.log(allDropValueDataLength);
           }
+          
           setAllDropValueData({
             ...allDropValueData,
             [i]: radioName,
@@ -577,6 +451,7 @@ const SingleEntryForm = ({
       }
     });
     setSelectedOption((prev) => {
+      console.log(prev)
       const temp__details = [...prev];
       temp__details[i] = dataMenuArr;
       return temp__details;
@@ -1136,21 +1011,6 @@ const SingleEntryForm = ({
                       className="getInputValue mt-2"
                       required
                       onChange={(e) => {
-                        // setAllData(e.target.value, labelType, labelName);
-                        // setAllData({
-                        //   ...allData,
-                        //   [labelName]: e.target.value,
-                        //   [labelType]: e.target.type,
-                        // });
-                        // if(e.target.value==""){
-                        //   document.getElementsByName(`input${name}`)[0].style.borderColor="red";
-                        //   document.getElementsByName(`input${name}validity`)[0].style.display="block";
-                        // }
-                        // else{
-                        //   document.getElementsByName(`input${name}`)[0].style.borderColor="black";
-                        //   document.getElementsByName(`input${name}validity`)[0].style.display="none";
-                        // }
-
                         setAllInputValueData({
                           ...allInputValueData,
                           [name]: e.target.value,
@@ -1290,157 +1150,6 @@ const SingleEntryForm = ({
           </div>
         </div>
 
-        {/* <div className="header">
-           
-            <div className="inner-header flex p-5">
-            
-
-              {openModal ? (
-                <Grid>
-                  <Grid className="single-entry-form">
-                    <Grid className="justify-content-start">
-                      <Grid className="d-flex justify-content-between">
-                        <label htmlFor="" className="text-style">
-                         Parent Menu
-                        </label>
-                        <Grid className="d-flex align-items-center">
-                        <div className="w-100">
-                          <Select
-                            class="form-select text-white"
-                            className="w-100 text-white"
-                            name={`drop`}
-                            aria-label="Default select example"
-                            options={parentDropdownMenu}
-                            id={`dropValue}`}
-                            onChange={(e) => {}}
-                            required
-                          ></Select>
-                        </div>
-                        <FontAwesomeIcon icon={faPlusCircle} className="fs-4 ms-1"></FontAwesomeIcon>
-                        </Grid>
-                      </Grid>
-                      <Grid className="d-flex justify-content-between  mt-2">
-                      <label htmlFor="" className="text-style">Page Name</label>
-                        <TextField
-                          id="outlined-basic"
-                          variant="outlined"
-                          type="text"
-                          required
-                          value={pageName}
-                          inputProps={{
-                            style: {
-                              height: "5px",
-                            },
-                          }}
-                          class="peer border border-slate-400 ms-2"
-                          onChange={(e) => {
-                            setPageName(e.target.value);
-                          }}
-                        />
-                        {errorsPage
-                          .filter((err) => err.index === 0)
-                          .map((err, i) => (
-                            <div style={{ color: "#FF0000" }} key={i}>
-                              This Field is required
-                            </div>
-                          ))}
-                      </Grid>
-                    </Grid>
-                  </Grid>
-
-                  
-                  <Grid className="d-flex  align-items-center"></Grid>
-                </Grid>
-              ) : (
-                ""
-              )}
-            </div>
-          
-            <div>
-              <svg
-                className="waves"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlnsXlink="http://www.w3.org/1999/xlink"
-                viewBox="0 24 150 28"
-                preserveAspectRatio="none"
-                shapeRendering="auto"
-              >
-                <defs>
-                  <path
-                    id="gentle-wave"
-                    d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
-                  />
-                </defs>
-                <g className="parallax">
-                  <use
-                    xlinkHref="#gentle-wave"
-                    x={48}
-                    y={0}
-                    fill="rgba(255,255,255,0.7"
-                  />
-                  <use
-                    xlinkHref="#gentle-wave"
-                    x={48}
-                    y={3}
-                    fill="rgba(255,255,255,0.5)"
-                  />
-                  <use
-                    xlinkHref="#gentle-wave"
-                    x={48}
-                    y={5}
-                    fill="rgba(255,255,255,0.3)"
-                  />
-                  <use xlinkHref="#gentle-wave" x={48} y={7} fill="#fff" />
-                </g>
-              </svg>
-            </div>
-     
-          </div> */}
-
-        {/* {showCalculactionModal ? (
-          <div
-            style={{
-              display: showCalculactionModal ? "none !important" : "block",
-            }}
-
-            class="modal fade"
-            id="exampleModalFormula"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="exampleModalFormulaLabel"
-            aria-hidden="true"
-          >
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalFormulaLabel">
-                    Modal title
-                  </h5>
-                  <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
-                    onClick={() => {
-                      setShowCalculactionModal(false);
-                    }}
-                  >
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  ...
-                  
-                </div>
-                <div class="modal-footer">
-                  
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          ""
-        )} */}
 
         <Modal
           show={showCalculactionModal}

@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 import SidebarColorButton from "./SidebarColorButton";
-import SidebarHiddenButton from "./SidebarHiddenButton";
 import Token from "../../common/Token";
 import "./SidebarButton.css";
 import useParentMenu from "../../customHooks/useParentMenu";
 import useChildMenu from "../../customHooks/useChildMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import SingleEntryData from "../../SingleEntryData/SingleEntryData";
 
-const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
+
+const Sidebar = ({ showHeader, showSidebar, setShowSidebar,showTable, setShowTable }) => {
   const [backgroundColor, setBackgroundColor] = useState(false);
   const [fontColor, setFontColor] = useState(false);
   const [fontColorBtn, setFontColorBtn] = useState(false);
@@ -24,14 +24,13 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar }) => {
   const sidebarBackgroundColor = sessionStorage.getItem(
     "sidebarBackgroundColor"
   );
-console.log(childMenu)
-  const navigate=useNavigate()
+console.log(showTable)
   const thirdArray = childMenu.filter((elem) => {
     return parentMenu.some((ele) => {
       return elem.MenuName === ele.MenuName;
     });
   });
- 
+
   const modelData = {
     procedureName: "",
     parameters: {},
@@ -57,18 +56,8 @@ console.log(childMenu)
       }
     }
     fatchAllMenuData()
-      
-        
-   
+
   }
-  
-  const handleLinkClick = event => {
-    childMenu.map(item=>{
-      let link=item.UiLink+`/:${item.MenuId}`
-      console.log(link)
-      return navigate(`${link}`)
-    })
-  };
 
   return (
     <div>
@@ -188,6 +177,9 @@ console.log(childMenu)
                                     backgroundColor: "#66CBFF",
                                     color:'white',
                                     fontSize:'16px',
+                                  }}
+                                  onClick={()=>{
+                                    setShowTable(false)
                                   }}
                                 >
                                   <i className="far fa-circle nav-icon" />

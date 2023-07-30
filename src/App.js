@@ -2,26 +2,28 @@ import GenerateForm from "./component/GenerateForm/GenerateForm";
 import { Routes, Route } from "react-router-dom";
 import SingleEntryForm from "./component/SingleEntryForm/SingleEntryForm";
 import SingleForm from "./component/GenerateForm/SingleForm/SingleForm";
-import Slider from "./component/SliderView/Slider";
 import MyComponent from "./component/Test/MyComponent";
 import CreatePage from "./component/CreatePage/CreatePage";
 import SingleEntryData from "./component/SingleEntryData/SingleEntryData";
 
 import Dashboard from "./component/Dashboard/Dashboard";
-import SingleDasboard from "./component/Dashboard/SingleDasboard";
-import CreateMenu from "./component/CreateMenu/CreateMenu";
+import CreateMenu from "./component/CreateMenu/CreateParentMenu/CreateMenu";
 import "./App.css";
 import CreateChildMenu from "./component/CreateMenu/CreateChildMenu/CreateChildMenu";
 import useChildMenu from "./component/customHooks/useChildMenu";
+import ChildInfoList from "./component/CreateMenu/CreateChildMenu/ChildInfoList";
+import { useState } from "react";
 
 function App() {
   const [childMenu, setChildMenu] = useChildMenu([]);
-
+  const [showTable, setShowTable] = useState(false);
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Dashboard></Dashboard>}>
-          <Route index element={<SingleDasboard></SingleDasboard>}></Route>
+        <Route path="/" element={<Dashboard 
+        showTable={showTable}
+        setShowTable={setShowTable}
+        ></Dashboard>}>
 
           {childMenu.map((item) => {
             const pageType = item.PageType;
@@ -30,7 +32,10 @@ function App() {
                 {pageType == "singleEntryPage" ? (
                   <Route
                     path={item.UiLink + "/:" + item.MenuId}
-                    element={<SingleEntryData></SingleEntryData>}
+                    element={<SingleEntryData 
+                      showTable={showTable}
+                       setShowTable={setShowTable}
+                    ></SingleEntryData>}
                   ></Route>
                 ) : (
                   <>
@@ -40,8 +45,9 @@ function App() {
                     ></Route>
                     <Route
                       path="/child-menu"
-                      element={<CreateChildMenu></CreateChildMenu>}
+                      element={<ChildInfoList></ChildInfoList>}
                     ></Route>
+                    <Route path="/add-child" element={<CreateChildMenu></CreateChildMenu>}></Route>
                   </>
                 )}
               </>

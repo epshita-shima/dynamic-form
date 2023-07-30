@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react'
 import Sidebar from './Sidebar';
 
-const SidebarButton = ({showHeader,showSidebar,setShowSidebar}) => {
+const SidebarButton = ({showHeader,showSidebar,setShowSidebar,showTable,setShowTable}) => {
     
   return (
     <div>
@@ -12,6 +12,8 @@ const SidebarButton = ({showHeader,showSidebar,setShowSidebar}) => {
      showHeader={showHeader}
      showSidebar={showSidebar}
      setShowSidebar={setShowSidebar}
+     showTable={showTable}
+        setShowTable={setShowTable}
      ></Sidebar>
     ) : (
     <div style={{ marginTop:'250px'}} data-toggle="tooltip" data-placement="top" title="Open Sidebar">

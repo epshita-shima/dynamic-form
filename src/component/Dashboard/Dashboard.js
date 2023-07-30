@@ -4,7 +4,7 @@ import SidebarButton from "../modules/Sidebar/SidebarButton";
 import FooterShowButton from "../modules/Footer/FooterShowButton";
 import Home from "../modules/Home/Home";
 
-const Dashboard = () => {
+const Dashboard = ({showTable, setShowTable}) => {
     const [showHeader, setShowHeader] = useState(false);
     const [showSidebar, setShowSidebar] = useState(false);
     const [showFooter,setShowFooter]=useState(false);
@@ -17,6 +17,8 @@ const Dashboard = () => {
     setShowHeader={setShowHeader}
     ></HeaderButton>
     <SidebarButton
+    showTable={showTable}
+    setShowTable={setShowTable}
 showHeader={showHeader}
     showSidebar={showSidebar}
     setShowSidebar={setShowSidebar}

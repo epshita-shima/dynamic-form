@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import "./GenerateForm.css";
 import SingleEntryForm from "../SingleEntryForm/SingleEntryForm";
 import MyComponent from "../Test/MyComponent";
-import CreateMasterEntry from "../CreateMasterEntry/CreateMasterEntry";
 import Token from "../common/Token";
 import { useNavigate } from "react-router-dom";
 
@@ -89,7 +88,7 @@ const handlePageValidation=()=>{
         <MyComponent></MyComponent>
       </Grid> */} 
       <Grid className={`${openPage ? "d-visible" : "d-hidden" }`}>
-      <CreateMasterEntry></CreateMasterEntry>
+     
       </Grid>
     </Grid>
   );

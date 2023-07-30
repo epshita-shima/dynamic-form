@@ -4,22 +4,18 @@ import {
   FormControlLabel,
   FormGroup,
   Grid,
-  TextField,
 } from "@mui/material";
 import { FieldArray, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsRotate, faXmark } from "@fortawesome/free-solid-svg-icons";
-import swal from "sweetalert";
 import Swal from "sweetalert2";
 import Token from "../common/Token";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import "./SingleEntryData.css";
 import SingleEntryList from "./SingleEntryList";
-import SingleEntyAddRow, { handleAddRow } from "./SingleEntyAddRow";
-const SingleEntryData = () => {
+import { handleAddRow } from "./SingleEntyAddRow";
+const SingleEntryData = ({showTable, setShowTable}) => {
   const [openModal, setOpenModal] = useState(true);
   const [labelPosition, setLabelPosition] = useState([]);
   const [selectedListName, setSelectedListName] = useState([]);
@@ -37,15 +33,14 @@ const SingleEntryData = () => {
   const [allDateValueData, setAllDateValueData] = useState(null);
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
-  const [showTable, setShowTable] = useState(false);
-  console.log(selectedOption);
-  const token = Token.token;
 
+console.log({labelData},{labelDataCopy})
+console.log(columnValues)
+  const token = Token.token;
   const search = useLocation();
-  console.log(search);
   const link = search.pathname.split("/");
   let id = link[2];
-  console.log(labelData);
+
   useEffect(() => {
     const modelDataLabel = {
       procedureName: "",
@@ -70,15 +65,18 @@ const SingleEntryData = () => {
         }
       });
   }, []);
+
   const modelData = {
     procedureName: "prc_GetPageInfo",
     parameters: {
       MenuId: id,
     },
   };
-
+console.log(labelDataCopy)
   const handleLabelField = () => {
+    console.log(modelData)
     setShowTable(true);
+   
     fetch(`https://localhost:44372/api/GetData/GetDataById`, {
       method: "POST",
       headers: {
@@ -91,10 +89,13 @@ const SingleEntryData = () => {
       .then((data) => {
         if (data.status == true) {
           const monthlySalesData = JSON.parse(data.data);
-          if (labelData.length == 0) {
-            labelDataCopy.push(monthlySalesData);
-            labelData.push(monthlySalesData);
+         
+         if (labelData.length == 0 || labelData.length !== 0) {
+            labelDataCopy[0]=monthlySalesData;
+            labelData[0]=monthlySalesData;
+           setColumnValues({})
           }
+console.log(columnValues)
           var createColumnValuesObject = {};
           var multipleDateArrayField = [];
           labelData.map((item, index) => {
@@ -218,7 +219,7 @@ const SingleEntryData = () => {
           console.log(twoDimensionData);
           setTwoDimentionData(twoDimensionData);
           setGetDate([...getDate, new Date()]);
-          setColumnValues([...columnValues, createColumnValuesObject]);
+            setColumnValues([...columnValues, createColumnValuesObject]);
         } else {
           console.log(data);
         }
@@ -259,7 +260,6 @@ const SingleEntryData = () => {
         >
           <div
             draggable="false"
-            className="d-flex justify-content-between align-items-center"
           >
             {/* {replaceFunction("input", countOfInput)} */}
             <input
@@ -313,17 +313,17 @@ const SingleEntryData = () => {
     if (item.ColumnType == "dropdown") {
       return (
         <td
-          className={`dropTh${countOfInput} border`}
+          className={`dropTh${countOfInput} border `}
           draggable="false" //change dragable true to work again
           // id={`item${randnum}${countOfInput}${i}`}
         >
           <div draggable="false">
             {/* {replaceFunction("dropdown", i)} */}
-            <Select
+            {/* <Select
               id={`${i}drop`}
               name={`${i}drop`}
               className="form-select"
-              class="w-[100%] getValue"
+              class="w-[100%] "
               aria-label="Default select example"
               // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
               options={selectedOption[countOfInput]}
@@ -341,7 +341,23 @@ const SingleEntryData = () => {
                 });
                 setColumnValues(columnValues);
               }}
-            ></Select>
+            ></Select> */}
+              <div className="w-100">
+              <Select
+                    class="form-select"
+                    aria-label="Default select example"
+                    name="groupId"
+                    id="groupName"
+                    placeholder="Select.."
+                    options={selectedOption[countOfInput]}
+              //       value={selectedOption[countOfInput].find(
+              //   (x) => x.value == labelData[i][countOfInput]["ColumnValue"]
+              // )}
+                    onChange={(e) => {
+                      // category.groupId = e.value;
+                    }}
+                  ></Select>
+              </div>
           </div>
           <div
             className="droptarget1 border" // remove 1 for dragable work
@@ -356,7 +372,7 @@ const SingleEntryData = () => {
     if (item.ColumnType == "checkbox") {
       return (
         <td
-          className={`dropTh${countOfInput} border`}
+          className={`dropTh${countOfInput} border  text-center`}
           draggable="false" //change dragable true to work again
           // id={`item${randnum}${countOfInput}${i}`}
         >
@@ -366,7 +382,7 @@ const SingleEntryData = () => {
               <FormControlLabel
                 name={`box${i}`}
                 id={`check${i}`}
-                style={{ marginTop: "3px" }}
+                style={{ marginTop: "3px",textAlign:'center' }}
                 control={<Checkbox />}
                 label="Label"
                 checked={labelData[i][countOfInput]["ColumnValue"]}
@@ -416,7 +432,6 @@ const SingleEntryData = () => {
         >
           <div
             draggable="false"
-            className="d-flex justify-content-between align-items-center"
           >
             {/* {replaceFunction("input", countOfInput)} */}
             <div className="form-check">
@@ -475,7 +490,7 @@ const SingleEntryData = () => {
     if (item.ColumnType == "datetime") {
       return (
         <td
-          className={`dropTh${countOfInput} border`}
+          className={`dropTh${countOfInput} border text-center`}
           draggable="false" //change dragable true to work again
           // id={`item${randnum}${countOfInput}${i}`}
         >
@@ -484,7 +499,7 @@ const SingleEntryData = () => {
 
             <DatePicker
               dateFormat="yyyy-MM-dd"
-              className="input text-center"
+              className="input text-center w-75"
               name={`date${i}`}
               id={`date${i}`}
               placeholderText="Click to select a date"
@@ -539,11 +554,11 @@ const SingleEntryData = () => {
   };
 
   const handleDropdownValue = (i) => {
-    console.log(i);
+   
     var radioName = document.querySelector(
       'input[name="dropValueField"]:checked'
     ).value;
-    console.log(radioName);
+
     setSelectedListName(radioName);
     var dataTable = [];
     for (var modelArrayPosition in allModelDataTable)
@@ -551,7 +566,7 @@ const SingleEntryData = () => {
         modelArrayPosition,
         allModelDataTable[modelArrayPosition],
       ]);
-    console.log(allModelDataTable);
+
     var dataMenuArr = [];
     dataTable.map((element) => {
       console.log(element);
@@ -565,7 +580,7 @@ const SingleEntryData = () => {
           if (allDropValueData != null) {
             allDropValueDataLength = Object.keys(allDropValueData).length;
           }
-
+console.log( dataMenuArr )
           setAllDropValueData({
             ...allDropValueData,
             [allDropValueDataLength]: radioName,
@@ -729,7 +744,6 @@ const SingleEntryData = () => {
         newNode,
         document.getElementById(refNode).nextSibling
       );
-    console.log(getID.getElementsByClassName("dropTh2"));
   }
 
   function insertAfter(newNode, refNode) {
@@ -973,7 +987,7 @@ const SingleEntryData = () => {
     //   element.parentNode.insertBefore(newNode[i], element.nextSibling);
     // });
   }
-  console.log(labelData);
+ 
   return (
     <Grid className="shadow-lg p-4">
       <Formik
@@ -990,7 +1004,7 @@ const SingleEntryData = () => {
               >
                 {allModelDataTable.MenuName}
               </h2>
-              <div className="mt-4">
+              <div className="mt-2">
                {
                 showTable ? "" : (
                   <Button
@@ -1059,6 +1073,7 @@ const SingleEntryData = () => {
               <br />
               <FieldArray
                 render={(arrayHelpers) => {
+                  console.log(labelData)
                   return (
                     <div
                       div

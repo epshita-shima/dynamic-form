@@ -15,7 +15,7 @@ import { useLocation } from "react-router-dom";
 import "./SingleEntryData.css";
 import SingleEntryList from "./SingleEntryList";
 import { handleAddRow } from "./SingleEntyAddRow";
-const SingleEntryData = ({showTable, setShowTable}) => {
+const SingleEntryData = ({ showTable, setShowTable }) => {
   const [openModal, setOpenModal] = useState(true);
   const [labelPosition, setLabelPosition] = useState([]);
   const [selectedListName, setSelectedListName] = useState([]);
@@ -33,14 +33,20 @@ const SingleEntryData = ({showTable, setShowTable}) => {
   const [allDateValueData, setAllDateValueData] = useState(null);
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
-
-console.log({labelData},{labelDataCopy})
-console.log(columnValues)
+  const [labelCount, setLAbelCount] = useState(0);
+  console.log({ labelData }, { labelDataCopy });
+  console.log(columnValues);
   const token = Token.token;
   const search = useLocation();
   const link = search.pathname.split("/");
   let id = link[2];
 
+  // useEffect(()=>{
+  //   setLabelData([]);
+  //         setLabelData([]);
+  //         setLabelDataCopy([]);
+  //         setLabelDataCopy([]);
+  // },[setLabelData,setLabelDataCopy])
   useEffect(() => {
     const modelDataLabel = {
       procedureName: "",
@@ -72,11 +78,11 @@ console.log(columnValues)
       MenuId: id,
     },
   };
-console.log(labelDataCopy)
+  console.log(labelDataCopy);
   const handleLabelField = () => {
-    console.log(modelData)
+    console.log(modelData);
     setShowTable(true);
-   
+
     fetch(`https://localhost:44372/api/GetData/GetDataById`, {
       method: "POST",
       headers: {
@@ -89,18 +95,40 @@ console.log(labelDataCopy)
       .then((data) => {
         if (data.status == true) {
           const monthlySalesData = JSON.parse(data.data);
+          console.log(monthlySalesData);
+          
+          if (labelData.length == 0) {
+            labelDataCopy[0] = monthlySalesData;
+            labelData[0] = monthlySalesData;
+            // columnValues.forEach((item, i) => {
+            //   delete columnValues[i];
+            //   setColumnValues(columnValues);
+            // });
+          } 
+          else {
+            labelData.forEach((item, i) => {
+              delete labelData[i];
+              setLabelDataCopy(labelData);
+            });
+            labelDataCopy[0] = monthlySalesData;
+            labelData[0] = monthlySalesData;
+            columnValues.forEach((item, i) => {
+              delete columnValues[i];
+              setColumnValues(columnValues);
+            });
+
          
-         if (labelData.length == 0 || labelData.length !== 0) {
-            labelDataCopy[0]=monthlySalesData;
-            labelData[0]=monthlySalesData;
-           setColumnValues({})
           }
-console.log(columnValues)
           var createColumnValuesObject = {};
+
+          // setColumnValues([]);
+          // setColumnValues( columnValues:[])
+          console.log(labelData);
           var multipleDateArrayField = [];
           labelData.map((item, index) => {
             multipleDateArrayField[index] = [];
             item.forEach((element, i) => {
+              setLAbelCount(i + 2);
               multipleDateArrayField[index][i] = {};
               console.log(element, i);
               multipleDateArrayField[index]["" + i]["ColumnName"] =
@@ -219,7 +247,8 @@ console.log(columnValues)
           console.log(twoDimensionData);
           setTwoDimentionData(twoDimensionData);
           setGetDate([...getDate, new Date()]);
-            setColumnValues([...columnValues, createColumnValuesObject]);
+          console.log(createColumnValuesObject)
+          setColumnValues([...columnValues, createColumnValuesObject]);
         } else {
           console.log(data);
         }
@@ -250,17 +279,15 @@ console.log(columnValues)
 
   const handleInputValue = (item, countOfInput, i) => {
     console.log(countOfInput, i);
-  
-    if (item.ColumnType == "textbox") {
+
+    if (item?.ColumnType == "textbox") {
       return (
         <td
           className={`dropTh${countOfInput} border`}
           draggable="false"
           // id={`item${randnum}${countOfInput}${i}`}
         >
-          <div
-            draggable="false"
-          >
+          <div draggable="false">
             {/* {replaceFunction("input", countOfInput)} */}
             <input
               type="text"
@@ -275,23 +302,31 @@ console.log(columnValues)
               style={{ marginTop: "3px" }}
               value={labelData[i][countOfInput]["ColumnValue"]}
               className="getValue form-control"
-              placeholder={item.ColumnName}
+              placeholder={item?.ColumnName}
               onChange={(e) => {
                 const { value } = e.target;
-                columnValues[i][item.ColumnName] = value;
+               const  filteredArr = []
+               columnValues.forEach((item) => {
+                if (item !== undefined) {
+                  filteredArr.push(item);
+                }
+              });
+               
+              filteredArr[i][item?.ColumnName] = value;
+               
 
                 setLabelData((prevArr) => {
                   const result = [...prevArr];
                   result[i][countOfInput].ColumnValue = value;
                   return result;
                 });
-                console.log(labelData);
-                setColumnValues(columnValues);
+             
+                setColumnValues(filteredArr);
                 if (
                   labelData[i][countOfInput]["CalculationType"] == "dynamic"
                 ) {
-                  if (item.ColumnName == item.CalculationKey) {
-                    const calculationFormula = item.CalculationFormula;
+                  if (item.ColumnName == item?.CalculationKey) {
+                    const calculationFormula = item?.CalculationFormula;
                     handleCalculation(calculationFormula, i, countOfInput);
                   } else {
                     console.log("hi");
@@ -318,46 +353,23 @@ console.log(columnValues)
           // id={`item${randnum}${countOfInput}${i}`}
         >
           <div draggable="false">
-            {/* {replaceFunction("dropdown", i)} */}
-            {/* <Select
-              id={`${i}drop`}
-              name={`${i}drop`}
-              className="form-select"
-              class="w-[100%] "
-              aria-label="Default select example"
-              // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-              options={selectedOption[countOfInput]}
-              // value={selectedOption[countOfInput].find(
-              //   (x) => x.value == labelData[i][countOfInput]["ColumnValue"]
-              // )}
-              onChange={(e) => {
-                const { value } = e;
-                columnValues[i][item?.ColumnName] = value;
-                setLabelData((prevArr) => {
-                  const result = [...prevArr];
-                  console.log(i, countOfInput, labelData, result);
-                  result[i][countOfInput].ColumnValue = value;
-                  return result;
-                });
-                setColumnValues(columnValues);
-              }}
-            ></Select> */}
-              <div className="w-100">
+         
+            <div className="w-100">
               <Select
-                    class="form-select"
-                    aria-label="Default select example"
-                    name="groupId"
-                    id="groupName"
-                    placeholder="Select.."
-                    options={selectedOption[countOfInput]}
-              //       value={selectedOption[countOfInput].find(
-              //   (x) => x.value == labelData[i][countOfInput]["ColumnValue"]
-              // )}
-                    onChange={(e) => {
-                      // category.groupId = e.value;
-                    }}
-                  ></Select>
-              </div>
+                class="form-select"
+                aria-label="Default select example"
+                name="groupId"
+                id="groupName"
+                placeholder="Select.."
+                options={selectedOption[countOfInput]}
+                //       value={selectedOption[countOfInput].find(
+                //   (x) => x.value == labelData[i][countOfInput]["ColumnValue"]
+                // )}
+                onChange={(e) => {
+                  // category.groupId = e.value;
+                }}
+              ></Select>
+            </div>
           </div>
           <div
             className="droptarget1 border" // remove 1 for dragable work
@@ -382,7 +394,7 @@ console.log(columnValues)
               <FormControlLabel
                 name={`box${i}`}
                 id={`check${i}`}
-                style={{ marginTop: "3px",textAlign:'center' }}
+                style={{ marginTop: "3px", textAlign: "center" }}
                 control={<Checkbox />}
                 label="Label"
                 checked={labelData[i][countOfInput]["ColumnValue"]}
@@ -390,23 +402,37 @@ console.log(columnValues)
                   const { checked } = e.target;
                   console.log(checked);
                   if (checked) {
-                    columnValues[i][item.ColumnName] = "true";
+                    let  filteredArr = []
+                    columnValues.forEach((item) => {
+                     if (item !== undefined) {
+                       filteredArr.push(item);
+                     }
+                   });
+                    
+                   filteredArr[i][item.ColumnName] = "true";
+                  //  filteredArr[i][item?.ColumnName] = value;
                     setLabelData((prevArr) => {
                       const result = [...prevArr];
                       console.log(i, countOfInput, labelData, result);
                       result[i][countOfInput].ColumnValue = true;
                       return result;
                     });
-                    setColumnValues(columnValues);
+                    setColumnValues(filteredArr);
                   } else {
-                    columnValues[i][item.ColumnName] = "false";
+                    let  filteredArr = []
+                    columnValues.forEach((item) => {
+                     if (item !== undefined) {
+                       filteredArr.push(item);
+                     }
+                   });
+                    filteredArr[i][item.ColumnName] = "false";
                     setLabelData((prevArr) => {
                       const result = [...prevArr];
                       console.log(i, countOfInput, labelData, result);
                       result[i][countOfInput].ColumnValue = false;
                       return result;
                     });
-                    setColumnValues(columnValues);
+                    setColumnValues(filteredArr);
                   }
                   // const {value,name}=e.checked
                 }}
@@ -430,9 +456,7 @@ console.log(columnValues)
           draggable="false"
           // id={`item${randnum}${countOfInput}${i}`}
         >
-          <div
-            draggable="false"
-          >
+          <div draggable="false">
             {/* {replaceFunction("input", countOfInput)} */}
             <div className="form-check">
               <input
@@ -444,7 +468,13 @@ console.log(columnValues)
                 onChange={(e) => {
                   const { value, checked } = e.target;
                   if (checked) {
-                    columnValues[i][item.ColumnName] = "true";
+                    let  filteredArr = []
+                    columnValues.forEach((item) => {
+                     if (item !== undefined) {
+                       filteredArr.push(item);
+                     }
+                   });
+                   filteredArr[i][item.ColumnName] = "true";
                     labelData[i][countOfInput].ColumnValue = "true";
                     // setLabelData((prevArr) => {
                     //   const result = [...prevArr];
@@ -452,16 +482,19 @@ console.log(columnValues)
                     //   result[i][countOfInput].ColumnValue = "true";
                     //   return result;
                     // });
-                    setColumnValues(columnValues);
+                    setColumnValues(filteredArr);
                     setLabelData(labelData);
                     columnValues.forEach((e, index) => {
                       if (index != i) {
-                        columnValues[index][item.ColumnName] = "";
-
-                        setColumnValues(columnValues);
-
+                        let  filteredArr = []
+                        columnValues.forEach((item) => {
+                         if (item !== undefined) {
+                           filteredArr.push(item);
+                         }
+                       });
+                       filteredArr[index][item.ColumnName] = "";
+                        setColumnValues(filteredArr);
                         labelData[index][countOfInput].ColumnValue = "";
-
                         setLabelData(labelData);
                       }
                     });
@@ -527,8 +560,13 @@ console.log(columnValues)
                   day: "2-digit",
                 });
                 var formattedDate = year + "-" + month + "-" + day;
-
-                columnValues[i][item.ColumnName] = formattedDate;
+                let  filteredArr = []
+                columnValues.forEach((item) => {
+                 if (item !== undefined) {
+                   filteredArr.push(item);
+                 }
+               });
+               filteredArr[i][item.ColumnName] = formattedDate;
                 setLabelData((prevArr) => {
                   const result = [...prevArr];
                   console.log(i, countOfInput, labelData, result);
@@ -537,7 +575,7 @@ console.log(columnValues)
                 });
                 getDate.push(e);
                 setTwoDimentionData(multipleDateArrayField);
-                setColumnValues(columnValues);
+                setColumnValues(filteredArr);
               }}
             />
           </div>
@@ -554,7 +592,6 @@ console.log(columnValues)
   };
 
   const handleDropdownValue = (i) => {
-   
     var radioName = document.querySelector(
       'input[name="dropValueField"]:checked'
     ).value;
@@ -580,7 +617,7 @@ console.log(columnValues)
           if (allDropValueData != null) {
             allDropValueDataLength = Object.keys(allDropValueData).length;
           }
-console.log( dataMenuArr )
+          console.log(dataMenuArr);
           setAllDropValueData({
             ...allDropValueData,
             [allDropValueDataLength]: radioName,
@@ -987,7 +1024,7 @@ console.log( dataMenuArr )
     //   element.parentNode.insertBefore(newNode[i], element.nextSibling);
     // });
   }
- 
+
   return (
     <Grid className="shadow-lg p-4">
       <Formik
@@ -1005,20 +1042,22 @@ console.log( dataMenuArr )
                 {allModelDataTable.MenuName}
               </h2>
               <div className="mt-2">
-               {
-                showTable ? "" : (
+                {showTable ? (
+                  ""
+                ) : (
                   <Button
-                  variant="contained"
-                  type="button"
-                  style={{ marginLeft: "5px", background: "#5A6691" }}
-                  onClick={(e, index) => {
-                    handleLabelField();
-                  }}
-                >
-                  Show Data
-                </Button>
-                )
-               }
+                    variant="contained"
+                    type="button"
+                    style={{ marginLeft: "5px", background: "#5A6691" }}
+                    onClick={(e, index) => {
+                      console.log(e);
+                      e.preventDefault();
+                      handleLabelField();
+                    }}
+                  >
+                    Show Data
+                  </Button>
+                )}
                 {showTable ? (
                   <>
                     <Button
@@ -1026,6 +1065,7 @@ console.log( dataMenuArr )
                       className="ms-2"
                       type="submit"
                       onClick={(e, index) => {
+                        console.log(e);
                         handleSubmit(e, index);
                       }}
                     >
@@ -1073,7 +1113,7 @@ console.log( dataMenuArr )
               <br />
               <FieldArray
                 render={(arrayHelpers) => {
-                  console.log(labelData)
+                  console.log(labelData);
                   return (
                     <div
                       div
@@ -1099,6 +1139,7 @@ console.log( dataMenuArr )
                         modalSpecificData={modalSpecificData}
                         labelPosition={labelPosition}
                         selectedListName={selectedListName}
+                        labelCount={labelCount}
                       ></SingleEntryList>
                     </div>
                   );

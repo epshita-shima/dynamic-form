@@ -6,7 +6,8 @@ import React from 'react'
 import Select from "react-select";
 import { handleDeleteColumn } from './SingleEntyAddRow';
 
-const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCopy,setLabelPosition,showDeleteIcon,setColumnValues,columnValues,setShowDeleteIcon,setModalSpecificData,setOpenModal,labelDataCopy,handleDropdownValue,handleInputValue,modalSpecificData,labelPosition,selectedListName}) => {
+const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCopy,setLabelPosition,showDeleteIcon,setColumnValues,columnValues,setShowDeleteIcon,setModalSpecificData,setOpenModal,labelDataCopy,handleDropdownValue,handleInputValue,modalSpecificData,labelPosition,selectedListName,labelCount}) => {
+console.log(columnValues)
 console.log(labelData)
     const handleModalMenu = () => {
         const modelData = {
@@ -138,8 +139,8 @@ console.log(labelData)
     
   return (
   <div className='table-container'>
-      <table className={`table table-size`}>
-    <thead className="border ">
+      <table className={`table table-size`} style={{width: labelCount > 3 ? '1548px' : '100%' }}>
+    <thead className="border">
       <tr>
       <th scope="col" style={{width:'70px',textAlign:'center'}}>SL</th>
         {labelData?.map((item, i) => {

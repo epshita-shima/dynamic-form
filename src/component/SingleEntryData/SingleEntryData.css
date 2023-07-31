@@ -7,12 +7,9 @@
   .table-container{
     width:1100px;
     height:350px;
-    overflow-y:scroll
+    overflow-y:scroll;
   }
-  .table-size{
-    width:1548px;
-  }
-
+ 
   @media only screen and (max-width: 600px) {
     .table-size{
 

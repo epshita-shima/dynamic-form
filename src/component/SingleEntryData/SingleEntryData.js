@@ -6,7 +6,7 @@ import {
   Grid,
 } from "@mui/material";
 import { FieldArray, Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import Swal from "sweetalert2";
@@ -15,6 +15,8 @@ import { useLocation } from "react-router-dom";
 import "./SingleEntryData.css";
 import SingleEntryList from "./SingleEntryList";
 import { handleAddRow } from "./SingleEntyAddRow";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUpload } from "@fortawesome/free-solid-svg-icons";
 const SingleEntryData = ({ showTable, setShowTable }) => {
   const [openModal, setOpenModal] = useState(true);
   const [labelPosition, setLabelPosition] = useState([]);
@@ -34,12 +36,18 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
   const [labelCount, setLAbelCount] = useState(0);
-  console.log({ labelData }, { labelDataCopy });
-  console.log(columnValues);
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const token = Token.token;
   const search = useLocation();
   const link = search.pathname.split("/");
   let id = link[2];
+  // const fileInputRef = useRef(null);
+  // const handleImageClick = (e) => {
+  //   e.preventDefault()
+  //   console.log(fileInputRef)
+  //   // fileInputRef.current.click();
+  // };
 
   // useEffect(()=>{
   //   setLabelData([]);
@@ -96,7 +104,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         if (data.status == true) {
           const monthlySalesData = JSON.parse(data.data);
           console.log(monthlySalesData);
-          
+
           if (labelData.length == 0) {
             labelDataCopy[0] = monthlySalesData;
             labelData[0] = monthlySalesData;
@@ -104,8 +112,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
             //   delete columnValues[i];
             //   setColumnValues(columnValues);
             // });
-          } 
-          else {
+          } else {
             labelData.forEach((item, i) => {
               delete labelData[i];
               setLabelDataCopy(labelData);
@@ -116,8 +123,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               delete columnValues[i];
               setColumnValues(columnValues);
             });
-
-         
           }
           var createColumnValuesObject = {};
 
@@ -247,7 +252,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
           console.log(twoDimensionData);
           setTwoDimentionData(twoDimensionData);
           setGetDate([...getDate, new Date()]);
-          console.log(createColumnValuesObject)
+          console.log(createColumnValuesObject);
           setColumnValues([...columnValues, createColumnValuesObject]);
         } else {
           console.log(data);
@@ -279,11 +284,15 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
 
   const handleInputValue = (item, countOfInput, i) => {
     console.log(countOfInput, i);
-
+    const handleImageChange = (event) => {
+      console.log(event);
+      const file = event.target.files[0];
+      setSelectedImage(event.target.files[0]);
+    };
     if (item?.ColumnType == "textbox") {
       return (
         <td
-          className={`dropTh${countOfInput} border`}
+          className={`dropTh${countOfInput} border align-middle`}
           draggable="false"
           // id={`item${randnum}${countOfInput}${i}`}
         >
@@ -305,22 +314,21 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               placeholder={item?.ColumnName}
               onChange={(e) => {
                 const { value } = e.target;
-               const  filteredArr = []
-               columnValues.forEach((item) => {
-                if (item !== undefined) {
-                  filteredArr.push(item);
-                }
-              });
-               
-              filteredArr[i][item?.ColumnName] = value;
-               
+                const filteredArr = [];
+                columnValues.forEach((item) => {
+                  if (item !== undefined) {
+                    filteredArr.push(item);
+                  }
+                });
+
+                filteredArr[i][item?.ColumnName] = value;
 
                 setLabelData((prevArr) => {
                   const result = [...prevArr];
                   result[i][countOfInput].ColumnValue = value;
                   return result;
                 });
-             
+
                 setColumnValues(filteredArr);
                 if (
                   labelData[i][countOfInput]["CalculationType"] == "dynamic"
@@ -353,7 +361,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
           // id={`item${randnum}${countOfInput}${i}`}
         >
           <div draggable="false">
-         
             <div className="w-100">
               <Select
                 class="form-select"
@@ -402,15 +409,15 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                   const { checked } = e.target;
                   console.log(checked);
                   if (checked) {
-                    let  filteredArr = []
+                    let filteredArr = [];
                     columnValues.forEach((item) => {
-                     if (item !== undefined) {
-                       filteredArr.push(item);
-                     }
-                   });
-                    
-                   filteredArr[i][item.ColumnName] = "true";
-                  //  filteredArr[i][item?.ColumnName] = value;
+                      if (item !== undefined) {
+                        filteredArr.push(item);
+                      }
+                    });
+
+                    filteredArr[i][item.ColumnName] = "true";
+                    //  filteredArr[i][item?.ColumnName] = value;
                     setLabelData((prevArr) => {
                       const result = [...prevArr];
                       console.log(i, countOfInput, labelData, result);
@@ -419,12 +426,12 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                     });
                     setColumnValues(filteredArr);
                   } else {
-                    let  filteredArr = []
+                    let filteredArr = [];
                     columnValues.forEach((item) => {
-                     if (item !== undefined) {
-                       filteredArr.push(item);
-                     }
-                   });
+                      if (item !== undefined) {
+                        filteredArr.push(item);
+                      }
+                    });
                     filteredArr[i][item.ColumnName] = "false";
                     setLabelData((prevArr) => {
                       const result = [...prevArr];
@@ -468,13 +475,13 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 onChange={(e) => {
                   const { value, checked } = e.target;
                   if (checked) {
-                    let  filteredArr = []
+                    let filteredArr = [];
                     columnValues.forEach((item) => {
-                     if (item !== undefined) {
-                       filteredArr.push(item);
-                     }
-                   });
-                   filteredArr[i][item.ColumnName] = "true";
+                      if (item !== undefined) {
+                        filteredArr.push(item);
+                      }
+                    });
+                    filteredArr[i][item.ColumnName] = "true";
                     labelData[i][countOfInput].ColumnValue = "true";
                     // setLabelData((prevArr) => {
                     //   const result = [...prevArr];
@@ -486,13 +493,13 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                     setLabelData(labelData);
                     columnValues.forEach((e, index) => {
                       if (index != i) {
-                        let  filteredArr = []
+                        let filteredArr = [];
                         columnValues.forEach((item) => {
-                         if (item !== undefined) {
-                           filteredArr.push(item);
-                         }
-                       });
-                       filteredArr[index][item.ColumnName] = "";
+                          if (item !== undefined) {
+                            filteredArr.push(item);
+                          }
+                        });
+                        filteredArr[index][item.ColumnName] = "";
                         setColumnValues(filteredArr);
                         labelData[index][countOfInput].ColumnValue = "";
                         setLabelData(labelData);
@@ -560,13 +567,13 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                   day: "2-digit",
                 });
                 var formattedDate = year + "-" + month + "-" + day;
-                let  filteredArr = []
+                let filteredArr = [];
                 columnValues.forEach((item) => {
-                 if (item !== undefined) {
-                   filteredArr.push(item);
-                 }
-               });
-               filteredArr[i][item.ColumnName] = formattedDate;
+                  if (item !== undefined) {
+                    filteredArr.push(item);
+                  }
+                });
+                filteredArr[i][item.ColumnName] = formattedDate;
                 setLabelData((prevArr) => {
                   const result = [...prevArr];
                   console.log(i, countOfInput, labelData, result);
@@ -581,6 +588,90 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
           </div>
           <div
             className="droptarget1 border" // remove 1 for dragable work
+            style={{ display: "none" }}
+            draggable="false"
+          >
+            Drop
+          </div>
+        </td>
+      );
+    }
+    if (item.ColumnType == "textarea") {
+      return (
+        <td
+          className={`dropTh${countOfInput} border align-middle`}
+          draggable="false"
+          // id={`item${randnum}${countOfInput}${i}`}
+        >
+          <div draggable="false" clas>
+            {/* {replaceFunction("input", countOfInput)} */}
+            <textarea
+              class="form-control "
+              value={labelData[i][countOfInput]["ColumnValue"]}
+              id="exampleFormControlTextarea1"
+              rows="1"
+              onChange={(e) => {
+                const { value } = e.target;
+                const filteredArr = [];
+                console.log(columnValues);
+                columnValues.forEach((item) => {
+                  if (item !== undefined) {
+                    filteredArr.push(item);
+                  }
+                });
+
+                filteredArr[i][item?.ColumnName] = value;
+                setLabelData((prevArr) => {
+                  const result = [...prevArr];
+                  result[i][countOfInput].ColumnValue = value;
+                  return result;
+                });
+
+                setColumnValues(filteredArr);
+              }}
+            ></textarea>
+          </div>
+          <div
+            className="droptarget1 border"
+            style={{ display: "none" }}
+            draggable="false"
+          >
+            Drop
+          </div>
+        </td>
+      );
+    }
+    if (item.ColumnType == "image") {
+      return (
+        <td
+          className={`dropTh${countOfInput} border align-middle`}
+          draggable="false"
+          // id={`item${randnum}${countOfInput}${i}`}
+        >
+          <div
+            draggable="false"
+            className="d-flex justify-content-center align-items-center"
+          >
+            {selectedImage ? (
+            
+              <img
+                src={URL.createObjectURL(selectedImage)}
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "50px",
+                  border: "1px solid gray",
+                }}
+                alt="Uploaded"
+                
+            ></img>
+             
+            ) : ''}
+
+            <input type="file" name="file" onChange={handleImageChange} className="ms-4" />
+          </div>
+          <div
+            className="droptarget1 border"
             style={{ display: "none" }}
             draggable="false"
           >

@@ -39,10 +39,14 @@ const SingleEntryForm = ({
   const [inputValueDDF, setInputValueDDF] = useState("");
   const [inputValueCheck, setInputValueCheck] = useState("");
   const [inputValueDate, setInputValueDate] = useState("");
+  const [inputValueTextArea, setInputValueTextArea] = useState("");
+  const [inputValueImage, setInputValueImage] = useState("");
   const previousInputValue = useRef("");
   const previousInputValueDDF = useRef("");
   const previousInputValueCheck = useRef("");
   const previousInputValueDate = useRef("");
+  const previousInputValueTextArea = useRef("");
+  const previousInputValueImage = useRef("");
   const [displayFormulaAuto, setDisplayFormulaAuto] = useState(false);
   const [calculationType, setCalculationType] = useState("Manual");
   const [formulaTarget, setFormulaTarget] = useState("");
@@ -50,16 +54,22 @@ const SingleEntryForm = ({
   const [dropdownData, setDropdownData] = useState([]);
   const [checkboxData, setCheckboxData] = useState([]);
   const [dateData, setDateData] = useState([]);
+  const [textareaData,setTextareaData]=useState([]);
+  const [imageData,setImageData]=useState([])
   const [showDropDownModal, setShowDropDownModal] = useState(false);
   const [currentDropSelected, setCurrentDropSelected] = useState("0");
   var arrayInput = [];
   var arrayDropdown = [];
   var arrayCheck = [];
   var arrayDate = [];
+  var arrayTextArea=[];
+  var arrayImage=[];
   const [allInputValueData, setAllInputValueData] = useState({});
   const [allDropValueData, setAllDropValueData] = useState({});
   const [allCheckValueData, setAllCheckValueData] = useState({});
   const [allDateValueData, setAllDateValueData] = useState({});
+  const [allTextAreaValueData, setAllTextAreaValueData] = useState({});
+  const [allImageValueData, setAllImageValueData] = useState({});
   const [inputSchema, setInputSchema] = useState(null);
   const [dropSchema, setDropSchema] = useState(null);
   const [checkSchema, setCheckSchema] = useState(null);
@@ -120,7 +130,7 @@ const SingleEntryForm = ({
     tableCreateData =
       tableCreateData + convertLowerCase + " " + "varchar(250)" + ",";
   });
-
+console.log(allData,allCheckValueData)
   useEffect(() => {
     const modelDataLabel = {
       procedureName: "",
@@ -178,14 +188,31 @@ const SingleEntryForm = ({
     for (let i = 0; i < inputValueDate; i++) {
       arrayDate.push([i]);
     }
+    for(let i=0;i<inputValueTextArea;i++){
+      arrayTextArea.push(i)
+    }
+    for(let i=0;i<inputValueImage;i++){
+      arrayImage.push(i)
+    }
 
     useEffect(() => {
       setInputData(arrayInput);
       setDropdownData(arrayDropdown);
       setCheckboxData(arrayCheck);
       setDateData(arrayDate);
-    }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
+      setTextareaData(arrayTextArea)
+      setImageData(arrayImage)
+    }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate,inputValueTextArea,inputValueImage]);
   }
+  
+  useEffect(() => {
+    previousInputValue.current = inputValue;
+    previousInputValueDDF.current = inputValueDDF;
+    previousInputValueCheck.current = inputValueCheck;
+    previousInputValueDate.current = inputValueDate;
+    previousInputValueTextArea.current=inputValueTextArea;
+    previousInputValueImage.current=inputValueImage
+  }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate,inputValueTextArea]);
 
   const submitForm = () => {
     const modelCreatePage = {
@@ -249,6 +276,14 @@ const SingleEntryForm = ({
         var allDropValueDataLength = 0;
         if (allDropValueData != null) {
           allDropValueDataLength = Object.keys(allDropValueData).length;
+        }
+        var allTextareaValueDataLength = 0;
+        if (allTextAreaValueData != null) {
+          allTextareaValueDataLength = Object.keys(allTextAreaValueData).length;
+        }
+        var allImageValueDataLength = 0;
+        if (allImageValueData != null) {
+          allImageValueDataLength = Object.keys(allImageValueData).length;
         }
         var orderPosition = 0;
 
@@ -341,6 +376,50 @@ const SingleEntryForm = ({
             CalculationKey: "",
             CalculationFormula: "",
             RelatedTable:allDropValueData[allDropValueDataCount],
+            Position: orderPosition,
+            IsDisable: "0",
+          };
+          tableModelData.detailsData.push(tabledataparams);
+        }
+        for (
+          let allTeaxtAreaValueDataCount = 0;
+          allTeaxtAreaValueDataCount < allTextareaValueDataLength;
+          allTeaxtAreaValueDataCount++
+        ) {
+          orderPosition++;
+          var tabledataparams = {
+            PageId: "PageID",
+            MenuId: "MenuID",
+            ColumnName: allTextAreaValueData[allTeaxtAreaValueDataCount],
+            ColumnType: "textarea",
+            ColumnDataType: "",
+            SiteName: "DynamicSite",
+            CalculationType: "Manual",
+            CalculationKey: "",
+            CalculationFormula: "",
+            RelatedTable:allTextAreaValueData[allTeaxtAreaValueDataCount],
+            Position: orderPosition,
+            IsDisable: "0",
+          };
+          tableModelData.detailsData.push(tabledataparams);
+        }
+        for (
+          let allImageValueDataCount = 0;
+          allImageValueDataCount < allImageValueDataLength;
+          allImageValueDataCount++
+        ) {
+          orderPosition++;
+          var tabledataparams = {
+            PageId: "PageID",
+            MenuId: "MenuID",
+            ColumnName: allImageValueData[allImageValueDataCount],
+            ColumnType: "image",
+            ColumnDataType: "",
+            SiteName: "DynamicSite",
+            CalculationType: "Manual",
+            CalculationKey: "",
+            CalculationFormula: "",
+            RelatedTable:allImageValueData[allImageValueDataCount],
             Position: orderPosition,
             IsDisable: "0",
           };
@@ -458,13 +537,6 @@ const SingleEntryForm = ({
     });
     setShowDropDownModal(false);
   };
-
-  useEffect(() => {
-    previousInputValue.current = inputValue;
-    previousInputValueDDF.current = inputValueDDF;
-    previousInputValueCheck.current = inputValueCheck;
-    previousInputValueDate.current = inputValueDate;
-  }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate]);
 
   function validationOutsideSchema() {
     var allInputValueDataLength = 0;
@@ -800,7 +872,7 @@ const SingleEntryForm = ({
     <form
       name="myForms"
       noValidate
-      class="bg-white shadow-lg  p-5 mt-4"
+      class="bg-white shadow-lg  p-3 mt-4"
       onSubmit={handleSubmit}
     >
       <Grid>
@@ -823,7 +895,7 @@ const SingleEntryForm = ({
           </button>
         </Grid>
         <div class="container-fluid mt-4">
-          <div class="row shadow-lg p-4">
+          <div class="row shadow-lg pt-4 pb-4">
             <div class="col">
               <label htmlFor="" className="text-style d-block mx-auto">
                 Text Field
@@ -981,7 +1053,7 @@ const SingleEntryForm = ({
                   } else {
                     targetValue = parseInt(e.target.value);
                   }
-                  setAllCheckValueData((prev) => {
+                  setAllDateValueData((prev) => {
                     const temp__details = {};
                     for (
                       var inputLength = 0;
@@ -993,6 +1065,90 @@ const SingleEntryForm = ({
                     return temp__details;
                   });
                   setInputValueDate(targetValue);
+                }}
+              />
+            </div>
+            <div class="col">
+              <label htmlFor="" className="text-style d-block mx-auto">
+               Textarea
+              </label>
+              <TextField
+                id="outlined-basic"
+                variant="outlined"
+                type="number"
+                size="small"
+                defaultValue="0"
+                value={inputValueTextArea}
+                onChange={(e) => {
+                  if (e.target.value < 0) {
+                    swal({
+                      title: "Not Possible!",
+                      text: "Please select positive number",
+                      icon: "warning",
+                      button: "OK",
+                    });
+                    return;
+                  }
+                  let targetValue = 0;
+                  if (e.target.value == "") {
+                    targetValue = 0;
+                  } else {
+                    targetValue = parseInt(e.target.value);
+                  }
+                  setAllTextAreaValueData((prev) => {
+                    const temp__details = {};
+                    for (
+                      var inputLength = 0;
+                      inputLength < targetValue;
+                      inputLength++
+                    ) {
+                      temp__details[inputLength] = "";
+                    }
+                    return temp__details;
+                  });
+                  setInputValueTextArea(targetValue);
+                }}
+              />
+            </div>
+            <div class="col">
+              <label htmlFor="" className="text-style d-block mx-auto">
+               Take Image 
+              </label>
+              <TextField
+                id="outlined-basic"
+                variant="outlined"
+                type="number"
+                size="small"
+                defaultValue="0"
+                value={inputValueImage}
+                onChange={(e) => {
+                  if (e.target.value < 0) {
+                    swal({
+                      title: "Not Possible!",
+                      text: "Please select positive number",
+                      icon: "warning",
+                      button: "OK",
+                    });
+                    return;
+                  }
+                  let targetValue = 0;
+                  if (e.target.value == "") {
+                    targetValue = 0;
+                  } else {
+                    targetValue = parseInt(e.target.value);
+                  }
+                  setAllImageValueData((prev) => {
+                    const temp__details = {};
+                    for (
+                      var inputLength = 0;
+                      inputLength < targetValue;
+                      inputLength++
+                    ) {
+                      temp__details[inputLength] = "";
+                    }
+                    return temp__details;
+                  });
+                  setInputValueImage(targetValue);
                 }}
               />
             </div>
@@ -1132,6 +1288,74 @@ const SingleEntryForm = ({
                         });
                         setAllDateValueData({
                           ...allDateValueData,
+                          [name]: e.target.value,
+                        });
+                      }}
+                    />
+                    {errorsDate
+                      .filter((err) => err.index === name)
+                      .map((err, i) => (
+                        <div style={{ color: "#FF0000" }} key={i}>
+                          This Field is required
+                        </div>
+                      ))}
+                  </div>
+                );
+              })}
+            </div>
+            <div class="col">
+              {textareaData.map((item, name) => {
+                return (
+                  <div >
+                    <TextField
+                      type="text"
+                      name={`input${name}`}
+                      id={name}
+                      variant="outlined"
+                      size="small"
+                      placeholder="textarea field"
+                      className="getInputValue mt-2"
+                      onChange={(e) => {
+                        setAllData({
+                          ...allData,
+                          [allData.length]: e.target.value,
+                        });
+                        setAllTextAreaValueData({
+                          ...allTextAreaValueData,
+                          [name]: e.target.value,
+                        });
+                      }}
+                    />
+                    {errorsDate
+                      .filter((err) => err.index === name)
+                      .map((err, i) => (
+                        <div style={{ color: "#FF0000" }} key={i}>
+                          This Field is required
+                        </div>
+                      ))}
+                  </div>
+                );
+              })}
+            </div>
+            <div class="col">
+              {imageData.map((item, name) => {
+                return (
+                  <div >
+                    <TextField
+                      type="text"
+                      name={`input${name}`}
+                      id={name}
+                      variant="outlined"
+                      size="small"
+                      placeholder="image field"
+                      className="getInputValue mt-2"
+                      onChange={(e) => {
+                        setAllData({
+                          ...allData,
+                          [allData.length]: e.target.value,
+                        });
+                        setAllImageValueData({
+                          ...allImageValueData,
                           [name]: e.target.value,
                         });
                       }}

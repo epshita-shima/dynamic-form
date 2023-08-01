@@ -398,7 +398,7 @@ console.log(labelData)
         
         return (
           <tr id={`tr${index}`}>
-            <td className='text-center'>{index+1}</td>
+            <td className='text-center align-middle'>{index+1}</td>
             {item.map((element, i) => {
               return handleInputValue(element, i, index);
             })}

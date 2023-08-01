@@ -17,6 +17,7 @@ import { useState } from "react";
 function App() {
   const [childMenu, setChildMenu] = useChildMenu([]);
   const [showTable, setShowTable] = useState(false);
+  console.log(childMenu)
   return (
     <div>
       <Routes>

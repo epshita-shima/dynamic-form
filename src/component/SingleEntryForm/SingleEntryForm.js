@@ -120,7 +120,7 @@ const SingleEntryForm = ({
   const tableName = childMenuName.SubMenuName;
   const spaceRemove = tableName.split(" ").join("");
   const tableNameLowerCase = spaceRemove.toLowerCase();
-
+console.log(pageEntry.pageEntry)
   var tableCreateData = "";
   Object.entries(allInputValueData).forEach((entry) => {
     const [key, value] = entry;
@@ -132,6 +132,7 @@ const SingleEntryForm = ({
   });
 console.log(allData,allCheckValueData)
   useEffect(() => {
+    console.log('hi');
     const modelDataLabel = {
       procedureName: "",
       parameters: {},
@@ -147,8 +148,10 @@ console.log(allData,allCheckValueData)
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
+          
           setAllModelDataTable(allModalData);
         } else {
           console.log(data);
@@ -482,6 +485,7 @@ console.log(allData,allCheckValueData)
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
           setModalSpecificData(allModalData.Tables2);
@@ -1112,7 +1116,7 @@ console.log(allData,allCheckValueData)
             </div>
             <div class="col">
               <label htmlFor="" className="text-style d-block mx-auto">
-               Take Image 
+              Image Field
               </label>
               <TextField
                 id="outlined-basic"

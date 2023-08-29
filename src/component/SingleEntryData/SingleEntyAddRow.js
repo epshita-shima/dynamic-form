@@ -9,7 +9,7 @@ console.log(columnValues)
   
   setLabelData((prevArr) => {
     const result = [...prevArr];
-console.log(result,labelDataCopy)
+    console.log(result,labelDataCopy)
     result[0].map((element, i) => {
       if (element.ColumnType == "datetime") {
         twoDimensionData[twoDimensionData.length - 1][i] =
@@ -27,8 +27,11 @@ console.log(result,labelDataCopy)
     console.log(result);
     return result;
   });
+
+ 
   setTwoDimentionData(twoDimensionData);
 }
+
 
 export const handleDeleteColumn=({setColumnValues,element,setLabelData,index,setLabelDataCopy,setShowDeleteIcon})=>{
   swal({
@@ -53,6 +56,7 @@ export const handleDeleteColumn=({setColumnValues,element,setLabelData,index,set
         );
         return temp__details;
       });
+      
       setLabelData((prev) => {
         const temp__details = [
           ...prev,

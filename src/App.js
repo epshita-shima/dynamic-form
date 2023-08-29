@@ -30,7 +30,7 @@ function App() {
             const pageType = item.PageType;
             return (
               <>
-                {pageType == "singleEntryPage" ? (
+                {pageType == "singleEntryPage" || pageType == "doubleEntryPage" ? (
                   <Route
                     path={item.UiLink + "/:" + item.MenuId}
                     element={<SingleEntryData 
@@ -38,9 +38,16 @@ function App() {
                        setShowTable={setShowTable}
                     ></SingleEntryData>}
                   ></Route>
-                ) : (
-                  <>
-                    <Route
+                ) 
+                // : pageType == "doubleEntryPage" ? (<>
+                // <Route
+                //     path={item.UiLink + "/:" + item.MenuId}
+                //     element={<DoubleDataEntryInsert></DoubleDataEntryInsert>}
+                //   ></Route>
+                
+                // </>) 
+                : pageType !== "doubleEntryPage" || pageType == "singleEntryPage" ?(<>
+                  <Route
                       path="/master-menu"
                       element={<CreateMenu></CreateMenu>}
                     ></Route>
@@ -49,8 +56,8 @@ function App() {
                       element={<ChildInfoList></ChildInfoList>}
                     ></Route>
                     <Route path="/add-child" element={<CreateChildMenu></CreateChildMenu>}></Route>
-                  </>
-                )}
+                </>):''
+                }
               </>
             );
           })}

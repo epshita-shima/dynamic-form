@@ -5,10 +5,10 @@ import React from 'react'
 
 import Select from "react-select";
 import { handleDeleteColumn } from './SingleEntyAddRow';
+import './SingleEntryData.css'
 
 const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCopy,setLabelPosition,showDeleteIcon,setColumnValues,columnValues,setShowDeleteIcon,setModalSpecificData,setOpenModal,labelDataCopy,handleDropdownValue,handleInputValue,modalSpecificData,labelPosition,selectedListName,labelCount}) => {
-console.log(columnValues)
-console.log(labelData)
+
     const handleModalMenu = () => {
         const modelData = {
           procedureName: "",
@@ -139,28 +139,32 @@ console.log(labelData)
     
   return (
   <div className='table-container'>
-      <table className={`table table-size`} style={{width: labelCount > 3 ? '1548px' : '100%' }}>
-    <thead className="border">
-      <tr>
-      <th scope="col" style={{width:'70px',textAlign:'center'}}>SL</th>
+    <h2 className='fs-3 mb-2'>Details Information</h2>
+      <table className={`table table-size`} style={{width: labelCount > 3 ? '1548px' : '100%',border:'2px solid gray'}}>
+    <thead>
+      <tr  style={{border:'2px solid gray'}} >
+      <th scope="col" style={{width:'70px',textAlign:'center',border:'2px solid gray'}}>SL</th>
         {labelData?.map((item, i) => {
           if (i == 0) {
             return item?.map((element, index) => {
-              const str = element?.ColumnName;
-              const str2 =
-                str.charAt(0).toUpperCase() + str.slice(1);
+              const str = element?.ColumnNameWithSpace;
+              let str2 = str.split(' ');
+              for (let i = 0; i < str2.length; i++) {
+                str2[i] = str2[i][0]?.toUpperCase() + str2[i].substr(1);
+              }
+            
               return (
-                <>
                 <th
                   scope="col"
-                  className={`dropTh${index} border`}
+                  className={`dropTh${index}`}
                   draggable="true"
+                  style={{border:'2px solid gray'}}
                 >
-                  <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex justify-content-between align-items-center" >
                     <TextField
                       id={`box${index}`}
                       name="L"
-                      label={`${str2}`}
+                      label={`${str2.join(' ')}`}
                       variant="standard"
                       disabled
                       InputLabelProps={{
@@ -274,7 +278,7 @@ console.log(labelData)
                                   ></Select>
                                 </div>
                                 <div
-                                  className="droptarget border"
+                                  className="droptarget"
                                   style={{
                                     display: "none",
                                   }}
@@ -378,18 +382,18 @@ console.log(labelData)
                   </div>
 
                   <div
-                    className="droptargettd border"
+                    className="droptargettd"
                     style={{ display: "none" }}
                     draggable="false"
                   >
                     Drop
                   </div>
-                </th></>
+                </th>
               );
             });
           }
         })}
-        <th scope="col" className='text-center'>Action</th>
+        <th scope="col" className='text-center' style={{border:'2px solid gray'}}>Action</th>
       </tr>
     </thead>
 
@@ -397,12 +401,16 @@ console.log(labelData)
       {labelData.map((item, index) => {
         
         return (
-          <tr id={`tr${index}`}>
-            <td className='text-center align-middle'>{index+1}</td>
+          <tr id={`tr${index}`} 
+          style={{border:'2px solid gray'}}
+          >
+            <td className='text-center align-middle'  style={{border:'2px solid gray'}}>{index+1}</td>
             {item.map((element, i) => {
               return handleInputValue(element, i, index);
             })}
-            <td className="border text-center">
+            <td className="text-center" 
+            style={{border:'2px solid gray'}}
+            >
               <Button
                 id={`delete${index}`}
                 variant="contained"

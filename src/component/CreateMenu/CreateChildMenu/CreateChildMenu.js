@@ -11,6 +11,7 @@ import "./CreateMenuChild.css";
 import Token from "../../common/Token";
 import swal from "sweetalert";
 import useChildMenu from "../../customHooks/useChildMenu";
+import DoubleEnteryData from "../../DoubleEntryData/DoubleEnteryData";
 
 const CreateChildMenu = () => {
   const [parentSelectOption, setParentSelectOption] = useParentDropdown();
@@ -22,8 +23,8 @@ const CreateChildMenu = () => {
   const [childMenuName, setChildMenuName] = useState({ SubMenuName: "" });
   const [singleEntry, setSingleEntry] = useState({ singlePage: "" });
   const [doubleEntry, setDoubleEntry] = useState({ doubleEntry: "" });
-  const [pageEntry, setPageEntry] = useState({ pageEntry: "singleEntryPage" });
-  const [exist,setExist]=useState(false)
+  const [pageEntry, setPageEntry] = useState({ pageEntry: "" });
+  const [exist, setExist] = useState(false);
   const [childMenu, setChildMenu] = useChildMenu([]);
 
   const token = Token.token;
@@ -94,7 +95,6 @@ const CreateChildMenu = () => {
       setChildMenuName({ SubMenuName: "" });
     }
   };
-
   return (
     <Container>
       <Grid className="shadow-lg px-4 py-2  mb-4">
@@ -132,7 +132,6 @@ const CreateChildMenu = () => {
                       ["MenuName"]: e.value,
                     });
                   }}
-                 
                 ></Select>
               </div>
               <FontAwesomeIcon
@@ -168,48 +167,56 @@ const CreateChildMenu = () => {
               className="d-flex justify-content-between align-items-center mt-3"
               style={{ width: "70%" }}
             >
-            <div className="d-block">
-            <div className="d-flex justify-content-between align-items-center">
-            <label
-                style={{
-                  color: "#878A99",
-                  fontSize: "20px",
-                  marginRight: "60px",
-                }}
-              >
-                Create Child Menu:
-              </label>
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                type="text"
-                size="small"
-                required
-                style={{border: exist? '1px solid red' : '',borderRadius: exist? '5px' : ''}}
-                value={childMenuName.MenuName}
-                onChange={(e) => {
-                  const { name, value } = e.target;
-                  setChildMenuName({
-                    ...childMenuName,
-                    ["SubMenuName"]: value,
-                  });
-                  const exists = childMenu.find(p => p.SubMenuName === value);
-                  console.log(exists)
-                  if(exists){
-                    setExist(true)
-                  }
-                  else if(exists==undefined){
-                    setExist(false)
-                  }
-                }}
-              ></TextField>
-            </div>
-            <div >
-            {
-              exist? <p className="text-danger text-right" >Child menu already exist</p>:''
-              }
-            </div>
-            </div>
+              <div className="d-block">
+                <div className="d-flex justify-content-between align-items-center">
+                  <label
+                    style={{
+                      color: "#878A99",
+                      fontSize: "20px",
+                      marginRight: "60px",
+                    }}
+                  >
+                    Create Child Menu:
+                  </label>
+                  <TextField
+                    id="outlined-basic"
+                    variant="outlined"
+                    type="text"
+                    size="small"
+                    required
+                    style={{
+                      border: exist ? "1px solid red" : "",
+                      borderRadius: exist ? "5px" : "",
+                    }}
+                    value={childMenuName.MenuName}
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      setChildMenuName({
+                        ...childMenuName,
+                        ["SubMenuName"]: value,
+                      });
+                      const exists = childMenu.find(
+                        (p) => p.SubMenuName === value
+                      );
+                   
+                      if (exists) {
+                        setExist(true);
+                      } else if (exists == undefined) {
+                        setExist(false);
+                      }
+                    }}
+                  ></TextField>
+                </div>
+                <div>
+                  {exist ? (
+                    <p className="text-danger text-right">
+                      Child menu already exist
+                    </p>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
 
               <div class="custom-control custom-switch custom-switch-md">
                 <input
@@ -222,13 +229,13 @@ const CreateChildMenu = () => {
                       setShowSaveData(1);
                       setPageEntry({
                         ...pageEntry,
-                        ["pageEntry"]: "singleEnrtyPage",
+                        ["pageEntry"]: "doubleEntryPage",
                       });
                     } else {
                       setShowSaveData(0);
                       setPageEntry({
                         ...pageEntry,
-                        ["pageEntry"]: "doubleEntryPage",
+                        ["pageEntry"]: "singleEnrtyPage",
                       });
                     }
                   }}
@@ -245,10 +252,25 @@ const CreateChildMenu = () => {
                 </label>
               </div>
             </Grid>
-            
           </form>
           <Grid>
-            <SingleEntryForm
+    <Grid className={`${pageEntry.pageEntry== "doubleEntryPage" ? 'd-none': 'd-block'}`}>
+      {
+        pageEntry.pageEntry=="singleEnrtyPage"? (<SingleEntryForm
+          parentMenuName={parentMenuName}
+          childMenuName={childMenuName}
+          pageEntry={pageEntry}
+          setParentMenuName={setParentMenuName}
+          setChildMenuName={setChildMenuName}
+          setPageEntry={setPageEntry}
+          setExist={setExist}
+        ></SingleEntryForm>) :""
+      }
+    
+    </Grid>
+            
+          {
+            pageEntry.pageEntry == "doubleEntryPage" ?(<DoubleEnteryData
               parentMenuName={parentMenuName}
               childMenuName={childMenuName}
               pageEntry={pageEntry}
@@ -256,7 +278,10 @@ const CreateChildMenu = () => {
               setChildMenuName={setChildMenuName}
               setPageEntry={setPageEntry}
               setExist={setExist}
-            ></SingleEntryForm>
+              ></DoubleEnteryData>):''
+          }
+              
+            
           </Grid>
         </Grid>
       </Grid>

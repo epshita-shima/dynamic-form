@@ -171,7 +171,9 @@ console.log(showTable)
                             return (
                               <li className="nav-item">
                                 <Link
-                                  to={`${item.PageType== 'singleEntryPage' ? `${item.UiLink}/${item.MenuId}` : `${item.UiLink}`}`}
+                                  to={`${item.PageType== 'singleEntryPage' || item.PageType== 'doubleEntryPage' ? `${item.UiLink}/${item.MenuId}`: 
+                                  // item.PageType== 'doubleEntryPage' ? `${item.UiLink}/${item.MenuId}` : 
+                                  item.PageType !== "doubleEntryPage" || item.PageType== "singleEntryPage" ? `${item.UiLink}`:'' }`}
                                   className="nav-link"
                                   style={{
                                     backgroundColor: "#66CBFF",

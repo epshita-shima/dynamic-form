@@ -32,6 +32,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   const [twoDimensionData, setTwoDimentionData] = useState([[]]);
   const [allModelDataTable, setAllModelDataTable] = useState([]);
   const [selectedOption, setSelectedOption] = useState([]);
+  const [selectedOptionParent, setSelectedOptionParent] = useState([]);
   const [getDate, setGetDate] = useState([]);
   const [allInputValueData, setAllInputValueData] = useState(null);
   const [allDropValueData, setAllDropValueData] = useState(null);
@@ -40,19 +41,20 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
   const [labelCount, setLabelCount] = useState(0);
-  const [selectedImage, setSelectedImage] = useState([]);
+  const [selectedImage, setSelectedImage] = useState([[]]);
   const [selectedImageSingle, setSelectedImageSingle] = useState([]);
   const [selectImagePopupSingle, setSelectedImagePopupSingle] = useState(null);
   const [selectImagePopup, setSelectedImagePopup] = useState(null);
   const [childPageType, setChildPageType] = useState([]);
   const [removeSpace, setRemoveSpace] = useState([]);
-  console.log(selectedOption);
+  console.log(selectedOptionParent);
   const token = Token.token;
   const search = useLocation();
   const link = search.pathname.split("/");
   let id = link[2];
-
+console.log(selectedOption)
   console.log(columnValuesSingle);
+  console.log(columnValues)
   useEffect(() => {
     const modelDataLabel = {
       procedureName: "",
@@ -137,6 +139,41 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 return (createColumnValuesObjectSingle[items.ColumnName] = "");
               });
             });
+            labelDataSingle.map((element)=>{
+              element.forEach((elem,i)=>{
+                if (elem.RelatedTable != "") {
+                  var dataTable = [];
+                  for (var modelArrayPosition in allModelDataTable)
+                    dataTable.push([
+                      modelArrayPosition,
+                      allModelDataTable[modelArrayPosition],
+                    ]);
+                  var dataMenuArr = [];
+                  console.log(dataTable);
+                  dataTable.map((ele) => {
+                    console.log(ele[1][0].title, elem.RelatedTable)
+                    if (ele[1][0].title == elem.RelatedTable) {
+                      ele[1].map((member) => {
+                        console.log(member)
+                        var dataMenuArrLength = dataMenuArr.length;
+                        dataMenuArr[dataMenuArrLength] = {};
+                        dataMenuArr[dataMenuArrLength]["label"] = member.label;
+                        dataMenuArr[dataMenuArrLength]["value"] = member.value;
+                      });
+                    }
+                    console.log(dataMenuArr);
+                    setSelectedOptionParent((prev) => {
+                      const temp__details = [...prev];
+                      temp__details[i] = dataMenuArr;
+                      return temp__details;
+                    });
+                  });
+                  console.log(dataMenuArr);
+                 
+                }
+              })
+             
+            })
             columnValues.forEach((item, i) => {
               delete columnValues[i];
               setColumnValues(columnValues);
@@ -222,6 +259,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                   var dataMenuArr = [];
                   console.log(dataTable);
                   dataTable.map((ele) => {
+                    console.log(ele[1][0].title, element.RelatedTable)
                     if (ele[1][0].title == element.RelatedTable) {
                       ele[1].map((member) => {
                         var dataMenuArrLength = dataMenuArr.length;
@@ -555,7 +593,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   //   }
   //   return new Blob([u8arr], { type: mime });
   // }
-  console.log(selectedImageSingle)
   const handleSingleData = (item, i) => {
 
     const str = item?.ColumnNameWithSpace;
@@ -567,12 +604,15 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
       const files = event.target.files[0];
       console.log(files);
       const resultFile = URL.createObjectURL(files);
-
-      setSelectedImageSingle((prevArr) => {
-        const result = [...prevArr];
-        result.push(resultFile);
-        return result;
-      });
+      var multipleDateArrayField = [...selectedImageSingle];
+      multipleDateArrayField[i] = resultFile;
+      // setSelectedImageSingle((prevArr) => {
+      //   const result = [...prevArr];
+      //   result.push(resultFile);
+      //   return result;
+      // });
+      console.log(multipleDateArrayField)
+      setSelectedImageSingle(multipleDateArrayField)
       const filteredArr = [];
       columnValuesSingle.forEach((item) => {
         if (item !== undefined) {
@@ -637,44 +677,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         </div>
       );
     }
-    if (item?.ColumnType == "dropdown") {
-      return (
-        <div className="col-md-3 mb-2">
-          <label htmlFor="">{str2.join(" ")}</label>
-          <div className="w-100">
-            <Select
-              class="form-select"
-              aria-label="Default select example"
-              name="groupId"
-              id="groupName"
-              placeholder="Select.."
-              options={selectedOption[6]}
-              //       value={selectedOption[i].find(
-              //   (x) => x.value == labelDataSingle[i]["ColumnValue"]
-              // )}
-              onChange={(e) => {
-                console.log(e.value);
-                const filteredArr = [];
-                columnValuesSingle.forEach((item) => {
-                  if (item !== undefined) {
-                    filteredArr.push(item);
-                  }
-                });
-
-                filteredArr[0][item?.ColumnName] = e.value;
-                setLabelDataSingle((prevArr) => {
-                  const result = [...prevArr];
-                  console.log(result[0][i], i, result);
-                  result[0][i].ColumnValue = e.value;
-                  return result;
-                });
-                setColumnValuesSingle(filteredArr);
-              }}
-            ></Select>
-          </div>
-        </div>
-      );
-    }
+   
     if (item?.ColumnType == "datetime") {
       return (
         <div className="col-md-3 mb-2">
@@ -727,6 +730,44 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               setColumnValuesSingle(filteredArr);
             }}
           />
+        </div>
+      );
+    }
+    if (item?.ColumnType == "dropdown") {
+      return (
+        <div className="col-md-3 mb-2">
+          <label htmlFor="">{str2.join(" ")}</label>
+          <div className="w-100">
+            <Select
+              class="form-select"
+              aria-label="Default select example"
+              name="groupId"
+              id="groupName"
+              placeholder="Select.."
+              options={selectedOptionParent[i]}
+              //       value={selectedOption[i].find(
+              //   (x) => x.value == labelDataSingle[i]["ColumnValue"]
+              // )}
+              onChange={(e) => {
+                console.log(e.value,i);
+                const filteredArr = [];
+                columnValuesSingle.forEach((item) => {
+                  if (item !== undefined) {
+                    filteredArr.push(item);
+                  }
+                });
+
+                filteredArr[0][item?.ColumnName] = e.value;
+                setLabelDataSingle((prevArr) => {
+                  const result = [...prevArr];
+                  console.log(result[0][i], i, result);
+                  result[0][i].ColumnValue = e.value;
+                  return result;
+                });
+                setColumnValuesSingle(filteredArr);
+              }}
+            ></Select>
+          </div>
         </div>
       );
     }
@@ -821,10 +862,10 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         <div className="col-md-3 mb-2">
           <label htmlFor="">{str2.join(" ")}</label>
           <div className="d-flex align-items-center">
-            {selectedImageSingle.length !== 0 ? (
+            {selectedImageSingle[i] ? (
               <>
                 <img
-                  src={selectedImageSingle[0]}
+                  src={selectedImageSingle[i]}
                   style={{
                     width: "45px",
                     height: "45px",
@@ -832,7 +873,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                     border: "1px solid gray",
                     marginRight: "10px",
                   }}
-                  onClick={() => handleImageSingleClick(selectedImageSingle)}
+                  onClick={() => handleImageSingleClick(selectedImageSingle[i])}
                   alt={i}
                 ></img>
                 {selectImagePopupSingle ? (
@@ -860,6 +901,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     }
   };
   const handleInputValue = (item, countOfInput, i) => {
+    console.log(selectedImage,countOfInput,i)
     const handleImageChange = (event) => {
       const files = event.target.files[0];
       const resultFile = URL.createObjectURL(files);
@@ -877,11 +919,14 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         result[i][countOfInput].ColumnValue = resultFile;
         return result;
       });
-      setSelectedImage((prevArr) => {
-        const result = [...prevArr];
-        result.push(resultFile);
-        return result;
-      });
+      var multipleDateArrayField = [...selectedImage];
+      multipleDateArrayField[i][countOfInput] = resultFile;
+      // setSelectedImage((prevArr) => {
+      //   const result = [...prevArr];
+      //   result.push(resultFile);
+      //   return result;
+      // });
+      setSelectedImage( multipleDateArrayField)
     };
 
     const handleImageClick = (image) => {
@@ -1201,7 +1246,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 filteredArr[i][item.ColumnName] = formattedDate;
                 setLabelData((prevArr) => {
                   const result = [...prevArr];
-                  console.log(i, countOfInput, labelData, result);
                   result[i][countOfInput].ColumnValue = formattedDate;
                   return result;
                 });
@@ -1279,17 +1323,17 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
             draggable="false"
             className="d-flex justify-content-center align-items-center"
           >
-            {selectedImage.length !== 0 ? (
+            {selectedImage[i][countOfInput]  ? (
               <>
                 <img
-                  src={selectedImage[i]}
+                  src={selectedImage[i][countOfInput]}
                   style={{
                     width: "50px",
                     height: "50px",
                     borderRadius: "50px",
                     border: "1px solid gray",
                   }}
-                  onClick={() => handleImageClick(selectedImage[i])}
+                  onClick={() => handleImageClick(selectedImage[i][countOfInput])}
                   alt={countOfInput}
                 ></img>
                 {selectImagePopup ? (
@@ -1360,7 +1404,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
           if (allDropValueData != null) {
             allDropValueDataLength = Object.keys(allDropValueData).length;
           }
-          console.log(allDropValueDataLength);
+        
           console.log(dataMenuArr);
           setAllDropValueData({
             ...allDropValueData,
@@ -1386,8 +1430,8 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   const handleSubmitData = (e, i) => {
     e.preventDefault();
     const modelPurchase = {
-      tableNameMaster: "groupinformations",
-      tableNameChild: "groupinformationsdetails",
+      tableNameMaster: "testmodal",
+      tableNameChild: "testmodaldetails",
       columnNamePrimary: "Id",
       columnNameForign: "Id",
       columnNameSerialNo: "",
@@ -1867,6 +1911,8 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                           setLabelData,
                           labelDataCopy,
                           setTwoDimentionData,
+                          selectedImage,
+                          setSelectedImage
                         });
                       }}
                     >
@@ -1907,6 +1953,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                             return (
                               <div className="row mb-4">
                                 {items?.map((item, i) => {
+                                  console.log(item,i)
                                   return handleSingleData(item, i);
                                 })}
                               </div>

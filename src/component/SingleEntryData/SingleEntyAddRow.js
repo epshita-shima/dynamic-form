@@ -1,11 +1,13 @@
 import swal from "sweetalert";
 
-export const handleAddRow=({columnValues,setGetDate,getDate,twoDimensionData,setLabelData,labelDataCopy,setTwoDimentionData})=>{
+export const handleAddRow=({columnValues,setGetDate,getDate,twoDimensionData,setLabelData,labelDataCopy,setTwoDimentionData, selectedImage,
+  setSelectedImage})=>{
 console.log(columnValues)
   console.log(labelDataCopy)
   columnValues[columnValues?.length] = {};
   setGetDate([...getDate, new Date()]);
   twoDimensionData[twoDimensionData.length] = [];
+  selectedImage[selectedImage.length]=[]
   
   setLabelData((prevArr) => {
     const result = [...prevArr];
@@ -14,6 +16,9 @@ console.log(columnValues)
       if (element.ColumnType == "datetime") {
         twoDimensionData[twoDimensionData.length - 1][i] =
           new Date();
+      }
+      if (element.ColumnType == "image") {
+        selectedImage[selectedImage.length-1[i]]=''
       }
       columnValues[columnValues.length - 1][
         element.ColumnName
@@ -28,8 +33,8 @@ console.log(columnValues)
     return result;
   });
 
- 
   setTwoDimentionData(twoDimensionData);
+  setSelectedImage(selectedImage);
 }
 
 

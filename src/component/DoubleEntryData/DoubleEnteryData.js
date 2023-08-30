@@ -107,6 +107,7 @@ const DoubleEnteryData = ({
   ]);
   const [allData, setAllData] = useState([]);
   const [selectedOption, setSelectedOption] = useState([]);
+  const [selectedOptionParent, setSelectedOptionParent] = useState([]);
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [allModelDataTable, setAllModelDataTable] = useState([]);
   const [pageName, setPageName] = useState("");
@@ -122,7 +123,7 @@ const DoubleEnteryData = ({
   const [allTextAreaValueDataDetails, setAllTextAreaValueDataDetails] =
     useState({});
   const [allImageValueDataDetails, setAllImageValueDataDetails] = useState({});
-  console.log({ allDropValueDataDetails }, { selectedOption });
+  console.log({ allDropValueDataDetails }, { selectedOptionParent });
 
   const [keyValue, setKeyValue] = useState([
     {
@@ -160,7 +161,7 @@ const DoubleEnteryData = ({
   let newString = tableName.replace("-", "_");
   const spaceRemove = newString.split(" ").join("");
   const tableNameLowerCase = spaceRemove.toLowerCase();
-
+console.log(selectedOptionParent)
   var inputLowerCaseData = [];
   Object.entries(allInputValueData).forEach((entry) => {
     const [key, value] = entry;
@@ -1178,7 +1179,7 @@ var checkboxLowerCaseData=[]
         });
       }
     });
-    setSelectedOption((prev) => {
+    setSelectedOptionParent((prev) => {
       const temp__details = [...prev];
       temp__details[i] = dataMenuArr;
       return temp__details;
@@ -1833,7 +1834,7 @@ var checkboxLowerCaseData=[]
                           className="w-[100%] mt-2"
                           name={`drop${name}`}
                           aria-label="Default select example"
-                          options={selectedOption[name]}
+                          options={selectedOptionParent[name]}
                           id={`dropValue${name}`}
                           onChange={(e) => {}}
                           required

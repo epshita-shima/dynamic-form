@@ -138,30 +138,30 @@ setPageFormulaDetails
   //     tableCreateData + convertLowerCase + " " + "varchar(250)" + ",";
   // });
 
-  useEffect(() => {
-    const modelDataLabel = {
-      procedureName: "",
-      parameters: {},
-    };
-    modelDataLabel.procedureName = "prc_GetMasterInfoList";
-    fetch("https://localhost:44372/api/GetData/GetInitialData", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelDataLabel),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == true) {
-          const allModalData = JSON.parse(data.data);
-          setAllModelDataTableDetails(allModalData);
-        } else {
-          console.log(data);
-        }
-      });
-  }, []);
+  // useEffect(() => {
+  //   const modelDataLabel = {
+  //     procedureName: "",
+  //     parameters: {},
+  //   };
+  //   modelDataLabel.procedureName = "prc_GetMasterInfoList";
+  //   fetch("https://localhost:44372/api/GetData/GetInitialData", {
+  //     method: "POST",
+  //     headers: {
+  //       authorization: `Bearer ${token}`,
+  //       "content-type": "application/json",
+  //     },
+  //     body: JSON.stringify(modelDataLabel),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       if (data.status == true) {
+  //         const allModalData = JSON.parse(data.data);
+  //         setAllModelDataTableDetails(allModalData);
+  //       } else {
+  //         console.log(data);
+  //       }
+  //     });
+  // }, []);
 
   const insertField = (modelDataParams) => {
     fetch("http://localhost:53601/DBCommand/Insert", {

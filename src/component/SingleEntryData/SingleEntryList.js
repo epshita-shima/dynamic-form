@@ -147,6 +147,7 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
         {labelData?.map((item, i) => {
           if (i == 0) {
             return item?.map((element, index) => {
+              console.log(element)
               const str = element?.ColumnNameWithSpace;
               let str2 = str.split(' ');
               for (let i = 0; i < str2.length; i++) {

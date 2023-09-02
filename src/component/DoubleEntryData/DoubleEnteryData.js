@@ -1143,6 +1143,7 @@ var checkboxLowerCaseData=[]
       });
   };
   const handleDropdownValue = (i) => {
+    console.log(i)
     var radioName = 0;
     if (
       document.querySelector('input[name="dropValueField"]:checked') != null

@@ -52,16 +52,21 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   const search = useLocation();
   const link = search.pathname.split("/");
   let id = link[2];
-console.log(selectedOption)
+  console.log(selectedOption);
   console.log(columnValuesSingle);
-  console.log(columnValues)
+  console.log(columnValues);
+ 
   useEffect(() => {
     const modelDataLabel = {
       procedureName: "",
-      parameters: {},
+      parameters: {
+        TableName:''
+      },
     };
+   
     modelDataLabel.procedureName = "prc_GetMasterInfoList";
-    fetch("https://localhost:44372/api/GetData/GetInitialData", {
+    modelDataLabel.parameters.TableName="groupinformation"
+    fetch("https://localhost:44372/api/GetData/GetDataByID", {
       method: "POST",
       headers: {
         authorization: `Bearer ${token}`,
@@ -114,7 +119,7 @@ console.log(selectedOption)
           if (data.status == true) {
             console.log(data);
             const showSingleData = JSON.parse(data.data);
-            console.log(showSingleData.Tables2)
+            console.log(showSingleData.Tables2);
             // removeSpace[0] = showSingleData.Tables1;
             // removeSpace.map((item) => {
             //   return item.map((items) => {
@@ -126,9 +131,9 @@ console.log(selectedOption)
             //       const temp__details=prev
             //       temp__details[0][0]['ColumnName']=convertLowerCase
             //     })
-            //   });   
+            //   });
             // });
-            console.log(showSingleData.Tables1)
+            console.log(showSingleData.Tables1);
             labelDataSingle[0] = showSingleData.Tables1;
             setLabelDataSingle(labelDataSingle);
             var createColumnValuesObjectSingle = {};
@@ -139,8 +144,8 @@ console.log(selectedOption)
                 return (createColumnValuesObjectSingle[items.ColumnName] = "");
               });
             });
-            labelDataSingle.map((element)=>{
-              element.forEach((elem,i)=>{
+            labelDataSingle.map((element) => {
+              element.forEach((elem, i) => {
                 if (elem.RelatedTable != "") {
                   var dataTable = [];
                   for (var modelArrayPosition in allModelDataTable)
@@ -151,10 +156,10 @@ console.log(selectedOption)
                   var dataMenuArr = [];
                   console.log(dataTable);
                   dataTable.map((ele) => {
-                    console.log(ele[1][0].title, elem.RelatedTable)
+                    console.log(ele[1][0].title, elem.RelatedTable);
                     if (ele[1][0].title == elem.RelatedTable) {
                       ele[1].map((member) => {
-                        console.log(member)
+                        console.log(member);
                         var dataMenuArrLength = dataMenuArr.length;
                         dataMenuArr[dataMenuArrLength] = {};
                         dataMenuArr[dataMenuArrLength]["label"] = member.label;
@@ -169,11 +174,9 @@ console.log(selectedOption)
                     });
                   });
                   console.log(dataMenuArr);
-                 
                 }
-              })
-             
-            })
+              });
+            });
             columnValues.forEach((item, i) => {
               delete columnValues[i];
               setColumnValues(columnValues);
@@ -259,7 +262,7 @@ console.log(selectedOption)
                   var dataMenuArr = [];
                   console.log(dataTable);
                   dataTable.map((ele) => {
-                    console.log(ele[1][0].title, element.RelatedTable)
+                    console.log(ele[1][0].title, element.RelatedTable);
                     if (ele[1][0].title == element.RelatedTable) {
                       ele[1].map((member) => {
                         var dataMenuArrLength = dataMenuArr.length;
@@ -285,7 +288,7 @@ console.log(selectedOption)
                 multipleDateArrayFieldcopy[index][i] = {};
                 multipleDateArrayFieldcopy[index]["" + i]["ColumnName"] =
                   element.ColumnName;
-                  multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
+                multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
                   element.ColumnNameWithSpace;
                 multipleDateArrayField[index]["" + i]["Position"] =
                   element.Position;
@@ -416,6 +419,8 @@ console.log(selectedOption)
                 console.log(element, i);
                 multipleDateArrayField[index]["" + i]["ColumnName"] =
                   element.ColumnName;
+                multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
+                  element.ColumnNameWithSpace;
                 multipleDateArrayField[index]["" + i]["Position"] =
                   element.Position;
                 multipleDateArrayField[index]["" + i]["ColumnType"] =
@@ -461,6 +466,8 @@ console.log(selectedOption)
                 multipleDateArrayFieldcopy[index][i] = {};
                 multipleDateArrayFieldcopy[index]["" + i]["ColumnName"] =
                   element.ColumnName;
+                multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
+                  element.ColumnNameWithSpace;
                 multipleDateArrayField[index]["" + i]["Position"] =
                   element.Position;
                 multipleDateArrayFieldcopy[index]["" + i]["ColumnType"] =
@@ -500,30 +507,94 @@ console.log(selectedOption)
                   twoDimensionData[0][i] = new Date();
                 }
                 if (element.RelatedTable != "") {
-                  var dataTable = [];
-                  for (var modelArrayPosition in allModelDataTable)
-                    dataTable.push([
-                      modelArrayPosition,
-                      allModelDataTable[modelArrayPosition],
-                    ]);
-                  var dataMenuArr = [];
-                  console.log(dataTable);
-                  dataTable.map((ele) => {
-                    if (ele[1][0].title == element.RelatedTable) {
-                      ele[1].map((member) => {
-                        var dataMenuArrLength = dataMenuArr.length;
-                        dataMenuArr[dataMenuArrLength] = {};
-                        dataMenuArr[dataMenuArrLength]["label"] = member.label;
-                        dataMenuArr[dataMenuArrLength]["value"] = member.value;
-                      });
+                  const modelDataLabel = {
+                    procedureName: "",
+                    parameters: {
+                      TableName:''
                     }
-                  });
-                  console.log(dataMenuArr);
-                  setSelectedOption((prev) => {
-                    const temp__details = [...prev];
-                    temp__details[i] = dataMenuArr;
-                    return temp__details;
-                  });
+                  };
+                  modelDataLabel.procedureName = "prc_GetMasterInfoList";
+                  modelDataLabel.parameters.TableName=`${element.ColumnName}`
+                  fetch("https://localhost:44372/api/GetData/GetDataByID", {
+                    method: "POST",
+                    headers: {
+                      authorization: `Bearer ${token}`,
+                      "content-type": "application/json",
+                    },
+                    body: JSON.stringify(modelDataLabel),
+                  })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      console.log(data);
+                      if (data.status == true) {
+                        const allModalData = JSON.parse(data.data);
+                        console.log(allModalData)
+                        // setAllModelDataTable(allModalData);
+                          var dataTable = [];
+                    console.log(allModalData)
+                    for (var modelArrayPosition in allModalData)
+                      dataTable.push([
+                        modelArrayPosition,
+                        allModalData[modelArrayPosition],
+                      ]);
+                      console.log(dataTable,allModalData)
+                    var dataMenuArr = [];
+                    dataTable.map((element) => {
+                      console.log(element)
+                  
+                      // if (element[1][0].title == radioName) {
+                        element.map((member) => {
+                          console.log(member)
+                         
+                          var dataMenuArrLength = dataMenuArr.length;
+                          dataMenuArr[dataMenuArrLength] = {};
+                          dataMenuArr[dataMenuArrLength]["label"] = member.groupname;
+                          dataMenuArr[dataMenuArrLength]["value"] =member.ID;
+                          var allDropValueDataLength = 0;
+                          if (allDropValueData != null) {
+                            allDropValueDataLength = Object.keys(allDropValueData).length;
+                            console.log(allDropValueDataLength);
+                          }
+                          
+                        
+                        });
+                      // }
+                    });
+                    console.log(dataMenuArr)
+                    setSelectedOption((prev) => {
+                      console.log(prev)
+                      const temp__details = [...prev];
+                      temp__details[i] = dataMenuArr;
+                      return temp__details;
+                    });
+                      } else {
+                        console.log(data);
+                      }
+                    });
+                  // var dataTable = [];
+                  // for (var modelArrayPosition in allModelDataTable)
+                  //   dataTable.push([
+                  //     modelArrayPosition,
+                  //     allModelDataTable[modelArrayPosition],
+                  //   ]);
+                  // var dataMenuArr = [];
+                  // console.log(dataTable);
+                  // dataTable.map((ele) => {
+                  //   if (ele[1][0].title == element.RelatedTable) {
+                  //     ele[1].map((member) => {
+                  //       var dataMenuArrLength = dataMenuArr.length;
+                  //       dataMenuArr[dataMenuArrLength] = {};
+                  //       dataMenuArr[dataMenuArrLength]["label"] = member.label;
+                  //       dataMenuArr[dataMenuArrLength]["value"] = member.value;
+                  //     });
+                  //   }
+                  // });
+                  // console.log(dataMenuArr);
+                  // setSelectedOption((prev) => {
+                  //   const temp__details = [...prev];
+                  //   temp__details[i] = dataMenuArr;
+                  //   return temp__details;
+                  // });
                 }
               });
             });
@@ -594,7 +665,6 @@ console.log(selectedOption)
   //   return new Blob([u8arr], { type: mime });
   // }
   const handleSingleData = (item, i) => {
-
     const str = item?.ColumnNameWithSpace;
     let str2 = str.split(" ");
     for (let i = 0; i < str2.length; i++) {
@@ -611,8 +681,8 @@ console.log(selectedOption)
       //   result.push(resultFile);
       //   return result;
       // });
-      console.log(multipleDateArrayField)
-      setSelectedImageSingle(multipleDateArrayField)
+      console.log(multipleDateArrayField);
+      setSelectedImageSingle(multipleDateArrayField);
       const filteredArr = [];
       columnValuesSingle.forEach((item) => {
         if (item !== undefined) {
@@ -652,7 +722,7 @@ console.log(selectedOption)
             className="getValue form-control"
             placeholder={item?.ColumnName}
             onChange={(e) => {
-              console.log(i)
+              console.log(i);
               // console.log(labelDataSingle[i]["ColumnValue"])
               const { value } = e.target;
               const filteredArr = [];
@@ -663,12 +733,12 @@ console.log(selectedOption)
               });
 
               filteredArr[0][item?.ColumnName] = value;
-              console.log(filteredArr[0][item?.ColumnName])
+              console.log(filteredArr[0][item?.ColumnName]);
               console.log(filteredArr);
               setLabelDataSingle((prevArr) => {
                 const result = [...prevArr];
                 result[0][i].ColumnValue = value;
-                console.log([i])
+                console.log([i]);
                 return result;
               });
               setColumnValuesSingle(filteredArr);
@@ -677,7 +747,7 @@ console.log(selectedOption)
         </div>
       );
     }
-   
+
     if (item?.ColumnType == "datetime") {
       return (
         <div className="col-md-3 mb-2">
@@ -749,7 +819,7 @@ console.log(selectedOption)
               //   (x) => x.value == labelDataSingle[i]["ColumnValue"]
               // )}
               onChange={(e) => {
-                console.log(e.value,i);
+                console.log(e.value, i);
                 const filteredArr = [];
                 columnValuesSingle.forEach((item) => {
                   if (item !== undefined) {
@@ -857,7 +927,7 @@ console.log(selectedOption)
       );
     }
     if (item.ColumnType == "image") {
-      console.log(selectedImageSingle)
+      console.log(selectedImageSingle);
       return (
         <div className="col-md-3 mb-2">
           <label htmlFor="">{str2.join(" ")}</label>
@@ -901,7 +971,7 @@ console.log(selectedOption)
     }
   };
   const handleInputValue = (item, countOfInput, i) => {
-    console.log(selectedImage,countOfInput,i)
+    console.log(selectedImage, countOfInput, i);
     const handleImageChange = (event) => {
       const files = event.target.files[0];
       const resultFile = URL.createObjectURL(files);
@@ -926,7 +996,7 @@ console.log(selectedOption)
       //   result.push(resultFile);
       //   return result;
       // });
-      setSelectedImage( multipleDateArrayField)
+      setSelectedImage(multipleDateArrayField);
     };
 
     const handleImageClick = (image) => {
@@ -1021,9 +1091,9 @@ console.log(selectedOption)
                 id="groupName"
                 placeholder="Select.."
                 options={selectedOption[countOfInput]}
-                value={selectedOption[countOfInput].find(
-                  (x) => x.value == labelData[i][countOfInput]["ColumnValue"]
-                )}
+                // value={selectedOption[countOfInput].find(
+                //   (x) => x.value == labelData[i][countOfInput]["ColumnValue"]
+                // )}
                 onChange={(e) => {
                   const filteredArr = [];
                   console.log(columnValues);
@@ -1323,7 +1393,7 @@ console.log(selectedOption)
             draggable="false"
             className="d-flex justify-content-center align-items-center"
           >
-            {selectedImage[i][countOfInput]  ? (
+            {selectedImage[i][countOfInput] ? (
               <>
                 <img
                   src={selectedImage[i][countOfInput]}
@@ -1333,7 +1403,9 @@ console.log(selectedOption)
                     borderRadius: "50px",
                     border: "1px solid gray",
                   }}
-                  onClick={() => handleImageClick(selectedImage[i][countOfInput])}
+                  onClick={() =>
+                    handleImageClick(selectedImage[i][countOfInput])
+                  }
                   alt={countOfInput}
                 ></img>
                 {selectImagePopup ? (
@@ -1404,7 +1476,7 @@ console.log(selectedOption)
           if (allDropValueData != null) {
             allDropValueDataLength = Object.keys(allDropValueData).length;
           }
-        
+
           console.log(dataMenuArr);
           setAllDropValueData({
             ...allDropValueData,
@@ -1429,58 +1501,105 @@ console.log(selectedOption)
   });
   const handleSubmitData = (e, i) => {
     e.preventDefault();
-    const modelPurchase = {
-      tableNameMaster: "testmodal",
-      tableNameChild: "testmodaldetails",
-      columnNamePrimary: "Id",
-      columnNameForign: "Id",
-      columnNameSerialNo: "",
-      serialType: "",
-      IsFlag: "",
-      // data: {
-      //   TableXId: "",
-      //   MakeDate: "2022-01-01",
-      //   MakeBy: "Test",
-      //   PageSingleInfoId: "Test",
-      // },
-      data: columnValuesSingle[0],
-      detailsData: [],
-    };
-    columnValues.map((item) => {
-      modelPurchase.detailsData.push(item);
-    });
-    console.log(columnValuesSingle);
-    columnValuesSingle.map((item) => {
-      console.log(item);
-      // modelPurchase.data.push(item)
-    });
-    fetch(`https://localhost:44372/api/DoubleMasterEntry/Insert`, {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelPurchase),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == true) {
-          swal({
-            title: "Data added successfully",
-            icon: "success",
-            button: "OK",
-          });
-        } else if (data.status == false) {
-          console.log(data);
-          swal({
-            title: "Try again",
-            text: "Something is worng",
-            icon: "warning",
-            button: "OK",
-          });
-        }
+    if (childPageType.PageType == "doubleEntryPage") {
+      const modelPurchase = {
+        tableNameMaster: "testmodal",
+        tableNameChild: "testmodaldetails",
+        columnNamePrimary: "Id",
+        columnNameForign: "Id",
+        columnNameSerialNo: "",
+        serialType: "",
+        IsFlag: "",
+        // data: {
+        //   TableXId: "",
+        //   MakeDate: "2022-01-01",
+        //   MakeBy: "Test",
+        //   PageSingleInfoId: "Test",
+        // },
+        data: columnValuesSingle[0],
+        detailsData: [],
+      };
+      columnValues.map((item) => {
+        modelPurchase.detailsData.push(item);
       });
-    console.log(modelPurchase);
+      console.log(columnValuesSingle);
+      columnValuesSingle.map((item) => {
+        console.log(item);
+        // modelPurchase.data.push(item)
+      });
+      fetch(`https://localhost:44372/api/DoubleMasterEntry/Insert`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(modelPurchase),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status == true) {
+            swal({
+              title: "Data added successfully",
+              icon: "success",
+              button: "OK",
+            });
+          } else if (data.status == false) {
+            console.log(data);
+            swal({
+              title: "Try again",
+              text: "Something is worng",
+              icon: "warning",
+              button: "OK",
+            });
+          }
+        });
+      console.log(modelPurchase);
+    }
+    if (childPageType.PageType == "singleEntryPage") {
+      const modelSingleData = {
+        tableNameMaster: null,
+        tableNameChild: "categoryinformation",
+        columnNamePrimary: null,
+        columnNameForign: null,
+        serialType: null,
+        columnNameSerialNo: null,
+        isFlag: null,
+        data: null,
+        detailsData: [],
+        whereParams: null,
+      };
+      columnValues.map((item) => {
+        modelSingleData.detailsData.push(item);
+      });
+
+      fetch(`https://localhost:44372/api/DoubleMasterEntry/InsertListData`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(modelSingleData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status == true) {
+            swal({
+              title: "Data added successfully",
+              icon: "success",
+              button: "OK",
+            });
+          } else if (data.status == false) {
+            console.log(data);
+            swal({
+              title: "Try again",
+              text: "Something is worng",
+              icon: "warning",
+              button: "OK",
+            });
+          }
+        });
+      console.log(modelSingleData);
+    }
   };
 
   document.ondragstart = function (event, i) {
@@ -1912,7 +2031,7 @@ console.log(selectedOption)
                           labelDataCopy,
                           setTwoDimentionData,
                           selectedImage,
-                          setSelectedImage
+                          setSelectedImage,
                         });
                       }}
                     >
@@ -1953,7 +2072,7 @@ console.log(selectedOption)
                             return (
                               <div className="row mb-4">
                                 {items?.map((item, i) => {
-                                  console.log(item,i)
+                                  console.log(item, i);
                                   return handleSingleData(item, i);
                                 })}
                               </div>

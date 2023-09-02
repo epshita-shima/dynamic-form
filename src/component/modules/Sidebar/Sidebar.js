@@ -24,7 +24,8 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar,showTable, setShowTab
   const sidebarBackgroundColor = sessionStorage.getItem(
     "sidebarBackgroundColor"
   );
-console.log(showTable)
+console.log(childMenu)
+console.log(parentMenu)
   const thirdArray = childMenu.filter((elem) => {
     return parentMenu.some((ele) => {
       return elem.MenuName === ele.MenuName;
@@ -138,6 +139,7 @@ console.log(showTable)
               <li className="nav-item menu-open">
                 <ul className="nav nav-treeview">
                   {parentMenu.map((items, i) => {
+                    console.log(items)
                     return (
                       <li className="nav-item" key={i}>
                         <a
@@ -167,13 +169,14 @@ console.log(showTable)
                           id={"collapseExample" + i}
                         >
                           {thirdArray.map((item, i) => {
+                            console.log(item.PageType)
                         if(items.MenuName==item.MenuName)
                             return (
                               <li className="nav-item">
                                 <Link
-                                  to={`${item.PageType== 'singleEntryPage' || item.PageType== 'doubleEntryPage' ? `${item.UiLink}/${item.MenuId}`: 
+                                  to={`${item?.PageType== 'singleEntryPage' || item?.PageType== 'doubleEntryPage' ? `${item.UiLink}/${item.MenuId}`: 
                                   // item.PageType== 'doubleEntryPage' ? `${item.UiLink}/${item.MenuId}` : 
-                                  item.PageType !== "doubleEntryPage" || item.PageType== "singleEntryPage" ? `${item.UiLink}`:'' }`}
+                                  item?.PageType !== "doubleEntryPage" || item?.PageType== "singleEntryPage" ? `${item.UiLink}`:'' }`}
                                   className="nav-link"
                                   style={{
                                     backgroundColor: "#66CBFF",

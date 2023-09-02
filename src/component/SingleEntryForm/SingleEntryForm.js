@@ -19,7 +19,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
-import { json, useNavigate } from "react-router-dom";
+import { json, useLocation, useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import * as Yup from "yup";
 import Token from "../common/Token";
@@ -79,6 +79,7 @@ const SingleEntryForm = ({
   const [errorMessageString, setErrorMessageString] = useState("");
   const [allInputValueForFormulaData, setAllInputValueForFormulaData] =
     useState([]);
+    const [show2, setShow2] = useState(false);
   const [pageFormula, setPageFormula] = useState([
     { Formula: [{ Field1: "", FormulaType: "", Field2: "" }], Target: {} },
   ]);
@@ -116,48 +117,120 @@ const SingleEntryForm = ({
   const [errorsDate, setErrorsDate] = useState([]);
   const [errorsCheck, setErrorsCheck] = useState([]);
   const [childMenu, setChildMenu] = useChildMenu([]);
+const[menuId,setMenuId]=useState('')
+  console.log(selectedOption,modalSpecificData)
+  var tableInputData = [];
+  var tableDropData = [];
+  var tableCheckboxData = [];
+  var tableTextareaData = [];
+  var tableImageData = [];
+
+  // const search = useLocation();
+  // const link = search.pathname.split("/");
+  // let id = link[2];
   const token = Token.token;
   const tableName = childMenuName.SubMenuName;
-  const spaceRemove = tableName.split(" ").join("");
+  let newString = tableName.replace("-", "_");
+  const spaceRemove = newString.split(" ").join("");
   const tableNameLowerCase = spaceRemove.toLowerCase();
-console.log(pageEntry.pageEntry)
-  var tableCreateData = "";
+console.log(menuId)
+  var inputLowerCaseData = [];
   Object.entries(allInputValueData).forEach((entry) => {
     const [key, value] = entry;
-    console.log(key, value);
-    const spaceRemove = value.split(" ").join("");
+    let newString = value.replace("-", "_");
+    const spaceRemove = newString.split(" ").join("");
     const convertLowerCase = spaceRemove.toLowerCase();
-    tableCreateData =
-      tableCreateData + convertLowerCase + " " + "varchar(250)" + ",";
+    let lowecaseInput = convertLowerCase;
+    var tableCreateDataInput =
+      "[" + convertLowerCase + "]" + " " + "varchar(250)" + ",";
+    tableInputData.push(tableCreateDataInput);
+    inputLowerCaseData.push(lowecaseInput);
   });
-console.log(allData,allCheckValueData)
-  useEffect(() => {
-    console.log('hi');
-    const modelDataLabel = {
-      procedureName: "",
-      parameters: {},
-    };
-    modelDataLabel.procedureName = "prc_GetMasterInfoList";
-    fetch("https://localhost:44372/api/GetData/GetInitialData", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelDataLabel),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        if (data.status == true) {
-          const allModalData = JSON.parse(data.data);
-          
-          setAllModelDataTable(allModalData);
-        } else {
-          console.log(data);
-        }
-      });
-  }, []);
+
+  var dropLowerCaseData = [];
+  Object.entries(allDropValueData).forEach((entry) => {
+    const [key, value] = entry;
+    let newString = value.replace("-", "_");
+    const spaceRemove = newString.split(" ").join("");
+    const convertLowerCase = spaceRemove.toLowerCase();
+    let lowercaseDrop = convertLowerCase;
+    let tableCreateDataDrop =
+      "[" + convertLowerCase + "]" + " " + "varchar(250)" + ",";
+    tableDropData.push(tableCreateDataDrop);
+    dropLowerCaseData.push(lowercaseDrop)
+  });
+
+  var checkboxLowerCaseData = [];
+  Object.entries(allCheckValueData).forEach((entry) => {
+    const [key, value] = entry;
+    let newString = value.replace("-", "_");
+    const spaceRemove = newString.split(" ").join("");
+    const convertLowerCase = spaceRemove.toLowerCase();
+    let lowercaseCheckbox = convertLowerCase;
+    let tableCreateDataDrop =
+      "[" + convertLowerCase + "]" + " " + "varchar(250)" + ",";
+    tableCheckboxData.push(tableCreateDataDrop);
+    checkboxLowerCaseData.push(lowercaseCheckbox)
+  });
+
+  var tableDateData = [];
+  var dateLowerCaseData=[]
+  Object.entries(allDateValueData).forEach((entry) => {
+    const [key, value] = entry;
+    let newString = value.replace("-", "_");
+    const spaceRemove = newString.split(" ").join("");
+    const convertLowerCase = spaceRemove.toLowerCase();
+    let lowercaseDate=convertLowerCase;
+    let tableCreateDataDate =
+      "[" + convertLowerCase + "]" + " " + "varchar(250)" + ",";
+    tableDateData.push(tableCreateDataDate);
+    dateLowerCaseData.push(lowercaseDate)
+  });
+
+  var textareaLowerCaseData=[]
+  Object.entries(allTextAreaValueData).forEach((entry) => {
+    console.log(entry);
+    const [key, value] = entry;
+    let newString = value.replace("-", "_");
+    const spaceRemove = newString.split(" ").join("");
+    const convertLowerCase = spaceRemove.toLowerCase();
+    let lowercaseTextarea=convertLowerCase;
+    let tableCreateDataTextarea =
+      "[" + convertLowerCase + "]" + " " + "varchar(250)" + ",";
+    tableTextareaData.push(tableCreateDataTextarea);
+    textareaLowerCaseData.push(lowercaseTextarea)
+  });
+
+  var imageLowerCaseData=[]
+  Object.entries(allImageValueData).forEach((entry) => {
+    const [key, value] = entry;
+    let newString = value.replace("-", "_");
+    const spaceRemove = newString.split(" ").join("");
+    const convertLowerCase = spaceRemove.toLowerCase();
+    let lowercaseImage=convertLowerCase;
+    let tableCreateDataImage =
+      "[" + convertLowerCase + "]" + " " + "varchar(250)" + ",";
+    tableImageData.push(tableCreateDataImage);
+    imageLowerCaseData.push(lowercaseImage);
+  });
+
+  var allLowercaseData = "";
+  tableInputData.forEach((element) => {
+    allLowercaseData += element;
+  });
+  tableDropData.forEach((element) => {
+    allLowercaseData += element;
+  });
+  tableDateData.forEach((element) => {
+    allLowercaseData += element;
+  });
+  tableTextareaData.forEach((element) => {
+    allLowercaseData += element;
+  });
+  tableImageData.forEach((element) => {
+    allLowercaseData += element;
+  });
+
 
   const insertField = (modelDataParams) => {
     fetch("http://localhost:53601/DBCommand/Insert", {
@@ -299,7 +372,8 @@ console.log(allData,allCheckValueData)
           var tabledataparams = {
             PageId: "PageID",
             MenuId: "MenuID",
-            ColumnName: allInputValueData[allInputValueDataCount],
+            ColumnName: inputLowerCaseData[allInputValueDataCount],
+            ColumnNameWithSpace: allInputValueData[allInputValueDataCount],
             ColumnType: "textbox",
             ColumnDataType: "",
             SiteName: "DynamicSite",
@@ -325,7 +399,8 @@ console.log(allData,allCheckValueData)
           var tabledataparams = {
             PageId: "PageID",
             MenuId: "MenuID",
-            ColumnName: allCheckValueData[allCheckValueDataCount],
+            ColumnName: checkboxLowerCaseData[allCheckValueDataCount],
+            ColumnNameWithSpace: allCheckValueData[allCheckValueDataCount],
             ColumnType: "checkbox",
             ColumnDataType: "",
             SiteName: "DynamicSite",
@@ -348,7 +423,8 @@ console.log(allData,allCheckValueData)
           var tabledataparams = {
             PageId: "PageID",
             MenuId: "MenuID",
-            ColumnName: allDateValueData[allDateValueDataCount],
+            ColumnName: dateLowerCaseData[allDateValueDataCount],
+              ColumnNameWithSpace: allDateValueData[allDateValueDataCount],
             ColumnType: "datetime",
             ColumnDataType: "",
             SiteName: "DynamicSite",
@@ -371,7 +447,8 @@ console.log(allData,allCheckValueData)
           var tabledataparams = {
             PageId: "PageID",
             MenuId: "MenuID",
-            ColumnName: allDropValueData[allDropValueDataCount],
+            ColumnName: dropLowerCaseData[allDropValueDataCount],
+              ColumnNameWithSpace: allDropValueData[allDropValueDataCount],
             ColumnType: "dropdown",
             ColumnDataType: "",
             SiteName: "DynamicSite",
@@ -385,22 +462,24 @@ console.log(allData,allCheckValueData)
           tableModelData.detailsData.push(tabledataparams);
         }
         for (
-          let allTeaxtAreaValueDataCount = 0;
-          allTeaxtAreaValueDataCount < allTextareaValueDataLength;
-          allTeaxtAreaValueDataCount++
+          let allTextAreaValueDataCount = 0;
+          allTextAreaValueDataCount < allTextareaValueDataLength;
+          allTextAreaValueDataCount++
         ) {
           orderPosition++;
           var tabledataparams = {
             PageId: "PageID",
             MenuId: "MenuID",
-            ColumnName: allTextAreaValueData[allTeaxtAreaValueDataCount],
+            ColumnName: textareaLowerCaseData[allTextAreaValueDataCount],
+              ColumnNameWithSpace:
+                allTextAreaValueData[allTextAreaValueDataCount],
             ColumnType: "textarea",
             ColumnDataType: "",
             SiteName: "DynamicSite",
             CalculationType: "Manual",
             CalculationKey: "",
             CalculationFormula: "",
-            RelatedTable:allTextAreaValueData[allTeaxtAreaValueDataCount],
+            RelatedTable:allTextAreaValueData[allTextAreaValueDataCount],
             Position: orderPosition,
             IsDisable: "0",
           };
@@ -415,7 +494,8 @@ console.log(allData,allCheckValueData)
           var tabledataparams = {
             PageId: "PageID",
             MenuId: "MenuID",
-            ColumnName: allImageValueData[allImageValueDataCount],
+            ColumnName: imageLowerCaseData[allImageValueDataCount],
+            ColumnNameWithSpace: allImageValueData[allImageValueDataCount],
             ColumnType: "image",
             ColumnDataType: "",
             SiteName: "DynamicSite",
@@ -433,8 +513,8 @@ console.log(allData,allCheckValueData)
         modelCreatePage.parameters = {
           childPageName: childMenuName.SubMenuName,
           childPageNameWithoutSpace: tableNameLowerCase,
-          tableColumn: `ID varchar(128),${tableCreateData} Makedate datetime,MakeBy varchar(128)`,
-          makeBy: "shima",
+          tableColumn: `ID varchar(128),${allLowercaseData} Makedate datetime,MakeBy varchar(128), inserttime datetime`,
+          makeBy: "sunshine-01",
           parentMenu: parentMenuName.MenuName,
           menuLogo: "no logo",
           pageType: pageEntry.pageEntry,
@@ -466,6 +546,7 @@ console.log(allData,allCheckValueData)
 
         fatchGetDataById();
       }
+      console.log(modelCreatePage)
     }
   };
 
@@ -488,6 +569,7 @@ console.log(allData,allCheckValueData)
         console.log(data);
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
+          console.log(allModalData)
           setModalSpecificData(allModalData.Tables2);
         } else {
           console.log(data);
@@ -495,8 +577,11 @@ console.log(allData,allCheckValueData)
       });
   };
   const handleDropdownValue = (i) => {
+    console.log(i)
+
     console.log(document.querySelector('input[name="dropValueField"]:checked'));
     var radioName = 0;
+    console.log(radioName)
     if (
       document.querySelector('input[name="dropValueField"]:checked') != null
     ) {
@@ -504,22 +589,72 @@ console.log(allData,allCheckValueData)
         'input[name="dropValueField"]:checked'
       ).value;
     }
-    var dataTable = [];
-    for (var modelArrayPosition in allModelDataTable)
+    console.log(radioName)
+
+    let newString = radioName.replace("-", "_");
+    const spaceRemove = newString.split(" ").join("");
+    const convertLowerCase = spaceRemove.toLowerCase();
+   let tableName=convertLowerCase;
+
+
+   const modelDataLabel = {
+    procedureName: "",
+    parameters: {
+      TableName:''
+    }
+  };
+  modelDataLabel.procedureName = "prc_GetMasterInfoList";
+  modelDataLabel.parameters.TableName=`${tableName}`
+  fetch("https://localhost:44372/api/GetData/GetDataByID", {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(modelDataLabel),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+      if (data.status == true) {
+        const allModalData = JSON.parse(data.data);
+        console.log(allModalData)
+        setAllModelDataTable(allModalData);
+          var dataTable = [];
+    console.log(allModalData)
+    for (var modelArrayPosition in allModalData)
       dataTable.push([
         modelArrayPosition,
-        allModelDataTable[modelArrayPosition],
+        allModalData[modelArrayPosition],
       ]);
-      console.log(dataTable,allModelDataTable)
+      console.log(dataTable,allModalData)
     var dataMenuArr = [];
     dataTable.map((element) => {
-      if (element[1][0].title == radioName) {
-        element[1].map((member) => {
-          var dataMenuArrLength = dataMenuArr.length;
-          dataMenuArr[dataMenuArrLength] = {};
-          dataMenuArr[dataMenuArrLength]["label"] = member.label;
-          dataMenuArr[dataMenuArrLength]["value"] = member.value;
-          console.log(dataMenuArrLength)
+      console.log(element)
+  
+      // if (element[1][0].title == radioName) {
+        element.map((member) => {
+          console.log(member,member.length)
+         
+          
+          var count = 0;
+          for (var key in member) {
+            count++;
+            if (member.hasOwnProperty(key)) {
+              if(key!='0'){
+                
+                
+                if(count==2){
+                  var dataMenuArrLength = dataMenuArr.length;
+                  dataMenuArr[dataMenuArrLength] = {};
+                  dataMenuArr[dataMenuArrLength]["value"] =member.ID;
+                  var val = member[key];
+                  dataMenuArr[dataMenuArrLength]["label"] = val;
+                }                
+              }
+            }
+          }
+          console.log(dataMenuArr);
           var allDropValueDataLength = 0;
           if (allDropValueData != null) {
             allDropValueDataLength = Object.keys(allDropValueData).length;
@@ -531,7 +666,7 @@ console.log(allData,allCheckValueData)
             [i]: radioName,
           });
         });
-      }
+      // }
     });
     setSelectedOption((prev) => {
       console.log(prev)
@@ -539,6 +674,12 @@ console.log(allData,allCheckValueData)
       temp__details[i] = dataMenuArr;
       return temp__details;
     });
+      } else {
+        console.log(data);
+      }
+    });
+  
+  
     setShowDropDownModal(false);
   };
 
@@ -872,6 +1013,31 @@ console.log(allData,allCheckValueData)
     }
   };
 
+  console.log(selectedOption)
+  const handleDropdown=()=>{
+    const modelData = {
+      procedureName: "prc_GetPageInfo",
+      parameters: {
+        MenuId: menuId,
+      },
+    };
+    fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(modelData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status == true) {
+            console.log(data);
+            const showSingleData = JSON.parse(data.data);
+            console.log(showSingleData.Tables1);
+          }})
+          console.log(modelData)
+  }
   return (
     <form
       name="myForms"
@@ -1651,7 +1817,9 @@ console.log(allData,allCheckValueData)
                         value={filteredPerson.SubMenuName}
                         name="dropValueField"
                         aria-label="Radio button for following text input"
-                        onClick={(e) => {}}
+                        onClick={(e) => {
+                          setMenuId(filteredPerson.MenuId)
+                        }}
                       />
                     </div>
                   </div>
@@ -1670,6 +1838,7 @@ console.log(allData,allCheckValueData)
               aria-label="Close"
               onClick={(e) => {
                 handleDropdownValue(currentDropSelected);
+                setShow2(true)
               }}
             >
               Save changes
@@ -1700,6 +1869,88 @@ console.log(allData,allCheckValueData)
             <label>{errorMessageString}</label>
           </Modal.Body>
         </Modal>
+        <Modal show={show2} onHide={() => setShow2(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Modal 2</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        {Object.entries(allModelDataTable).map(([key, value]) => {
+          return (Object.entries(value).map((key,value)=>{
+          return(<>
+          {
+            key.map(item=>{
+              return(
+                <>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">
+                          <input
+                            type="radio"
+                            value={item}
+                            name="dropValueField"
+                            aria-label="Radio button for following text input"
+                            onClick={(e) => {}}
+                          />
+                        </div>
+                      </div>
+                      <h4 className="text-black ms-2 fs-5">
+                        {item}
+                      </h4>
+                    </div>
+                </>
+              )
+            })
+          }
+          </>)
+          }))
+        })}
+          {/* {
+             
+            allModelDataTable.map(element=>{
+             
+            
+                  for (var key in element) {
+                    console.log(key)
+                    if (element.hasOwnProperty(key)){
+                      console.log(key)
+                      return(<>
+                        <div class="input-group">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">
+                          <input
+                            type="radio"
+                            value={key}
+                            name="dropValueField"
+                            aria-label="Radio button for following text input"
+                            onClick={(e) => {}}
+                          />
+                        </div>
+                      </div>
+                      <h4 className="text-black ms-2 fs-5">
+                        {key}
+                      </h4>
+                    </div>
+                      </>)
+                    
+                    }
+                    }
+             
+              
+          
+              
+             
+            })
+          } */}
+          
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={() => {
+            handleDropdown()
+            setShow2(false)}}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
       </Grid>
     </form>
   );

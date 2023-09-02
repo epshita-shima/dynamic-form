@@ -235,7 +235,7 @@ const CreateChildMenu = () => {
                       setShowSaveData(0);
                       setPageEntry({
                         ...pageEntry,
-                        ["pageEntry"]: "singleEnrtyPage",
+                        ["pageEntry"]: "singleEntryPage",
                       });
                     }
                   }}
@@ -256,7 +256,7 @@ const CreateChildMenu = () => {
           <Grid>
     <Grid className={`${pageEntry.pageEntry== "doubleEntryPage" ? 'd-none': 'd-block'}`}>
       {
-        pageEntry.pageEntry=="singleEnrtyPage"? (<SingleEntryForm
+        pageEntry.pageEntry=="singleEntryPage"? (<SingleEntryForm
           parentMenuName={parentMenuName}
           childMenuName={childMenuName}
           pageEntry={pageEntry}

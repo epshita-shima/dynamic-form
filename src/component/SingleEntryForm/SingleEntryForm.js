@@ -54,16 +54,16 @@ const SingleEntryForm = ({
   const [dropdownData, setDropdownData] = useState([]);
   const [checkboxData, setCheckboxData] = useState([]);
   const [dateData, setDateData] = useState([]);
-  const [textareaData,setTextareaData]=useState([]);
-  const [imageData,setImageData]=useState([])
+  const [textareaData, setTextareaData] = useState([]);
+  const [imageData, setImageData] = useState([]);
   const [showDropDownModal, setShowDropDownModal] = useState(false);
   const [currentDropSelected, setCurrentDropSelected] = useState("0");
   var arrayInput = [];
   var arrayDropdown = [];
   var arrayCheck = [];
   var arrayDate = [];
-  var arrayTextArea=[];
-  var arrayImage=[];
+  var arrayTextArea = [];
+  var arrayImage = [];
   const [allInputValueData, setAllInputValueData] = useState({});
   const [allDropValueData, setAllDropValueData] = useState({});
   const [allCheckValueData, setAllCheckValueData] = useState({});
@@ -77,9 +77,10 @@ const SingleEntryForm = ({
   const [pageSchema, setPageSchema] = useState(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessageString, setErrorMessageString] = useState("");
+  const [radioButton,setRadioButton]=useState([])
   const [allInputValueForFormulaData, setAllInputValueForFormulaData] =
     useState([]);
-    const [show2, setShow2] = useState(false);
+  const [show2, setShow2] = useState(false);
   const [pageFormula, setPageFormula] = useState([
     { Formula: [{ Field1: "", FormulaType: "", Field2: "" }], Target: {} },
   ]);
@@ -117,8 +118,10 @@ const SingleEntryForm = ({
   const [errorsDate, setErrorsDate] = useState([]);
   const [errorsCheck, setErrorsCheck] = useState([]);
   const [childMenu, setChildMenu] = useChildMenu([]);
-const[menuId,setMenuId]=useState('')
-  console.log(selectedOption,modalSpecificData)
+  const [dropdownName, setDropdownName] = useState([]);
+  const [menuId, setMenuId] = useState("");
+  console.log(selectedOption, modalSpecificData);
+  console.log(radioButton)
   var tableInputData = [];
   var tableDropData = [];
   var tableCheckboxData = [];
@@ -133,7 +136,7 @@ const[menuId,setMenuId]=useState('')
   let newString = tableName.replace("-", "_");
   const spaceRemove = newString.split(" ").join("");
   const tableNameLowerCase = spaceRemove.toLowerCase();
-console.log(menuId)
+  console.log(menuId);
   var inputLowerCaseData = [];
   Object.entries(allInputValueData).forEach((entry) => {
     const [key, value] = entry;
@@ -157,7 +160,7 @@ console.log(menuId)
     let tableCreateDataDrop =
       "[" + convertLowerCase + "]" + " " + "varchar(250)" + ",";
     tableDropData.push(tableCreateDataDrop);
-    dropLowerCaseData.push(lowercaseDrop)
+    dropLowerCaseData.push(lowercaseDrop);
   });
 
   var checkboxLowerCaseData = [];
@@ -170,44 +173,44 @@ console.log(menuId)
     let tableCreateDataDrop =
       "[" + convertLowerCase + "]" + " " + "varchar(250)" + ",";
     tableCheckboxData.push(tableCreateDataDrop);
-    checkboxLowerCaseData.push(lowercaseCheckbox)
+    checkboxLowerCaseData.push(lowercaseCheckbox);
   });
 
   var tableDateData = [];
-  var dateLowerCaseData=[]
+  var dateLowerCaseData = [];
   Object.entries(allDateValueData).forEach((entry) => {
     const [key, value] = entry;
     let newString = value.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
     const convertLowerCase = spaceRemove.toLowerCase();
-    let lowercaseDate=convertLowerCase;
+    let lowercaseDate = convertLowerCase;
     let tableCreateDataDate =
       "[" + convertLowerCase + "]" + " " + "varchar(250)" + ",";
     tableDateData.push(tableCreateDataDate);
-    dateLowerCaseData.push(lowercaseDate)
+    dateLowerCaseData.push(lowercaseDate);
   });
 
-  var textareaLowerCaseData=[]
+  var textareaLowerCaseData = [];
   Object.entries(allTextAreaValueData).forEach((entry) => {
     console.log(entry);
     const [key, value] = entry;
     let newString = value.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
     const convertLowerCase = spaceRemove.toLowerCase();
-    let lowercaseTextarea=convertLowerCase;
+    let lowercaseTextarea = convertLowerCase;
     let tableCreateDataTextarea =
       "[" + convertLowerCase + "]" + " " + "varchar(250)" + ",";
     tableTextareaData.push(tableCreateDataTextarea);
-    textareaLowerCaseData.push(lowercaseTextarea)
+    textareaLowerCaseData.push(lowercaseTextarea);
   });
 
-  var imageLowerCaseData=[]
+  var imageLowerCaseData = [];
   Object.entries(allImageValueData).forEach((entry) => {
     const [key, value] = entry;
     let newString = value.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
     const convertLowerCase = spaceRemove.toLowerCase();
-    let lowercaseImage=convertLowerCase;
+    let lowercaseImage = convertLowerCase;
     let tableCreateDataImage =
       "[" + convertLowerCase + "]" + " " + "varchar(250)" + ",";
     tableImageData.push(tableCreateDataImage);
@@ -230,7 +233,6 @@ console.log(menuId)
   tableImageData.forEach((element) => {
     allLowercaseData += element;
   });
-
 
   const insertField = (modelDataParams) => {
     fetch("http://localhost:53601/DBCommand/Insert", {
@@ -264,11 +266,11 @@ console.log(menuId)
     for (let i = 0; i < inputValueDate; i++) {
       arrayDate.push([i]);
     }
-    for(let i=0;i<inputValueTextArea;i++){
-      arrayTextArea.push(i)
+    for (let i = 0; i < inputValueTextArea; i++) {
+      arrayTextArea.push(i);
     }
-    for(let i=0;i<inputValueImage;i++){
-      arrayImage.push(i)
+    for (let i = 0; i < inputValueImage; i++) {
+      arrayImage.push(i);
     }
 
     useEffect(() => {
@@ -276,19 +278,32 @@ console.log(menuId)
       setDropdownData(arrayDropdown);
       setCheckboxData(arrayCheck);
       setDateData(arrayDate);
-      setTextareaData(arrayTextArea)
-      setImageData(arrayImage)
-    }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate,inputValueTextArea,inputValueImage]);
+      setTextareaData(arrayTextArea);
+      setImageData(arrayImage);
+    }, [
+      inputValue,
+      inputValueDDF,
+      inputValueCheck,
+      inputValueDate,
+      inputValueTextArea,
+      inputValueImage,
+    ]);
   }
-  
+
   useEffect(() => {
     previousInputValue.current = inputValue;
     previousInputValueDDF.current = inputValueDDF;
     previousInputValueCheck.current = inputValueCheck;
     previousInputValueDate.current = inputValueDate;
-    previousInputValueTextArea.current=inputValueTextArea;
-    previousInputValueImage.current=inputValueImage
-  }, [inputValue, inputValueDDF, inputValueCheck, inputValueDate,inputValueTextArea]);
+    previousInputValueTextArea.current = inputValueTextArea;
+    previousInputValueImage.current = inputValueImage;
+  }, [
+    inputValue,
+    inputValueDDF,
+    inputValueCheck,
+    inputValueDate,
+    inputValueTextArea,
+  ]);
 
   const submitForm = () => {
     const modelCreatePage = {
@@ -380,7 +395,8 @@ console.log(menuId)
             CalculationType: calculationType,
             CalculationKey: allInputValueData[allInputValueDataCount],
             CalculationFormula: JSON.stringify(pageFormula),
-            RelatedTable: '',
+            RelatedTable: "",
+            ColumnValueField:"",
             Position: orderPosition,
             IsDisable:
               formulaTarget == allInputValueData[allInputValueDataCount]
@@ -407,7 +423,8 @@ console.log(menuId)
             CalculationType: "Manual",
             CalculationKey: "",
             CalculationFormula: "",
-            RelatedTable: '',
+            RelatedTable: "",
+            ColumnValueField:"",
             Position: orderPosition,
             IsDisable: "0",
           };
@@ -424,14 +441,15 @@ console.log(menuId)
             PageId: "PageID",
             MenuId: "MenuID",
             ColumnName: dateLowerCaseData[allDateValueDataCount],
-              ColumnNameWithSpace: allDateValueData[allDateValueDataCount],
+            ColumnNameWithSpace: allDateValueData[allDateValueDataCount],
             ColumnType: "datetime",
             ColumnDataType: "",
             SiteName: "DynamicSite",
             CalculationType: "Manual",
             CalculationKey: "",
             CalculationFormula: "",
-            RelatedTable:'',
+            RelatedTable: "",
+            ColumnValueField:"",
             Position: orderPosition,
             IsDisable: "0",
           };
@@ -448,16 +466,17 @@ console.log(menuId)
             PageId: "PageID",
             MenuId: "MenuID",
             ColumnName: dropLowerCaseData[allDropValueDataCount],
-              ColumnNameWithSpace: allDropValueData[allDropValueDataCount],
+            ColumnNameWithSpace: allDropValueData[allDropValueDataCount],
             ColumnType: "dropdown",
             ColumnDataType: "",
             SiteName: "DynamicSite",
             CalculationType: "Manual",
             CalculationKey: "",
             CalculationFormula: "",
-            RelatedTable:allDropValueData[allDropValueDataCount],
+            RelatedTable: allDropValueData[allDropValueDataCount],
             Position: orderPosition,
             IsDisable: "0",
+            ColumnValueField:radioButton[allDropValueDataCount]
           };
           tableModelData.detailsData.push(tabledataparams);
         }
@@ -471,15 +490,16 @@ console.log(menuId)
             PageId: "PageID",
             MenuId: "MenuID",
             ColumnName: textareaLowerCaseData[allTextAreaValueDataCount],
-              ColumnNameWithSpace:
-                allTextAreaValueData[allTextAreaValueDataCount],
+            ColumnNameWithSpace:
+              allTextAreaValueData[allTextAreaValueDataCount],
             ColumnType: "textarea",
             ColumnDataType: "",
             SiteName: "DynamicSite",
             CalculationType: "Manual",
             CalculationKey: "",
             CalculationFormula: "",
-            RelatedTable:allTextAreaValueData[allTextAreaValueDataCount],
+            RelatedTable: allTextAreaValueData[allTextAreaValueDataCount],
+            ColumnValueField:"",
             Position: orderPosition,
             IsDisable: "0",
           };
@@ -502,7 +522,8 @@ console.log(menuId)
             CalculationType: "Manual",
             CalculationKey: "",
             CalculationFormula: "",
-            RelatedTable:allImageValueData[allImageValueDataCount],
+            RelatedTable: allImageValueData[allImageValueDataCount],
+            ColumnValueField:"",
             Position: orderPosition,
             IsDisable: "0",
           };
@@ -518,7 +539,7 @@ console.log(menuId)
           parentMenu: parentMenuName.MenuName,
           menuLogo: "no logo",
           pageType: pageEntry.pageEntry,
-          pageInfoJson: tableModelData.detailsData
+          pageInfoJson: tableModelData.detailsData,
         };
         const fatchGetDataById = async () => {
           const response = await fetch(
@@ -540,13 +561,12 @@ console.log(menuId)
               icon: "success",
               button: "OK",
             });
-            
           }
         };
 
         fatchGetDataById();
       }
-      console.log(modelCreatePage)
+      console.log(modelCreatePage);
     }
   };
 
@@ -569,7 +589,7 @@ console.log(menuId)
         console.log(data);
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
-          console.log(allModalData)
+          console.log(allModalData);
           setModalSpecificData(allModalData.Tables2);
         } else {
           console.log(data);
@@ -577,11 +597,11 @@ console.log(menuId)
       });
   };
   const handleDropdownValue = (i) => {
-    console.log(i)
+    console.log(i);
 
     console.log(document.querySelector('input[name="dropValueField"]:checked'));
     var radioName = 0;
-    console.log(radioName)
+    console.log(radioName);
     if (
       document.querySelector('input[name="dropValueField"]:checked') != null
     ) {
@@ -589,97 +609,67 @@ console.log(menuId)
         'input[name="dropValueField"]:checked'
       ).value;
     }
-    console.log(radioName)
+    console.log(radioName);
 
     let newString = radioName.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
     const convertLowerCase = spaceRemove.toLowerCase();
-   let tableName=convertLowerCase;
+    let tableName = convertLowerCase;
 
-
-   const modelDataLabel = {
-    procedureName: "",
-    parameters: {
-      TableName:''
-    }
-  };
-  modelDataLabel.procedureName = "prc_GetMasterInfoList";
-  modelDataLabel.parameters.TableName=`${tableName}`
-  fetch("https://localhost:44372/api/GetData/GetDataByID", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${token}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(modelDataLabel),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-      if (data.status == true) {
-        const allModalData = JSON.parse(data.data);
-        console.log(allModalData)
-        setAllModelDataTable(allModalData);
-          var dataTable = [];
-    console.log(allModalData)
-    for (var modelArrayPosition in allModalData)
-      dataTable.push([
-        modelArrayPosition,
-        allModalData[modelArrayPosition],
-      ]);
-      console.log(dataTable,allModalData)
-    var dataMenuArr = [];
-    dataTable.map((element) => {
-      console.log(element)
-  
-      // if (element[1][0].title == radioName) {
-        element.map((member) => {
-          console.log(member,member.length)
-         
-          
-          var count = 0;
-          for (var key in member) {
-            count++;
-            if (member.hasOwnProperty(key)) {
-              if(key!='0'){
-                
-                
-                if(count==2){
-                  var dataMenuArrLength = dataMenuArr.length;
-                  dataMenuArr[dataMenuArrLength] = {};
-                  dataMenuArr[dataMenuArrLength]["value"] =member.ID;
-                  var val = member[key];
-                  dataMenuArr[dataMenuArrLength]["label"] = val;
-                }                
-              }
-            }
-          }
-          console.log(dataMenuArr);
-          var allDropValueDataLength = 0;
-          if (allDropValueData != null) {
-            allDropValueDataLength = Object.keys(allDropValueData).length;
-            console.log(allDropValueDataLength);
-          }
-          
+    const modelDataLabel = {
+      procedureName: "",
+      parameters: {
+        TableName: "",
+      },
+    };
+    modelDataLabel.procedureName = "prc_GetMasterInfoList";
+    modelDataLabel.parameters.TableName = `${tableName}`;
+    fetch("https://localhost:44372/api/GetData/GetDataByID", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelDataLabel),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.status == true) {
+          const allModalData = JSON.parse(data.data);
+          console.log(allModalData);
+          setAllModelDataTable(allModalData);
+      
           setAllDropValueData({
             ...allDropValueData,
             [i]: radioName,
           });
+        } else {
+          console.log(data);
+        }
+      });
+      const modelData = {
+        procedureName: "prc_GetPageInfo",
+        parameters: {
+          MenuId: menuId,
+        },
+      };
+      fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(modelData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status == true) {
+            console.log(data);
+            const showSingleData = JSON.parse(data.data);
+            setDropdownName(showSingleData.Tables1);
+          }
         });
-      // }
-    });
-    setSelectedOption((prev) => {
-      console.log(prev)
-      const temp__details = [...prev];
-      temp__details[i] = dataMenuArr;
-      return temp__details;
-    });
-      } else {
-        console.log(data);
-      }
-    });
-  
-  
     setShowDropDownModal(false);
   };
 
@@ -1013,31 +1003,63 @@ console.log(menuId)
     }
   };
 
-  console.log(selectedOption)
-  const handleDropdown=()=>{
-    const modelData = {
-      procedureName: "prc_GetPageInfo",
-      parameters: {
-        MenuId: menuId,
-      },
-    };
-    fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${token}`,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(modelData),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status == true) {
-            console.log(data);
-            const showSingleData = JSON.parse(data.data);
-            console.log(showSingleData.Tables1);
-          }})
-          console.log(modelData)
-  }
+  console.log(selectedOption);
+  const handleDropdown = (i) => {
+    console.log(i)
+    let radioName=0
+    if (
+      document.querySelector('input[name="dropValueFieldCheck"]:checked') != null
+    ) {
+      radioName = document.querySelector(
+        'input[name="dropValueFieldCheck"]:checked'
+      ).value;
+    }
+  console.log(radioName)
+  setRadioButton([...radioButton,radioName])
+    var dataTable = [];
+          console.log(allModelDataTable);
+          for (var modelArrayPosition in allModelDataTable)
+            dataTable.push([
+              modelArrayPosition,
+              allModelDataTable[modelArrayPosition],
+            ]);
+          console.log(dataTable,allModelDataTable);
+    var dataMenuArr = [];
+    dataTable.map((element) => {
+      console.log(element);
+
+      // if (element[1][0].title == radioName) {
+      element.map((member) => {
+        for (var key in member) {
+          if (member.hasOwnProperty(key)) { 
+            if (key != "0") {
+              if (key==radioName) {
+                var dataMenuArrLength = dataMenuArr.length;
+                dataMenuArr[dataMenuArrLength] = {};
+                dataMenuArr[dataMenuArrLength]["value"] = member.ID;
+                var val = member[key];
+                dataMenuArr[dataMenuArrLength]["label"] =val
+                ;
+              }
+            }
+          }
+        }
+        console.log(dataMenuArr);
+        var allDropValueDataLength = 0;
+        if (allDropValueData != null) {
+          allDropValueDataLength = Object.keys(allDropValueData).length;
+          console.log(allDropValueDataLength);
+        } 
+      });
+      // }
+    });
+    setSelectedOption((prev) => {
+      console.log(prev);
+      const temp__details = [...prev];
+      temp__details[i] = dataMenuArr;
+      return temp__details;
+    });
+  };
   return (
     <form
       name="myForms"
@@ -1240,7 +1262,7 @@ console.log(menuId)
             </div>
             <div class="col">
               <label htmlFor="" className="text-style d-block mx-auto">
-               Textarea
+                Textarea
               </label>
               <TextField
                 id="outlined-basic"
@@ -1282,7 +1304,7 @@ console.log(menuId)
             </div>
             <div class="col">
               <label htmlFor="" className="text-style d-block mx-auto">
-              Image Field
+                Image Field
               </label>
               <TextField
                 id="outlined-basic"
@@ -1476,7 +1498,7 @@ console.log(menuId)
             <div class="col">
               {textareaData.map((item, name) => {
                 return (
-                  <div >
+                  <div>
                     <TextField
                       type="text"
                       name={`input${name}`}
@@ -1510,7 +1532,7 @@ console.log(menuId)
             <div class="col">
               {imageData.map((item, name) => {
                 return (
-                  <div >
+                  <div>
                     <TextField
                       type="text"
                       name={`input${name}`}
@@ -1543,7 +1565,6 @@ console.log(menuId)
             </div>
           </div>
         </div>
-
 
         <Modal
           show={showCalculactionModal}
@@ -1818,7 +1839,7 @@ console.log(menuId)
                         name="dropValueField"
                         aria-label="Radio button for following text input"
                         onClick={(e) => {
-                          setMenuId(filteredPerson.MenuId)
+                          setMenuId(filteredPerson.MenuId);
                         }}
                       />
                     </div>
@@ -1838,7 +1859,7 @@ console.log(menuId)
               aria-label="Close"
               onClick={(e) => {
                 handleDropdownValue(currentDropSelected);
-                setShow2(true)
+                setShow2(true);
               }}
             >
               Save changes
@@ -1870,87 +1891,44 @@ console.log(menuId)
           </Modal.Body>
         </Modal>
         <Modal show={show2} onHide={() => setShow2(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal 2</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-        {Object.entries(allModelDataTable).map(([key, value]) => {
-          return (Object.entries(value).map((key,value)=>{
-          return(<>
-          {
-            key.map(item=>{
-              return(
+          <Modal.Header closeButton>
+            <Modal.Title>Modal 2</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {dropdownName.map((item, i) => {
+              console.log(item);
+              return (
                 <>
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <div class="input-group-text">
-                          <input
-                            type="radio"
-                            value={item}
-                            name="dropValueField"
-                            aria-label="Radio button for following text input"
-                            onClick={(e) => {}}
-                          />
-                        </div>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <input
+                          type="radio"
+                          value={item.ColumnName}
+                          name="dropValueFieldCheck"
+                          aria-label="Radio button for following text input"
+                          onClick={(e) => {}}
+                        />
                       </div>
-                      <h4 className="text-black ms-2 fs-5">
-                        {item}
-                      </h4>
                     </div>
+                    <h4 className="text-black ms-2 fs-5">{item.ColumnName}</h4>
+                  </div>
                 </>
-              )
-            })
-          }
-          </>)
-          }))
-        })}
-          {/* {
-             
-            allModelDataTable.map(element=>{
-             
-            
-                  for (var key in element) {
-                    console.log(key)
-                    if (element.hasOwnProperty(key)){
-                      console.log(key)
-                      return(<>
-                        <div class="input-group">
-                      <div class="input-group-prepend">
-                        <div class="input-group-text">
-                          <input
-                            type="radio"
-                            value={key}
-                            name="dropValueField"
-                            aria-label="Radio button for following text input"
-                            onClick={(e) => {}}
-                          />
-                        </div>
-                      </div>
-                      <h4 className="text-black ms-2 fs-5">
-                        {key}
-                      </h4>
-                    </div>
-                      </>)
-                    
-                    }
-                    }
-             
-              
-          
-              
-             
-            })
-          } */}
-          
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={() => {
-            handleDropdown()
-            setShow2(false)}}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+              );
+            })}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="danger"
+              onClick={(e) => {
+                handleDropdown(currentDropSelected);
+                setShow2(false);
+              }}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Grid>
     </form>
   );

@@ -46,26 +46,25 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   const [selectImagePopupSingle, setSelectedImagePopupSingle] = useState(null);
   const [selectImagePopup, setSelectedImagePopup] = useState(null);
   const [childPageType, setChildPageType] = useState([]);
-  const [removeSpace, setRemoveSpace] = useState([]);
+  const [childTableName, setChildTableName] = useState("");
+  const [radioButton,setRadioButton]=useState('')
+  console.log(allModelDataTable);
   console.log(selectedOptionParent);
   const token = Token.token;
   const search = useLocation();
   const link = search.pathname.split("/");
   let id = link[2];
-  console.log(selectedOption);
-  console.log(columnValuesSingle);
-  console.log(columnValues);
- 
+
   useEffect(() => {
     const modelDataLabel = {
       procedureName: "",
       parameters: {
-        TableName:''
+        TableName: "",
       },
     };
-   
+
     modelDataLabel.procedureName = "prc_GetMasterInfoList";
-    modelDataLabel.parameters.TableName="groupinformation"
+    modelDataLabel.parameters.TableName = "groupinformation";
     fetch("https://localhost:44372/api/GetData/GetDataByID", {
       method: "POST",
       headers: {
@@ -372,7 +371,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         });
     }
     if (findPageType.PageType == "singleEntryPage") {
-      fetch(`https://localhost:44372/api/GetData/GetDataById`, {
+      fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
         method: "POST",
         headers: {
           authorization: `Bearer ${token}`,
@@ -383,12 +382,15 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         .then((res) => res.json())
         .then((data) => {
           if (data.status == true) {
-            const monthlySalesData = JSON.parse(data.data);
-            console.log(monthlySalesData);
-
+            console.log(data);
+            const allData = JSON.parse(data.data);
+            const allLabelData = allData.Tables1;
+            const getTableName = allData.Tables2;
+            const childTableData = getTableName[0].TableName;
+            setChildTableName(childTableData);
             if (labelData.length == 0) {
-              labelDataCopy[0] = monthlySalesData;
-              labelData[0] = monthlySalesData;
+              labelDataCopy[0] = allLabelData;
+              labelData[0] = allLabelData;
               // columnValues.forEach((item, i) => {
               //   delete columnValues[i];
               //   setColumnValues(columnValues);
@@ -398,8 +400,8 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 delete labelData[i];
                 setLabelDataCopy(labelData);
               });
-              labelDataCopy[0] = monthlySalesData;
-              labelData[0] = monthlySalesData;
+              labelDataCopy[0] = allLabelData;
+              labelData[0] = allLabelData;
               columnValues.forEach((item, i) => {
                 delete columnValues[i];
                 setColumnValues(columnValues);
@@ -436,6 +438,8 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 multipleDateArrayField[index]["" + i]["ColumnValue"] = "";
                 multipleDateArrayField[index]["" + i]["RelatedTable"] =
                   element.RelatedTable;
+                multipleDateArrayField[index]["" + i]["ColumnValueField"] =
+                  element?.ColumnValueField;
                 multipleDateArrayField[index]["" + i]["PageId"] =
                   element.PageId;
                 if (element.ColumnType == "datetime") {
@@ -456,6 +460,81 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 createColumnValuesObject[element.ColumnName] = "";
                 if (element.ColumnType == "datetime") {
                   twoDimensionData[0][i] = new Date();
+                }
+                if (element.RelatedTable != "") {
+                  const modelDataLabel = {
+                    procedureName: "",
+                    parameters: {
+                      TableName: "",
+                    },
+                  };
+                  modelDataLabel.procedureName = "prc_GetMasterInfoList";
+                  modelDataLabel.parameters.TableName = `${element.ColumnName}`;
+                  fetch("https://localhost:44372/api/GetData/GetDataByID", {
+                    method: "POST",
+                    headers: {
+                      authorization: `Bearer ${token}`,
+                      "content-type": "application/json",
+                    },
+                    body: JSON.stringify(modelDataLabel),
+                  })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      console.log(data);
+                      if (data.status == true) {
+                        console.log(data)
+                        const allModalData = JSON.parse(data.data);
+                     
+                        console.log(allModalData);
+                        var dataTable = [];
+                        console.log(allModalData);
+                        for (var modelArrayPosition in allModalData)
+                          dataTable.push([
+                            modelArrayPosition,
+                            allModalData[modelArrayPosition],
+                          ]);
+                        console.log(dataTable, allModalData);
+                        var dataMenuArr = [];
+                        dataTable.map((elements) => {
+                          elements.map((member) => {
+                            for (var key in member) {
+                              console.log(elements, key, element);
+                              if (member.hasOwnProperty(key)) {
+                                if (key != "0") {
+                                  if (key == element.ColumnValueField) {
+                                    var dataMenuArrLength = dataMenuArr.length;
+                                    dataMenuArr[dataMenuArrLength] = {};
+                                    dataMenuArr[dataMenuArrLength]["value"] =
+                                      member.ID;
+                                    var val = member[key];
+                                    dataMenuArr[dataMenuArrLength]["label"] =
+                                      val;
+                                  }
+                                }
+                              }
+                            }
+                            console.log(dataMenuArr);
+                            var allDropValueDataLength = 0;
+                            if (allDropValueData != null) {
+                              allDropValueDataLength =
+                                Object.keys(allDropValueData).length;
+                              console.log(allDropValueDataLength);
+                            }
+                          });
+                          // }
+                        });
+                        console.log(dataMenuArr);
+                        setSelectedOption((prev) => {
+                          console.log(prev);
+                          const temp__details = [...prev];
+                          temp__details[i] = dataMenuArr;
+                          return temp__details;
+                        });
+                      } else {
+                        console.log(data);
+                      }
+                    });
+            
                 }
               });
             });
@@ -484,7 +563,9 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                   element.IsDisable;
                 multipleDateArrayFieldcopy[index]["" + i]["RelatedTable"] =
                   element.RelatedTable;
-                multipleDateArrayField[index]["" + i]["PageId"] =
+                multipleDateArrayFieldcopy[index]["" + i]["ColumnValueField"] =
+                  element.ColumnValueField;
+                multipleDateArrayFieldcopy[index]["" + i]["PageId"] =
                   element.PageId;
                 if (element.ColumnType == "datetime") {
                   const newDate = new Date();
@@ -510,11 +591,11 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                   const modelDataLabel = {
                     procedureName: "",
                     parameters: {
-                      TableName:''
-                    }
+                      TableName: "",
+                    },
                   };
                   modelDataLabel.procedureName = "prc_GetMasterInfoList";
-                  modelDataLabel.parameters.TableName=`${element.ColumnName}`
+                  modelDataLabel.parameters.TableName = `${element.ColumnName}`;
                   fetch("https://localhost:44372/api/GetData/GetDataByID", {
                     method: "POST",
                     headers: {
@@ -528,73 +609,58 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                       console.log(data);
                       if (data.status == true) {
                         const allModalData = JSON.parse(data.data);
-                        console.log(allModalData)
-                        // setAllModelDataTable(allModalData);
-                          var dataTable = [];
-                    console.log(allModalData)
-                    for (var modelArrayPosition in allModalData)
-                      dataTable.push([
-                        modelArrayPosition,
-                        allModalData[modelArrayPosition],
-                      ]);
-                      console.log(dataTable,allModalData)
-                    var dataMenuArr = [];
-                    dataTable.map((element) => {
-                      console.log(element)
-                  
-                      // if (element[1][0].title == radioName) {
-                        element.map((member) => {
-                          console.log(member)
-                         
-                          var dataMenuArrLength = dataMenuArr.length;
-                          dataMenuArr[dataMenuArrLength] = {};
-                          dataMenuArr[dataMenuArrLength]["label"] = member.groupname;
-                          dataMenuArr[dataMenuArrLength]["value"] =member.ID;
-                          var allDropValueDataLength = 0;
-                          if (allDropValueData != null) {
-                            allDropValueDataLength = Object.keys(allDropValueData).length;
-                            console.log(allDropValueDataLength);
-                          }
-                          
-                        
+                        console.log(allModalData);
+                        setAllModelDataTable(allModalData);
+                        var dataTable = [];
+                        console.log(allModalData);
+                        for (var modelArrayPosition in allModalData)
+                          dataTable.push([
+                            modelArrayPosition,
+                            allModalData[modelArrayPosition],
+                          ]);
+                        console.log(element.ColumnValueField);
+                        var dataMenuArr = [];
+                        dataTable.map((elements) => {
+                          elements.map((member) => {
+                            for (var key in member) {
+                              console.log(member);
+                              if (member.hasOwnProperty(key)) {
+                                if (key != "0") {
+                                  if (key == element.ColumnValueField) {
+                                    var dataMenuArrLength = dataMenuArr.length;
+                                    dataMenuArr[dataMenuArrLength] = {};
+                                    dataMenuArr[dataMenuArrLength]["value"] =
+                                      member.ID;
+                                    var val = member[key];
+                                    console.log(val)
+                                    dataMenuArr[dataMenuArrLength]["label"] =
+                                      val;
+                                  }
+                                }
+                              }
+                            }
+                            console.log(dataMenuArr);
+                            var allDropValueDataLength = 0;
+                            if (allDropValueData != null) {
+                              allDropValueDataLength =
+                                Object.keys(allDropValueData).length;
+                              console.log(allDropValueDataLength);
+                            }
+                          });
+                          // }
                         });
-                      // }
-                    });
-                    console.log(dataMenuArr)
-                    setSelectedOption((prev) => {
-                      console.log(prev)
-                      const temp__details = [...prev];
-                      temp__details[i] = dataMenuArr;
-                      return temp__details;
-                    });
+                        console.log(dataMenuArr);
+                        setSelectedOption((prev) => {
+                          console.log(prev);
+                          const temp__details = [...prev];
+                          temp__details[i] = dataMenuArr;
+                          return temp__details;
+                        });
                       } else {
                         console.log(data);
                       }
                     });
-                  // var dataTable = [];
-                  // for (var modelArrayPosition in allModelDataTable)
-                  //   dataTable.push([
-                  //     modelArrayPosition,
-                  //     allModelDataTable[modelArrayPosition],
-                  //   ]);
-                  // var dataMenuArr = [];
-                  // console.log(dataTable);
-                  // dataTable.map((ele) => {
-                  //   if (ele[1][0].title == element.RelatedTable) {
-                  //     ele[1].map((member) => {
-                  //       var dataMenuArrLength = dataMenuArr.length;
-                  //       dataMenuArr[dataMenuArrLength] = {};
-                  //       dataMenuArr[dataMenuArrLength]["label"] = member.label;
-                  //       dataMenuArr[dataMenuArrLength]["value"] = member.value;
-                  //     });
-                  //   }
-                  // });
-                  // console.log(dataMenuArr);
-                  // setSelectedOption((prev) => {
-                  //   const temp__details = [...prev];
-                  //   temp__details[i] = dataMenuArr;
-                  //   return temp__details;
-                  // });
+            
                 }
               });
             });
@@ -970,6 +1036,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
       );
     }
   };
+  console.log(selectedOption)
   const handleInputValue = (item, countOfInput, i) => {
     console.log(selectedImage, countOfInput, i);
     const handleImageChange = (event) => {
@@ -1011,7 +1078,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     if (item?.ColumnType == "textbox") {
       return (
         <td
-          className={`dropTh${countOfInput} align-middle`}
+          className={`dropTh${countOfInput} align-middle `}
           draggable="false"
           // id={`item${randnum}${countOfInput}${i}`}
           style={{ border: "2px solid gray" }}
@@ -1077,7 +1144,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     if (item.ColumnType == "dropdown") {
       return (
         <td
-          className={`dropTh${countOfInput}  align-middle`}
+          className={`dropTh${countOfInput}  align-middle `}
           draggable="false" //change dragable true to work again
           // id={`item${randnum}${countOfInput}${i}`}
           style={{ border: "2px solid gray" }}
@@ -1128,7 +1195,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     if (item.ColumnType == "checkbox") {
       return (
         <td
-          className={`dropTh${countOfInput}  text-center`}
+          className={`dropTh${countOfInput}  text-center `}
           draggable="false" //change dragable true to work again
           // id={`item${randnum}${countOfInput}${i}`}
           style={{ border: "2px solid gray" }}
@@ -1197,7 +1264,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     if (item.ColumnType == "radiobutton") {
       return (
         <td
-          className={`dropTh${countOfInput}`}
+          className={`dropTh${countOfInput} `}
           draggable="false"
           // id={`item${randnum}${countOfInput}${i}`}
           style={{ border: "2px solid gray" }}
@@ -1464,27 +1531,80 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
       ]);
 
     var dataMenuArr = [];
-    dataTable.map((element) => {
-      console.log(element);
-      if (element[1][0].title == radioName) {
-        element[1].map((member) => {
-          var dataMenuArrLength = dataMenuArr.length;
-          dataMenuArr[dataMenuArrLength] = {};
-          dataMenuArr[dataMenuArrLength]["label"] = member.label;
-          dataMenuArr[dataMenuArrLength]["value"] = member.value;
-          var allDropValueDataLength = 0;
-          if (allDropValueData != null) {
-            allDropValueDataLength = Object.keys(allDropValueData).length;
-          }
+    // if (element.RelatedTable != "") {
+    //   const modelDataLabel = {
+    //     procedureName: "",
+    //     parameters: {
+    //       TableName: "",
+    //     },
+    //   };
+    //   modelDataLabel.procedureName = "prc_GetMasterInfoList";
+    //   modelDataLabel.parameters.TableName = `${element.ColumnName}`;
+    //   fetch("https://localhost:44372/api/GetData/GetDataByID", {
+    //     method: "POST",
+    //     headers: {
+    //       authorization: `Bearer ${token}`,
+    //       "content-type": "application/json",
+    //     },
+    //     body: JSON.stringify(modelDataLabel),
+    //   })
+    //     .then((res) => res.json())
+    //     .then((data) => {
+    //       console.log(data);
+    //       if (data.status == true) {
+    //         const allModalData = JSON.parse(data.data);
+    //         console.log(allModalData);
+    //         // setAllModelDataTable(allModalData);
+    //         var dataTable = [];
+    //         console.log(allModalData);
+    //         for (var modelArrayPosition in allModalData)
+    //           dataTable.push([
+    //             modelArrayPosition,
+    //             allModalData[modelArrayPosition],
+    //           ]);
+    //         console.log(dataTable, allModalData);
+    //         var dataMenuArr = [];
+    //         dataTable.map((elements) => {
+    //           elements.map((member) => {
+    //             for (var key in member) {
+    //               console.log(elements, key, element);
+    //               if (member.hasOwnProperty(key)) {
+    //                 if (key != "0") {
+    //                   if (key == element.ColumnValueField) {
+    //                     var dataMenuArrLength = dataMenuArr.length;
+    //                     dataMenuArr[dataMenuArrLength] = {};
+    //                     dataMenuArr[dataMenuArrLength]["value"] =
+    //                       member.ID;
+    //                     var val = member[key];
+    //                     dataMenuArr[dataMenuArrLength]["label"] =
+    //                       val;
+    //                   }
+    //                 }
+    //               }
+    //             }
+    //             console.log(dataMenuArr);
+    //             var allDropValueDataLength = 0;
+    //             if (allDropValueData != null) {
+    //               allDropValueDataLength =
+    //                 Object.keys(allDropValueData).length;
+    //               console.log(allDropValueDataLength);
+    //             }
+    //           });
+    //           // }
+    //         });
+    //         console.log(dataMenuArr);
+    //         setSelectedOption((prev) => {
+    //           console.log(prev);
+    //           const temp__details = [...prev];
+    //           temp__details[i] = dataMenuArr;
+    //           return temp__details;
+    //         });
+    //       } else {
+    //         console.log(data);
+    //       }
+    //     });
 
-          console.log(dataMenuArr);
-          setAllDropValueData({
-            ...allDropValueData,
-            [i]: radioName,
-          });
-        });
-      }
-    });
+    // }
     setSelectedOption((prev) => {
       console.log(prev);
       const temp__details = [...prev];
@@ -1492,14 +1612,15 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
       return temp__details;
     });
   };
-  console.log(allDropValueData);
-  Object.keys(columnValuesSingle).map(function (object) {
-    columnValuesSingle[object]["ID"] = "newID()";
-  });
-  Object.keys(columnValues).map(function (object) {
-    columnValues[object]["ID"] = "newID()";
-  });
+
+
   const handleSubmitData = (e, i) => {
+    Object.keys(columnValuesSingle).map(function (object) {
+      columnValuesSingle[object]["ID"] = "newID()";
+    });
+    Object.keys(columnValues).map(function (object) {
+      columnValues[object]["ID"] = "newID()";
+    });
     e.preventDefault();
     if (childPageType.PageType == "doubleEntryPage") {
       const modelPurchase = {
@@ -1558,7 +1679,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     if (childPageType.PageType == "singleEntryPage") {
       const modelSingleData = {
         tableNameMaster: null,
-        tableNameChild: "categoryinformation",
+        tableNameChild: childTableName,
         columnNamePrimary: null,
         columnNameForign: null,
         serialType: null,
@@ -1598,13 +1719,14 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
             });
           }
         });
-      console.log(modelSingleData);
+      console.log(JSON.stringify(modelSingleData));
     }
   };
 
   document.ondragstart = function (event, i) {
     if (event.target.nodeName == "TH") {
       var allelement = document.querySelectorAll(".droptargettd");
+      console.log(allelement);
       allelement.forEach((element) => {
         element.style.display = "block";
       });
@@ -1625,14 +1747,16 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
 
   document.ondrop = function (event) {
     event.preventDefault();
+    console.log(event);
     var data = event.dataTransfer.getData("Text");
 
     if (
       document.getElementsByClassName(data).length != 0 &&
       document.getElementsByClassName(data)[0].nodeName == "TH"
     ) {
-      if (event.target.className == "droptargettd border") {
+      if (event.target.className == "droptargettd") {
         var allelement = document.querySelectorAll(".droptargettd");
+        console.log(allelement);
         allelement.forEach((element) => {
           element.style.display = "none";
         });
@@ -1656,7 +1780,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
           })
           .then((result) => {
             if (result.isConfirmed) {
-              insertBeforeth(
+              insertRigthth(
                 document.getElementsByClassName(data),
                 event.target.parentElement.className
               );
@@ -1756,16 +1880,16 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     var arr = [...allelement];
 
     var fromNode = refNode.replace("dropTh", "");
-    fromNode = fromNode.replace(" border", "");
+    fromNode = fromNode.replace(" borders", "");
 
     var frompositions = 0;
     var topositions = 0;
 
     var toNode = newNode[0].className.replace("dropTh", "");
-    toNode = toNode.replace(" border", "");
+    toNode = toNode.replace(" borders", "");
 
     var b = document.getElementsByTagName("th");
-
+    console.log(b, toNode);
     for (var index = 0; index < b.length; index++) {
       if (b[index].className == refNode) {
         topositions = index;
@@ -1784,7 +1908,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     multipleDateArrayField.map((item, index) => {
       const e = item.splice(frompositions, 1)[0];
       console.log(e); // ['css']
-      item.splice(topositions, 0, e);
+      item.splice(parseInt(topositions)-2, 0, e);
 
       multipleDateArrayField[index] = item;
     });
@@ -1796,7 +1920,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     multipleDateArrayFieldcopy.map((item, index) => {
       const e = item.splice(frompositions, 1)[0];
       console.log(e); // ['css']
-      item.splice(topositions, 0, e);
+      item.splice(parseInt(topositions)-2, 0, e);
       multipleDateArrayFieldcopy[index] = item;
     });
 
@@ -1817,28 +1941,81 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         console.log(e, tempjson, columnValues[index][e.ColumnName]);
         tempjson["" + index][e.ColumnName] = columnValues[index][e.ColumnName];
         console.log(item, index, i);
+        
         if (item[i].RelatedTable != null) {
-          var dataTable = [];
-          for (var modelArrayPosition in allModelDataTable)
-            dataTable.push([
-              modelArrayPosition,
-              allModelDataTable[modelArrayPosition],
-            ]);
-
-          console.log(dataTable);
-
-          dataTable.map((ele) => {
-            console.log(ele[1]);
-            if (ele[1][0].title == item[i].RelatedTable) {
-              ele[1].map((member) => {
-                var dataMenuArrLength = dataMenuArr.length;
-                console.log(member, dataMenuArrLength);
-                dataMenuArr[dataMenuArrLength] = {};
-                dataMenuArr[dataMenuArrLength]["label"] = member.label;
-                dataMenuArr[dataMenuArrLength]["value"] = member.value;
-              });
-            }
-          });
+          const modelDataLabel = {
+            procedureName: "",
+            parameters: {
+              TableName: "",
+            },
+          };
+          modelDataLabel.procedureName = "prc_GetMasterInfoList";
+          modelDataLabel.parameters.TableName = `${item[i].ColumnName}`;
+          fetch("https://localhost:44372/api/GetData/GetDataByID", {
+            method: "POST",
+            headers: {
+              authorization: `Bearer ${token}`,
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(modelDataLabel),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              if (data.status == true) {
+                console.log(data)
+                const allModalData = JSON.parse(data.data);
+             
+                console.log(allModalData);
+                var dataTable = [];
+                console.log(allModalData);
+                for (var modelArrayPosition in allModalData)
+                  dataTable.push([
+                    modelArrayPosition,
+                    allModalData[modelArrayPosition],
+                  ]);
+                console.log(dataTable, allModalData);
+                var dataMenuArr = [];
+                dataTable.map((elements) => {
+                  elements.map((member) => {
+                    for (var key in member) {
+                      console.log(elements, key, item);
+                      if (member.hasOwnProperty(key)) {
+                        if (key != "0") {
+                          if (key == item[i].ColumnValueField) {
+                            var dataMenuArrLength = dataMenuArr.length;
+                            dataMenuArr[dataMenuArrLength] = {};
+                            dataMenuArr[dataMenuArrLength]["value"] =
+                              member.ID;
+                            var val = member[key];
+                            dataMenuArr[dataMenuArrLength]["label"] =
+                              val;
+                          }
+                        }
+                      }
+                    }
+                    console.log(dataMenuArr);
+                    var allDropValueDataLength = 0;
+                    if (allDropValueData != null) {
+                      allDropValueDataLength =
+                        Object.keys(allDropValueData).length;
+                      console.log(allDropValueDataLength);
+                    }
+                  });
+                  // }
+                });
+                console.log(dataMenuArr);
+                setSelectedOption((prev) => {
+                  console.log(prev);
+                  const temp__details = [...prev];
+                  temp__details[i] = dataMenuArr;
+                  return temp__details;
+                });
+              } else {
+                console.log(data);
+              }
+            });
+    
         }
 
         console.log(dataMenuArr);
@@ -1853,7 +2030,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     setColumnValues(tempjson);
   }
 
-  function insertBeforeth(newNode, refNode) {
+  function insertRigthth(newNode, refNode) {
     var allelement = document.getElementsByClassName(refNode);
     var arr = [...allelement];
 
@@ -1864,10 +2041,10 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     var topositions = 0;
 
     var toNode = newNode[0].className.replace("dropTh", "");
-    toNode = toNode.replace(" border", "");
+    toNode = toNode.replace(" borders", "");
 
     var b = document.getElementsByTagName("th");
-
+    console.log(refNode,frompositions,toNode);
     for (var index = 0; index < b.length; index++) {
       if (b[index].className == refNode) {
         topositions = index - 1;
@@ -1886,7 +2063,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     multipleDateArrayField.map((item, index) => {
       const e = item.splice(frompositions, 1)[0];
       console.log(e); // ['css']
-      item.splice(parseInt(topositions) + 1, 0, e);
+      item.splice(parseInt(topositions), 0, e);
 
       multipleDateArrayField[index] = item;
     });
@@ -1897,7 +2074,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     multipleDateArrayFieldcopy.map((item, index) => {
       const e = item.splice(frompositions, 1)[0];
       console.log(e); // ['css']
-      item.splice(parseInt(topositions) + 1, 0, e);
+      item.splice(parseInt(topositions), 0, e);
 
       multipleDateArrayFieldcopy[index] = item;
     });
@@ -1918,6 +2095,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         tempjson["" + index][e.ColumnName] = columnValues[index][e.ColumnName];
 
         labelData.map((item, index) => {
+          console.log(item)
           tempjson[index] = {};
           item.map((e, i) => {
             var dataMenuArr = [];
@@ -1928,28 +2106,81 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
             tempjson["" + index][e.ColumnName] =
               columnValues[index][e.ColumnName];
             console.log(item, index, i);
+         
             if (item[i].RelatedTable != null) {
-              var dataTable = [];
-              for (var modelArrayPosition in allModelDataTable)
-                dataTable.push([
-                  modelArrayPosition,
-                  allModelDataTable[modelArrayPosition],
-                ]);
-
-              console.log(dataTable);
-
-              dataTable.map((ele) => {
-                console.log(ele[1]);
-                if (ele[1][0].title == item[i].RelatedTable) {
-                  ele[1].map((member) => {
-                    var dataMenuArrLength = dataMenuArr.length;
-                    console.log(member, dataMenuArrLength);
-                    dataMenuArr[dataMenuArrLength] = {};
-                    dataMenuArr[dataMenuArrLength]["label"] = member.label;
-                    dataMenuArr[dataMenuArrLength]["value"] = member.value;
-                  });
-                }
-              });
+              const modelDataLabel = {
+                procedureName: "",
+                parameters: {
+                  TableName: "",
+                },
+              };
+              modelDataLabel.procedureName = "prc_GetMasterInfoList";
+              modelDataLabel.parameters.TableName = `${item[i].ColumnName}`;
+              fetch("https://localhost:44372/api/GetData/GetDataByID", {
+                method: "POST",
+                headers: {
+                  authorization: `Bearer ${token}`,
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify(modelDataLabel),
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  console.log(data);
+                  if (data.status == true) {
+                    console.log(data)
+                    const allModalData = JSON.parse(data.data);
+                 
+                    console.log(allModalData);
+                    var dataTable = [];
+                    console.log(allModalData);
+                    for (var modelArrayPosition in allModalData)
+                      dataTable.push([
+                        modelArrayPosition,
+                        allModalData[modelArrayPosition],
+                      ]);
+                    console.log(dataTable, allModalData);
+                    var dataMenuArr = [];
+                    dataTable.map((elements) => {
+                      elements.map((member) => {
+                        for (var key in member) {
+                          console.log(elements, key, item);
+                          if (member.hasOwnProperty(key)) {
+                            if (key != "0") {
+                              if (key == item[i].ColumnValueField) {
+                                var dataMenuArrLength = dataMenuArr.length;
+                                dataMenuArr[dataMenuArrLength] = {};
+                                dataMenuArr[dataMenuArrLength]["value"] =
+                                  member.ID;
+                                var val = member[key];
+                                dataMenuArr[dataMenuArrLength]["label"] =
+                                  val;
+                              }
+                            }
+                          }
+                        }
+                        console.log(dataMenuArr);
+                        var allDropValueDataLength = 0;
+                        if (allDropValueData != null) {
+                          allDropValueDataLength =
+                            Object.keys(allDropValueData).length;
+                          console.log(allDropValueDataLength);
+                        }
+                      });
+                      // }
+                    });
+                    console.log(dataMenuArr);
+                    setSelectedOption((prev) => {
+                      console.log(prev);
+                      const temp__details = [...prev];
+                      temp__details[i] = dataMenuArr;
+                      return temp__details;
+                    });
+                  } else {
+                    console.log(data);
+                  }
+                });
+        
             }
 
             console.log(dataMenuArr);
@@ -1969,7 +2200,62 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     //   element.parentNode.insertBefore(newNode[i], element.nextSibling);
     // });
   }
+  // const handleDropdown = (i) => {
+  //   console.log(i)
+  //   let radioName=0
+  //   if (
+  //     document.querySelector('input[name="dropValueFieldCheck"]:checked') != null
+  //   ) {
+  //     radioName = document.querySelector(
+  //       'input[name="dropValueFieldCheck"]:checked'
+  //     ).value;
+  //   }
+  // console.log(radioName)
+  // setRadioButton(radioName)
+  //   var dataTable = [];
+  //         console.log(allModelDataTable);
+  //         for (var modelArrayPosition in allModelDataTable)
+  //           dataTable.push([
+  //             modelArrayPosition,
+  //             allModelDataTable[modelArrayPosition],
+  //           ]);
+  //         console.log(dataTable,allModelDataTable);
+  //   var dataMenuArr = [];
+  //   dataTable.map((element) => {
+  //     console.log(element);
 
+  //     // if (element[1][0].title == radioName) {
+  //     element.map((member) => {
+  //       for (var key in member) {
+  //         if (member.hasOwnProperty(key)) { 
+  //           if (key != "0") {
+  //             if (key==radioName) {
+  //               var dataMenuArrLength = dataMenuArr.length;
+  //               dataMenuArr[dataMenuArrLength] = {};
+  //               dataMenuArr[dataMenuArrLength]["value"] = member.ID;
+  //               var val = member[key];
+  //               dataMenuArr[dataMenuArrLength]["label"] =val
+  //               ;
+  //             }
+  //           }
+  //         }
+  //       }
+  //       console.log(dataMenuArr);
+  //       var allDropValueDataLength = 0;
+  //       if (allDropValueData != null) {
+  //         allDropValueDataLength = Object.keys(allDropValueData).length;
+  //         console.log(allDropValueDataLength);
+  //       } 
+  //     });
+  //     // }
+  //   });
+  //   setSelectedOption((prev) => {
+  //     console.log(prev);
+  //     const temp__details = [...prev];
+  //     temp__details[i] = dataMenuArr;
+  //     return temp__details;
+  //   });
+  // };
   return (
     <Grid className="shadow-lg p-4">
       <Formik

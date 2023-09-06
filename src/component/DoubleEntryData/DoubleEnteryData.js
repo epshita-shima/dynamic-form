@@ -1,4 +1,4 @@
-import { Grid, TextField } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import "../SingleEntryForm/SingleEntryForm.css";
@@ -150,7 +150,10 @@ const DoubleEnteryData = ({
   const [errorsDate, setErrorsDate] = useState([]);
   const [errorsCheck, setErrorsCheck] = useState([]);
   const [childMenu, setChildMenu] = useChildMenu([]);
-
+  const [radioButton,setRadioButton]=useState([])
+  const [dropdownName, setDropdownName] = useState([]);
+  const [menuId, setMenuId] = useState("");
+  const [show2, setShow2] = useState(false);
   var tableInputData = [];
   var tableDropData = [];
   var tableTextareaData = [];
@@ -1136,6 +1139,7 @@ var checkboxLowerCaseData=[]
       .then((data) => {
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
+          console.log(allModalData)
           setModalSpecificData(allModalData.Tables2);
         } else {
           console.log(data);
@@ -1143,8 +1147,11 @@ var checkboxLowerCaseData=[]
       });
   };
   const handleDropdownValue = (i) => {
-    console.log(i)
+    console.log(i);
+
+    console.log(document.querySelector('input[name="dropValueField"]:checked'));
     var radioName = 0;
+    console.log(radioName);
     if (
       document.querySelector('input[name="dropValueField"]:checked') != null
     ) {
@@ -1152,42 +1159,125 @@ var checkboxLowerCaseData=[]
         'input[name="dropValueField"]:checked'
       ).value;
     }
-    var dataTable = [];
-    for (var modelArrayPosition in allModelDataTable)
-      dataTable.push([
-        modelArrayPosition,
-        allModelDataTable[modelArrayPosition],
-      ]);
+    console.log(radioName);
 
-    var dataMenuArr = [];
-    dataTable.map((element) => {
-      if (element[1][0].title == radioName) {
-        element[1].map((member) => {
-          var dataMenuArrLength = dataMenuArr.length;
-          dataMenuArr[dataMenuArrLength] = {};
-          dataMenuArr[dataMenuArrLength]["label"] = member.label;
-          dataMenuArr[dataMenuArrLength]["value"] = member.value;
-          var allDropValueDataLength = 0;
+    let newString = radioName.replace("-", "_");
+    const spaceRemove = newString.split(" ").join("");
+    const convertLowerCase = spaceRemove.toLowerCase();
+    let tableName = convertLowerCase;
 
-          if (allDropValueData != null) {
-            allDropValueDataLength = Object.keys(allDropValueData).length;
-          }
-
+    const modelDataLabel = {
+      procedureName: "",
+      parameters: {
+        TableName: "",
+      },
+    };
+    modelDataLabel.procedureName = "prc_GetMasterInfoList";
+    modelDataLabel.parameters.TableName = `${tableName}`;
+    fetch("https://localhost:44372/api/GetData/GetDataByID", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelDataLabel),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.status == true) {
+          const allModalData = JSON.parse(data.data);
+          console.log(allModalData);
+          setAllModelDataTable(allModalData);
+      
           setAllDropValueData({
             ...allDropValueData,
             [i]: radioName,
           });
+        } else {
+          console.log(data);
+        }
+      });
+      const modelData = {
+        procedureName: "prc_GetPageInfo",
+        parameters: {
+          MenuId: menuId,
+        },
+      };
+      fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(modelData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status == true) {
+            console.log(data);
+            const showSingleData = JSON.parse(data.data);
+            setDropdownName(showSingleData.Tables1);
+          }
         });
-      }
+    setShowDropDownModal(false);
+  };
+  const handleDropdown = (i) => {
+    console.log(i)
+    let radioName=0
+    if (
+      document.querySelector('input[name="dropValueFieldCheck"]:checked') != null
+    ) {
+      radioName = document.querySelector(
+        'input[name="dropValueFieldCheck"]:checked'
+      ).value;
+    }
+  console.log(radioName)
+  setRadioButton([...radioButton,radioName])
+    var dataTable = [];
+          console.log(allModelDataTable);
+          for (var modelArrayPosition in allModelDataTable)
+            dataTable.push([
+              modelArrayPosition,
+              allModelDataTable[modelArrayPosition],
+            ]);
+          console.log(dataTable,allModelDataTable);
+    var dataMenuArr = [];
+    dataTable.map((element) => {
+      console.log(element);
+
+      // if (element[1][0].title == radioName) {
+      element.map((member) => {
+        for (var key in member) {
+          if (member.hasOwnProperty(key)) { 
+            if (key != "0") {
+              if (key==radioName) {
+                var dataMenuArrLength = dataMenuArr.length;
+                dataMenuArr[dataMenuArrLength] = {};
+                dataMenuArr[dataMenuArrLength]["value"] = member.ID;
+                var val = member[key];
+                dataMenuArr[dataMenuArrLength]["label"] =val
+                ;
+              }
+            }
+          }
+        }
+        console.log(dataMenuArr);
+        var allDropValueDataLength = 0;
+        if (allDropValueData != null) {
+          allDropValueDataLength = Object.keys(allDropValueData).length;
+          console.log(allDropValueDataLength);
+        } 
+      });
+      // }
     });
     setSelectedOptionParent((prev) => {
+      console.log(prev);
       const temp__details = [...prev];
       temp__details[i] = dataMenuArr;
       return temp__details;
     });
-    setShowDropDownModal(false);
   };
-
   function validationOutsideSchema() {
     var allInputValueDataLength = 0;
     if (allInputValueData != null) {
@@ -2244,7 +2334,9 @@ var checkboxLowerCaseData=[]
                           value={filteredPerson.SubMenuName}
                           name="dropValueField"
                           aria-label="Radio button for following text input"
-                          onClick={(e) => {}}
+                          onClick={(e) => {
+                            setMenuId(filteredPerson.MenuId);
+                          }}
                         />
                       </div>
                     </div>
@@ -2263,6 +2355,7 @@ var checkboxLowerCaseData=[]
                 aria-label="Close"
                 onClick={(e) => {
                   handleDropdownValue(currentDropSelected);
+                  setShow2(true);
                 }}
               >
                 Save changes
@@ -2293,6 +2386,45 @@ var checkboxLowerCaseData=[]
               <label>{errorMessageString}</label>
             </Modal.Body>
           </Modal>
+          <Modal show={show2} onHide={() => setShow2(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modal 2</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {dropdownName.map((item, i) => {
+              console.log(item);
+              return (
+                <>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <input
+                          type="radio"
+                          value={item.ColumnName}
+                          name="dropValueFieldCheck"
+                          aria-label="Radio button for following text input"
+                          onClick={(e) => {}}
+                        />
+                      </div>
+                    </div>
+                    <h4 className="text-black ms-2 fs-5">{item.ColumnName}</h4>
+                  </div>
+                </>
+              );
+            })}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="danger"
+              onClick={(e) => {
+                handleDropdown(currentDropSelected);
+                setShow2(false);
+              }}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
           <DoubleEntryChildData
             parentMenuName={parentMenuName}
             childMenuName={childMenuName}

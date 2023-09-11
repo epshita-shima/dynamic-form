@@ -72,6 +72,7 @@ const DoubleEnteryData = ({
     useState(false);
   const [currentDropSelectedDetails, setCurrentDropSelectedDetails] =
     useState("0");
+
   var arrayInput = [];
   var arrayDropdown = [];
   var arrayCheck = [];
@@ -116,6 +117,7 @@ const DoubleEnteryData = ({
   const [fieldTargetValidation, setFieldTargetValidation] = useState(2);
   const [fieldFormulaValidation, setFieldFormulaValidation] = useState(2);
   const [showCalculactionModal, setShowCalculactionModal] = useState(false);
+  const [showCalculactionModalDetails, setShowCalculactionModalDetails] = useState(false);
   const [allInputValueDataDetails, setAllInputValueDataDetails] = useState({});
   const [allDropValueDataDetails, setAllDropValueDataDetails] = useState({});
   const [allCheckValueDataDetails, setAllCheckValueDataDetails] = useState({});
@@ -125,23 +127,11 @@ const DoubleEnteryData = ({
   const [allImageValueDataDetails, setAllImageValueDataDetails] = useState({});
   console.log({ allDropValueDataDetails }, { selectedOptionParent });
 
-  const [keyValue, setKeyValue] = useState([
-    {
-      key: "qty",
-      type: "calcField",
-    },
-    {
-      key: "rate",
-      type: "calcField",
-    },
-    {
-      key: "amount",
-      type: "targetField",
-    },
-  ]);
+  const [keyValue, setKeyValue] = useState([]);
 
   const [selectedListName, setSelectedListName] = useState([]);
   const handleClose = () => setShowCalculactionModal(false);
+  const handleCloseDetails = () => setShowCalculactionModalDetails(false);
   const handleDropClose = () => setShowDropDownModal(false);
   const handleErrorClose = () => setShowErrorModal(false);
   const [errorsPage, setErrorsPage] = useState([]);
@@ -154,17 +144,49 @@ const DoubleEnteryData = ({
   const [dropdownName, setDropdownName] = useState([]);
   const [menuId, setMenuId] = useState("");
   const [show2, setShow2] = useState(false);
+  const [radioButton2,setRadioButton2]=useState([])
+  const [field1ValidationDetails, setField1ValidationDetails] = useState(2);
+  const [field2ValidationDetails, setField2ValidationDetails] = useState(2);
+  const [fieldTargetValidationDetails, setFieldTargetValidationDetails] = useState(2);
+  const [fieldFormulaValidationDetails, setFieldFormulaValidationDetails] = useState(2);
+  const [ allInputValueForFormulaDataDetails, setAllInputValueForFormulaDataDetails ] = useState([]);
+  const [modalTitle,setModalTitle]=useState('')
+  const [childModalTitle,setChildModalTitle]=useState('')
   var tableInputData = [];
   var tableDropData = [];
   var tableTextareaData = [];
   var tableImageData = [];
-
+console.log(radioButton,radioButton2)
   const token = Token.token;
   const tableName = childMenuName.SubMenuName;
   let newString = tableName.replace("-", "_");
   const spaceRemove = newString.split(" ").join("");
   const tableNameLowerCase = spaceRemove.toLowerCase();
-console.log(selectedOptionParent)
+  console.log(keyValue)
+  useEffect(()=>{
+    const modelKeyData = {
+      procedureName: "",
+      parameters: {},
+    };
+    modelKeyData.procedureName = "prc_getInitialData";
+    fetch("https://localhost:44372/api/GetData/GetInitialData", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelKeyData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == true) {
+          const allKeyData = JSON.parse(data.data);
+          setKeyValue(allKeyData.Tables1);
+        } else {
+          console.log(data);
+        }
+      });
+  },[])
   var inputLowerCaseData = [];
   Object.entries(allInputValueData).forEach((entry) => {
     const [key, value] = entry;
@@ -715,6 +737,7 @@ var checkboxLowerCaseData=[]
               CalculationKey: allInputValueData[allInputValueDataCount],
               CalculationFormula: JSON.stringify(pageFormula),
               RelatedTable: "",
+              ColumnValueField:'',
               Position: orderPosition,
               IsDisable:
                 formulaTarget == allInputValueData[allInputValueDataCount]
@@ -743,6 +766,7 @@ var checkboxLowerCaseData=[]
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: "",
+              ColumnValueField:'',
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -769,6 +793,7 @@ var checkboxLowerCaseData=[]
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: allDropValueData[allDropValueDataCount],
+              ColumnValueField:radioButton[allDropValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -793,6 +818,7 @@ var checkboxLowerCaseData=[]
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: allTextAreaValueData[allTextAreaValueDataCount],
+              ColumnValueField:"",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -816,6 +842,7 @@ var checkboxLowerCaseData=[]
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: allImageValueData[allImageValueDataCount],
+              ColumnValueField:"",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -897,6 +924,7 @@ var checkboxLowerCaseData=[]
                 allInputValueDataDetails[allInputValueDataCountDetails],
               CalculationFormula: JSON.stringify(pageFormulaDetails),
               RelatedTable: "",
+              ColumnValueField:"",
               Position: orderPosition,
               IsDisable:
                 formulaTargetDetails ==
@@ -926,6 +954,7 @@ var checkboxLowerCaseData=[]
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: "",
+              ColumnValueField:"",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -951,6 +980,7 @@ var checkboxLowerCaseData=[]
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: "",
+              ColumnValueField:"",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -977,6 +1007,7 @@ var checkboxLowerCaseData=[]
               CalculationFormula: "",
               RelatedTable:
                 allDropValueDataDetails[allDropValueDataCountDetails],
+                ColumnValueField:radioButton2[allDropValueDataCountDetails],
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1003,6 +1034,7 @@ var checkboxLowerCaseData=[]
               CalculationFormula: "",
               RelatedTable:
                 allTextAreaValueDataDetails[allTeaxtAreaValueDataCountDetails],
+                ColumnValueField:"",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1028,6 +1060,7 @@ var checkboxLowerCaseData=[]
               CalculationFormula: "",
               RelatedTable:
                 allImageValueDataDetails[allImageValueDataCountDetails],
+                ColumnValueField:"",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1086,7 +1119,7 @@ var checkboxLowerCaseData=[]
             pageInfoJson: tableModelData.detailsData,
             pageInfoDetailsJson: tableModelDataDetails.detailsData,
             childPageNameDetailsWithoutSpace: tableNameLowerCase + "details",
-            tableColumnDetails: `ID varchar(128),${allLowercaseDataDetails} Makedate datetime,MakeBy varchar(128), InsertTime datetime`,
+            tableColumnDetails: `DetailsId varchar(128),ID varchar(128),${allLowercaseDataDetails} Makedate datetime,MakeBy varchar(128), InsertTime datetime`,
           };
           console.log(JSON.stringify(modelCreatePageSingle));
             const fatchGetDataById = async () => {
@@ -1160,7 +1193,7 @@ var checkboxLowerCaseData=[]
       ).value;
     }
     console.log(radioName);
-
+setModalTitle(radioName)
     let newString = radioName.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
     const convertLowerCase = spaceRemove.toLowerCase();
@@ -1329,6 +1362,7 @@ var checkboxLowerCaseData=[]
     e.preventDefault();
     validationOutsideSchema();
     var foundKey = 0;
+    var foundChildKey = 0;
     var foundEmpty = 0;
     var allInputValueDataLength = 0;
     if (inputValue != "") {
@@ -1445,24 +1479,42 @@ var checkboxLowerCaseData=[]
       }
       if (foundEmpty == 1) {
       } else {
-        if (inputValue > 2) {
+        if (inputValue > 2 || inputValueDetails>2) {
+          console.log(keyValue,allInputValueData,allInputValueDataDetails,allInputValueDataLength,allInputValueDataLengthDetails);
           for (
             let countKeyValue = 0;
             countKeyValue < allInputValueDataLength;
             countKeyValue++
           ) {
-            if (
-              keyValue.some(
-                (item) => item.key === allInputValueData[countKeyValue]
+            
+            if (keyValue.some(
+                (item) => item.KeyValue.toLowerCase() === allInputValueData[countKeyValue].toLowerCase()
               )
             ) {
               foundKey = 1;
             }
           }
+
+          for (
+            let countKeyValue = 0;
+            countKeyValue < allInputValueDataLengthDetails;
+            countKeyValue++
+          ) {
+            if (
+              keyValue.some(
+                (item) => item.KeyValue.toLowerCase() === allInputValueDataDetails[countKeyValue].toLowerCase()
+              )
+            ) {
+              foundChildKey = 1;
+            }
+          }
           alert(foundKey);
-          if (foundKey == 1) {
+          if (foundKey == 1 && foundChildKey==0) {
             setShowCalculactionModal(true);
-          } else {
+          } 
+          else if(foundKey == 0 && foundChildKey==1){
+            setShowCalculactionModalDetails(true);
+          }else {
             submitForm();
           }
         } else {
@@ -2388,7 +2440,7 @@ var checkboxLowerCaseData=[]
           </Modal>
           <Modal show={show2} onHide={() => setShow2(false)}>
           <Modal.Header closeButton>
-            <Modal.Title>Modal 2</Modal.Title>
+            <Modal.Title>{modalTitle}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             {dropdownName.map((item, i) => {
@@ -2425,6 +2477,254 @@ var checkboxLowerCaseData=[]
             </Button>
           </Modal.Footer>
         </Modal>
+
+        
+      <Modal
+        show={showCalculactionModalDetails}
+        onHide={handleCloseDetails}
+        size="lg"
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header>
+          <Modal.Title style={{ color: "#000", fontWeight: "bold" }}>
+            Calculation{" "}
+          </Modal.Title>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            onClick={handleCloseDetails}
+          >
+            X
+          </button>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="w-50">
+            <label className="fw-bold" style={{ color: "#000" }} htmlFor="">
+              Calculation Type
+            </label>
+            <Select
+              class="form-select"
+              className="w-[100%] mt-2"
+              aria-label="Default select example"
+              // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+              options={[
+                {
+                  label: "Manual",
+                  value: "Manual",
+                },
+                {
+                  label: "Auto",
+                  value: "Auto",
+                },
+              ]}
+              id={`dropValue`}
+              onChange={(e) => {
+                console.log(e.value);
+                setCalculationTypeDetails(e.value);
+                if (e.value == "Auto") {
+                  setDisplayFormulaAutoDetails(true);
+                } else {
+                  setDisplayFormulaAutoDetails(false);
+                }
+              }}
+            ></Select>
+          </div>
+          <div
+            className={`d-flex justify-content-between ${
+              displayFormulaAutoDetails ? "d-visible" : "d-hidden"
+            } mt-4`}
+          >
+            <div className="w-100">
+              <label className="fw-bold" htmlFor="">
+                Field1
+              </label>
+              <Select
+                class="form-select"
+                className="w-[100%] mt-2"
+                aria-label="Default select example"
+                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                options={allInputValueForFormulaDataDetails}
+                id={`dropValueField1`}
+                onChange={(e) => {
+                  console.log(e.value, pageFormulaDetails);
+                  if (
+                    pageFormulaDetails[0]["Formula"][0]["Field2"] == e.value
+                  ) {
+                    setField1ValidationDetails(0);
+                  } else if (pageFormulaDetails[0]["Target"] == e.value) {
+                    setField1ValidationDetails(0);
+                  } else {
+                    setField1ValidationDetails(1);
+                    pageFormulaDetails[0]["Formula"][0]["Field1"] = e.value;
+                  }
+                }}
+              ></Select>
+
+              {field1ValidationDetails == 0 ? (
+                <label className="" style={{ color: "red" }}>
+                  Value can not be same as Field2 or Target
+                </label>
+              ) : (
+                ""
+              )}
+            </div>
+            <div className="w-100 ms-2">
+              <label className="fw-bold" htmlFor="">
+                Formula
+              </label>
+              <Select
+                class="form-select"
+                className="w-[100%] mt-2"
+                aria-label="Default select example"
+                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                options={[
+                  {
+                    label: "+",
+                    value: "+",
+                  },
+                  {
+                    label: "-",
+                    value: "-",
+                  },
+                  {
+                    label: "*",
+                    value: "*",
+                  },
+                  {
+                    label: "/",
+                    value: "/",
+                  },
+                ]}
+                id={`dropValueFormula`}
+                onChange={(e) => {
+                  console.log(e.value);
+                  pageFormulaDetails[0]["Formula"][0]["FormulaType"] = e.value;
+                  if (e.value != "") {
+                    setFieldFormulaValidationDetails(1);
+                  } else {
+                    setFieldFormulaValidationDetails(0);
+                  }
+                }}
+              ></Select>
+
+              {fieldFormulaValidationDetails == 0 ? (
+                <label className="" style={{ color: "red" }}>
+                  Value can not be empty
+                </label>
+              ) : (
+                ""
+              )}
+            </div>
+            <div className="w-100 ms-2">
+              <label className="fw-bold" htmlFor="">
+                Field2
+              </label>
+              <Select
+                class="form-select"
+                className="w-[100%] mt-2"
+                aria-label="Default select example"
+                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                options={allInputValueForFormulaDataDetails}
+                id={`dropValueField2`}
+                onChange={(e) => {
+                  console.log(e.value);
+                  if (
+                    pageFormulaDetails[0]["Formula"][0]["Field1"] == e.value
+                  ) {
+                    setField2ValidationDetails(0);
+                  } else if (pageFormulaDetails[0]["Target"] == e.value) {
+                    setField2ValidationDetails(0);
+                  } else {
+                    setField2ValidationDetails(1);
+                    pageFormulaDetails[0]["Formula"][0]["Field2"] = e.value;
+                  }
+                }}
+              ></Select>
+              {field2ValidationDetails == 0 ? (
+                <label className="" style={{ color: "red" }}>
+                  Value can not be same as Field1 or Target
+                </label>
+              ) : (
+                ""
+              )}
+            </div>
+            <div className="w-100 ms-2">
+              <label className="fw-bold" htmlFor="">
+                Target
+              </label>
+              <Select
+                class="form-select"
+                className="w-[100%] mt-2"
+                aria-label="Default select example"
+                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                options={allInputValueForFormulaDataDetails}
+                id={`dropValueFieldTarget`}
+                onChange={(e) => {
+                  if (
+                    pageFormulaDetails[0]["Formula"][0]["Field1"] == e.value
+                  ) {
+                    setFieldTargetValidationDetails(0);
+                  } else if (
+                    pageFormulaDetails[0]["Formula"][0]["Field2"] == e.value
+                  ) {
+                    setFieldTargetValidationDetails(0);
+                  } else {
+                    console.log(e.value);
+                    setFormulaTargetDetails(e.value);
+                    setFieldTargetValidationDetails(1);
+                    pageFormulaDetails[0]["Target"] = e.value;
+                  }
+                }}
+              ></Select>
+              {fieldTargetValidationDetails == 0 ? (
+                <label className="" style={{ color: "red" }}>
+                  Value can not be same as Field1 or Field2
+                </label>
+              ) : (
+                ""
+              )}
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            type="button"
+            class="btn"
+            style={{ backgroundColor: "#34C38F", color: "white" }}
+            onClick={() => {
+              if (pageFormulaDetails[0]["Formula"][0]["FormulaType"] == "") {
+                setFieldFormulaValidationDetails(0);
+              }
+              if (pageFormulaDetails[0]["Formula"][0]["Field2"] == "") {
+                setField2ValidationDetails(0);
+              }
+              if (pageFormulaDetails[0]["Formula"][0]["Field1"] == "") {
+                setField1ValidationDetails(0);
+              }
+              if (pageFormulaDetails[0]["Formula"][0]["FormulaType"] == "") {
+                setFieldFormulaValidationDetails(0);
+              }
+              if (pageFormulaDetails[0]["Formula"][0]["Target"] == "") {
+                setFieldTargetValidationDetails(0);
+              }
+              if (
+                field1ValidationDetails != 1 ||
+                field2ValidationDetails != 1 ||
+                fieldFormulaValidationDetails != 1 ||
+                fieldTargetValidationDetails != 1
+              ) {
+              } else {
+                // addList();
+               submitForm();
+              }
+            }}
+          >
+            Save changes
+          </button>
+        </Modal.Footer>
+      </Modal>
           <DoubleEntryChildData
             parentMenuName={parentMenuName}
             childMenuName={childMenuName}
@@ -2493,6 +2793,16 @@ var checkboxLowerCaseData=[]
             arrayImageDetails={arrayImageDetails}
             pageFormulaDetails={pageFormulaDetails}
             setPageFormulaDetails={setPageFormulaDetails}
+            radioButton2={radioButton2}
+            setRadioButton2={setRadioButton2}
+            keyValue={keyValue} 
+            setKeyValue={setKeyValue}
+            showCalculactionModalDetails={showCalculactionModalDetails} 
+            setShowCalculactionModalDetails={setShowCalculactionModalDetails}
+            allInputValueForFormulaDataDetails={allInputValueForFormulaDataDetails}
+            setAllInputValueForFormulaDataDetails={ setAllInputValueForFormulaDataDetails}
+            childModalTitle={childModalTitle}
+            setChildModalTitle={setChildModalTitle}
           ></DoubleEntryChildData>
         </Grid>
       </form>

@@ -1,8 +1,9 @@
 import swal from "sweetalert";
 
-export const handleAddRow=({columnValues,setGetDate,getDate,twoDimensionData,setLabelData,labelDataCopy,setTwoDimentionData, selectedImage,
+export const handleAddRow=({columnValues,childPageType,setGetDate,getDate,twoDimensionData,setLabelData,labelDataCopy,setTwoDimentionData, selectedImage,
   setSelectedImage})=>{
-console.log(columnValues)
+    console.log(childPageType.PageType)
+    console.log(columnValues)
   console.log(labelDataCopy)
   columnValues[columnValues?.length] = {};
   setGetDate([...getDate, new Date()]);
@@ -13,6 +14,7 @@ console.log(columnValues)
     const result = [...prevArr];
     console.log(result,labelDataCopy)
     result[0].map((element, i) => {
+      console.log(Object.keys(element))
       if (element.ColumnType == "datetime") {
         twoDimensionData[twoDimensionData.length - 1][i] =
           new Date();
@@ -23,6 +25,21 @@ console.log(columnValues)
       columnValues[columnValues.length - 1][
         element.ColumnName
       ] = "";
+      if(childPageType.PageType=="singleEntryPage"){
+        columnValues[columnValues.length - 1][
+          [Object.keys(element)[0]]
+        ] = "newID()";
+        
+      }
+      if(childPageType.PageType=="doubleEntryPage"){
+        columnValues[columnValues.length - 1][
+          [Object.keys(element)[0]]
+        ] = "newID()";
+        columnValues[columnValues.length - 1][
+          [Object.keys(element)[1]]
+        ] = "";
+      }
+     
     });
 
     var tempdatanewrow = JSON.parse(

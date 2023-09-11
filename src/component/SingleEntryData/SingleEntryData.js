@@ -46,15 +46,18 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   const [selectImagePopupSingle, setSelectedImagePopupSingle] = useState(null);
   const [selectImagePopup, setSelectedImagePopup] = useState(null);
   const [childPageType, setChildPageType] = useState([]);
+  const [parentTableName, setParentTableName] = useState("");
   const [childTableName, setChildTableName] = useState("");
-  const [radioButton,setRadioButton]=useState('')
-  console.log(allModelDataTable);
-  console.log(selectedOptionParent);
+  const [childMenu, setChildMenu] = useChildMenu([]);
+const [totalAmount,setTotalAmount]=useState('')
+console.log(totalAmount)
+  console.log(labelData)
   const token = Token.token;
   const search = useLocation();
   const link = search.pathname.split("/");
   let id = link[2];
 
+  console.log(columnValues)
   useEffect(() => {
     const modelDataLabel = {
       procedureName: "",
@@ -83,9 +86,8 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         }
       });
   }, []);
-  console.log(labelData);
-  console.log(labelDataSingle);
-  const [childMenu, setChildMenu] = useChildMenu([]);
+
+ 
   const modelData = {
     procedureName: "prc_GetPageInfo",
     parameters: {
@@ -100,7 +102,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   };
 
   const handleLabelField = () => {
-    console.log(modelData, modelDataDetails);
+
     setShowTable(true);
     const findPageType = childMenu.find((item) => item.MenuId == id);
     setChildPageType(findPageType);
@@ -116,63 +118,90 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         .then((res) => res.json())
         .then((data) => {
           if (data.status == true) {
-            console.log(data);
             const showSingleData = JSON.parse(data.data);
-            console.log(showSingleData.Tables2);
-            // removeSpace[0] = showSingleData.Tables1;
-            // removeSpace.map((item) => {
-            //   return item.map((items) => {
-            //     let newString = items.ColumnName.replace("-", "_");
-            //     const spaceRemove = newString.split(" ").join("");
-            //     const convertLowerCase = spaceRemove.toLowerCase();
-            //     console.log(convertLowerCase);
-            //     setRemoveSpace(prev=>{
-            //       const temp__details=prev
-            //       temp__details[0][0]['ColumnName']=convertLowerCase
-            //     })
-            //   });
-            // });
-            console.log(showSingleData.Tables1);
+         console.log(showSingleData)
+         const getParentTableName=showSingleData.Tables3
+         const tableName=getParentTableName[0].TableName
+         setParentTableName(tableName)
+         const childName=tableName+"details"
+         setChildTableName(childName)
+         console.log(getParentTableName)
             labelDataSingle[0] = showSingleData.Tables1;
             setLabelDataSingle(labelDataSingle);
             var createColumnValuesObjectSingle = {};
-            console.log(createColumnValuesObjectSingle);
             labelDataSingle.map((item) => {
-              console.log(item.ColumnName);
               return item.map((items) => {
                 return (createColumnValuesObjectSingle[items.ColumnName] = "");
               });
             });
-            labelDataSingle.map((element) => {
-              element.forEach((elem, i) => {
-                if (elem.RelatedTable != "") {
-                  var dataTable = [];
-                  for (var modelArrayPosition in allModelDataTable)
-                    dataTable.push([
-                      modelArrayPosition,
-                      allModelDataTable[modelArrayPosition],
-                    ]);
-                  var dataMenuArr = [];
-                  console.log(dataTable);
-                  dataTable.map((ele) => {
-                    console.log(ele[1][0].title, elem.RelatedTable);
-                    if (ele[1][0].title == elem.RelatedTable) {
-                      ele[1].map((member) => {
-                        console.log(member);
-                        var dataMenuArrLength = dataMenuArr.length;
-                        dataMenuArr[dataMenuArrLength] = {};
-                        dataMenuArr[dataMenuArrLength]["label"] = member.label;
-                        dataMenuArr[dataMenuArrLength]["value"] = member.value;
-                      });
-                    }
-                    console.log(dataMenuArr);
-                    setSelectedOptionParent((prev) => {
-                      const temp__details = [...prev];
-                      temp__details[i] = dataMenuArr;
-                      return temp__details;
+            labelDataSingle.map((elem) => {
+              
+              elem.forEach((element, i) => {
+                if (element.RelatedTable != "") {
+                  const modelDataLabel = {
+                    procedureName: "",
+                    parameters: {
+                      TableName: "",
+                    },
+                  };
+                  modelDataLabel.procedureName = "prc_GetMasterInfoList";
+                  modelDataLabel.parameters.TableName = `${element.ColumnName}`;
+                  fetch("https://localhost:44372/api/GetData/GetDataByID", {
+                    method: "POST",
+                    headers: {
+                      authorization: `Bearer ${token}`,
+                      "content-type": "application/json",
+                    },
+                    body: JSON.stringify(modelDataLabel),
+                  })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      if (data.status == true) {
+                        const allModalData = JSON.parse(data.data);
+                        var dataTable = [];
+                        for (var modelArrayPosition in allModalData)
+                          dataTable.push([
+                            modelArrayPosition,
+                            allModalData[modelArrayPosition],
+                          ]);
+                       
+                        var dataMenuArr = [];
+                        dataTable.map((elements) => {
+                          elements.map((member) => {
+                            for (var key in member) {
+                              if (member.hasOwnProperty(key)) {
+                                if (key != "0") {
+                                  if (key == element.ColumnValueField) {
+                                    var dataMenuArrLength = dataMenuArr.length;
+                                    dataMenuArr[dataMenuArrLength] = {};
+                                    dataMenuArr[dataMenuArrLength]["value"] =
+                                      member.ID;
+                                    var val = member[key];
+                                    dataMenuArr[dataMenuArrLength]["label"] =
+                                      val;
+                                  }
+                                }
+                              }
+                            }
+                            var allDropValueDataLength = 0;
+                            if (allDropValueData != null) {
+                              allDropValueDataLength =
+                                Object.keys(allDropValueData).length;
+                            }
+                          });
+                          // }
+                          setSelectedOptionParent((prev) => {
+                            const temp__details = [...prev];
+                            temp__details[i] = dataMenuArr;
+                            return temp__details;
+                          });
+                        });
+                       
+                      } else {
+                        console.log(data);
+                      }
                     });
-                  });
-                  console.log(dataMenuArr);
+            
                 }
               });
             });
@@ -181,6 +210,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               setColumnValues(columnValues);
             });
             if (labelData.length == 0) {
+              console.log(showSingleData.Tables2);
               labelDataCopy[0] = showSingleData.Tables2;
               labelData[0] = showSingleData.Tables2;
               // columnValues.forEach((item, i) => {
@@ -199,18 +229,18 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 setColumnValues(columnValues);
               });
             }
-            var createColumnValuesObject = {};
-
-            // setColumnValues([]);
-            // setColumnValues( columnValues:[])
+            var createColumnValuesObject = {DetailsId:"newID()",ID:""};
             var multipleDateArrayField = [];
             labelData.map((item, index) => {
               multipleDateArrayField[index] = [];
               item.forEach((element, i) => {
                 setLabelCount(i + 2);
                 multipleDateArrayField[index][i] = {};
-                console.log(element, i);
 
+                multipleDateArrayField[index]["" + i]["DetailsId"] =
+                 "newID()";
+                multipleDateArrayField[index]["" + i]["ID"] =
+                 "";
                 multipleDateArrayField[index]["" + i]["ColumnName"] =
                   element.ColumnName;
                 multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
@@ -230,6 +260,8 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 multipleDateArrayField[index]["" + i]["ColumnValue"] = "";
                 multipleDateArrayField[index]["" + i]["RelatedTable"] =
                   element.RelatedTable;
+                  multipleDateArrayField[index]["" + i]["ColumnValueField"] =
+                  element?.ColumnValueField;
                 multipleDateArrayField[index]["" + i]["PageId"] =
                   element.PageId;
                 if (element.ColumnType == "datetime") {
@@ -252,31 +284,76 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                   twoDimensionData[0][i] = new Date();
                 }
                 if (element.RelatedTable != "") {
-                  var dataTable = [];
-                  for (var modelArrayPosition in allModelDataTable)
-                    dataTable.push([
-                      modelArrayPosition,
-                      allModelDataTable[modelArrayPosition],
-                    ]);
-                  var dataMenuArr = [];
-                  console.log(dataTable);
-                  dataTable.map((ele) => {
-                    console.log(ele[1][0].title, element.RelatedTable);
-                    if (ele[1][0].title == element.RelatedTable) {
-                      ele[1].map((member) => {
-                        var dataMenuArrLength = dataMenuArr.length;
-                        dataMenuArr[dataMenuArrLength] = {};
-                        dataMenuArr[dataMenuArrLength]["label"] = member.label;
-                        dataMenuArr[dataMenuArrLength]["value"] = member.value;
-                      });
-                    }
-                  });
-                  console.log(dataMenuArr);
-                  setSelectedOption((prev) => {
-                    const temp__details = [...prev];
-                    temp__details[i] = dataMenuArr;
-                    return temp__details;
-                  });
+                  const modelDataLabel = {
+                    procedureName: "",
+                    parameters: {
+                      TableName: "",
+                    },
+                  };
+                  modelDataLabel.procedureName = "prc_GetMasterInfoList";
+                  modelDataLabel.parameters.TableName = `${element.ColumnName}`;
+                  fetch("https://localhost:44372/api/GetData/GetDataByID", {
+                    method: "POST",
+                    headers: {
+                      authorization: `Bearer ${token}`,
+                      "content-type": "application/json",
+                    },
+                    body: JSON.stringify(modelDataLabel),
+                  })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      if (data.status == true) {
+                        const allModalData = JSON.parse(data.data);
+                        var dataTable = [];
+                        for (var modelArrayPosition in allModalData)
+                          dataTable.push([
+                            modelArrayPosition,
+                            allModalData[modelArrayPosition],
+                          ]);
+                          console.log(dataTable)
+                        var dataMenuArr = [];
+                        dataTable.map((elements) => {
+                          console.log(elements)
+                          elements.map((member) => {
+                            console.log(member)
+                            for (var key in member) {
+                              if (member.hasOwnProperty(key)) {
+                                if (key != "0") {
+                                  console.log(element.ColumnValueField)
+                                  if (key == element.ColumnValueField) {
+                                    var dataMenuArrLength = dataMenuArr.length;
+                                    dataMenuArr[dataMenuArrLength] = {};
+                                    dataMenuArr[dataMenuArrLength]["value"] =
+                                      member.ID;
+                                    var val = member[key];
+                                    dataMenuArr[dataMenuArrLength]["label"] =
+                                      val;
+                                  }
+                                }
+                              }
+                            }
+                            var allDropValueDataLength = 0;
+                            if (allDropValueData != null) {
+                              allDropValueDataLength =
+                                Object.keys(allDropValueData).length;
+                            }
+                          });
+                          // }
+                          console.log(dataMenuArr)
+                          setSelectedOption((prev) => {
+                            console.log(prev)
+                            const temp__details = [...prev];
+                            temp__details[i] = dataMenuArr;
+                            return temp__details;
+                          });
+                        });
+                       
+                      
+                      } else {
+                        console.log(data);
+                      }
+                    });
+            
                 }
               });
             });
@@ -285,6 +362,10 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               multipleDateArrayFieldcopy[index] = [];
               item.forEach((element, i) => {
                 multipleDateArrayFieldcopy[index][i] = {};
+                multipleDateArrayFieldcopy[index]["" + i]["DetailsId"] =
+                 "newID()";
+                multipleDateArrayFieldcopy[index]["" + i]["ID"] =
+                 "";
                 multipleDateArrayFieldcopy[index]["" + i]["ColumnName"] =
                   element.ColumnName;
                 multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
@@ -305,6 +386,8 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                   element.IsDisable;
                 multipleDateArrayFieldcopy[index]["" + i]["RelatedTable"] =
                   element.RelatedTable;
+                  multipleDateArrayField[index]["" + i]["ColumnValueField"] =
+                  element?.ColumnValueField;
                 multipleDateArrayField[index]["" + i]["PageId"] =
                   element.PageId;
                 if (element.ColumnType == "datetime") {
@@ -328,30 +411,68 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                   twoDimensionData[0][i] = new Date();
                 }
                 if (element.RelatedTable != "") {
-                  var dataTable = [];
-                  for (var modelArrayPosition in allModelDataTable)
-                    dataTable.push([
-                      modelArrayPosition,
-                      allModelDataTable[modelArrayPosition],
-                    ]);
-                  var dataMenuArr = [];
-                  console.log(dataTable);
-                  dataTable.map((ele) => {
-                    if (ele[1][0].title == element.RelatedTable) {
-                      ele[1].map((member) => {
-                        var dataMenuArrLength = dataMenuArr.length;
-                        dataMenuArr[dataMenuArrLength] = {};
-                        dataMenuArr[dataMenuArrLength]["label"] = member.label;
-                        dataMenuArr[dataMenuArrLength]["value"] = member.value;
-                      });
-                    }
-                  });
-                  console.log(dataMenuArr);
-                  setSelectedOption((prev) => {
-                    const temp__details = [...prev];
-                    temp__details[i] = dataMenuArr;
-                    return temp__details;
-                  });
+                  const modelDataLabel = {
+                    procedureName: "",
+                    parameters: {
+                      TableName: "",
+                    },
+                  };
+                  modelDataLabel.procedureName = "prc_GetMasterInfoList";
+                  modelDataLabel.parameters.TableName = `${element.ColumnName}`;
+                  fetch("https://localhost:44372/api/GetData/GetDataByID", {
+                    method: "POST",
+                    headers: {
+                      authorization: `Bearer ${token}`,
+                      "content-type": "application/json",
+                    },
+                    body: JSON.stringify(modelDataLabel),
+                  })
+                    .then((res) => res.json())
+                    .then((data) => {
+                      if (data.status == true) {
+                        const allModalData = JSON.parse(data.data);
+                        var dataTable = [];
+                        for (var modelArrayPosition in allModalData)
+                          dataTable.push([
+                            modelArrayPosition,
+                            allModalData[modelArrayPosition],
+                          ]);
+                        var dataMenuArr = [];
+                        dataTable.map((elements) => {
+                          elements.map((member) => {
+                            for (var key in member) {
+                              if (member.hasOwnProperty(key)) {
+                                if (key != "0") {
+                                  if (key == element.ColumnValueField) {
+                                    var dataMenuArrLength = dataMenuArr.length;
+                                    dataMenuArr[dataMenuArrLength] = {};
+                                    dataMenuArr[dataMenuArrLength]["value"] =
+                                      member.ID;
+                                    var val = member[key];
+                                    dataMenuArr[dataMenuArrLength]["label"] =
+                                      val;
+                                  }
+                                }
+                              }
+                            }
+                            var allDropValueDataLength = 0;
+                            if (allDropValueData != null) {
+                              allDropValueDataLength =
+                                Object.keys(allDropValueData).length;
+                            }
+                          });
+                          // }
+                        });
+                        setSelectedOption((prev) => {
+                          const temp__details = [...prev];
+                          temp__details[i] = dataMenuArr;
+                          return temp__details;
+                        });
+                      } else {
+                        console.log(data);
+                      }
+                    });
+            
                 }
               });
             });
@@ -382,7 +503,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         .then((res) => res.json())
         .then((data) => {
           if (data.status == true) {
-            console.log(data);
             const allData = JSON.parse(data.data);
             const allLabelData = allData.Tables1;
             const getTableName = allData.Tables2;
@@ -407,18 +527,17 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 setColumnValues(columnValues);
               });
             }
-            var createColumnValuesObject = {};
+            var createColumnValuesObject = {ID:"newID()"};
 
-            // setColumnValues([]);
-            // setColumnValues( columnValues:[])
-            console.log(labelData);
+     
             var multipleDateArrayField = [];
             labelData.map((item, index) => {
               multipleDateArrayField[index] = [];
               item.forEach((element, i) => {
                 setLabelCount(i + 2);
                 multipleDateArrayField[index][i] = {};
-                console.log(element, i);
+                multipleDateArrayField[index]["" + i]["ID"] =
+                  'newID()';
                 multipleDateArrayField[index]["" + i]["ColumnName"] =
                   element.ColumnName;
                 multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
@@ -480,25 +599,19 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                   })
                     .then((res) => res.json())
                     .then((data) => {
-                      console.log(data);
                       if (data.status == true) {
-                        console.log(data)
                         const allModalData = JSON.parse(data.data);
-                     
-                        console.log(allModalData);
                         var dataTable = [];
-                        console.log(allModalData);
                         for (var modelArrayPosition in allModalData)
                           dataTable.push([
                             modelArrayPosition,
                             allModalData[modelArrayPosition],
                           ]);
-                        console.log(dataTable, allModalData);
+                       
                         var dataMenuArr = [];
                         dataTable.map((elements) => {
                           elements.map((member) => {
                             for (var key in member) {
-                              console.log(elements, key, element);
                               if (member.hasOwnProperty(key)) {
                                 if (key != "0") {
                                   if (key == element.ColumnValueField) {
@@ -513,23 +626,22 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                                 }
                               }
                             }
-                            console.log(dataMenuArr);
                             var allDropValueDataLength = 0;
                             if (allDropValueData != null) {
                               allDropValueDataLength =
                                 Object.keys(allDropValueData).length;
-                              console.log(allDropValueDataLength);
                             }
                           });
                           // }
                         });
-                        console.log(dataMenuArr);
+                      
                         setSelectedOption((prev) => {
-                          console.log(prev);
                           const temp__details = [...prev];
                           temp__details[i] = dataMenuArr;
                           return temp__details;
                         });
+                        
+            console.log(columnValues);
                       } else {
                         console.log(data);
                       }
@@ -543,6 +655,8 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               multipleDateArrayFieldcopy[index] = [];
               item.forEach((element, i) => {
                 multipleDateArrayFieldcopy[index][i] = {};
+                multipleDateArrayFieldcopy[index]["" + i]["ID"] =
+                  "newID()";
                 multipleDateArrayFieldcopy[index]["" + i]["ColumnName"] =
                   element.ColumnName;
                 multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
@@ -606,24 +720,20 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                   })
                     .then((res) => res.json())
                     .then((data) => {
-                      console.log(data);
                       if (data.status == true) {
                         const allModalData = JSON.parse(data.data);
-                        console.log(allModalData);
                         setAllModelDataTable(allModalData);
                         var dataTable = [];
-                        console.log(allModalData);
                         for (var modelArrayPosition in allModalData)
                           dataTable.push([
                             modelArrayPosition,
                             allModalData[modelArrayPosition],
                           ]);
-                        console.log(element.ColumnValueField);
+                      
                         var dataMenuArr = [];
                         dataTable.map((elements) => {
                           elements.map((member) => {
                             for (var key in member) {
-                              console.log(member);
                               if (member.hasOwnProperty(key)) {
                                 if (key != "0") {
                                   if (key == element.ColumnValueField) {
@@ -632,26 +742,24 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                                     dataMenuArr[dataMenuArrLength]["value"] =
                                       member.ID;
                                     var val = member[key];
-                                    console.log(val)
                                     dataMenuArr[dataMenuArrLength]["label"] =
                                       val;
                                   }
                                 }
                               }
                             }
-                            console.log(dataMenuArr);
+                         
                             var allDropValueDataLength = 0;
                             if (allDropValueData != null) {
                               allDropValueDataLength =
                                 Object.keys(allDropValueData).length;
-                              console.log(allDropValueDataLength);
+                             
                             }
                           });
                           // }
                         });
-                        console.log(dataMenuArr);
+                        
                         setSelectedOption((prev) => {
-                          console.log(prev);
                           const temp__details = [...prev];
                           temp__details[i] = dataMenuArr;
                           return temp__details;
@@ -667,10 +775,8 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
 
             setLabelData(multipleDateArrayField);
             setLabelDataCopy(multipleDateArrayFieldcopy);
-            console.log(twoDimensionData);
             setTwoDimentionData(twoDimensionData);
             setGetDate([...getDate, new Date()]);
-            console.log(createColumnValuesObject);
             setColumnValues([...columnValues, createColumnValuesObject]);
           } else {
             console.log(data);
@@ -684,22 +790,38 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     var calculationValue = 0;
     var target = 0;
     const calculationFormulaField = JSON.parse(calculationFormula);
-    const calculateFormulaField = calculationFormulaField.Formula;
-    console.log(calculateFormulaField[0].Field1);
+    const calculateFormulaField = calculationFormulaField[0].Formula;
+    console.log(calculateFormulaField,calculationFormulaField[0]);
 
     labelData[i].map((item, pos) => {
-      if (item.ColumnName == calculateFormulaField[0].Field1) {
+      console.log(labelData,item.ColumnName,item.ColumnValue,calculateFormulaField[0],calculationFormulaField.Target);
+      if (item.ColumnName.toUpperCase() == calculateFormulaField[0].Field1.toUpperCase()) {
+       
         if (item.ColumnValue != "") calculationValue1 = item.ColumnValue;
       }
-      if (item.ColumnName == calculateFormulaField[0].Field2) {
+      if (item.ColumnName.toUpperCase() == calculateFormulaField[0].Field2.toUpperCase()) {
         if (item.ColumnValue != "") calculationValue = item.ColumnValue;
       }
-      if (item.ColumnName == calculationFormulaField.Target) {
+      if (item.ColumnName.toUpperCase() == calculationFormulaField[0].Target.toUpperCase()) {
         target = pos;
       }
+
     });
+    console.log(columnValues,i,target,calculationFormulaField[0].Target.toUpperCase())
     const result = parseFloat(calculationValue) * parseFloat(calculationValue1);
+    setTotalAmount(result)
     labelData[i][target].ColumnValue = result;
+    
+    Object.entries(columnValues[i]).forEach((entry) => {
+      const [key, value] = entry;
+      console.log(value,key);
+      if(key.toUpperCase()==calculationFormulaField[0].Target.toUpperCase()){
+        entry[value] = result;
+        columnValues[i][key] = result;
+      }
+    });
+    // columnValues[i][target].ColumnName= result;
+    
   };
   // const   handleImageFile=(item, countOfInput, i)=>{
   //    const filteredArr = [];
@@ -742,12 +864,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
       const resultFile = URL.createObjectURL(files);
       var multipleDateArrayField = [...selectedImageSingle];
       multipleDateArrayField[i] = resultFile;
-      // setSelectedImageSingle((prevArr) => {
-      //   const result = [...prevArr];
-      //   result.push(resultFile);
-      //   return result;
-      // });
-      console.log(multipleDateArrayField);
+    
       setSelectedImageSingle(multipleDateArrayField);
       const filteredArr = [];
       columnValuesSingle.forEach((item) => {
@@ -788,8 +905,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
             className="getValue form-control"
             placeholder={item?.ColumnName}
             onChange={(e) => {
-              console.log(i);
-              // console.log(labelDataSingle[i]["ColumnValue"])
+             
               const { value } = e.target;
               const filteredArr = [];
               columnValuesSingle.forEach((item) => {
@@ -799,12 +915,10 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               });
 
               filteredArr[0][item?.ColumnName] = value;
-              console.log(filteredArr[0][item?.ColumnName]);
-              console.log(filteredArr);
+              
               setLabelDataSingle((prevArr) => {
                 const result = [...prevArr];
                 result[0][i].ColumnValue = value;
-                console.log([i]);
                 return result;
               });
               setColumnValuesSingle(filteredArr);
@@ -827,17 +941,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
             // value={labelDataSingle[i]["ColumnValue"]}
             selected={startDate}
             onChange={(e) => {
-              console.log(e);
-              // const date_data = getDate[i];
-              // setStartDate(startDate > new Date() ? new Date() : startDate);
-              // if (startDate == startDate) {
-              //   setIsDate(startDate ? false : true);
-              // }
-              // columnValues[i][item.ColumnName] =  formattedDate;
-              // setColumnValues(columnValues)
-
-              // var multipleDateArrayField = [...twoDimensionData];
-              // multipleDateArrayField[i] = e;
+              
               const newDate = e;
               var year = newDate.toLocaleString("default", {
                 year: "numeric",
@@ -861,6 +965,8 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 result[0][i].ColumnValue = formattedDate;
                 return result;
               });
+              console.log(formattedDate)
+              setStartDate(e)
               // getDate.push(e);
               // setTwoDimentionData(multipleDateArrayField);
               setColumnValuesSingle(filteredArr);
@@ -885,7 +991,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               //   (x) => x.value == labelDataSingle[i]["ColumnValue"]
               // )}
               onChange={(e) => {
-                console.log(e.value, i);
                 const filteredArr = [];
                 columnValuesSingle.forEach((item) => {
                   if (item !== undefined) {
@@ -896,7 +1001,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 filteredArr[0][item?.ColumnName] = e.value;
                 setLabelDataSingle((prevArr) => {
                   const result = [...prevArr];
-                  console.log(result[0][i], i, result);
                   result[0][i].ColumnValue = e.value;
                   return result;
                 });
@@ -993,7 +1097,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
       );
     }
     if (item.ColumnType == "image") {
-      console.log(selectedImageSingle);
       return (
         <div className="col-md-3 mb-2">
           <label htmlFor="">{str2.join(" ")}</label>
@@ -1036,9 +1139,9 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
       );
     }
   };
-  console.log(selectedOption)
+
   const handleInputValue = (item, countOfInput, i) => {
-    console.log(selectedImage, countOfInput, i);
+
     const handleImageChange = (event) => {
       const files = event.target.files[0];
       const resultFile = URL.createObjectURL(files);
@@ -1067,7 +1170,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     };
 
     const handleImageClick = (image) => {
-      console.log(image);
       setSelectedImagePopup(image);
     };
 
@@ -1088,12 +1190,13 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
             <input
               type="text"
               draggable="false"
+              required
               id={`item${i}`}
               size="small"
-              // disabled={
-              //   labelData[i][countOfInput]["IsDisable"]?.toLowerCase?.() ===
-              //   "true"
-              // }
+              disabled={
+                labelData[i][countOfInput]["IsDisable"]?.toLowerCase?.() ===
+                "false"
+              }
               name={`${i}input`}
               style={{ marginTop: "3px" }}
               value={labelData[i][countOfInput]["ColumnValue"]}
@@ -1103,26 +1206,35 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 const { value } = e.target;
                 const filteredArr = [];
                 columnValues.forEach((item) => {
+                  console.log(item)
                   if (item !== undefined) {
                     filteredArr.push(item);
                   }
                 });
 
+                if( labelData[i][countOfInput]["IsDisable"]?.toLowerCase?.() ===
+                "false"){
+                  filteredArr['amount']= totalAmount;
+                  labelData[i][countOfInput].ColumnValue = totalAmount;
+                }
                 filteredArr[i][item?.ColumnName] = value;
-
-                setLabelData((prevArr) => {
-                  const result = [...prevArr];
-                  result[i][countOfInput].ColumnValue = value;
-                  return result;
-                });
-
+                
+                // filteredArr[i][item?.ColumnValue] = totalAmount;
+                // setLabelData((prevArr) => {
+                //   const result = [...prevArr];
+                labelData[i][countOfInput].ColumnValue = value;
+                // labelData[i][target].ColumnValue = result;
+                //   return result;
+                // });
+                console.log(filteredArr)
                 setColumnValues(filteredArr);
-
+                console.log(item.ColumnName,item?.CalculationKey,labelData[i][countOfInput]["CalculationType"]);
                 if (
-                  labelData[i][countOfInput]["CalculationType"] == "dynamic"
+                  labelData[i][countOfInput]["CalculationType"] == "Auto"
                 ) {
-                  if (item.ColumnName == item?.CalculationKey) {
+                  if (item.ColumnName.toUpperCase() == item?.CalculationKey.toUpperCase()) {
                     const calculationFormula = item?.CalculationFormula;
+                    console.log(calculationFormula)
                     handleCalculation(calculationFormula, i, countOfInput);
                   } else {
                     console.log("hi");
@@ -1156,6 +1268,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 aria-label="Default select example"
                 name="groupId"
                 id="groupName"
+                required
                 placeholder="Select.."
                 options={selectedOption[countOfInput]}
                 // value={selectedOption[countOfInput].find(
@@ -1163,7 +1276,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 // )}
                 onChange={(e) => {
                   const filteredArr = [];
-                  console.log(columnValues);
                   columnValues.forEach((item) => {
                     if (item !== undefined) {
                       filteredArr.push(item);
@@ -1176,7 +1288,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                     result[i].ColumnValue = e.value;
                     return result;
                   });
-                  console.log(filteredArr);
                   setColumnValues(filteredArr);
                 }}
               ></Select>
@@ -1206,13 +1317,13 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               <FormControlLabel
                 name={`box${i}`}
                 id={`check${i}`}
+                required
                 style={{ marginTop: "3px", textAlign: "center" }}
                 control={<Checkbox />}
                 label="Label"
                 checked={labelData[i][countOfInput]["ColumnValue"]}
                 onChange={(e) => {
                   const { checked } = e.target;
-                  console.log(checked);
                   if (checked) {
                     let filteredArr = [];
                     columnValues.forEach((item) => {
@@ -1225,7 +1336,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                     //  filteredArr[i][item?.ColumnName] = value;
                     setLabelData((prevArr) => {
                       const result = [...prevArr];
-                      console.log(i, countOfInput, labelData, result);
                       result[i][countOfInput].ColumnValue = true;
                       return result;
                     });
@@ -1240,7 +1350,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                     filteredArr[i][item.ColumnName] = "false";
                     setLabelData((prevArr) => {
                       const result = [...prevArr];
-                      console.log(i, countOfInput, labelData, result);
                       result[i][countOfInput].ColumnValue = false;
                       return result;
                     });
@@ -1276,6 +1385,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 className="form-check-input"
                 type="radio"
                 name={`radio`}
+                required
                 id={`radio${i}`}
                 checked={labelData[i][countOfInput]["ColumnValue"]}
                 onChange={(e) => {
@@ -1289,12 +1399,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                     });
                     filteredArr[i][item.ColumnName] = "true";
                     labelData[i][countOfInput].ColumnValue = "true";
-                    // setLabelData((prevArr) => {
-                    //   const result = [...prevArr];
-                    //   console.log(i,countOfInput,labelData,result);
-                    //   result[i][countOfInput].ColumnValue = "true";
-                    //   return result;
-                    // });
+                   
                     setColumnValues(filteredArr);
                     setLabelData(labelData);
                     columnValues.forEach((e, index) => {
@@ -1349,6 +1454,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               className="input text-center w-75"
               name={`date${i}`}
               id={`date${i}`}
+              required
               placeholderText="Click to select a date"
               value={labelData[i][countOfInput]["ColumnValue"]}
               selected={twoDimensionData[i][countOfInput]}
@@ -1414,13 +1520,13 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
             {/* {replaceFunction("input", countOfInput)} */}
             <textarea
               class="form-control "
+              required
               value={labelData[i][countOfInput]["ColumnValue"]}
               id="exampleFormControlTextarea1"
               rows="1"
               onChange={(e) => {
                 const { value } = e.target;
                 const filteredArr = [];
-                console.log(columnValues);
                 columnValues.forEach((item) => {
                   if (item !== undefined) {
                     filteredArr.push(item);
@@ -1606,7 +1712,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
 
     // }
     setSelectedOption((prev) => {
-      console.log(prev);
       const temp__details = [...prev];
       temp__details[i] = dataMenuArr;
       return temp__details;
@@ -1615,38 +1720,25 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
 
 
   const handleSubmitData = (e, i) => {
-    Object.keys(columnValuesSingle).map(function (object) {
-      columnValuesSingle[object]["ID"] = "newID()";
-    });
-    Object.keys(columnValues).map(function (object) {
-      columnValues[object]["ID"] = "newID()";
-    });
-    e.preventDefault();
+ e.preventDefault();
     if (childPageType.PageType == "doubleEntryPage") {
+      Object.keys(columnValuesSingle).map(function (object) {
+        columnValuesSingle[object]["ID"] = "newID()";
+      });
       const modelPurchase = {
-        tableNameMaster: "testmodal",
-        tableNameChild: "testmodaldetails",
-        columnNamePrimary: "Id",
-        columnNameForign: "Id",
+        tableNameMaster: parentTableName,
+        tableNameChild: childTableName,
+        columnNamePrimary: "ID",
+        columnNameForign: "ID",
         columnNameSerialNo: "",
         serialType: "",
         IsFlag: "",
-        // data: {
-        //   TableXId: "",
-        //   MakeDate: "2022-01-01",
-        //   MakeBy: "Test",
-        //   PageSingleInfoId: "Test",
-        // },
         data: columnValuesSingle[0],
         detailsData: [],
       };
+
       columnValues.map((item) => {
-        modelPurchase.detailsData.push(item);
-      });
-      console.log(columnValuesSingle);
-      columnValuesSingle.map((item) => {
-        console.log(item);
-        // modelPurchase.data.push(item)
+        modelPurchase.detailsData.push(item)
       });
       fetch(`https://localhost:44372/api/DoubleMasterEntry/Insert`, {
         method: "POST",
@@ -1674,9 +1766,10 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
             });
           }
         });
-      console.log(modelPurchase);
+      console.log(JSON.stringify(modelPurchase));
     }
     if (childPageType.PageType == "singleEntryPage") {
+      console.log(columnValues)
       const modelSingleData = {
         tableNameMaster: null,
         tableNameChild: childTableName,
@@ -1726,7 +1819,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   document.ondragstart = function (event, i) {
     if (event.target.nodeName == "TH") {
       var allelement = document.querySelectorAll(".droptargettd");
-      console.log(allelement);
       allelement.forEach((element) => {
         element.style.display = "block";
       });
@@ -1747,7 +1839,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
 
   document.ondrop = function (event) {
     event.preventDefault();
-    console.log(event);
     var data = event.dataTransfer.getData("Text");
 
     if (
@@ -1756,7 +1847,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     ) {
       if (event.target.className == "droptargettd") {
         var allelement = document.querySelectorAll(".droptargettd");
-        console.log(allelement);
         allelement.forEach((element) => {
           element.style.display = "none";
         });
@@ -1833,7 +1923,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                 document.getElementById(data),
                 event.target.parentElement.id
               );
-              console.log(event.target.parentElement.id);
+              
             }
           });
       }
@@ -1843,7 +1933,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   };
 
   function insertBefore(newNode, refNode) {
-    console.log(newNode);
     var getID = document.getElementById(refNode);
     document
       .getElementById(refNode)
@@ -1854,7 +1943,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   }
 
   function insertAfter(newNode, refNode) {
-    console.log(newNode, refNode);
     var fromthid = "";
     var fromthclass = "";
     var tothid = "";
@@ -1864,8 +1952,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     fromthclass = newNode.className;
     tothid = refNode;
     tothclass = document.getElementById(refNode).className;
-
-    console.log(fromthid, fromthclass, tothid, tothclass);
 
     document
       .getElementById(refNode)
@@ -1889,7 +1975,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     toNode = toNode.replace(" borders", "");
 
     var b = document.getElementsByTagName("th");
-    console.log(b, toNode);
     for (var index = 0; index < b.length; index++) {
       if (b[index].className == refNode) {
         topositions = index;
@@ -1897,7 +1982,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         frompositions = index;
       }
     }
-    console.log(frompositions, topositions);
+
     if (topositions < 0) {
       topositions = 0;
     }
@@ -1907,7 +1992,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     var multipleDateArrayField = [...labelData];
     multipleDateArrayField.map((item, index) => {
       const e = item.splice(frompositions, 1)[0];
-      console.log(e); // ['css']
       item.splice(parseInt(topositions)-2, 0, e);
 
       multipleDateArrayField[index] = item;
@@ -1924,13 +2008,12 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
       multipleDateArrayFieldcopy[index] = item;
     });
 
-    console.log(multipleDateArrayField);
     setLabelDataCopy(multipleDateArrayFieldcopy);
 
     // labelData = multipleDateArrayField;
 
     var tempjson = [];
-    console.log(labelData);
+
     labelData.map((item, index) => {
       tempjson[index] = {};
       item.map((e, i) => {
@@ -1938,9 +2021,16 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         if (item.ColumnType == "datetime") {
           twoDimensionData[index][i] = item.ColumnValue;
         }
-        console.log(e, tempjson, columnValues[index][e.ColumnName]);
+        const findPageType = childMenu.find((item) => item.MenuId == id);
+        if (findPageType.PageType == "doubleEntryPage"){
+          tempjson[index] = {DetailsID:"newID()",ID:""};
+        }
+        if (findPageType.PageType == "singleEntryPage"){
+          tempjson[index] = {ID:"newID()"};
+        }
+
         tempjson["" + index][e.ColumnName] = columnValues[index][e.ColumnName];
-        console.log(item, index, i);
+
         
         if (item[i].RelatedTable != null) {
           const modelDataLabel = {
@@ -1961,25 +2051,18 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
           })
             .then((res) => res.json())
             .then((data) => {
-              console.log(data);
               if (data.status == true) {
-                console.log(data)
                 const allModalData = JSON.parse(data.data);
-             
-                console.log(allModalData);
                 var dataTable = [];
-                console.log(allModalData);
                 for (var modelArrayPosition in allModalData)
                   dataTable.push([
                     modelArrayPosition,
                     allModalData[modelArrayPosition],
                   ]);
-                console.log(dataTable, allModalData);
                 var dataMenuArr = [];
                 dataTable.map((elements) => {
                   elements.map((member) => {
                     for (var key in member) {
-                      console.log(elements, key, item);
                       if (member.hasOwnProperty(key)) {
                         if (key != "0") {
                           if (key == item[i].ColumnValueField) {
@@ -1994,19 +2077,17 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                         }
                       }
                     }
-                    console.log(dataMenuArr);
+                   
                     var allDropValueDataLength = 0;
                     if (allDropValueData != null) {
                       allDropValueDataLength =
                         Object.keys(allDropValueData).length;
-                      console.log(allDropValueDataLength);
+                  
                     }
                   });
                   // }
                 });
-                console.log(dataMenuArr);
                 setSelectedOption((prev) => {
-                  console.log(prev);
                   const temp__details = [...prev];
                   temp__details[i] = dataMenuArr;
                   return temp__details;
@@ -2018,7 +2099,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     
         }
 
-        console.log(dataMenuArr);
         setSelectedOption((prev) => {
           const temp__details = [...prev];
           temp__details[i] = dataMenuArr;
@@ -2035,16 +2115,15 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     var arr = [...allelement];
 
     var fromNode = refNode.replace("dropTh", "");
-    fromNode = fromNode.replace(" border", "");
+    fromNode = fromNode.replace("border", "");
 
     var frompositions = 0;
     var topositions = 0;
 
     var toNode = newNode[0].className.replace("dropTh", "");
-    toNode = toNode.replace(" borders", "");
+    toNode = toNode.replace("border", "");
 
     var b = document.getElementsByTagName("th");
-    console.log(refNode,frompositions,toNode);
     for (var index = 0; index < b.length; index++) {
       if (b[index].className == refNode) {
         topositions = index - 1;
@@ -2052,7 +2131,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         frompositions = index;
       }
     }
-    console.log(frompositions, topositions);
+
     if (topositions < 0) {
       topositions = 0;
     }
@@ -2061,31 +2140,33 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     }
     var multipleDateArrayField = [...labelData]; //JSON.parse(JSON.stringify(labelData));
     multipleDateArrayField.map((item, index) => {
+      console.log(item)
       const e = item.splice(frompositions, 1)[0];
       console.log(e); // ['css']
       item.splice(parseInt(topositions), 0, e);
 
       multipleDateArrayField[index] = item;
+      console.log(multipleDateArrayField)
     });
-    console.log(multipleDateArrayField);
     setLabelData(multipleDateArrayField);
 
     var multipleDateArrayFieldcopy = [...labelDataCopy];
     multipleDateArrayFieldcopy.map((item, index) => {
+
+      console.log(item)
       const e = item.splice(frompositions, 1)[0];
-      console.log(e); // ['css']
       item.splice(parseInt(topositions), 0, e);
 
       multipleDateArrayFieldcopy[index] = item;
+      console.log(multipleDateArrayFieldcopy)
     });
-
-    console.log(multipleDateArrayField);
     setLabelDataCopy(multipleDateArrayFieldcopy);
 
     // labelData = multipleDateArrayField;
 
     var tempjson = [];
     labelData.map((item, index) => {
+      console.log(item)
       tempjson[index] = {};
       item.map((e, i) => {
         if (item.ColumnType == "datetime") {
@@ -2095,8 +2176,17 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         tempjson["" + index][e.ColumnName] = columnValues[index][e.ColumnName];
 
         labelData.map((item, index) => {
-          console.log(item)
-          tempjson[index] = {};
+          const findPageType = childMenu.find((item) => item.MenuId == id);
+          console.log(findPageType.PageType)
+          if (findPageType.PageType == "doubleEntryPage"){
+
+            tempjson[index] = {DetailsID:"newID()",ID:""};
+          }
+          if (findPageType.PageType == "singleEntryPage"){
+            tempjson[index] = {ID:"newID()"};
+
+          }
+
           item.map((e, i) => {
             var dataMenuArr = [];
             if (item.ColumnType == "datetime") {
@@ -2126,25 +2216,18 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               })
                 .then((res) => res.json())
                 .then((data) => {
-                  console.log(data);
                   if (data.status == true) {
-                    console.log(data)
                     const allModalData = JSON.parse(data.data);
-                 
-                    console.log(allModalData);
                     var dataTable = [];
-                    console.log(allModalData);
                     for (var modelArrayPosition in allModalData)
                       dataTable.push([
                         modelArrayPosition,
                         allModalData[modelArrayPosition],
                       ]);
-                    console.log(dataTable, allModalData);
                     var dataMenuArr = [];
                     dataTable.map((elements) => {
                       elements.map((member) => {
                         for (var key in member) {
-                          console.log(elements, key, item);
                           if (member.hasOwnProperty(key)) {
                             if (key != "0") {
                               if (key == item[i].ColumnValueField) {
@@ -2159,19 +2242,15 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                             }
                           }
                         }
-                        console.log(dataMenuArr);
                         var allDropValueDataLength = 0;
                         if (allDropValueData != null) {
                           allDropValueDataLength =
                             Object.keys(allDropValueData).length;
-                          console.log(allDropValueDataLength);
                         }
                       });
                       // }
                     });
-                    console.log(dataMenuArr);
                     setSelectedOption((prev) => {
-                      console.log(prev);
                       const temp__details = [...prev];
                       temp__details[i] = dataMenuArr;
                       return temp__details;
@@ -2183,7 +2262,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
         
             }
 
-            console.log(dataMenuArr);
             setSelectedOption((prev) => {
               const temp__details = [...prev];
               temp__details[i] = dataMenuArr;
@@ -2195,10 +2273,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
     });
     setTwoDimentionData(twoDimensionData);
     setColumnValues(tempjson);
-
-    // arr.forEach((element, i) => {
-    //   element.parentNode.insertBefore(newNode[i], element.nextSibling);
-    // });
+    console.log(tempjson)
   }
   // const handleDropdown = (i) => {
   //   console.log(i)
@@ -2281,7 +2356,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                     type="button"
                     style={{ marginLeft: "5px", background: "#5A6691" }}
                     onClick={(e, index) => {
-                      console.log(e);
                       e.preventDefault();
                       handleLabelField();
                     }}
@@ -2296,7 +2370,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                       className="ms-2"
                       type="submit"
                       onClick={(e, index) => {
-                        console.log(e);
                         handleSubmitData(e, index);
                       }}
                     >
@@ -2318,6 +2391,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                           setTwoDimentionData,
                           selectedImage,
                           setSelectedImage,
+                          childPageType
                         });
                       }}
                     >
@@ -2346,7 +2420,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
               <br />
               <FieldArray
                 render={(arrayHelpers) => {
-                  console.log(labelData);
                   return (
                     <div
                       div
@@ -2358,7 +2431,6 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
                             return (
                               <div className="row mb-4">
                                 {items?.map((item, i) => {
-                                  console.log(item, i);
                                   return handleSingleData(item, i);
                                 })}
                               </div>

@@ -1,4 +1,4 @@
-import { Grid, TextField } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import "../SingleEntryForm/SingleEntryForm.css";
@@ -72,7 +72,13 @@ const DoubleEntryChildData = ({
   arrayTextAreaDetails,
   arrayImageDetails,
   pageFormulaDetails,
-setPageFormulaDetails
+setPageFormulaDetails,
+radioButton2,setRadioButton2,
+keyValue, setKeyValue,
+showCalculactionModalDetails,
+setShowCalculactionModalDetails,
+allInputValueForFormulaDataDetails, setAllInputValueForFormulaDataDetails,
+childModalTitle,setChildModalTitle
 }) => {
   const [inputSchemaDetails, setInputSchemaDetails] = useState(null);
   const [dropSchemaDetails, setDropSchemaDetails] = useState(null);
@@ -82,35 +88,16 @@ setPageFormulaDetails
   const [showErrorModalDetails, setShowErrorModalDetails] = useState(false);
   const [errorMessageStringDetails, setErrorMessageStringDetails] =
     useState("");
-  const [
-    allInputValueForFormulaDataDetails,
-    setAllInputValueForFormulaDataDetails,
-  ] = useState([]);
+ 
  
   const [allDataDetails, setAllDataDetails] = useState([]);
   const [selectedOptionDetails, setSelectedOptionDetails] = useState([]);
   const [modalSpecificDataDetails, setModalSpecificDataDetails] = useState([]);
   const [allModelDataTableDetails, setAllModelDataTableDetails] = useState([]);
   const [pageNameDetails, setPageNameDetails] = useState("");
-  const [field1ValidationDetails, setField1ValidationDetails] = useState(2);
-  const [field2ValidationDetails, setField2ValidationDetails] = useState(2);
-  const [fieldTargetValidationDetails, setFieldTargetValidationDetails] = useState(2);
-  const [fieldFormulaValidationDetails, setFieldFormulaValidationDetails] = useState(2);
-  const [showCalculactionModalDetails, setShowCalculactionModalDetails] = useState(false);
-  const [keyValue, setKeyValue] = useState([
-    {
-      key: "qty",
-      type: "calcField",
-    },
-    {
-      key: "rate",
-      type: "calcField",
-    },
-    {
-      key: "amount",
-      type: "targetField",
-    },
-  ]);
+
+  
+
   // const [selectedListName, setSelectedListName] = useState([]);
   const handleClose = () => setShowCalculactionModalDetails(false);
   const handleDropClose = () => setShowDropDownModalDetails(false);
@@ -121,14 +108,17 @@ setPageFormulaDetails
   const [errorsDateDetails, setErrorsDateDetails] = useState([]);
   const [errorsCheckDetails, setErrorsCheckDetails] = useState([]);
   const [childMenu, setChildMenu] = useChildMenu([]);
-
+  const [show2, setShow2] = useState(false);
+  
+  const [menuId, setMenuId] = useState("");
+  const [dropdownName, setDropdownName] = useState([]);
   const token = Token.token;
   const tableName = childMenuName.SubMenuName;
   const spaceRemove = tableName.split(" ").join("");
   const tableNameLowerCase = spaceRemove.toLowerCase();
 
   console.log(selectedOptionDetails,allDropValueDataDetails)
-
+console.log(radioButton2)
   // var tableCreateData = "";
   // Object.entries(allInputValueDataDetails).forEach((entry) => {
   //   const [key, value] = entry;
@@ -329,7 +319,11 @@ setPageFormulaDetails
       });
   };
   const handleDropdownValue = (i) => {
+    console.log(i);
+
+    console.log(document.querySelector('input[name="dropValueField"]:checked'));
     var radioName = 0;
+    console.log(radioName);
     if (
       document.querySelector('input[name="dropValueField"]:checked') != null
     ) {
@@ -337,34 +331,119 @@ setPageFormulaDetails
         'input[name="dropValueField"]:checked'
       ).value;
     }
-    var dataTable = [];
-    for (var modelArrayPosition in allModelDataTableDetails)
-      dataTable.push([
-        modelArrayPosition,
-        allModelDataTableDetails[modelArrayPosition],
-      ]);
+    console.log(radioName);
+    setChildModalTitle(radioName)
+    let newString = radioName.replace("-", "_");
+    const spaceRemove = newString.split(" ").join("");
+    const convertLowerCase = spaceRemove.toLowerCase();
+    let tableName = convertLowerCase;
 
-    var dataMenuArr = [];
-    dataTable.map((element) => {
-      if (element[1][0].title == radioName) {
-        element[1].map((member) => {
-          var dataMenuArrLength = dataMenuArr.length;
-          dataMenuArr[dataMenuArrLength] = {};
-          dataMenuArr[dataMenuArrLength]["label"] = member.label;
-          dataMenuArr[dataMenuArrLength]["value"] = member.value;
-          var allDropValueDataLengthDetails = 0;
-          if (allDropValueDataDetails != null) {
-            allDropValueDataLengthDetails = Object.keys(
-              allDropValueDataDetails
-            ).length;
-          }
-
+    const modelDataLabel = {
+      procedureName: "",
+      parameters: {
+        TableName: "",
+      },
+    };
+    modelDataLabel.procedureName = "prc_GetMasterInfoList";
+    modelDataLabel.parameters.TableName = `${tableName}`;
+    fetch("https://localhost:44372/api/GetData/GetDataByID", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelDataLabel),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.status == true) {
+          const allModalData = JSON.parse(data.data);
+          console.log(allModalData);
+          setAllModelDataTableDetails(allModalData);
+      
           setAllDropValueDataDetails({
             ...allDropValueDataDetails,
             [i]: radioName,
           });
+        } else {
+          console.log(data);
+        }
+      });
+      const modelData = {
+        procedureName: "prc_GetPageInfo",
+        parameters: {
+          MenuId: menuId,
+        },
+      };
+      fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(modelData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status == true) {
+            console.log(data);
+            const showSingleData = JSON.parse(data.data);
+            console.log(showSingleData)
+            setDropdownName(showSingleData.Tables1);
+          }
         });
-      }
+    setShowDropDownModalDetails(false);
+  };
+
+  const handleDropdown = (i) => {
+    console.log(i)
+    let radioName=0
+    if (
+      document.querySelector('input[name="dropValueFieldCheck"]:checked') != null
+    ) {
+      radioName = document.querySelector(
+        'input[name="dropValueFieldCheck"]:checked'
+      ).value;
+    }
+  console.log(radioName)
+  setRadioButton2([...radioButton2,radioName])
+    var dataTable = [];
+          console.log(allModelDataTableDetails);
+          for (var modelArrayPosition in allModelDataTableDetails)
+            dataTable.push([
+              modelArrayPosition,
+              allModelDataTableDetails[modelArrayPosition],
+            ]);
+          console.log(dataTable,allModelDataTableDetails);
+    var dataMenuArr = [];
+    dataTable.map((element) => {
+      console.log(element);
+
+      // if (element[1][0].title == radioName) {
+      element.map((member) => {
+        for (var key in member) {
+          if (member.hasOwnProperty(key)) { 
+            if (key != "0") {
+              if (key==radioName) {
+                var dataMenuArrLength = dataMenuArr.length;
+                dataMenuArr[dataMenuArrLength] = {};
+                dataMenuArr[dataMenuArrLength]["value"] = member.ID;
+                var val = member[key];
+                dataMenuArr[dataMenuArrLength]["label"] =val
+                ;
+              }
+            }
+          }
+        }
+        console.log(dataMenuArr);
+        var allDropValueDataLength = 0;
+        if (allDropValueDataDetails != null) {
+          allDropValueDataLength = Object.keys(allDropValueDataDetails).length;
+          console.log(allDropValueDataLength);
+        } 
+      });
+      // }
     });
     setSelectedOptionDetails((prev) => {
       console.log(prev);
@@ -372,9 +451,7 @@ setPageFormulaDetails
       temp__details[i] = dataMenuArr;
       return temp__details;
     });
-    setShowDropDownModalDetails(false);
   };
-
   function validationOutsideSchema() {
     var allInputValueDataLengthDetails = 0;
     if (allInputValueDataDetails != null) {
@@ -1202,252 +1279,6 @@ setPageFormulaDetails
       </div>
 
       <Modal
-        show={showCalculactionModalDetails}
-        onHide={handleClose}
-        size="lg"
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header>
-          <Modal.Title style={{ color: "#000", fontWeight: "bold" }}>
-            Calculation{" "}
-          </Modal.Title>
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Close"
-            onClick={handleClose}
-          >
-            X
-          </button>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="w-50">
-            <label className="fw-bold" style={{ color: "#000" }} htmlFor="">
-              Calculation Type
-            </label>
-            <Select
-              class="form-select"
-              className="w-[100%] mt-2"
-              aria-label="Default select example"
-              // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-              options={[
-                {
-                  label: "Manual",
-                  value: "Manual",
-                },
-                {
-                  label: "Auto",
-                  value: "Auto",
-                },
-              ]}
-              id={`dropValue`}
-              onChange={(e) => {
-                console.log(e.value);
-                setCalculationTypeDetails(e.value);
-                if (e.value == "Auto") {
-                  setDisplayFormulaAutoDetails(true);
-                } else {
-                  setDisplayFormulaAutoDetails(false);
-                }
-              }}
-            ></Select>
-          </div>
-          <div
-            className={`d-flex justify-content-between ${
-              displayFormulaAutoDetails ? "d-visible" : "d-hidden"
-            } mt-4`}
-          >
-            <div className="w-100">
-              <label className="fw-bold" htmlFor="">
-                Field1
-              </label>
-              <Select
-                class="form-select"
-                className="w-[100%] mt-2"
-                aria-label="Default select example"
-                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                options={allInputValueForFormulaDataDetails}
-                id={`dropValueField1`}
-                onChange={(e) => {
-                  console.log(e.value, pageFormulaDetails);
-                  if (
-                    pageFormulaDetails[0]["Formula"][0]["Field2"] == e.value
-                  ) {
-                    setField1ValidationDetails(0);
-                  } else if (pageFormulaDetails[0]["Target"] == e.value) {
-                    setField1ValidationDetails(0);
-                  } else {
-                    setField1ValidationDetails(1);
-                    pageFormulaDetails[0]["Formula"][0]["Field1"] = e.value;
-                  }
-                }}
-              ></Select>
-
-              {field1ValidationDetails == 0 ? (
-                <label className="" style={{ color: "red" }}>
-                  Value can not be same as Field2 or Target
-                </label>
-              ) : (
-                ""
-              )}
-            </div>
-            <div className="w-100 ms-2">
-              <label className="fw-bold" htmlFor="">
-                Formula
-              </label>
-              <Select
-                class="form-select"
-                className="w-[100%] mt-2"
-                aria-label="Default select example"
-                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                options={[
-                  {
-                    label: "+",
-                    value: "+",
-                  },
-                  {
-                    label: "-",
-                    value: "-",
-                  },
-                  {
-                    label: "*",
-                    value: "*",
-                  },
-                  {
-                    label: "/",
-                    value: "/",
-                  },
-                ]}
-                id={`dropValueFormula`}
-                onChange={(e) => {
-                  console.log(e.value);
-                  pageFormulaDetails[0]["Formula"][0]["FormulaType"] = e.value;
-                  if (e.value != "") {
-                    setFieldFormulaValidationDetails(1);
-                  } else {
-                    setFieldFormulaValidationDetails(0);
-                  }
-                }}
-              ></Select>
-
-              {fieldFormulaValidationDetails == 0 ? (
-                <label className="" style={{ color: "red" }}>
-                  Value can not be empty
-                </label>
-              ) : (
-                ""
-              )}
-            </div>
-            <div className="w-100 ms-2">
-              <label className="fw-bold" htmlFor="">
-                Field2
-              </label>
-              <Select
-                class="form-select"
-                className="w-[100%] mt-2"
-                aria-label="Default select example"
-                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                options={allInputValueForFormulaDataDetails}
-                id={`dropValueField2`}
-                onChange={(e) => {
-                  console.log(e.value);
-                  if (
-                    pageFormulaDetails[0]["Formula"][0]["Field1"] == e.value
-                  ) {
-                    setField2ValidationDetails(0);
-                  } else if (pageFormulaDetails[0]["Target"] == e.value) {
-                    setField2ValidationDetails(0);
-                  } else {
-                    setField2ValidationDetails(1);
-                    pageFormulaDetails[0]["Formula"][0]["Field2"] = e.value;
-                  }
-                }}
-              ></Select>
-              {field2ValidationDetails == 0 ? (
-                <label className="" style={{ color: "red" }}>
-                  Value can not be same as Field1 or Target
-                </label>
-              ) : (
-                ""
-              )}
-            </div>
-            <div className="w-100 ms-2">
-              <label className="fw-bold" htmlFor="">
-                Target
-              </label>
-              <Select
-                class="form-select"
-                className="w-[100%] mt-2"
-                aria-label="Default select example"
-                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                options={allInputValueForFormulaDataDetails}
-                id={`dropValueFieldTarget`}
-                onChange={(e) => {
-                  if (
-                    pageFormulaDetails[0]["Formula"][0]["Field1"] == e.value
-                  ) {
-                    setFieldTargetValidationDetails(0);
-                  } else if (
-                    pageFormulaDetails[0]["Formula"][0]["Field2"] == e.value
-                  ) {
-                    setFieldTargetValidationDetails(0);
-                  } else {
-                    console.log(e.value);
-                    setFormulaTargetDetails(e.value);
-                    setFieldTargetValidationDetails(1);
-                    pageFormulaDetails[0]["Target"] = e.value;
-                  }
-                }}
-              ></Select>
-              {fieldTargetValidationDetails == 0 ? (
-                <label className="" style={{ color: "red" }}>
-                  Value can not be same as Field1 or Field2
-                </label>
-              ) : (
-                ""
-              )}
-            </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <button
-            type="button"
-            class="btn"
-            style={{ backgroundColor: "#34C38F", color: "white" }}
-            onClick={() => {
-              if (pageFormulaDetails[0]["Formula"][0]["FormulaType"] == "") {
-                setFieldFormulaValidationDetails(0);
-              }
-              if (pageFormulaDetails[0]["Formula"][0]["Field2"] == "") {
-                setField1ValidationDetails(0);
-              }
-              if (pageFormulaDetails[0]["Formula"][0]["Field1"] == "") {
-                setField1ValidationDetails(0);
-              }
-              if (pageFormulaDetails[0]["Formula"][0]["FormulaType"] == "") {
-                setFieldFormulaValidationDetails(0);
-              }
-              if (pageFormulaDetails[0]["Formula"][0]["Target"] == "") {
-                setFieldTargetValidationDetails(0);
-              }
-              if (
-                field1ValidationDetails != 1 ||
-                field2ValidationDetails != 1 ||
-                fieldFormulaValidationDetails != 1 ||
-                fieldTargetValidationDetails != 1
-              ) {
-              } else {
-                // addList();
-                // submitForm();
-              }
-            }}
-          >
-            Save changes
-          </button>
-        </Modal.Footer>
-      </Modal>
-      <Modal
         show={showDropDownModalDetails}
         onHide={handleDropClose}
         backdrop="true"
@@ -1477,7 +1308,9 @@ setPageFormulaDetails
                       value={filteredPerson.SubMenuName}
                       name="dropValueField"
                       aria-label="Radio button for following text input"
-                      onClick={(e) => {}}
+                      onClick={(e) => {
+                        setMenuId(filteredPerson.MenuId);
+                      }}
                     />
                   </div>
                 </div>
@@ -1496,6 +1329,7 @@ setPageFormulaDetails
             aria-label="Close"
             onClick={(e) => {
               handleDropdownValue(currentDropSelectedDetails);
+              setShow2(true);
             }}
           >
             Save changes
@@ -1525,7 +1359,47 @@ setPageFormulaDetails
         <Modal.Body>
           <label>{errorMessageStringDetails}</label>
         </Modal.Body>
+
       </Modal>
+      <Modal show={show2} onHide={() => setShow2(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>{childModalTitle}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {dropdownName.map((item, i) => {
+              console.log(item);
+              return (
+                <>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">
+                        <input
+                          type="radio"
+                          value={item.ColumnName}
+                          name="dropValueFieldCheck"
+                          aria-label="Radio button for following text input"
+                          onClick={(e) => {}}
+                        />
+                      </div>
+                    </div>
+                    <h4 className="text-black ms-2 fs-5">{item.ColumnName}</h4>
+                  </div>
+                </>
+              );
+            })}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="danger"
+              onClick={(e) => {
+                handleDropdown(currentDropSelectedDetails);
+                setShow2(false);
+              }}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
     </Grid>
   );
 };

@@ -1,8 +1,5 @@
 import {
   Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
   Grid,
   TextField,
 } from "@mui/material";
@@ -11,21 +8,15 @@ import Select from "react-select";
 import "./SingleEntryForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowsRotate,
-  faPlus,
   faPlusCircle,
 } from "@fortawesome/free-solid-svg-icons";
-
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
-import { json, useLocation, useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import * as Yup from "yup";
 import Token from "../common/Token";
-import useParentMenu from "../customHooks/useParentMenu";
-import useParentDropdown from "../customHooks/useParentDropdown";
 import useChildMenu from "./../customHooks/useChildMenu";
+
 const SingleEntryForm = ({
   setExist,
   parentMenuName,
@@ -78,8 +69,7 @@ const SingleEntryForm = ({
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessageString, setErrorMessageString] = useState("");
   const [radioButton,setRadioButton]=useState([])
-  const [allInputValueForFormulaData, setAllInputValueForFormulaData] =
-    useState([]);
+  const [allInputValueForFormulaData, setAllInputValueForFormulaData] =useState([]);
   const [show2, setShow2] = useState(false);
   const [pageFormula, setPageFormula] = useState([
     { Formula: [{ Field1: "", FormulaType: "", Field2: "" }], Target: {} },
@@ -94,20 +84,7 @@ const SingleEntryForm = ({
   const [fieldTargetValidation, setFieldTargetValidation] = useState(2);
   const [fieldFormulaValidation, setFieldFormulaValidation] = useState(2);
   const [showCalculactionModal, setShowCalculactionModal] = useState(false);
-  const [keyValue, setKeyValue] = useState([
-    {
-      key: "qty",
-      type: "calcField",
-    },
-    {
-      key: "rate",
-      type: "calcField",
-    },
-    {
-      key: "amount",
-      type: "targetField",
-    },
-  ]);
+  const [keyValue, setKeyValue] = useState([]);
   const [selectedListName, setSelectedListName] = useState([]);
   const handleClose = () => setShowCalculactionModal(false);
   const handleDropClose = () => setShowDropDownModal(false);
@@ -128,9 +105,9 @@ const SingleEntryForm = ({
   var tableTextareaData = [];
   var tableImageData = [];
 
-  // const search = useLocation();
-  // const link = search.pathname.split("/");
-  // let id = link[2];
+console.log(keyValue)
+console.log(inputValue)
+console.log(allInputValueData)
   const token = Token.token;
   const tableName = childMenuName.SubMenuName;
   let newString = tableName.replace("-", "_");
@@ -570,6 +547,30 @@ const SingleEntryForm = ({
     }
   };
 
+  useEffect(()=>{
+    const modelKeyData = {
+      procedureName: "",
+      parameters: {},
+    };
+    modelKeyData.procedureName = "prc_getInitialData";
+    fetch("https://localhost:44372/api/GetData/GetInitialData", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelKeyData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == true) {
+          const allKeyData = JSON.parse(data.data);
+          setKeyValue(allKeyData.Tables1);
+        } else {
+          console.log(data);
+        }
+      });
+  },[])
   const handleModalMenu = () => {
     const modelData = {
       procedureName: "",
@@ -589,7 +590,8 @@ const SingleEntryForm = ({
         console.log(data);
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
-          console.log(allModalData);
+          console.log(allModalData)
+         
           setModalSpecificData(allModalData.Tables2);
         } else {
           console.log(data);
@@ -609,7 +611,7 @@ const SingleEntryForm = ({
         'input[name="dropValueField"]:checked'
       ).value;
     }
-    console.log(radioName);
+    setSelectedListName(radioName);
 
     let newString = radioName.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
@@ -754,7 +756,7 @@ const SingleEntryForm = ({
 
     if (totalField > 12) {
       setErrorMessageString("There cannot be more than 12 input");
-      showErrorModal(true);
+      setShowErrorModal(true);
     } else if (totalField == 0) {
       setErrorMessageString("There need to be more than 0 input");
       setShowErrorModal(true);
@@ -1081,7 +1083,21 @@ const SingleEntryForm = ({
             variant="contained"
             className="btn-createMenu"
             style={{ marginLeft: "10px", background: "#F06548" }}
-            onClick={() => {}}
+            onClick={() => {
+              setChildMenuName({SubMenuName:''})
+              setInputValue('')
+              setInputValueDDF('')
+              setInputValueCheck('')
+              setInputValueDate('')
+              setInputValueTextArea('')
+              setInputValueImage('')
+              setAllInputValueData('')
+              setAllDropValueData('')
+              setAllCheckValueData('')
+              setAllDateValueData('')
+              setAllTextAreaValueData('')
+              setAllImageValueData('')
+            }}
           >
             Clear
           </button>
@@ -1098,6 +1114,8 @@ const SingleEntryForm = ({
                 type="number"
                 size="small"
                 defaultValue="0"
+                className="noscroll"
+                onWheel={(e) => e.preventDefault()} 
                 value={inputValue}
                 onChange={(e) => {
                   if (e.target.value < 0) {
@@ -1356,7 +1374,7 @@ const SingleEntryForm = ({
                       variant="outlined"
                       size="small"
                       placeholder="Text Field"
-                      className="getInputValue mt-2"
+                      className="getInputValue mt-2 noscroll"
                       required
                       onChange={(e) => {
                         setAllInputValueData({
@@ -1378,9 +1396,10 @@ const SingleEntryForm = ({
                     {errorsInput
                       .filter((err) => err.index === name)
                       .map((err, i) => (
-                        <div style={{ color: "#FF0000" }} key={i}>
-                          This Field is required
-                        </div>
+                        console.log(err)
+                        // <div style={{ color: "#FF0000" }} key={i}>
+                        //   This Field is required
+                        // </div>
                       ))}
                   </div>
                 );
@@ -1389,7 +1408,7 @@ const SingleEntryForm = ({
             <div class="col">
               {dropdownData.map((item, name) => {
                 return (
-                  <div className="d-flex align-items-center ">
+                  <div className="d-flex align-items-center">
                     <div className="w-100">
                       <Select
                         class="form-select w-100"
@@ -1635,14 +1654,19 @@ const SingleEntryForm = ({
                   options={allInputValueForFormulaData}
                   id={`dropValueField1`}
                   onChange={(e) => {
+                    let fieldName=e.value;
+                    let newString = fieldName.replace("-", "_");
+                    const spaceRemove = newString.split(" ").join("");
+                    const fieldNameLowerCase = spaceRemove.toLowerCase();
+                    console.log(fieldNameLowerCase)
                     console.log(e.value, pageFormula);
-                    if (pageFormula[0]["Formula"][0]["Field2"] == e.value) {
+                    if (pageFormula[0]["Formula"][0]["Field2"] == fieldNameLowerCase) {
                       setField1Validation(0);
-                    } else if (pageFormula[0]["Target"] == e.value) {
+                    } else if (pageFormula[0]["Target"] == fieldNameLowerCase) {
                       setField1Validation(0);
                     } else {
                       setField1Validation(1);
-                      pageFormula[0]["Formula"][0]["Field1"] = e.value;
+                      pageFormula[0]["Formula"][0]["Field1"] = fieldNameLowerCase;
                     }
                   }}
                 ></Select>
@@ -1714,14 +1738,19 @@ const SingleEntryForm = ({
                   options={allInputValueForFormulaData}
                   id={`dropValueField2`}
                   onChange={(e) => {
+                    let fieldName=e.value;
+                    let newString = fieldName.replace("-", "_");
+                    const spaceRemove = newString.split(" ").join("");
+                    const fieldNameLowerCase = spaceRemove.toLowerCase();
+                    console.log(fieldNameLowerCase)
                     console.log(e.value);
-                    if (pageFormula[0]["Formula"][0]["Field1"] == e.value) {
+                    if (pageFormula[0]["Formula"][0]["Field1"] == fieldNameLowerCase) {
                       setField2Validation(0);
-                    } else if (pageFormula[0]["Target"] == e.value) {
+                    } else if (pageFormula[0]["Target"] == fieldNameLowerCase) {
                       setField2Validation(0);
                     } else {
                       setField2Validation(1);
-                      pageFormula[0]["Formula"][0]["Field2"] = e.value;
+                      pageFormula[0]["Formula"][0]["Field2"] = fieldNameLowerCase;
                     }
                   }}
                 ></Select>
@@ -1745,17 +1774,22 @@ const SingleEntryForm = ({
                   options={allInputValueForFormulaData}
                   id={`dropValueFieldTarget`}
                   onChange={(e) => {
-                    if (pageFormula[0]["Formula"][0]["Field1"] == e.value) {
+                    let fieldName=e.value;
+                    let newString = fieldName.replace("-", "_");
+                    const spaceRemove = newString.split(" ").join("");
+                    const fieldNameLowerCase = spaceRemove.toLowerCase();
+                    console.log(fieldNameLowerCase)
+                    if (pageFormula[0]["Formula"][0]["Field1"] == fieldNameLowerCase) {
                       setFieldTargetValidation(0);
                     } else if (
-                      pageFormula[0]["Formula"][0]["Field2"] == e.value
+                      pageFormula[0]["Formula"][0]["Field2"] ==fieldNameLowerCase
                     ) {
                       setFieldTargetValidation(0);
                     } else {
                       console.log(e.value);
-                      setFormulaTarget(e.value);
+                      setFormulaTarget(fieldNameLowerCase);
                       setFieldTargetValidation(1);
-                      pageFormula[0]["Target"] = e.value;
+                      pageFormula[0]["Target"] = fieldNameLowerCase;
                     }
                   }}
                 ></Select>
@@ -1891,12 +1925,22 @@ const SingleEntryForm = ({
           </Modal.Body>
         </Modal>
         <Modal show={show2} onHide={() => setShow2(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Modal 2</Modal.Title>
+        <Modal.Header>
+        <Modal.Title>{selectedListName}</Modal.Title>
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              onClick={handleErrorClose}
+            >
+              X
+            </button>
           </Modal.Header>
+          {/* <Modal.Header closeButton>
+           
+          </Modal.Header> */}
           <Modal.Body>
             {dropdownName.map((item, i) => {
-              console.log(item);
               return (
                 <>
                   <div class="input-group">

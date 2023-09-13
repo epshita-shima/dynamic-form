@@ -7,7 +7,6 @@ import useChildMenu from "../../customHooks/useChildMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import SingleEntryData from "../../SingleEntryData/SingleEntryData";
 
 
 const Sidebar = ({ showHeader, showSidebar, setShowSidebar,showTable, setShowTable }) => {
@@ -51,13 +50,15 @@ console.log(parentMenu)
       if (data.status == true) {
         const allModalData = JSON.parse(data.data);
         setParentMenu(allModalData.Tables1);
-        setChildMenu(allModalData.Tables2)
+        setChildMenu(allModalData.Tables2);
+        window.location.reload();
+
       } else {
         console.log(data);
       }
+     
     }
     fatchAllMenuData()
-
   }
 
   return (
@@ -165,7 +166,7 @@ console.log(parentMenu)
                           </p>
                         </a>
                         <ul
-                          className={`nav collapse side-dropdown  `}
+                          className={`nav collapse side-dropdown`}
                           id={"collapseExample" + i}
                         >
                           {thirdArray.map((item, i) => {

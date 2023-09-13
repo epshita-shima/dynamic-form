@@ -16,17 +16,18 @@ import DoubleEnteryData from "../../DoubleEntryData/DoubleEnteryData";
 const CreateChildMenu = () => {
   const [parentSelectOption, setParentSelectOption] = useParentDropdown();
   const [show, setShow] = useState(false);
-  const [showSaveData, setShowSaveData] = useState("");
+  const [showSaveData, setShowSaveData] = useState(0);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [parentMenuName, setParentMenuName] = useState({ MenuName: "" });
   const [childMenuName, setChildMenuName] = useState({ SubMenuName: "" });
   const [singleEntry, setSingleEntry] = useState({ singlePage: "" });
   const [doubleEntry, setDoubleEntry] = useState({ doubleEntry: "" });
-  const [pageEntry, setPageEntry] = useState({ pageEntry: "" });
+  const [pageEntry, setPageEntry] = useState({ pageEntry: "singleEntryPage" });
   const [exist, setExist] = useState(false);
   const [childMenu, setChildMenu] = useChildMenu([]);
 
+  console.log(pageEntry.pageEntry)
   const token = Token.token;
   const modelData = {
     procedureName: "",
@@ -188,7 +189,7 @@ const CreateChildMenu = () => {
                       border: exist ? "1px solid red" : "",
                       borderRadius: exist ? "5px" : "",
                     }}
-                    value={childMenuName.MenuName}
+                    value={childMenuName.SubMenuName}
                     onChange={(e) => {
                       const { name, value } = e.target;
                       setChildMenuName({
@@ -254,7 +255,7 @@ const CreateChildMenu = () => {
             </Grid>
           </form>
           <Grid>
-    <Grid className={`${pageEntry.pageEntry== "doubleEntryPage" ? 'd-none': 'd-block'}`}>
+    <Grid className={`${pageEntry.pageEntry== "doubleEntryPage" ? 'd-none': 'd-block'}` || `${pageEntry.pageEntry== "singleEntryPage" ? 'd-block': 'd-none'}`}>
       {
         pageEntry.pageEntry=="singleEntryPage"? (<SingleEntryForm
           parentMenuName={parentMenuName}

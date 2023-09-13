@@ -50,6 +50,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   const [childTableName, setChildTableName] = useState("");
   const [childMenu, setChildMenu] = useChildMenu([]);
 const [totalAmount,setTotalAmount]=useState('')
+const [childModalTitle,setChildModalTitle]=useState('')
 console.log(totalAmount)
   console.log(labelData)
   const token = Token.token;
@@ -786,6 +787,7 @@ console.log(totalAmount)
   };
 
   const handleCalculation = (calculationFormula, i, countOfInput) => {
+    console.log('hi')
     var calculationValue1 = 0;
     var calculationValue = 0;
     var target = 0;
@@ -800,6 +802,7 @@ console.log(totalAmount)
         if (item.ColumnValue != "") calculationValue1 = item.ColumnValue;
       }
       if (item.ColumnName.toUpperCase() == calculateFormulaField[0].Field2.toUpperCase()) {
+        console.log(item.ColumnValue)
         if (item.ColumnValue != "") calculationValue = item.ColumnValue;
       }
       if (item.ColumnName.toUpperCase() == calculationFormulaField[0].Target.toUpperCase()) {
@@ -808,7 +811,9 @@ console.log(totalAmount)
 
     });
     console.log(columnValues,i,target,calculationFormulaField[0].Target.toUpperCase())
+    console.log(calculationValue,calculationValue1)
     const result = parseFloat(calculationValue) * parseFloat(calculationValue1);
+    console.log(result)
     setTotalAmount(result)
     labelData[i][target].ColumnValue = result;
     
@@ -1190,6 +1195,7 @@ console.log(totalAmount)
             <input
               type="text"
               draggable="false"
+              autoComplete="false"
               required
               id={`item${i}`}
               size="small"
@@ -1203,6 +1209,7 @@ console.log(totalAmount)
               className="getValue form-control"
               placeholder={item?.ColumnName}
               onChange={(e) => {
+                console.log(e.target.value)
                 const { value } = e.target;
                 const filteredArr = [];
                 columnValues.forEach((item) => {
@@ -2457,6 +2464,8 @@ console.log(totalAmount)
                         labelPosition={labelPosition}
                         selectedListName={selectedListName}
                         labelCount={labelCount}
+                        childModalTitle={childModalTitle}
+                        setChildModalTitle={setChildModalTitle}
                       ></SingleEntryList>
                     </div>
                   );

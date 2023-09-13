@@ -44,7 +44,6 @@ function App() {
                 //     path={item.UiLink + "/:" + item.MenuId}
                 //     element={<DoubleDataEntryInsert></DoubleDataEntryInsert>}
                 //   ></Route>
-                
                 // </>) 
                 : pageType !== "doubleEntryPage" || pageType == "singleEntryPage" ?(<>
                   <Route

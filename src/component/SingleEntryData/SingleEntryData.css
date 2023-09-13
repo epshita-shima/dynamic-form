@@ -54,13 +54,13 @@
   }
   @media only screen and (max-width: 1200px) {
     .table-container{
-      width:1900px;
+      width:2100px;
       height:600px;
    overflow-y: scroll;
 
     }
     .table-size{
-      width:1548px;
+      width:1848px;
       height:650px
     }
   }

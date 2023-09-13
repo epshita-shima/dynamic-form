@@ -78,13 +78,25 @@ keyValue, setKeyValue,
 showCalculactionModalDetails,
 setShowCalculactionModalDetails,
 allInputValueForFormulaDataDetails, setAllInputValueForFormulaDataDetails,
-childModalTitle,setChildModalTitle
+childModalTitle,setChildModalTitle,
+inputSchemaDetails,
+            setInputSchemaDetails,
+            dropSchemaDetails,
+            setDropSchemaDetails,
+            checkSchemaDetails,
+            setCheckSchemaDetails,
+            dateSchemaDetails,
+            setDateSchemaDetails,
+            pageSchemaDetails,
+            pageNameDetails,
+            setPageNameDetails,
+            errorsPageDetails,
+            errorsInputDetails,
+            errorsDropDownDetails,
+            errorsDateDetails,
+            errorsCheckDetails,
 }) => {
-  const [inputSchemaDetails, setInputSchemaDetails] = useState(null);
-  const [dropSchemaDetails, setDropSchemaDetails] = useState(null);
-  const [checkSchemaDetails, setCheckSchemaDetails] = useState(null);
-  const [dateSchemaDetails, setDateSchemaDetails] = useState(null);
-  const [pageSchemaDetails, setPageSchemaDetails] = useState(null);
+
   const [showErrorModalDetails, setShowErrorModalDetails] = useState(false);
   const [errorMessageStringDetails, setErrorMessageStringDetails] =
     useState("");
@@ -94,19 +106,12 @@ childModalTitle,setChildModalTitle
   const [selectedOptionDetails, setSelectedOptionDetails] = useState([]);
   const [modalSpecificDataDetails, setModalSpecificDataDetails] = useState([]);
   const [allModelDataTableDetails, setAllModelDataTableDetails] = useState([]);
-  const [pageNameDetails, setPageNameDetails] = useState("");
 
-  
 
-  // const [selectedListName, setSelectedListName] = useState([]);
   const handleClose = () => setShowCalculactionModalDetails(false);
   const handleDropClose = () => setShowDropDownModalDetails(false);
   const handleErrorClose = () => setShowErrorModalDetails(false);
-  const [errorsPageDetails, setErrorsPageDetails] = useState([]);
-  const [errorsInputDetails, setInputErrorsDetails] = useState([]);
-  const [errorsDropDownDetails, setErrorsDropDownDetails] = useState([]);
-  const [errorsDateDetails, setErrorsDateDetails] = useState([]);
-  const [errorsCheckDetails, setErrorsCheckDetails] = useState([]);
+  
   const [childMenu, setChildMenu] = useChildMenu([]);
   const [show2, setShow2] = useState(false);
   
@@ -116,42 +121,6 @@ childModalTitle,setChildModalTitle
   const tableName = childMenuName.SubMenuName;
   const spaceRemove = tableName.split(" ").join("");
   const tableNameLowerCase = spaceRemove.toLowerCase();
-
-  console.log(selectedOptionDetails,allDropValueDataDetails)
-console.log(radioButton2)
-  // var tableCreateData = "";
-  // Object.entries(allInputValueDataDetails).forEach((entry) => {
-  //   const [key, value] = entry;
-  //   const spaceRemove = value.split(" ").join("");
-  //   const convertLowerCase = spaceRemove.toLowerCase();
-  //   tableCreateData =
-  //     tableCreateData + convertLowerCase + " " + "varchar(250)" + ",";
-  // });
-
-  // useEffect(() => {
-  //   const modelDataLabel = {
-  //     procedureName: "",
-  //     parameters: {},
-  //   };
-  //   modelDataLabel.procedureName = "prc_GetMasterInfoList";
-  //   fetch("https://localhost:44372/api/GetData/GetInitialData", {
-  //     method: "POST",
-  //     headers: {
-  //       authorization: `Bearer ${token}`,
-  //       "content-type": "application/json",
-  //     },
-  //     body: JSON.stringify(modelDataLabel),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       if (data.status == true) {
-  //         const allModalData = JSON.parse(data.data);
-  //         setAllModelDataTableDetails(allModalData);
-  //       } else {
-  //         console.log(data);
-  //       }
-  //     });
-  // }, []);
 
   const insertField = (modelDataParams) => {
     fetch("http://localhost:53601/DBCommand/Insert", {
@@ -224,76 +193,7 @@ console.log(radioButton2)
     inputValueTextAreaDetails,
   ]);
 
-  // const submitForm = () => {
-  //   const modelCreatePage = {
-  //     procedureName: "",
-  //     parameters: {},
-  //   };
-  //   console.log("all data is ok");
-  //   if (parentMenuName.MenuName == "" || childMenuName.SubMenuName == "") {
-  //     swal({
-  //       title: "Try again",
-  //       text: "Please take parent and child menu",
-  //       icon: "warning",
-  //       button: "OK",
-  //     });
-  //     return;
-  //   } else {
-  //     const exists = childMenu.find(
-  //       (p) => p.SubMenuName === childMenuName.SubMenuName
-  //     );
-  //     console.log(exists);
-  //     if (exists) {
-  //       setExist(true);
-  //       swal({
-  //         title: "Try again",
-  //         text: "Child manu already exist",
-  //         icon: "warning",
-  //         button: "OK",
-  //       });
-  //       return;
-  //     } else if (exists === undefined) {
-      
-  //       modelCreatePage.procedureName = "createChildPage";
-  //       modelCreatePage.parameters = {
-  //         childPageName: childMenuName.SubMenuName,
-  //         childPageNameWithoutSpace: tableNameLowerCase,
-  //         tableColumn: `ID varchar(128),${tableCreateData} Makedate datetime,MakeBy varchar(128)`,
-  //         makeBy: "shima",
-  //         parentMenu: parentMenuName.MenuName,
-  //         menuLogo: "no logo",
-  //         pageType: pageEntry.pageEntry,
-  //         pageInfoJson: tableModelData.detailsData
-  //       };
-  //       const fatchGetDataById = async () => {
-  //         const response = await fetch(
-  //           "https://localhost:44372/api/GetData/GetDataById",
-  //           {
-  //             method: "POST",
-  //             headers: {
-  //               authorization: `Bearer ${token}`,
-  //               "content-type": "application/json",
-  //             },
-  //             body: JSON.stringify(modelCreatePage),
-  //           }
-  //         );
-  //         const data = await response.json();
-  //         console.log(JSON.stringify(data));
-  //         if (data.status == true) {
-  //           swal({
-  //             title: "Create page successfully",
-  //             icon: "success",
-  //             button: "OK",
-  //           });
-
-  //         }
-  //       };
-
-  //       fatchGetDataById();
-  //     }
-  //   }
-  // };
-
+ 
   const handleModalMenu = () => {
     const modelData = {
       procedureName: "",
@@ -319,11 +219,8 @@ console.log(radioButton2)
       });
   };
   const handleDropdownValue = (i) => {
-    console.log(i);
 
-    console.log(document.querySelector('input[name="dropValueField"]:checked'));
     var radioName = 0;
-    console.log(radioName);
     if (
       document.querySelector('input[name="dropValueField"]:checked') != null
     ) {
@@ -331,7 +228,6 @@ console.log(radioButton2)
         'input[name="dropValueField"]:checked'
       ).value;
     }
-    console.log(radioName);
     setChildModalTitle(radioName)
     let newString = radioName.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
@@ -397,7 +293,6 @@ console.log(radioButton2)
   };
 
   const handleDropdown = (i) => {
-    console.log(i)
     let radioName=0
     if (
       document.querySelector('input[name="dropValueFieldCheck"]:checked') != null
@@ -406,7 +301,6 @@ console.log(radioButton2)
         'input[name="dropValueFieldCheck"]:checked'
       ).value;
     }
-  console.log(radioName)
   setRadioButton2([...radioButton2,radioName])
     var dataTable = [];
           console.log(allModelDataTableDetails);
@@ -418,9 +312,6 @@ console.log(radioButton2)
           console.log(dataTable,allModelDataTableDetails);
     var dataMenuArr = [];
     dataTable.map((element) => {
-      console.log(element);
-
-      // if (element[1][0].title == radioName) {
       element.map((member) => {
         for (var key in member) {
           if (member.hasOwnProperty(key)) { 
@@ -443,7 +334,7 @@ console.log(radioButton2)
           console.log(allDropValueDataLength);
         } 
       });
-      // }
+    
     });
     setSelectedOptionDetails((prev) => {
       console.log(prev);
@@ -453,58 +344,7 @@ console.log(radioButton2)
     });
   };
   function validationOutsideSchema() {
-    var allInputValueDataLengthDetails = 0;
-    if (allInputValueDataDetails != null) {
-      allInputValueDataLengthDetails = Object.keys(
-        allInputValueDataDetails
-      ).length;
-    }
-    if (allInputValueDataLengthDetails > 0) {
-      var schemaForInput = createDynamicSchema(allInputValueDataDetails);
-      setInputSchemaDetails(schemaForInput);
-      validateInputFields(schemaForInput);
-    }
 
-    var schemaForPage = createPageSchema(pageNameDetails);
-    setPageSchemaDetails(schemaForPage);
-    validatePageNameFields(schemaForPage);
-
-    var allDropValueDataLengthDetails = 0;
-    if (allDropValueDataDetails != null) {
-      allDropValueDataLengthDetails = Object.keys(
-        allDropValueDataDetails
-      ).length;
-    }
-    if (allDropValueDataLengthDetails > 0) {
-      var schemaForDrop = createDynamicSchemaForDrop(allDropValueDataDetails);
-      setDropSchemaDetails(schemaForDrop);
-      validateDropFields(schemaForDrop);
-    }
-    var allCheckValueDataLengthDetails = 0;
-    if (allCheckValueDataDetails != null) {
-      allCheckValueDataLengthDetails = Object.keys(
-        allCheckValueDataDetails
-      ).length;
-    }
-    if (allCheckValueDataLengthDetails > 0) {
-      var schemaForCheck = createDynamicSchemaForCheck(
-        allCheckValueDataDetails
-      );
-      setCheckSchemaDetails(schemaForCheck);
-      validateCheckFields(schemaForCheck);
-    }
-
-    var allDateValueDataLengthDetails = 0;
-    if (allDateValueDataDetails != null) {
-      allDateValueDataLengthDetails = Object.keys(
-        allDateValueDataDetails
-      ).length;
-    }
-    if (allDateValueDataLengthDetails > 0) {
-      var schemaForDate = createDynamicSchemaForDate(allDateValueDataDetails);
-      setDateSchemaDetails(schemaForDate);
-      validateDateFields(schemaForDate);
-    }
   }
 
   // const handleSubmit = (e) => {
@@ -635,162 +475,7 @@ console.log(radioButton2)
   //     }
   //   }
   // };
-  const createPageSchema = (fields) => {
-    const schemaFields = {};
 
-    // schemaFields =  Yup.string().required();
-
-    return Yup.string().required();
-  };
-  const createDynamicSchema = (fields) => {
-    const schemaFields = {};
-
-    var countFieldLength = Object.keys(fields).length;
-    for (var countField = 0; countField < countFieldLength; countField++) {
-      schemaFields[countField] = Yup.string().required();
-    }
- 
-    return Yup.object().shape(schemaFields);
-  };
-
-  const createDynamicSchemaForDrop = (fields) => {
-    const schemaFields = {};
-    var countFieldLength = Object.keys(fields).length;
-    for (var countField = 0; countField < countFieldLength; countField++) {
-      schemaFields[countField] = Yup.string().required();
-    }
-    console.log(schemaFields);
-    return Yup.object().shape(schemaFields);
-  };
-
-  const createDynamicSchemaForCheck = (fields) => {
-    const schemaFields = {};
-    var countFieldLength = Object.keys(fields).length;
-    for (var countField = 0; countField < countFieldLength; countField++) {
-      schemaFields[countField] = Yup.string().required();
-    }
-    return Yup.object().shape(schemaFields);
-  };
-
-  const createDynamicSchemaForDate = (fields) => {
-    const schemaFields = {};
-    var countFieldLength = Object.keys(fields).length;
-    for (var countField = 0; countField < countFieldLength; countField++) {
-      schemaFields[countField] = Yup.string().required();
-    }
-    console.log(schemaFields);
-    return Yup.object().shape(schemaFields);
-  };
-
-  // const validateField = async (field,index) => {
-  //   console.log(field);
-  //   try {
-
-  //     await Yup.object().shape({
-  //       inputData: field({
-  //         value: Yup.string().required(),
-  //       }),
-  //     }).validate(field, { abortEarly: false });
-
-  //     setErrors((prevErrors) => prevErrors.filter((err) => err.index !== index));
-  //   } catch (validationErrors) {
-  //     // Validation failed for the field
-  //     console.log(validationErrors)
-  //     setErrors((prevErrors) => [
-  //       "value cannot be empty"
-  //     ]);
-  //   }
-  // };
-  const validatePageNameFields = async (schema) => {
-    try {
-      await schema.validate(pageNameDetails, { abortEarly: false });
-
-      // All fields passed validation
-      setErrorsPageDetails([]);
-    } catch (validationErrors) {
-      // Some fields failed validation
-
-      setErrorsPageDetails(
-        validationErrors.inner.map((err) => ({
-          index: 0,
-          message: err.message,
-        }))
-      );
-    }
-  };
-  const validateInputFields = async (schema) => {
-    try {
-      console.log(schema);
-      await schema.validate(allInputValueDataDetails, { abortEarly: false });
-
-      // All fields passed validation
-      setInputErrorsDetails([]);
-    } catch (validationErrors) {
-      // Some fields failed validation
-      console.log(validationErrors);
-      setInputErrorsDetails(
-        validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
-          message: err.message,
-        }))
-      );
-    }
-  };
-
-  const validateDropFields = async (schema) => {
-    try {
-      console.log(allDropValueDataDetails);
-      await schema.validate(allDropValueDataDetails, { abortEarly: false });
-
-      // All fields passed validation
-      setErrorsDropDownDetails([]);
-    } catch (validationErrors) {
-      console.log(validationErrors);
-      setErrorsDropDownDetails(
-        validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
-          message: err.message,
-        }))
-      );
-    }
-  };
-
-  const validateCheckFields = async (schema) => {
-    try {
-      console.log(allCheckValueDataDetails);
-      await schema.validate(allCheckValueDataDetails, { abortEarly: false });
-
-      // All fields passed validation
-      setErrorsCheckDetails([]);
-    } catch (validationErrors) {
-      // Some fields failed validation
-      console.log(validationErrors);
-      setErrorsCheckDetails(
-        validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
-          message: err.message,
-        }))
-      );
-    }
-  };
-
-  const validateDateFields = async (schema) => {
-    try {
-      await schema.validate(allDateValueDataDetails, { abortEarly: false });
-
-      // All fields passed validation
-      setErrorsDateDetails([]);
-    } catch (validationErrors) {
-      // Some fields failed validation
-      console.log(validationErrors);
-      setErrorsDateDetails(
-        validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
-          message: err.message,
-        }))
-      );
-    }
-  };
 
   return (
     <Grid>

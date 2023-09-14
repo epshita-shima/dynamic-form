@@ -56,7 +56,6 @@ const DoubleEnteryData = ({
   const [formulaTargetDetails, setFormulaTargetDetails] = useState("");
   const [inputData, setInputData] = useState([]);
   const [dropdownData, setDropdownData] = useState([]);
-  const [checkboxData, setCheckboxData] = useState([]);
   const [dateData, setDateData] = useState([]);
   const [textareaData, setTextareaData] = useState([]);
   const [imageData, setImageData] = useState([]);
@@ -93,13 +92,13 @@ const DoubleEnteryData = ({
   const [allImageValueData, setAllImageValueData] = useState({});
   const [inputSchema, setInputSchema] = useState(null);
   const [dropSchema, setDropSchema] = useState(null);
-  const [checkSchema, setCheckSchema] = useState(null);
   const [dateSchema, setDateSchema] = useState(null);
+  const [imageSchema, setImageSchema] = useState(null);
+  const [textareaSchema, setTextareaSchema] = useState(null);
   const [pageSchema, setPageSchema] = useState(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessageString, setErrorMessageString] = useState("");
-  const [allInputValueForFormulaData, setAllInputValueForFormulaData] =
-    useState([]);
+  const [allInputValueForFormulaData, setAllInputValueForFormulaData] =useState([]);
   const [pageFormula, setPageFormula] = useState([
     { Formula: [{ Field1: "", FormulaType: "", Field2: "" }], Target: {} },
   ]);
@@ -107,7 +106,6 @@ const DoubleEnteryData = ({
     { Formula: [{ Field1: "", FormulaType: "", Field2: "" }], Target: {} },
   ]);
   const [allData, setAllData] = useState([]);
-  const [selectedOption, setSelectedOption] = useState([]);
   const [selectedOptionParent, setSelectedOptionParent] = useState([]);
   const [modalSpecificData, setModalSpecificData] = useState([]);
   const [allModelDataTable, setAllModelDataTable] = useState([]);
@@ -117,8 +115,7 @@ const DoubleEnteryData = ({
   const [fieldTargetValidation, setFieldTargetValidation] = useState(2);
   const [fieldFormulaValidation, setFieldFormulaValidation] = useState(2);
   const [showCalculactionModal, setShowCalculactionModal] = useState(false);
-  const [showCalculactionModalDetails, setShowCalculactionModalDetails] =
-    useState(false);
+  const [showCalculactionModalDetails, setShowCalculactionModalDetails] =useState(false);
   const [allInputValueDataDetails, setAllInputValueDataDetails] = useState({});
   const [allDropValueDataDetails, setAllDropValueDataDetails] = useState({});
   const [allCheckValueDataDetails, setAllCheckValueDataDetails] = useState({});
@@ -126,11 +123,9 @@ const DoubleEnteryData = ({
   const [allTextAreaValueDataDetails, setAllTextAreaValueDataDetails] =
     useState({});
   const [allImageValueDataDetails, setAllImageValueDataDetails] = useState({});
-  console.log({ allDropValueDataDetails }, { selectedOptionParent });
 
   const [keyValue, setKeyValue] = useState([]);
 
-  const [selectedListName, setSelectedListName] = useState([]);
   const handleClose = () => setShowCalculactionModal(false);
   const handleCloseDetails = () => setShowCalculactionModalDetails(false);
   const handleDropClose = () => setShowDropDownModal(false);
@@ -139,7 +134,8 @@ const DoubleEnteryData = ({
   const [errorsInput, setInputErrors] = useState([]);
   const [errorsDropDown, setErrorsDropDown] = useState([]);
   const [errorsDate, setErrorsDate] = useState([]);
-  const [errorsCheck, setErrorsCheck] = useState([]);
+  const [errorsTextAreaErrors, setErrorsTextAreaErrors] = useState([]);
+  const [errorsImageErrors, setErrorsImageErrors] = useState([]);
   const [childMenu, setChildMenu] = useChildMenu([]);
   const [radioButton, setRadioButton] = useState([]);
   const [dropdownName, setDropdownName] = useState([]);
@@ -158,6 +154,8 @@ const DoubleEnteryData = ({
   const [dropSchemaDetails, setDropSchemaDetails] = useState(null);
   const [checkSchemaDetails, setCheckSchemaDetails] = useState(null);
   const [dateSchemaDetails, setDateSchemaDetails] = useState(null);
+  const [textareaSchemaDetails, setTextareaSchemaDetails] = useState(null);
+  const [imageSchemaDetails, setImageSchemaDetails] = useState(null);
   const [pageSchemaDetails, setPageSchemaDetails] = useState(null);
   const [pageNameDetails, setPageNameDetails] = useState("");
   const [errorsPageDetails, setErrorsPageDetails] = useState([]);
@@ -165,6 +163,8 @@ const DoubleEnteryData = ({
   const [errorsDropDownDetails, setErrorsDropDownDetails] = useState([]);
   const [errorsDateDetails, setErrorsDateDetails] = useState([]);
   const [errorsCheckDetails, setErrorsCheckDetails] = useState([]);
+  const [errorsTextareaDetails, setErrorsTextareaDetails] = useState([]);
+  const [errorsImageDetails, setErrorsImageDetails] = useState([]);
 
   var tableInputData = [];
   var tableDropData = [];
@@ -458,7 +458,6 @@ const DoubleEnteryData = ({
     useEffect(() => {
       setInputData(arrayInput);
       setDropdownData(arrayDropdown);
-      setCheckboxData(arrayCheck);
       setDateData(arrayDate);
       setTextareaData(arrayTextArea);
       setImageData(arrayImage);
@@ -471,7 +470,7 @@ const DoubleEnteryData = ({
       inputValueImage,
     ]);
   }
-  console.log(allDropValueData);
+
   useEffect(() => {
     previousInputValue.current = inputValue;
     previousInputValueDDF.current = inputValueDDF;
@@ -1352,7 +1351,6 @@ const DoubleEnteryData = ({
       var schemaForDrop = createDynamicSchemaForDrop(allDropValueData);
       console.log(schemaForDrop);
       setDropSchema(schemaForDrop);
-
       validateDropFields(schemaForDrop);
     }
 
@@ -1363,7 +1361,25 @@ const DoubleEnteryData = ({
     if (allDateValueDataLength > 0) {
       var schemaForDate = createDynamicSchemaForDate(allDateValueData);
       setDateSchema(schemaForDate);
-      validateDateFieldsDetails(schemaForDate);
+      validateDateFields(schemaForDate);
+    }
+    var allTestAreaValueDataLength = 0;
+    if (allTextAreaValueData != null) {
+      allTestAreaValueDataLength = Object.keys(allTextAreaValueData).length;
+    }
+    if (allTestAreaValueDataLength > 0) {
+      var schemaForTextArea =createDynamicSchemaForTextarea(allTextAreaValueData);
+      setTextareaSchema(schemaForTextArea);
+      validateTextAreaFields(schemaForTextArea);
+    }
+    var allImageValueDataLength = 0;
+    if (allImageValueData != null) {
+      allImageValueDataLength = Object.keys(allImageValueData).length;
+    }
+    if (allImageValueDataLength > 0) {
+      var schemaForImage = createDynamicSchemaForImage(allImageValueData);
+      setImageSchema(schemaForImage);
+      validateDateImageFields(schemaForImage);
     }
 
    
@@ -1374,12 +1390,12 @@ const DoubleEnteryData = ({
       ).length;
     }
     if (allInputValueDataLengthDetails > 0) {
-      var schemaForInputDetails = createDynamicSchema(allInputValueDataDetails);
+      var schemaForInputDetails = createDynamicSchemaDetails(allInputValueDataDetails);
       setInputSchemaDetails(schemaForInputDetails);
       validateInputFieldsDetails(schemaForInputDetails);
     }
 
-    var schemaForPageDetails = createPageSchema(pageNameDetails);
+    var schemaForPageDetails = createPageSchemaDetails(pageNameDetails);
     setPageSchemaDetails(schemaForPageDetails);
     validatePageNameFieldsDetails(schemaForPageDetails);
 
@@ -1390,7 +1406,7 @@ const DoubleEnteryData = ({
       ).length;
     }
     if (allDropValueDataLengthDetails > 0) {
-      var schemaForDropDetails = createDynamicSchemaForDrop(allDropValueDataDetails);
+      var schemaForDropDetails = createDynamicSchemaForDropDetails(allDropValueDataDetails);
       setDropSchemaDetails(schemaForDropDetails);
       validateDropFieldsDetails(schemaForDropDetails);
     }
@@ -1401,7 +1417,7 @@ const DoubleEnteryData = ({
       ).length;
     }
     if (allCheckValueDataLengthDetails > 0) {
-      var schemaForCheck = createDynamicSchemaForCheck(
+      var schemaForCheck = createDynamicSchemaForCheckDetails(
         allCheckValueDataDetails
       );
       setCheckSchemaDetails(schemaForCheck);
@@ -1415,9 +1431,32 @@ const DoubleEnteryData = ({
       ).length;
     }
     if (allDateValueDataLengthDetails > 0) {
-      var schemaForDateDetails = createDynamicSchemaForDate(allDateValueDataDetails);
+      var schemaForDateDetails = createDynamicSchemaForDateDetails(allDateValueDataDetails);
       setDateSchemaDetails(schemaForDateDetails);
       validateDateFieldsDetails(schemaForDateDetails);
+    }
+
+    var allTextareaValueDataLengthDetails = 0;
+    if (allTextAreaValueDataDetails != null) {
+      allTextareaValueDataLengthDetails = Object.keys(
+        allTextAreaValueDataDetails
+      ).length;
+    }
+    if (allTextareaValueDataLengthDetails > 0) {
+      var schemaForTextareaDetails = createDynamicSchemaForTextareaDetails(allTextAreaValueDataDetails);
+      setTextareaSchemaDetails(schemaForTextareaDetails);
+      validateTextareaFieldsDetails(schemaForTextareaDetails);
+    }
+    var allImageValueDataLengthDetails = 0;
+    if (allImageValueDataDetails != null) {
+      allImageValueDataLengthDetails = Object.keys(
+        allImageValueDataDetails
+      ).length;
+    }
+    if (allImageValueDataLengthDetails > 0) {
+      var schemaForImageDetails = createDynamicSchemaForTextareaDetails(allImageValueDataDetails);
+      setImageSchemaDetails(schemaForImageDetails);
+      validateImageFieldsDetails(schemaForImageDetails);
     }
   }
 
@@ -1618,10 +1657,7 @@ const DoubleEnteryData = ({
         }
       }
 
-      // var allCheckValueDataLength = 0;
-      // if (allCheckValueData != null) {
-      //   allCheckValueDataLength = Object.keys(allCheckValueData).length;
-      // }
+  
       for (
         var allInputCountDetails = 0;
         allInputCountDetails < allInputValueDataLengthDetails;
@@ -1702,10 +1738,6 @@ const DoubleEnteryData = ({
     
   };
   const createPageSchema = (fields) => {
-    const schemaFields = {};
-
-    // schemaFields =  Yup.string().required();
-    // console.log(schemaFields);
     return Yup.string().required();
   };
   const createDynamicSchema = (fields) => {
@@ -1715,21 +1747,10 @@ const DoubleEnteryData = ({
     for (var countField = 0; countField < countFieldLength; countField++) {
       schemaFields[countField] = Yup.string().required();
     }
-    console.log(schemaFields);
     return Yup.object().shape(schemaFields);
   };
 
   const createDynamicSchemaForDrop = (fields) => {
-    const schemaFields = {};
-    var countFieldLength = Object.keys(fields).length;
-    for (var countField = 0; countField < countFieldLength; countField++) {
-      schemaFields[countField] = Yup.string().required();
-    }
-    console.log(schemaFields);
-    return Yup.object().shape(schemaFields);
-  };
-
-  const createDynamicSchemaForCheck = (fields) => {
     const schemaFields = {};
     var countFieldLength = Object.keys(fields).length;
     for (var countField = 0; countField < countFieldLength; countField++) {
@@ -1744,7 +1765,22 @@ const DoubleEnteryData = ({
     for (var countField = 0; countField < countFieldLength; countField++) {
       schemaFields[countField] = Yup.string().required();
     }
-    console.log(schemaFields);
+    return Yup.object().shape(schemaFields);
+  };
+  const createDynamicSchemaForTextarea = (fields) => {
+    const schemaFields = {};
+    var countFieldLength = Object.keys(fields).length;
+    for (var countField = 0; countField < countFieldLength; countField++) {
+      schemaFields[countField] = Yup.string().required();
+    }
+    return Yup.object().shape(schemaFields);
+  };
+  const createDynamicSchemaForImage = (fields) => {
+    const schemaFields = {};
+    var countFieldLength = Object.keys(fields).length;
+    for (var countField = 0; countField < countFieldLength; countField++) {
+      schemaFields[countField] = Yup.string().required();
+    }
     return Yup.object().shape(schemaFields);
   };
 
@@ -1796,7 +1832,7 @@ const DoubleEnteryData = ({
       console.log(validationErrors);
       setInputErrors(
         validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
         }))
       );
@@ -1813,26 +1849,7 @@ const DoubleEnteryData = ({
       console.log(validationErrors);
       setErrorsDropDown(
         validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
-          message: err.message,
-        }))
-      );
-    }
-  };
-
-  const validateCheckFields = async (schema) => {
-    try {
-      console.log(allCheckValueData);
-      await schema.validate(allCheckValueData, { abortEarly: false });
-
-      // All fields passed validation
-      setErrorsCheck([]);
-    } catch (validationErrors) {
-      // Some fields failed validation
-      console.log(validationErrors);
-      setErrorsCheck(
-        validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
         }))
       );
@@ -1851,17 +1868,50 @@ const DoubleEnteryData = ({
       console.log(validationErrors);
       setErrorsDate(
         validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
         }))
       );
     }
   };
+  const validateTextAreaFields = async (schema) => {
+    console.log(allTextAreaValueData);
+    try {
+      await schema.validate(allTextAreaValueData, { abortEarly: false });
+
+      // All fields passed validation
+      setErrorsTextAreaErrors([]);
+    } catch (validationErrors) {
+      // Some fields failed validation
+      console.log(validationErrors);
+      setErrorsTextAreaErrors(
+        validationErrors.inner.map((err) => ({
+          index: err.path != "" ? parseInt(err.path) : -1,
+          message: err.message,
+        }))
+      );
+    }
+  };
+  const validateDateImageFields = async (schema) => {
+    console.log(allImageValueData);
+    try {
+      await schema.validate(allImageValueData, { abortEarly: false });
+
+      // All fields passed validation
+      setErrorsImageErrors([]);
+    } catch (validationErrors) {
+      // Some fields failed validation
+      console.log(validationErrors);
+      setErrorsImageErrors(
+        validationErrors.inner.map((err) => ({
+          index: err.path != "" ? parseInt(err.path) : -1,
+          message: err.message,
+        }))
+      );
+    }
+  };
+ 
   const createPageSchemaDetails = (fields) => {
-    const schemaFieldsDetails = {};
-
-    // schemaFields =  Yup.string().required();
-
     return Yup.string().required();
   };
   const createDynamicSchemaDetails = (fields) => {
@@ -1881,7 +1931,6 @@ const DoubleEnteryData = ({
     for (var countField = 0; countField < countFieldLength; countField++) {
       schemaFields[countField] = Yup.string().required();
     }
-    console.log(schemaFields);
     return Yup.object().shape(schemaFields);
   };
 
@@ -1900,7 +1949,22 @@ const DoubleEnteryData = ({
     for (var countField = 0; countField < countFieldLength; countField++) {
       schemaFields[countField] = Yup.string().required();
     }
-    console.log(schemaFields);
+    return Yup.object().shape(schemaFields);
+  };
+  const createDynamicSchemaForTextareaDetails = (fields) => {
+    const schemaFields = {};
+    var countFieldLength = Object.keys(fields).length;
+    for (var countField = 0; countField < countFieldLength; countField++) {
+      schemaFields[countField] = Yup.string().required();
+    }
+    return Yup.object().shape(schemaFields);
+  };
+  const createDynamicSchemaForImageDetails = (fields) => {
+    const schemaFields = {};
+    var countFieldLength = Object.keys(fields).length;
+    for (var countField = 0; countField < countFieldLength; countField++) {
+      schemaFields[countField] = Yup.string().required();
+    }
     return Yup.object().shape(schemaFields);
   };
 
@@ -1952,7 +2016,7 @@ const DoubleEnteryData = ({
       console.log(validationErrors);
       setInputErrorsDetails(
         validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
         }))
       );
@@ -1970,7 +2034,7 @@ const DoubleEnteryData = ({
       console.log(validationErrors);
       setErrorsDropDownDetails(
         validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
         }))
       );
@@ -1989,7 +2053,7 @@ const DoubleEnteryData = ({
       console.log(validationErrors);
       setErrorsCheckDetails(
         validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
         }))
       );
@@ -2004,10 +2068,39 @@ const DoubleEnteryData = ({
       setErrorsDateDetails([]);
     } catch (validationErrors) {
       // Some fields failed validation
-      console.log(validationErrors);
       setErrorsDateDetails(
         validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path) : -1,
+          message: err.message,
+        }))
+      );
+    }
+  };
+  const validateTextareaFieldsDetails = async (schema) => {
+    try {
+      await schema.validate(allTextAreaValueDataDetails, { abortEarly: false });
+
+      // All fields passed validation
+      setErrorsTextareaDetails([]);
+    } catch (validationErrors) {
+      setErrorsTextareaDetails(
+        validationErrors.inner.map((err) => ({
+          index: err.path != "" ? parseInt(err.path) : -1,
+          message: err.message,
+        }))
+      );
+    }
+  };
+  const validateImageFieldsDetails = async (schema) => {
+    try {
+      await schema.validate(allImageValueDataDetails, { abortEarly: false });
+
+      // All fields passed validation
+      setErrorsImageDetails([]);
+    } catch (validationErrors) {
+      setErrorsImageDetails(
+        validationErrors.inner.map((err) => ({
+          index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
         }))
       );
@@ -2425,7 +2518,7 @@ const DoubleEnteryData = ({
                           });
                         }}
                       />
-                      {errorsDate
+                      {errorsTextAreaErrors
                         .filter((err) => err.index === name)
                         .map((err, i) => (
                           <div style={{ color: "#FF0000" }} key={i}>
@@ -2459,7 +2552,7 @@ const DoubleEnteryData = ({
                           });
                         }}
                       />
-                      {errorsDate
+                      {errorsImageErrors
                         .filter((err) => err.index === name)
                         .map((err, i) => (
                           <div style={{ color: "#FF0000" }} key={i}>
@@ -3219,6 +3312,8 @@ const DoubleEnteryData = ({
             errorsDropDownDetails={errorsDropDownDetails}
             errorsDateDetails={errorsDateDetails}
             errorsCheckDetails={errorsCheckDetails}
+            errorsTextareaDetails={errorsTextareaDetails}
+              errorsImageDetails={errorsImageDetails}
           ></DoubleEntryChildData>
         </Grid>
       </form>

@@ -95,6 +95,8 @@ inputSchemaDetails,
             errorsDropDownDetails,
             errorsDateDetails,
             errorsCheckDetails,
+            errorsTextareaDetails,
+            errorsImageDetails
 }) => {
 
   const [showErrorModalDetails, setShowErrorModalDetails] = useState(false);
@@ -915,7 +917,7 @@ inputSchemaDetails,
                       });
                     }}
                   />
-                  {errorsDateDetails
+                  {errorsTextareaDetails
                     .filter((err) => err.index === name)
                     .map((err, i) => (
                       <div style={{ color: "#FF0000" }} key={i}>
@@ -949,7 +951,7 @@ inputSchemaDetails,
                       });
                     }}
                   />
-                  {errorsDateDetails
+                  {errorsImageDetails
                     .filter((err) => err.index === name)
                     .map((err, i) => (
                       <div style={{ color: "#FF0000" }} key={i}>

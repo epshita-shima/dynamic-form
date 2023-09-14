@@ -22,9 +22,7 @@ const SingleEntryForm = ({
   parentMenuName,
   childMenuName,
   pageEntry,
-  setParentMenuName,
-  setChildMenuName,
-  setPageEntry,
+  setChildMenuName
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [inputValueDDF, setInputValueDDF] = useState("");
@@ -940,12 +938,12 @@ console.log(allInputValueData)
       setInputErrors([]);
     } catch (validationErrors) {
       // Some fields failed validation
-      console.log(validationErrors);
       setInputErrors(
-        validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
+        validationErrors.inner.map((err) => {
+          return({
+          index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
-        }))
+        })})
       );
     }
   };
@@ -961,7 +959,7 @@ console.log(allInputValueData)
       console.log(validationErrors);
       setErrorsDropDown(
         validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
         }))
       );
@@ -980,7 +978,7 @@ console.log(allInputValueData)
       console.log(validationErrors);
       setErrorsCheck(
         validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
         }))
       );
@@ -998,14 +996,13 @@ console.log(allInputValueData)
       console.log(validationErrors);
       setErrorsDate(
         validationErrors.inner.map((err) => ({
-          index: err.path != "" ? parseInt(err.path, 9) : -1,
+          index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
         }))
       );
     }
   };
 
-  console.log(selectedOption);
   const handleDropdown = (i) => {
     console.log(i)
     let radioName=0
@@ -1118,35 +1115,36 @@ console.log(allInputValueData)
                 onWheel={(e) => e.preventDefault()} 
                 value={inputValue}
                 onChange={(e) => {
-                  if (e.target.value < 0) {
-                    swal({
-                      title: "Not Possible!",
-                      text: "Please select positive number",
-                      icon: "warning",
-                      button: "OK",
-                    });
-                    return;
-                  }
-
-                  let targetValue = 0;
-                  if (e.target.value == "") {
-                    targetValue = 0;
-                  } else {
-                    targetValue = parseInt(e.target.value);
-                  }
-                  setAllInputValueData((prev) => {
-                    const temp__details = {};
-                    for (
-                      var inputLength = 0;
-                      inputLength < targetValue;
-                      inputLength++
-                    ) {
-                      temp__details[inputLength] = "";
+                  
+                    if (e.target.value < 0) {
+                      swal({
+                        title: "Not Possible!",
+                        text: "Please select positive number",
+                        icon: "warning",
+                        button: "OK",
+                      });
+                      return;
                     }
-                    return temp__details;
-                  });
-                  setInputValue(targetValue);
-                }}
+  
+                    let targetValue = 0;
+                    if (e.target.value == "") {
+                      targetValue = 0;
+                    } else {
+                      targetValue = parseInt(e.target.value);
+                    }
+                    setAllInputValueData((prev) => {
+                      const temp__details = {};
+                      for (
+                        var inputLength = 0;
+                        inputLength < targetValue;
+                        inputLength++
+                      ) {
+                        temp__details[inputLength] = "";
+                      }
+                      return temp__details;
+                    });
+                    setInputValue(targetValue);
+                  }}
               />
             </div>
             <div class="col">
@@ -1161,36 +1159,39 @@ console.log(allInputValueData)
                 defaultValue="0"
                 value={inputValueDDF}
                 onChange={(e) => {
-                  if (e.target.value < 0) {
-                    swal({
-                      title: "Not Possible!",
-                      text: "Please select positive number",
-                      icon: "warning",
-                      button: "OK",
-                    });
-                    return;
-                  }
-                  let targetValue = 0;
-                  if (e.target.value == "") {
-                    targetValue = 0;
-                  } else {
-                    targetValue = parseInt(e.target.value);
-                  }
-
-                  setAllDropValueData((prev) => {
-                    const temp__details = {};
-                    console.log(temp__details);
-                    for (
-                      var inputLength = 0;
-                      inputLength < targetValue;
-                      inputLength++
-                    ) {
-                      temp__details[inputLength] = "";
+                 
+                    if (e.target.value < 0) {
+                      swal({
+                        title: "Not Possible!",
+                        text: "Please select positive number",
+                        icon: "warning",
+                        button: "OK",
+                      });
+                      return;
                     }
-                    return temp__details;
-                  });
-                  setInputValueDDF(targetValue);
-                }}
+                    let targetValue = 0;
+                    if (e.target.value == "") {
+                      targetValue = 0;
+                    } else {
+                      targetValue = parseInt(e.target.value);
+                    }
+  
+                    setAllDropValueData((prev) => {
+                      const temp__details = {};
+                      console.log(temp__details);
+                      for (
+                        var inputLength = 0;
+                        inputLength < targetValue;
+                        inputLength++
+                      ) {
+                        temp__details[inputLength] = "";
+                      }
+                      return temp__details;
+                    });
+                    setInputValueDDF(targetValue);
+                  }
+                 
+                }
               />
             </div>
             <div class="col">
@@ -1205,6 +1206,7 @@ console.log(allInputValueData)
                 defaultValue="0"
                 value={inputValueCheck}
                 onChange={(e) => {
+                 
                   if (e.target.value < 0) {
                     swal({
                       title: "Not Possible!",
@@ -1233,7 +1235,8 @@ console.log(allInputValueData)
                     return temp__details;
                   });
                   setInputValueCheck(targetValue);
-                }}
+                }
+                }
               />
             </div>
             <div class="col">
@@ -1248,34 +1251,37 @@ console.log(allInputValueData)
                 defaultValue="0"
                 value={inputValueDate}
                 onChange={(e) => {
-                  if (e.target.value < 0) {
-                    swal({
-                      title: "Not Possible!",
-                      text: "Please select positive number",
-                      icon: "warning",
-                      button: "OK",
-                    });
-                    return;
-                  }
-                  let targetValue = 0;
-                  if (e.target.value == "") {
-                    targetValue = 0;
-                  } else {
-                    targetValue = parseInt(e.target.value);
-                  }
-                  setAllDateValueData((prev) => {
-                    const temp__details = {};
-                    for (
-                      var inputLength = 0;
-                      inputLength < targetValue;
-                      inputLength++
-                    ) {
-                      temp__details[inputLength] = "";
+               
+                    if (e.target.value < 0) {
+                      swal({
+                        title: "Not Possible!",
+                        text: "Please select positive number",
+                        icon: "warning",
+                        button: "OK",
+                      });
+                      return;
                     }
-                    return temp__details;
-                  });
-                  setInputValueDate(targetValue);
-                }}
+                    let targetValue = 0;
+                    if (e.target.value == "") {
+                      targetValue = 0;
+                    } else {
+                      targetValue = parseInt(e.target.value);
+                    }
+                    setAllDateValueData((prev) => {
+                      const temp__details = {};
+                      for (
+                        var inputLength = 0;
+                        inputLength < targetValue;
+                        inputLength++
+                      ) {
+                        temp__details[inputLength] = "";
+                      }
+                      return temp__details;
+                    });
+                    setInputValueDate(targetValue);
+                  }
+                 
+                }
               />
             </div>
             <div class="col">
@@ -1290,34 +1296,37 @@ console.log(allInputValueData)
                 defaultValue="0"
                 value={inputValueTextArea}
                 onChange={(e) => {
-                  if (e.target.value < 0) {
-                    swal({
-                      title: "Not Possible!",
-                      text: "Please select positive number",
-                      icon: "warning",
-                      button: "OK",
-                    });
-                    return;
-                  }
-                  let targetValue = 0;
-                  if (e.target.value == "") {
-                    targetValue = 0;
-                  } else {
-                    targetValue = parseInt(e.target.value);
-                  }
-                  setAllTextAreaValueData((prev) => {
-                    const temp__details = {};
-                    for (
-                      var inputLength = 0;
-                      inputLength < targetValue;
-                      inputLength++
-                    ) {
-                      temp__details[inputLength] = "";
+                  
+                    if (e.target.value < 0) {
+                      swal({
+                        title: "Not Possible!",
+                        text: "Please select positive number",
+                        icon: "warning",
+                        button: "OK",
+                      });
+                      return;
                     }
-                    return temp__details;
-                  });
-                  setInputValueTextArea(targetValue);
-                }}
+                    let targetValue = 0;
+                    if (e.target.value == "") {
+                      targetValue = 0;
+                    } else {
+                      targetValue = parseInt(e.target.value);
+                    }
+                    setAllTextAreaValueData((prev) => {
+                      const temp__details = {};
+                      for (
+                        var inputLength = 0;
+                        inputLength < targetValue;
+                        inputLength++
+                      ) {
+                        temp__details[inputLength] = "";
+                      }
+                      return temp__details;
+                    });
+                    setInputValueTextArea(targetValue);
+                  }
+                  
+                }
               />
             </div>
             <div class="col">
@@ -1332,39 +1341,42 @@ console.log(allInputValueData)
                 defaultValue="0"
                 value={inputValueImage}
                 onChange={(e) => {
-                  if (e.target.value < 0) {
-                    swal({
-                      title: "Not Possible!",
-                      text: "Please select positive number",
-                      icon: "warning",
-                      button: "OK",
-                    });
-                    return;
-                  }
-                  let targetValue = 0;
-                  if (e.target.value == "") {
-                    targetValue = 0;
-                  } else {
-                    targetValue = parseInt(e.target.value);
-                  }
-                  setAllImageValueData((prev) => {
-                    const temp__details = {};
-                    for (
-                      var inputLength = 0;
-                      inputLength < targetValue;
-                      inputLength++
-                    ) {
-                      temp__details[inputLength] = "";
+                 
+                    if (e.target.value < 0) {
+                      swal({
+                        title: "Not Possible!",
+                        text: "Please select positive number",
+                        icon: "warning",
+                        button: "OK",
+                      });
+                      return;
                     }
-                    return temp__details;
-                  });
-                  setInputValueImage(targetValue);
-                }}
+                    let targetValue = 0;
+                    if (e.target.value == "") {
+                      targetValue = 0;
+                    } else {
+                      targetValue = parseInt(e.target.value);
+                    }
+                    setAllImageValueData((prev) => {
+                      const temp__details = {};
+                      for (
+                        var inputLength = 0;
+                        inputLength < targetValue;
+                        inputLength++
+                      ) {
+                        temp__details[inputLength] = "";
+                      }
+                      return temp__details;
+                    });
+                    setInputValueImage(targetValue);
+                  }
+                }
               />
             </div>
             <div class="w-100"></div>
             <div class="col">
               {inputData?.map((item, name) => {
+                console.log(name)
                 return (
                   <div>
                     <TextField
@@ -1376,6 +1388,7 @@ console.log(allInputValueData)
                       placeholder="Text Field"
                       className="getInputValue mt-2 noscroll"
                       required
+                      value={allInputValueData[name]}
                       onChange={(e) => {
                         setAllInputValueData({
                           ...allInputValueData,
@@ -1395,12 +1408,16 @@ console.log(allInputValueData)
                     />
                     {errorsInput
                       .filter((err) => err.index === name)
-                      .map((err, i) => (
-                        console.log(err)
-                        // <div style={{ color: "#FF0000" }} key={i}>
-                        //   This Field is required
-                        // </div>
-                      ))}
+                      .map((err, i) => {
+                        console.log(i,err,name)
+                        return (
+                            <div style={{ color: "#FF0000" }} key={i}>
+                              This Field is required
+                            </div>
+                          )
+                      }
+                     
+                      )}
                   </div>
                 );
               })}
@@ -1458,6 +1475,7 @@ console.log(allInputValueData)
                       size="small"
                       className="getInputValue mt-2"
                       placeholder="Checkbox Field"
+                      value={allCheckValueData[name]}
                       onChange={(e) => {
                         setAllData({
                           ...allData,
@@ -1492,6 +1510,7 @@ console.log(allInputValueData)
                       size="small"
                       placeholder="Date Field"
                       className="getInputValue mt-2"
+                      value={allDateValueData[name]}
                       onChange={(e) => {
                         setAllData({
                           ...allData,
@@ -1526,6 +1545,7 @@ console.log(allInputValueData)
                       size="small"
                       placeholder="textarea field"
                       className="getInputValue mt-2"
+                      value={allTextAreaValueData[name]}
                       onChange={(e) => {
                         setAllData({
                           ...allData,
@@ -1560,6 +1580,7 @@ console.log(allInputValueData)
                       size="small"
                       placeholder="image field"
                       className="getInputValue mt-2"
+                      value={allImageValueData[name]}
                       onChange={(e) => {
                         setAllData({
                           ...allData,

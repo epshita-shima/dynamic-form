@@ -39,12 +39,6 @@ function App() {
                     ></SingleEntryData>}
                   ></Route>
                 ) 
-                // : pageType == "doubleEntryPage" ? (<>
-                // <Route
-                //     path={item.UiLink + "/:" + item.MenuId}
-                //     element={<DoubleDataEntryInsert></DoubleDataEntryInsert>}
-                //   ></Route>
-                // </>) 
                 : pageType !== "doubleEntryPage" || pageType == "singleEntryPage" ?(<>
                   <Route
                       path="/master-menu"
@@ -62,15 +56,6 @@ function App() {
           })}
         </Route>
       </Routes>
-      {/* <Routes>
-      <Route path="/" element={<CreatePage></CreatePage>}></Route>
-      <Route path="/generate-form" element={<GenerateForm></GenerateForm>}></Route>
-     <Route path="single-entry" element={<SingleEntryForm></SingleEntryForm>}></Route>
-      <Route path="/single-entry-data" element={<SingleEntryData></SingleEntryData>}></Route>
-      <Route path="/Mycomponent" element={<MyComponent></MyComponent>}></Route>
-      <Route  path="/single-form" element={<SingleForm/>}></Route>
-      <Route path="/slider" element={<Slider></Slider>}></Route>
-    </Routes> */}
     </div>
   );
 }

@@ -113,7 +113,6 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
         setLabelData(labelData);
         setLabelData((prevArr) => {
           const result = [...prevArr];
-          // result.ColumnValue=new Date().toLocaleDateString('fr-CA')
           return result;
         });
     

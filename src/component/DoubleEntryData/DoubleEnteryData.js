@@ -1,4 +1,4 @@
-import { Button, Grid, TextField } from "@mui/material";
+import {Grid, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import "../SingleEntryForm/SingleEntryForm.css";
@@ -6,11 +6,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
-import Modal from "react-bootstrap/Modal";
 import * as Yup from "yup";
 import Token from "../common/Token";
 import useChildMenu from "./../customHooks/useChildMenu";
 import DoubleEntryChildData from "./DoubleEntryChildData";
+import CalculationModal from "../ModalStore/ParentModal/CalculationModal";
+import WarningModal from "../ModalStore/ParentModal/WarningModal";
+import ChildCalculationModal from "../ModalStore/ParentModal/ChildCalculationModal";
+import DropdownParentField from "../ModalStore/ParentModal/DropdownParentField";
+import TextFieldParent from './../FormField/ParentFormField/TextFieldParent';
+import DropDownParent from './../FormField/ParentFormField/DropDownParent';
+import DateFieldParent from './../FormField/ParentFormField/DateFieldParent';
+import TextareaParentField from './../FormField/ParentFormField/TextareaParentField';
+import ImageParentField from './../FormField/ParentFormField/ImageParentField';
+import DropDownSelect from '../ModalStore/ParentModal/DropDownSelect';
 
 const DoubleEnteryData = ({
   setExist,
@@ -98,7 +107,8 @@ const DoubleEnteryData = ({
   const [pageSchema, setPageSchema] = useState(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessageString, setErrorMessageString] = useState("");
-  const [allInputValueForFormulaData, setAllInputValueForFormulaData] =useState([]);
+  const [allInputValueForFormulaData, setAllInputValueForFormulaData] =
+    useState([]);
   const [pageFormula, setPageFormula] = useState([
     { Formula: [{ Field1: "", FormulaType: "", Field2: "" }], Target: {} },
   ]);
@@ -115,7 +125,8 @@ const DoubleEnteryData = ({
   const [fieldTargetValidation, setFieldTargetValidation] = useState(2);
   const [fieldFormulaValidation, setFieldFormulaValidation] = useState(2);
   const [showCalculactionModal, setShowCalculactionModal] = useState(false);
-  const [showCalculactionModalDetails, setShowCalculactionModalDetails] =useState(false);
+  const [showCalculactionModalDetails, setShowCalculactionModalDetails] =
+    useState(false);
   const [allInputValueDataDetails, setAllInputValueDataDetails] = useState({});
   const [allDropValueDataDetails, setAllDropValueDataDetails] = useState({});
   const [allCheckValueDataDetails, setAllCheckValueDataDetails] = useState({});
@@ -146,8 +157,12 @@ const DoubleEnteryData = ({
   const [field2ValidationDetails, setField2ValidationDetails] = useState(2);
   const [fieldTargetValidationDetails, setFieldTargetValidationDetails] =
     useState(2);
-  const [fieldFormulaValidationDetails, setFieldFormulaValidationDetails] = useState(2);
-  const [allInputValueForFormulaDataDetails,setAllInputValueForFormulaDataDetails] = useState([]);
+  const [fieldFormulaValidationDetails, setFieldFormulaValidationDetails] =
+    useState(2);
+  const [
+    allInputValueForFormulaDataDetails,
+    setAllInputValueForFormulaDataDetails,
+  ] = useState([]);
   const [modalTitle, setModalTitle] = useState("");
   const [childModalTitle, setChildModalTitle] = useState("");
   const [inputSchemaDetails, setInputSchemaDetails] = useState(null);
@@ -170,13 +185,15 @@ const DoubleEnteryData = ({
   var tableDropData = [];
   var tableTextareaData = [];
   var tableImageData = [];
+
+  console.log(show2);
   console.log(radioButton, radioButton2);
   const token = Token.token;
   const tableName = childMenuName.SubMenuName;
   let newString = tableName.replace("-", "_");
   const spaceRemove = newString.split(" ").join("");
   const tableNameLowerCase = spaceRemove.toLowerCase();
-  console.log(keyValue);
+
   useEffect(() => {
     const modelKeyData = {
       procedureName: "",
@@ -1097,30 +1114,30 @@ const DoubleEnteryData = ({
             pageType: pageEntry.pageEntry,
             pageInfoJson: tableModelData.detailsData,
           };
-          const fatchGetDataById = async () => {
-            const response = await fetch(
-              "https://localhost:44372/api/GetData/GetDataById",
-              {
-                method: "POST",
-                headers: {
-                  authorization: `Bearer ${token}`,
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify(modelCreatePageDetails),
-              }
-            );
-            const data = await response.json();
-            console.log(JSON.stringify(data));
-            if (data.status == true) {
-              swal({
-                title: "Create page successfully",
-                icon: "success",
-                button: "OK",
-              });
-            }
-          };
+          // const fatchGetDataById = async () => {
+          //   const response = await fetch(
+          //     "https://localhost:44372/api/GetData/GetDataById",
+          //     {
+          //       method: "POST",
+          //       headers: {
+          //         authorization: `Bearer ${token}`,
+          //         "content-type": "application/json",
+          //       },
+          //       body: JSON.stringify(modelCreatePageDetails),
+          //     }
+          //   );
+          //   const data = await response.json();
+          //   console.log(JSON.stringify(data));
+          //   if (data.status == true) {
+          //     swal({
+          //       title: "Create page successfully",
+          //       icon: "success",
+          //       button: "OK",
+          //     });
+          //   }
+          // };
 
-          fatchGetDataById();
+          // fatchGetDataById();
         }
 
         if (pageEntry.pageEntry == "doubleEntryPage") {
@@ -1139,29 +1156,29 @@ const DoubleEnteryData = ({
             tableColumnDetails: `DetailsId varchar(128),ID varchar(128),${allLowercaseDataDetails} Makedate datetime,MakeBy varchar(128), InsertTime datetime`,
           };
           console.log(JSON.stringify(modelCreatePageSingle));
-          const fatchGetDataById = async () => {
-            const response = await fetch(
-              "https://localhost:44372/api/GetData/GetDataById",
-              {
-                method: "POST",
-                headers: {
-                  authorization: `Bearer ${token}`,
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify(modelCreatePageSingle),
-              }
-            );
-            const data = await response.json();
-            console.log(JSON.stringify(data));
-            if (data.status == true) {
-              swal({
-                title: "Create page successfully",
-                icon: "success",
-                button: "OK",
-              });
-            }
-          };
-          fatchGetDataById();
+          // const fatchGetDataById = async () => {
+          //   const response = await fetch(
+          //     "https://localhost:44372/api/GetData/GetDataById",
+          //     {
+          //       method: "POST",
+          //       headers: {
+          //         authorization: `Bearer ${token}`,
+          //         "content-type": "application/json",
+          //       },
+          //       body: JSON.stringify(modelCreatePageSingle),
+          //     }
+          //   );
+          //   const data = await response.json();
+          //   console.log(JSON.stringify(data));
+          //   if (data.status == true) {
+          //     swal({
+          //       title: "Create page successfully",
+          //       icon: "success",
+          //       button: "OK",
+          //     });
+          //   }
+          // };
+          // fatchGetDataById();
         }
         console.log(
           modelCreatePageDetails,
@@ -1196,138 +1213,7 @@ const DoubleEnteryData = ({
         }
       });
   };
-  const handleDropdownValue = (i) => {
-    console.log(i);
 
-    console.log(document.querySelector('input[name="dropValueField"]:checked'));
-    var radioName = 0;
-    console.log(radioName);
-    if (
-      document.querySelector('input[name="dropValueField"]:checked') != null
-    ) {
-      radioName = document.querySelector(
-        'input[name="dropValueField"]:checked'
-      ).value;
-    }
-    console.log(radioName);
-    setModalTitle(radioName);
-    let newString = radioName.replace("-", "_");
-    const spaceRemove = newString.split(" ").join("");
-    const convertLowerCase = spaceRemove.toLowerCase();
-    let tableName = convertLowerCase;
-
-    const modelDataLabel = {
-      procedureName: "",
-      parameters: {
-        TableName: "",
-      },
-    };
-    modelDataLabel.procedureName = "prc_GetMasterInfoList";
-    modelDataLabel.parameters.TableName = `${tableName}`;
-    fetch("https://localhost:44372/api/GetData/GetDataByID", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelDataLabel),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        if (data.status == true) {
-          const allModalData = JSON.parse(data.data);
-          console.log(allModalData);
-          setAllModelDataTable(allModalData);
-
-          setAllDropValueData({
-            ...allDropValueData,
-            [i]: radioName,
-          });
-        } else {
-          console.log(data);
-        }
-      });
-    const modelData = {
-      procedureName: "prc_GetPageInfo",
-      parameters: {
-        MenuId: menuId,
-      },
-    };
-    fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == true) {
-          console.log(data);
-          const showSingleData = JSON.parse(data.data);
-          setDropdownName(showSingleData.Tables1);
-        }
-      });
-    setShowDropDownModal(false);
-  };
-  const handleDropdown = (i) => {
-    console.log(i);
-    let radioName = 0;
-    if (
-      document.querySelector('input[name="dropValueFieldCheck"]:checked') !=
-      null
-    ) {
-      radioName = document.querySelector(
-        'input[name="dropValueFieldCheck"]:checked'
-      ).value;
-    }
-    console.log(radioName);
-    setRadioButton([...radioButton, radioName]);
-    var dataTable = [];
-    console.log(allModelDataTable);
-    for (var modelArrayPosition in allModelDataTable)
-      dataTable.push([
-        modelArrayPosition,
-        allModelDataTable[modelArrayPosition],
-      ]);
-    console.log(dataTable, allModelDataTable);
-    var dataMenuArr = [];
-    dataTable.map((element) => {
-      console.log(element);
-
-      // if (element[1][0].title == radioName) {
-      element.map((member) => {
-        for (var key in member) {
-          if (member.hasOwnProperty(key)) {
-            if (key != "0") {
-              if (key == radioName) {
-                var dataMenuArrLength = dataMenuArr.length;
-                dataMenuArr[dataMenuArrLength] = {};
-                dataMenuArr[dataMenuArrLength]["value"] = member.ID;
-                var val = member[key];
-                dataMenuArr[dataMenuArrLength]["label"] = val;
-              }
-            }
-          }
-        }
-        console.log(dataMenuArr);
-        var allDropValueDataLength = 0;
-        if (allDropValueData != null) {
-          allDropValueDataLength = Object.keys(allDropValueData).length;
-          console.log(allDropValueDataLength);
-        }
-      });
-      // }
-    });
-    setSelectedOptionParent((prev) => {
-      console.log(prev);
-      const temp__details = [...prev];
-      temp__details[i] = dataMenuArr;
-      return temp__details;
-    });
-  };
   function validationOutsideSchema() {
     var allInputValueDataLength = 0;
     if (allInputValueData != null) {
@@ -1368,7 +1254,8 @@ const DoubleEnteryData = ({
       allTestAreaValueDataLength = Object.keys(allTextAreaValueData).length;
     }
     if (allTestAreaValueDataLength > 0) {
-      var schemaForTextArea =createDynamicSchemaForTextarea(allTextAreaValueData);
+      var schemaForTextArea =
+        createDynamicSchemaForTextarea(allTextAreaValueData);
       setTextareaSchema(schemaForTextArea);
       validateTextAreaFields(schemaForTextArea);
     }
@@ -1382,7 +1269,6 @@ const DoubleEnteryData = ({
       validateDateImageFields(schemaForImage);
     }
 
-   
     var allInputValueDataLengthDetails = 0;
     if (allInputValueDataDetails != null) {
       allInputValueDataLengthDetails = Object.keys(
@@ -1390,7 +1276,9 @@ const DoubleEnteryData = ({
       ).length;
     }
     if (allInputValueDataLengthDetails > 0) {
-      var schemaForInputDetails = createDynamicSchemaDetails(allInputValueDataDetails);
+      var schemaForInputDetails = createDynamicSchemaDetails(
+        allInputValueDataDetails
+      );
       setInputSchemaDetails(schemaForInputDetails);
       validateInputFieldsDetails(schemaForInputDetails);
     }
@@ -1406,7 +1294,9 @@ const DoubleEnteryData = ({
       ).length;
     }
     if (allDropValueDataLengthDetails > 0) {
-      var schemaForDropDetails = createDynamicSchemaForDropDetails(allDropValueDataDetails);
+      var schemaForDropDetails = createDynamicSchemaForDropDetails(
+        allDropValueDataDetails
+      );
       setDropSchemaDetails(schemaForDropDetails);
       validateDropFieldsDetails(schemaForDropDetails);
     }
@@ -1431,7 +1321,9 @@ const DoubleEnteryData = ({
       ).length;
     }
     if (allDateValueDataLengthDetails > 0) {
-      var schemaForDateDetails = createDynamicSchemaForDateDetails(allDateValueDataDetails);
+      var schemaForDateDetails = createDynamicSchemaForDateDetails(
+        allDateValueDataDetails
+      );
       setDateSchemaDetails(schemaForDateDetails);
       validateDateFieldsDetails(schemaForDateDetails);
     }
@@ -1443,7 +1335,9 @@ const DoubleEnteryData = ({
       ).length;
     }
     if (allTextareaValueDataLengthDetails > 0) {
-      var schemaForTextareaDetails = createDynamicSchemaForTextareaDetails(allTextAreaValueDataDetails);
+      var schemaForTextareaDetails = createDynamicSchemaForTextareaDetails(
+        allTextAreaValueDataDetails
+      );
       setTextareaSchemaDetails(schemaForTextareaDetails);
       validateTextareaFieldsDetails(schemaForTextareaDetails);
     }
@@ -1454,7 +1348,9 @@ const DoubleEnteryData = ({
       ).length;
     }
     if (allImageValueDataLengthDetails > 0) {
-      var schemaForImageDetails = createDynamicSchemaForTextareaDetails(allImageValueDataDetails);
+      var schemaForImageDetails = createDynamicSchemaForImageDetails(
+        allImageValueDataDetails
+      );
       setImageSchemaDetails(schemaForImageDetails);
       validateImageFieldsDetails(schemaForImageDetails);
     }
@@ -1645,7 +1541,9 @@ const DoubleEnteryData = ({
       var errorstatus = 0;
       var allInputValueDataLengthDEtails = 0;
       if (allInputValueDataDetails != null) {
-        allInputValueDataLengthDetails = Object.keys(allInputValueDataDetails).length;
+        allInputValueDataLengthDetails = Object.keys(
+          allInputValueDataDetails
+        ).length;
       }
       for (
         var allInputCountDetails = 0;
@@ -1657,7 +1555,6 @@ const DoubleEnteryData = ({
         }
       }
 
-  
       for (
         var allInputCountDetails = 0;
         allInputCountDetails < allInputValueDataLengthDetails;
@@ -1670,7 +1567,9 @@ const DoubleEnteryData = ({
 
       var allDropValueDataLengthDetails = 0;
       if (allDropValueDataDetails != null) {
-        allDropValueDataLengthDetails = Object.keys(allDropValueDataDetails).length;
+        allDropValueDataLengthDetails = Object.keys(
+          allDropValueDataDetails
+        ).length;
       }
       for (
         var allDropCountDetails = 0;
@@ -1685,7 +1584,9 @@ const DoubleEnteryData = ({
 
       var allDateValueDataLengthDetails = 0;
       if (allDateValueDataDetails != null) {
-        allDateValueDataLengthDetails = Object.keys(allDateValueDataDetails).length;
+        allDateValueDataLengthDetails = Object.keys(
+          allDateValueDataDetails
+        ).length;
       }
       for (
         var allDateCountDetails = 0;
@@ -1698,7 +1599,7 @@ const DoubleEnteryData = ({
       }
       if (foundEmpty == 1) {
       } else {
-        if ( inputValueDetails > 2) {
+        if (inputValueDetails > 2) {
           console.log(
             keyValue,
             allInputValueData,
@@ -1735,7 +1636,6 @@ const DoubleEnteryData = ({
         }
       }
     }
-    
   };
   const createPageSchema = (fields) => {
     return Yup.string().required();
@@ -1784,25 +1684,6 @@ const DoubleEnteryData = ({
     return Yup.object().shape(schemaFields);
   };
 
-  // const validateField = async (field,index) => {
-  //   console.log(field);
-  //   try {
-
-  //     await Yup.object().shape({
-  //       inputData: field({
-  //         value: Yup.string().required(),
-  //       }),
-  //     }).validate(field, { abortEarly: false });
-
-  //     setErrors((prevErrors) => prevErrors.filter((err) => err.index !== index));
-  //   } catch (validationErrors) {
-  //     // Validation failed for the field
-  //     console.log(validationErrors)
-  //     setErrors((prevErrors) => [
-  //       "value cannot be empty"
-  //     ]);
-  //   }
-  // };
   const validatePageNameFields = async (schema) => {
     try {
       await schema.validate(pageName, { abortEarly: false });
@@ -1910,7 +1791,7 @@ const DoubleEnteryData = ({
       );
     }
   };
- 
+
   const createPageSchemaDetails = (fields) => {
     return Yup.string().required();
   };
@@ -1921,7 +1802,7 @@ const DoubleEnteryData = ({
     for (var countField = 0; countField < countFieldLength; countField++) {
       schemaFields[countField] = Yup.string().required();
     }
- 
+
     return Yup.object().shape(schemaFields);
   };
 
@@ -1968,29 +1849,9 @@ const DoubleEnteryData = ({
     return Yup.object().shape(schemaFields);
   };
 
-  // const validateField = async (field,index) => {
-  //   console.log(field);
-  //   try {
-
-  //     await Yup.object().shape({
-  //       inputData: field({
-  //         value: Yup.string().required(),
-  //       }),
-  //     }).validate(field, { abortEarly: false });
-
-  //     setErrors((prevErrors) => prevErrors.filter((err) => err.index !== index));
-  //   } catch (validationErrors) {
-  //     // Validation failed for the field
-  //     console.log(validationErrors)
-  //     setErrors((prevErrors) => [
-  //       "value cannot be empty"
-  //     ]);
-  //   }
-  // };
   const validatePageNameFieldsDetails = async (schema) => {
     try {
       await schema.validate(pageNameDetails, { abortEarly: false });
-
       // All fields passed validation
       setErrorsPageDetails([]);
     } catch (validationErrors) {
@@ -2112,11 +1973,11 @@ const DoubleEnteryData = ({
       <form
         name="myForms"
         noValidate
-        class="bg-white shadow-lg  p-3 mt-4"
+        class="bg-white shadow-lg p-3 mt-4"
         onSubmit={handleSubmit}
       >
         <Grid>
-          <Grid>
+          <Grid className="p-3">
             <button
               type="submit"
               className="btn-createMenu"
@@ -2165,217 +2026,40 @@ const DoubleEnteryData = ({
             </h2>
             <div class="row shadow-lg pt-4 pb-4">
               <div class="col">
-                <label htmlFor="" className="text-style d-block mx-auto">
-                  Text Field
-                </label>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  type="number"
-                  size="small"
-                  defaultValue="0"
-                  value={inputValue}
-                  onChange={(e) => {
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-                    setAllInputValueData((prev) => {
-                      const temp__details = {};
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValue(targetValue);
-                  }}
-                />
+                <TextFieldParent
+                  inputValue={inputValue}
+                  setInputValue={setInputValue}
+                  setAllInputValueData={setAllInputValueData}
+                  allInputValueData={allInputValueData}
+                ></TextFieldParent>
               </div>
               <div class="col">
-                <label htmlFor="" className="text-style d-block mx-auto">
-                  DropDown Field
-                </label>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  type="number"
-                  size="small"
-                  defaultValue="0"
-                  value={inputValueDDF}
-                  onChange={(e) => {
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-
-                    setAllDropValueData((prev) => {
-                      const temp__details = {};
-                      console.log(temp__details);
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValueDDF(targetValue);
-                  }}
-                />
+                <DropDownParent
+                  inputValueDDF={inputValueDDF}
+                  setAllDropValueData={setAllDropValueData}
+                  setInputValueDDF={setInputValueDDF}
+                ></DropDownParent>
               </div>
               <div class="col">
-                <label htmlFor="" className="text-style d-block mx-auto">
-                  Date Field
-                </label>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  type="number"
-                  size="small"
-                  defaultValue="0"
-                  value={inputValueDate}
-                  onChange={(e) => {
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-                    setAllDateValueData((prev) => {
-                      const temp__details = {};
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValueDate(targetValue);
-                  }}
-                />
+                <DateFieldParent
+                  inputValueDate={inputValueDate}
+                  setAllDateValueData={setAllDateValueData}
+                  setInputValueDate={setInputValueDate}
+                ></DateFieldParent>
               </div>
               <div class="col">
-                <label htmlFor="" className="text-style d-block mx-auto">
-                  Textarea
-                </label>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  type="number"
-                  size="small"
-                  defaultValue="0"
-                  value={inputValueTextArea}
-                  onChange={(e) => {
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-                    setAllTextAreaValueData((prev) => {
-                      const temp__details = {};
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValueTextArea(targetValue);
-                  }}
-                />
+                <TextareaParentField
+                  inputValueTextArea={inputValueTextArea}
+                  setAllTextAreaValueData={setAllTextAreaValueData}
+                  setInputValueTextArea={setInputValueTextArea}
+                ></TextareaParentField>
               </div>
               <div class="col">
-                <label htmlFor="" className="text-style d-block mx-auto">
-                  Image Field
-                </label>
-                <TextField
-                  id="outlined-basic"
-                  variant="outlined"
-                  type="number"
-                  size="small"
-                  defaultValue="0"
-                  value={inputValueImage}
-                  onChange={(e) => {
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-                    setAllImageValueData((prev) => {
-                      const temp__details = {};
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValueImage(targetValue);
-                  }}
-                />
+                <ImageParentField
+                  inputValueImage={inputValueImage}
+                  setAllImageValueData={setAllImageValueData}
+                  setInputValueImage={setInputValueImage}
+                ></ImageParentField>
               </div>
               <div class="w-100"></div>
               <div class="col">
@@ -2391,6 +2075,7 @@ const DoubleEnteryData = ({
                         placeholder="Text Field"
                         className="getInputValue mt-2"
                         required
+                        value={allInputValueData[name]}
                         onChange={(e) => {
                           setAllInputValueData({
                             ...allInputValueData,
@@ -2507,6 +2192,7 @@ const DoubleEnteryData = ({
                         size="small"
                         placeholder="textarea field"
                         className="getInputValue mt-2"
+                        value={allTextAreaValueData[name]}
                         onChange={(e) => {
                           setAllData({
                             ...allData,
@@ -2566,654 +2252,79 @@ const DoubleEnteryData = ({
             </div>
           </div>
 
-          <Modal
-            show={showCalculactionModal}
-            onHide={handleClose}
-            size="lg"
-            backdrop="static"
-            keyboard={false}
-          >
-            <Modal.Header>
-              <Modal.Title style={{ color: "#000", fontWeight: "bold" }}>
-                Calculation{" "}
-              </Modal.Title>
-              <button
-                type="button"
-                class="btn-close"
-                aria-label="Close"
-                onClick={handleClose}
-              >
-                X
-              </button>
-            </Modal.Header>
-            <Modal.Body>
-              <div className="w-50">
-                <label className="fw-bold" style={{ color: "#000" }} htmlFor="">
-                  Calculation Type
-                </label>
-                <Select
-                  class="form-select"
-                  className="w-[100%] mt-2"
-                  aria-label="Default select example"
-                  // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                  options={[
-                    {
-                      label: "Manual",
-                      value: "Manual",
-                    },
-                    {
-                      label: "Auto",
-                      value: "Auto",
-                    },
-                  ]}
-                  id={`dropValue`}
-                  onChange={(e) => {
-                    console.log(e.value);
-                    setCalculationType(e.value);
-                    if (e.value == "Auto") {
-                      setDisplayFormulaAuto(true);
-                    } else {
-                      setDisplayFormulaAuto(false);
-                    }
-                  }}
-                ></Select>
-              </div>
-              <div
-                className={`d-flex justify-content-between ${
-                  displayFormulaAuto ? "d-visible" : "d-hidden"
-                } mt-4`}
-              >
-                <div className="w-100">
-                  <label className="fw-bold" htmlFor="">
-                    Field1
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaData}
-                    id={`dropValueField1`}
-                    onChange={(e) => {
-                      let fieldName = e.value;
-                      let newString = fieldName.replace("-", "_");
-                      const spaceRemove = newString.split(" ").join("");
-                      const fieldNameLowerCase = spaceRemove.toLowerCase();
-                      console.log(e.value, pageFormula);
-                      if (
-                        pageFormula[0]["Formula"][0]["Field2"] ==
-                        fieldNameLowerCase
-                      ) {
-                        setField1Validation(0);
-                      } else if (
-                        pageFormula[0]["Target"] == fieldNameLowerCase
-                      ) {
-                        setField1Validation(0);
-                      } else {
-                        setField1Validation(1);
-                        pageFormula[0]["Formula"][0]["Field1"] =
-                          fieldNameLowerCase;
-                      }
-                    }}
-                  ></Select>
+          <CalculationModal
+            showCalculactionModal={showCalculactionModal}
+            handleClose={handleClose}
+            setCalculationType={setCalculationType}
+            setDisplayFormulaAuto={setDisplayFormulaAuto}
+            displayFormulaAuto={displayFormulaAuto}
+            allInputValueForFormulaData={allInputValueForFormulaData}
+            pageFormula={pageFormula}
+            setField1Validation={setField1Validation}
+            field1Validation={field1Validation}
+            setFieldFormulaValidation={setFieldFormulaValidation}
+            fieldFormulaValidation={fieldFormulaValidation}
+            setField2Validation={setField2Validation}
+            field2Validation={field2Validation}
+            setFieldTargetValidation={setFieldTargetValidation}
+            setFormulaTarget={setFormulaTarget}
+            fieldTargetValidation={fieldTargetValidation}
+            submitForm={submitForm}
+          ></CalculationModal>
 
-                  {field1Validation == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be same as Field2 or Target
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Formula
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={[
-                      {
-                        label: "+",
-                        value: "+",
-                      },
-                      {
-                        label: "-",
-                        value: "-",
-                      },
-                      {
-                        label: "*",
-                        value: "*",
-                      },
-                      {
-                        label: "/",
-                        value: "/",
-                      },
-                    ]}
-                    id={`dropValueFormula`}
-                    onChange={(e) => {
-                      console.log(e.value);
-                      pageFormula[0]["Formula"][0]["FormulaType"] = e.value;
-                      if (e.value != "") {
-                        setFieldFormulaValidation(1);
-                      } else {
-                        setFieldFormulaValidation(0);
-                      }
-                    }}
-                  ></Select>
-
-                  {fieldFormulaValidation == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be empty
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Field2
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaData}
-                    id={`dropValueField2`}
-                    onChange={(e) => {
-                      let fieldName = e.value;
-                      let newString = fieldName.replace("-", "_");
-                      const spaceRemove = newString.split(" ").join("");
-                      const fieldNameLowerCase = spaceRemove.toLowerCase();
-                      console.log(fieldNameLowerCase);
-                      console.log(e.value, pageFormula);
-                      console.log(e.value);
-                      if (
-                        pageFormula[0]["Formula"][0]["Field1"] ==
-                        fieldNameLowerCase
-                      ) {
-                        setField2Validation(0);
-                      } else if (
-                        pageFormula[0]["Target"] == fieldNameLowerCase
-                      ) {
-                        setField2Validation(0);
-                      } else {
-                        setField2Validation(1);
-                        pageFormula[0]["Formula"][0]["Field2"] =
-                          fieldNameLowerCase;
-                      }
-                    }}
-                  ></Select>
-                  {field2Validation == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be same as Field1 or Target
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Target
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaData}
-                    id={`dropValueFieldTarget`}
-                    onChange={(e) => {
-                      let fieldName = e.value;
-                      let newString = fieldName.replace("-", "_");
-                      const spaceRemove = newString.split(" ").join("");
-                      const fieldNameLowerCase = spaceRemove.toLowerCase();
-                      console.log(fieldNameLowerCase);
-                      if (
-                        pageFormula[0]["Formula"][0]["Field1"] ==
-                        fieldNameLowerCase
-                      ) {
-                        setFieldTargetValidation(0);
-                      } else if (
-                        pageFormula[0]["Formula"][0]["Field2"] ==
-                        fieldNameLowerCase
-                      ) {
-                        setFieldTargetValidation(0);
-                      } else {
-                        console.log(e.value);
-                        setFormulaTarget(fieldNameLowerCase);
-                        setFieldTargetValidation(1);
-                        pageFormula[0]["Target"] = fieldNameLowerCase;
-                      }
-                    }}
-                  ></Select>
-                  {fieldTargetValidation == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be same as Field1 or Field2
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </div>
-            </Modal.Body>
-            <Modal.Footer>
-              <button
-                type="button"
-                class="btn"
-                style={{ backgroundColor: "#34C38F", color: "white" }}
-                onClick={() => {
-                  if (pageFormula[0]["Formula"][0]["FormulaType"] == "") {
-                    setFieldFormulaValidation(0);
-                  }
-                  if (pageFormula[0]["Formula"][0]["Field2"] == "") {
-                    setField1Validation(0);
-                  }
-                  if (pageFormula[0]["Formula"][0]["Field1"] == "") {
-                    setField1Validation(0);
-                  }
-                  if (pageFormula[0]["Formula"][0]["FormulaType"] == "") {
-                    setFieldFormulaValidation(0);
-                  }
-                  if (pageFormula[0]["Formula"][0]["Target"] == "") {
-                    setFieldTargetValidation(0);
-                  }
-                  if (
-                    field1Validation != 1 ||
-                    field2Validation != 1 ||
-                    fieldFormulaValidation != 1 ||
-                    fieldTargetValidation != 1
-                  ) {
-                  } else {
-                    // addList();
-                    submitForm();
-                  }
-                }}
-              >
-                Save changes
-              </button>
-            </Modal.Footer>
-          </Modal>
-          <Modal
-            show={showDropDownModal}
-            onHide={handleDropClose}
-            backdrop="true"
-            keyboard={false}
-          >
-            <Modal.Header>
-              <Modal.Title className="text-black fw-bold">
-                Select Menu
-              </Modal.Title>
-              <button
-                type="button"
-                class="btn-close"
-                aria-label="Close"
-                onClick={handleDropClose}
-              >
-                X
-              </button>
-            </Modal.Header>
-
-            <Modal.Body>
-              {modalSpecificData
-                .filter((person) => person.MenuName === "Master Entry")
-                .map((filteredPerson) => (
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <div class="input-group-text">
-                        <input
-                          type="radio"
-                          value={filteredPerson.SubMenuName}
-                          name="dropValueField"
-                          aria-label="Radio button for following text input"
-                          onClick={(e) => {
-                            setMenuId(filteredPerson.MenuId);
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <h4 className="text-black ms-2 fs-5">
-                      {filteredPerson.SubMenuName}
-                    </h4>
-                  </div>
-                ))}
-            </Modal.Body>
-            <Modal.Footer>
-              <button
-                style={{ backgroundColor: "#34C38F", border: "none" }}
-                type="button"
-                class="btn btn-primary"
-                data-dismiss="modal"
-                aria-label="Close"
-                onClick={(e) => {
-                  handleDropdownValue(currentDropSelected);
-                  setShow2(true);
-                }}
-              >
-                Save changes
-              </button>
-            </Modal.Footer>
-          </Modal>
-
-          <Modal
-            show={showErrorModal}
-            onHide={handleErrorClose}
-            backdrop="true"
-            keyboard={false}
-          >
-            <Modal.Header>
-              <Modal.Title>
-                <h5 className="fw-bold">Warning!</h5>
-              </Modal.Title>
-              <button
-                type="button"
-                class="btn-close"
-                aria-label="Close"
-                onClick={handleErrorClose}
-              >
-                X
-              </button>
-            </Modal.Header>
-            <Modal.Body>
-              <label>{errorMessageString}</label>
-            </Modal.Body>
-          </Modal>
-          <Modal show={show2} onHide={() => setShow2(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>{modalTitle}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {dropdownName.map((item, i) => {
-                console.log(item);
-                return (
-                  <>
-                    <div class="input-group">
-                      <div class="input-group-prepend">
-                        <div class="input-group-text">
-                          <input
-                            type="radio"
-                            value={item.ColumnName}
-                            name="dropValueFieldCheck"
-                            aria-label="Radio button for following text input"
-                            onClick={(e) => {}}
-                          />
-                        </div>
-                      </div>
-                      <h4 className="text-black ms-2 fs-5">
-                        {item.ColumnName}
-                      </h4>
-                    </div>
-                  </>
-                );
-              })}
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="danger"
-                onClick={(e) => {
-                  handleDropdown(currentDropSelected);
-                  setShow2(false);
-                }}
-              >
-                Close
-              </Button>
-            </Modal.Footer>
-          </Modal>
-
-          <Modal
-            show={showCalculactionModalDetails}
-            onHide={handleCloseDetails}
-            size="lg"
-            backdrop="static"
-            keyboard={false}
-          >
-            <Modal.Header>
-              <Modal.Title style={{ color: "#000", fontWeight: "bold" }}>
-                Calculation{" "}
-              </Modal.Title>
-              <button
-                type="button"
-                class="btn-close"
-                aria-label="Close"
-                onClick={handleCloseDetails}
-              >
-                X
-              </button>
-            </Modal.Header>
-            <Modal.Body>
-              <div className="w-50">
-                <label className="fw-bold" style={{ color: "#000" }} htmlFor="">
-                  Calculation Type
-                </label>
-                <Select
-                  class="form-select"
-                  className="w-[100%] mt-2"
-                  aria-label="Default select example"
-                  // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                  options={[
-                    {
-                      label: "Manual",
-                      value: "Manual",
-                    },
-                    {
-                      label: "Auto",
-                      value: "Auto",
-                    },
-                  ]}
-                  id={`dropValue`}
-                  onChange={(e) => {
-                    console.log(e.value);
-                    setCalculationTypeDetails(e.value);
-                    if (e.value == "Auto") {
-                      setDisplayFormulaAutoDetails(true);
-                    } else {
-                      setDisplayFormulaAutoDetails(false);
-                    }
-                  }}
-                ></Select>
-              </div>
-              <div
-                className={`d-flex justify-content-between ${
-                  displayFormulaAutoDetails ? "d-visible" : "d-hidden"
-                } mt-4`}
-              >
-                <div className="w-100">
-                  <label className="fw-bold" htmlFor="">
-                    Field1
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaDataDetails}
-                    id={`dropValueField1`}
-                    onChange={(e) => {
-                      console.log(e.value, pageFormulaDetails);
-                      if (
-                        pageFormulaDetails[0]["Formula"][0]["Field2"] == e.value
-                      ) {
-                        setField1ValidationDetails(0);
-                      } else if (pageFormulaDetails[0]["Target"] == e.value) {
-                        setField1ValidationDetails(0);
-                      } else {
-                        setField1ValidationDetails(1);
-                        pageFormulaDetails[0]["Formula"][0]["Field1"] = e.value;
-                      }
-                    }}
-                  ></Select>
-
-                  {field1ValidationDetails == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be same as Field2 or Target
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Formula
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={[
-                      {
-                        label: "+",
-                        value: "+",
-                      },
-                      {
-                        label: "-",
-                        value: "-",
-                      },
-                      {
-                        label: "*",
-                        value: "*",
-                      },
-                      {
-                        label: "/",
-                        value: "/",
-                      },
-                    ]}
-                    id={`dropValueFormula`}
-                    onChange={(e) => {
-                      console.log(e.value);
-                      pageFormulaDetails[0]["Formula"][0]["FormulaType"] =
-                        e.value;
-                      if (e.value != "") {
-                        setFieldFormulaValidationDetails(1);
-                      } else {
-                        setFieldFormulaValidationDetails(0);
-                      }
-                    }}
-                  ></Select>
-
-                  {fieldFormulaValidationDetails == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be empty
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Field2
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaDataDetails}
-                    id={`dropValueField2`}
-                    onChange={(e) => {
-                      console.log(e.value);
-                      if (
-                        pageFormulaDetails[0]["Formula"][0]["Field1"] == e.value
-                      ) {
-                        setField2ValidationDetails(0);
-                      } else if (pageFormulaDetails[0]["Target"] == e.value) {
-                        setField2ValidationDetails(0);
-                      } else {
-                        setField2ValidationDetails(1);
-                        pageFormulaDetails[0]["Formula"][0]["Field2"] = e.value;
-                      }
-                    }}
-                  ></Select>
-                  {field2ValidationDetails == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be same as Field1 or Target
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Target
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaDataDetails}
-                    id={`dropValueFieldTarget`}
-                    onChange={(e) => {
-                      if (
-                        pageFormulaDetails[0]["Formula"][0]["Field1"] == e.value
-                      ) {
-                        setFieldTargetValidationDetails(0);
-                      } else if (
-                        pageFormulaDetails[0]["Formula"][0]["Field2"] == e.value
-                      ) {
-                        setFieldTargetValidationDetails(0);
-                      } else {
-                        console.log(e.value);
-                        setFormulaTargetDetails(e.value);
-                        setFieldTargetValidationDetails(1);
-                        pageFormulaDetails[0]["Target"] = e.value;
-                      }
-                    }}
-                  ></Select>
-                  {fieldTargetValidationDetails == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be same as Field1 or Field2
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </div>
-            </Modal.Body>
-            <Modal.Footer>
-              <button
-                type="button"
-                class="btn"
-                style={{ backgroundColor: "#34C38F", color: "white" }}
-                onClick={() => {
-                  if (
-                    pageFormulaDetails[0]["Formula"][0]["FormulaType"] == ""
-                  ) {
-                    setFieldFormulaValidationDetails(0);
-                  }
-                  if (pageFormulaDetails[0]["Formula"][0]["Field2"] == "") {
-                    setField2ValidationDetails(0);
-                  }
-                  if (pageFormulaDetails[0]["Formula"][0]["Field1"] == "") {
-                    setField1ValidationDetails(0);
-                  }
-                  if (
-                    pageFormulaDetails[0]["Formula"][0]["FormulaType"] == ""
-                  ) {
-                    setFieldFormulaValidationDetails(0);
-                  }
-                  if (pageFormulaDetails[0]["Formula"][0]["Target"] == "") {
-                    setFieldTargetValidationDetails(0);
-                  }
-                  if (
-                    field1ValidationDetails != 1 ||
-                    field2ValidationDetails != 1 ||
-                    fieldFormulaValidationDetails != 1 ||
-                    fieldTargetValidationDetails != 1
-                  ) {
-                  } else {
-                    // addList();
-                    submitForm();
-                  }
-                }}
-              >
-                Save changes
-              </button>
-            </Modal.Footer>
-          </Modal>
+          <WarningModal
+            showErrorModal={showErrorModal}
+            handleErrorClose={handleErrorClose}
+            errorMessageString={errorMessageString}
+          ></WarningModal>
+          <DropDownSelect
+            show2={show2}
+            setShow2={setShow2}
+            modalTitle={modalTitle}
+            dropdownName={dropdownName}
+            setRadioButton={setRadioButton}
+            radioButton={radioButton}
+            allModelDataTable={allModelDataTable}
+            allDropValueData={allDropValueData}
+            currentDropSelected={currentDropSelected}
+            setSelectedOptionParent={setSelectedOptionParent}
+          ></DropDownSelect>
+          <DropdownParentField
+            showDropDownModal={showDropDownModal}
+            handleDropClose={handleDropClose}
+            modalSpecificData={modalSpecificData}
+            setMenuId={setMenuId}
+            setShow2={setShow2}
+            currentDropSelected={currentDropSelected}
+            setModalTitle={setModalTitle}
+            setAllModelDataTable={setAllModelDataTable}
+            setAllDropValueData={setAllDropValueData}
+            allDropValueData={allDropValueData}
+            menuId={menuId}
+            setDropdownName={setDropdownName}
+            setShowDropDownModal={setShowDropDownModal}
+          ></DropdownParentField>
+          <ChildCalculationModal
+            showCalculactionModalDetails={showCalculactionModalDetails}
+            handleCloseDetails={handleCloseDetails}
+            setCalculationTypeDetails={setCalculationTypeDetails}
+            setDisplayFormulaAutoDetails={setDisplayFormulaAutoDetails}
+            displayFormulaAutoDetails={displayFormulaAutoDetails}
+            allInputValueForFormulaDataDetails={
+              allInputValueForFormulaDataDetails
+            }
+            pageFormulaDetails={pageFormulaDetails}
+            setField1ValidationDetails={setField1ValidationDetails}
+            field1ValidationDetails={field1ValidationDetails}
+            setFieldFormulaValidationDetails={setFieldFormulaValidationDetails}
+            fieldFormulaValidationDetails={fieldFormulaValidationDetails}
+            setField2ValidationDetails={setField2ValidationDetails}
+            field2ValidationDetails={field2ValidationDetails}
+            setFieldTargetValidationDetails={setFieldTargetValidationDetails}
+            setFormulaTargetDetails={setFormulaTargetDetails}
+            fieldTargetValidationDetails={fieldTargetValidationDetails}
+            submitForm={submitForm}
+          ></ChildCalculationModal>
           <DoubleEntryChildData
             parentMenuName={parentMenuName}
             childMenuName={childMenuName}
@@ -3296,13 +2407,13 @@ const DoubleEnteryData = ({
             }
             childModalTitle={childModalTitle}
             setChildModalTitle={setChildModalTitle}
-            inputSchemaDetails={inputSchemaDetails} 
+            inputSchemaDetails={inputSchemaDetails}
             setInputSchemaDetails={setInputSchemaDetails}
-            dropSchemaDetails={dropSchemaDetails} 
+            dropSchemaDetails={dropSchemaDetails}
             setDropSchemaDetails={setDropSchemaDetails}
-            checkSchemaDetails={checkSchemaDetails} 
+            checkSchemaDetails={checkSchemaDetails}
             setCheckSchemaDetails={setCheckSchemaDetails}
-            dateSchemaDetails={dateSchemaDetails} 
+            dateSchemaDetails={dateSchemaDetails}
             setDateSchemaDetails={setDateSchemaDetails}
             pageSchemaDetails={pageSchemaDetails}
             pageNameDetails={pageNameDetails}
@@ -3313,7 +2424,7 @@ const DoubleEnteryData = ({
             errorsDateDetails={errorsDateDetails}
             errorsCheckDetails={errorsCheckDetails}
             errorsTextareaDetails={errorsTextareaDetails}
-              errorsImageDetails={errorsImageDetails}
+            errorsImageDetails={errorsImageDetails}
           ></DoubleEntryChildData>
         </Grid>
       </form>

@@ -4,12 +4,9 @@ import Select from "react-select";
 import "../SingleEntryForm/SingleEntryForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
-
 import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
-
 import Modal from "react-bootstrap/Modal";
-import * as Yup from "yup";
 import Token from "../common/Token";
 import useChildMenu from "./../customHooks/useChildMenu";
 
@@ -45,10 +42,6 @@ const DoubleEntryChildData = ({
   previousInputValueDateDetails,
   previousInputValueTextAreaDetails,
   previousInputValueImageDetails,
-  displayFormulaAutoDetails,
-  setDisplayFormulaAutoDetails,
-  setCalculationTypeDetails,
-  setFormulaTargetDetails,
   inputDataDetails,
   setInputDataDetails,
   dropdownDataDetails,
@@ -71,26 +64,12 @@ const DoubleEntryChildData = ({
   arrayDateDetails,
   arrayTextAreaDetails,
   arrayImageDetails,
-  pageFormulaDetails,
-setPageFormulaDetails,
 radioButton2,setRadioButton2,
-keyValue, setKeyValue,
-showCalculactionModalDetails,
+
 setShowCalculactionModalDetails,
 allInputValueForFormulaDataDetails, setAllInputValueForFormulaDataDetails,
 childModalTitle,setChildModalTitle,
-inputSchemaDetails,
-            setInputSchemaDetails,
-            dropSchemaDetails,
-            setDropSchemaDetails,
-            checkSchemaDetails,
-            setCheckSchemaDetails,
-            dateSchemaDetails,
-            setDateSchemaDetails,
-            pageSchemaDetails,
-            pageNameDetails,
-            setPageNameDetails,
-            errorsPageDetails,
+
             errorsInputDetails,
             errorsDropDownDetails,
             errorsDateDetails,
@@ -345,138 +324,6 @@ inputSchemaDetails,
       return temp__details;
     });
   };
-  function validationOutsideSchema() {
-
-  }
-
-  // const handleSubmit = (e) => {
-  //   console.log(e);
-  //   e.preventDefault();
-  //   validationOutsideSchema();
-  //   var foundKey = 0;
-  //   var foundEmpty = 0;
-  //   console.log(allInputValueDataDetails);
-  //   var allInputValueDataLength = 0;
-  //   if (inputValue != "") {
-  //     allInputValueDataLength = inputValue;
-  //   }
-
-  //   var allCheckValueDataLength = 0;
-  //   if (inputValueCheck != "") {
-  //     allCheckValueDataLength = inputValueCheck;
-  //   }
-
-  //   var allDateValueDataLength = 0;
-  //   if (inputValueDate != "") {
-  //     allDateValueDataLength = inputValueDate;
-  //   }
-
-  //   var allDropValueDataLength = 0;
-  //   if (inputValueDDF != "") {
-  //     allDropValueDataLength = inputValueDDF;
-  //   }
-  //   var totalField =
-  //     allCheckValueDataLength +
-  //     allInputValueDataLength +
-  //     allDateValueDataLength +
-  //     allDropValueDataLength;
-
-  //   console.log(totalField);
-
-  //   if (totalField > 12) {
-  //     setErrorMessageString("There cannot be more than 12 input");
-  //     showErrorModal(true);
-  //   } else if (totalField == 0) {
-  //     setErrorMessageString("There need to be more than 0 input");
-  //     setShowErrorModal(true);
-  //   } else {
-  //     var totalValueField = 0;
-
-  //     var errorstatus = 0;
-  //     var allInputValueDataLength = 0;
-  //     if (allInputValueDataDetails != null) {
-  //       allInputValueDataLength = Object.keys(allInputValueDataDetails).length;
-  //     }
-  //     for (
-  //       var allInputCount = 0;
-  //       allInputCount < allInputValueDataLength;
-  //       allInputCount++
-  //     ) {
-  //       if (allInputValueDataDetails[allInputCount] == "") {
-  //         foundEmpty = 1;
-  //       }
-  //     }
-
-  //     var allCheckValueDataLength = 0;
-  //     if (allCheckValueDataDetails != null) {
-  //       allCheckValueDataLength = Object.keys(allCheckValueDataDetails).length;
-  //     }
-  //     for (
-  //       var allInputCount = 0;
-  //       allInputCount < allInputValueDataLength;
-  //       allInputCount++
-  //     ) {
-  //       if (allInputValueDataDetails[allInputCount] == "") {
-  //         foundEmpty = 1;
-  //       }
-  //     }
-
-  //     var allDropValueDataLength = 0;
-  //     if (allDropValueDataDetails != null) {
-  //       allDropValueDataLength = Object.keys(allDropValueDataDetails).length;
-  //     }
-  //     for (
-  //       var allDropCount = 0;
-  //       allDropCount < allDropValueDataLength;
-  //       allDropCount++
-  //     ) {
-  //       console.log(allDropValueDataDetails[allDropCount]);
-  //       if (allDropValueDataDetails[allDropCount] == "") {
-  //         foundEmpty = 1;
-  //       }
-  //     }
-
-  //     var allDateValueDataLength = 0;
-  //     if (allDateValueDataDetails != null) {
-  //       allDateValueDataLength = Object.keys(allDateValueDataDetails).length;
-  //     }
-  //     for (
-  //       var allDateCount = 0;
-  //       allDateCount < allDateValueDataLength;
-  //       allDateCount++
-  //     ) {
-  //       if (allDateValueDataDetails[allDateCount] == "") {
-  //         foundEmpty = 1;
-  //       }
-  //     }
-  //     if (foundEmpty == 1) {
-  //     } else {
-  //       if (inputValue > 2) {
-  //         for (
-  //           let countKeyValue = 0;
-  //           countKeyValue < allInputValueDataLength;
-  //           countKeyValue++
-  //         ) {
-  //           if (
-  //             keyValue.some(
-  //               (item) => item.key === allInputValueDataDetails[countKeyValue]
-  //             )
-  //           ) {
-  //             foundKey = 1;
-  //           }
-  //         }
-  //         alert(foundKey);
-  //         if (foundKey == 1) {
-  //           setShowCalculactionModal(true);
-  //         } else {
-  //           submitForm();
-  //         }
-  //       } else {
-  //         submitForm();
-  //       }
-  //     }
-  //   }
-  // };
 
 
   return (

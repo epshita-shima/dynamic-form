@@ -281,8 +281,6 @@ const CreateChildMenu = () => {
               setExist={setExist}
               ></DoubleEnteryData>):''
           }
-              
-            
           </Grid>
         </Grid>
       </Grid>

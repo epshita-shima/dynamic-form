@@ -1,28 +1,32 @@
-import {
-  Button,
-  Grid,
-  TextField,
-} from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import "./SingleEntryForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlusCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
 import Modal from "react-bootstrap/Modal";
 import * as Yup from "yup";
 import Token from "../common/Token";
 import useChildMenu from "./../customHooks/useChildMenu";
+import ChildTextField from "../FormField/ChildFormField/ChildTextField";
+import ChildDropdownField from "../FormField/ChildFormField/ChildDropdownField";
+import ChildCheckboxField from "../FormField/ChildFormField/ChildCheckboxField";
+import ChildTextareaField from "../FormField/ChildFormField/ChildTextareaField";
+import ChildImageField from "../FormField/ChildFormField/ChildImageField";
+import CalculationModal from "../ModalStore/ChildModal/CalculationModal";
+import ChildDateField from "../FormField/ChildFormField/ChildDateField";
+import DropdownChildField from "../ModalStore/ChildModal/DropdownChildField";
+import DropdownSelect from "../ModalStore/ChildModal/DropdownSelect";
+import WarningModal from "../ModalStore/ChildModal/WarningModal";
 
 const SingleEntryForm = ({
   setExist,
   parentMenuName,
   childMenuName,
   pageEntry,
-  setChildMenuName
+  setChildMenuName,
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [inputValueDDF, setInputValueDDF] = useState("");
@@ -66,8 +70,9 @@ const SingleEntryForm = ({
   const [pageSchema, setPageSchema] = useState(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessageString, setErrorMessageString] = useState("");
-  const [radioButton,setRadioButton]=useState([])
-  const [allInputValueForFormulaData, setAllInputValueForFormulaData] =useState([]);
+  const [radioButton, setRadioButton] = useState([]);
+  const [allInputValueForFormulaData, setAllInputValueForFormulaData] =
+    useState([]);
   const [show2, setShow2] = useState(false);
   const [pageFormula, setPageFormula] = useState([
     { Formula: [{ Field1: "", FormulaType: "", Field2: "" }], Target: {} },
@@ -95,23 +100,18 @@ const SingleEntryForm = ({
   const [childMenu, setChildMenu] = useChildMenu([]);
   const [dropdownName, setDropdownName] = useState([]);
   const [menuId, setMenuId] = useState("");
-  console.log(selectedOption, modalSpecificData);
-  console.log(radioButton)
+
   var tableInputData = [];
   var tableDropData = [];
   var tableCheckboxData = [];
   var tableTextareaData = [];
   var tableImageData = [];
 
-console.log(keyValue)
-console.log(inputValue)
-console.log(allInputValueData)
   const token = Token.token;
   const tableName = childMenuName.SubMenuName;
   let newString = tableName.replace("-", "_");
   const spaceRemove = newString.split(" ").join("");
   const tableNameLowerCase = spaceRemove.toLowerCase();
-  console.log(menuId);
   var inputLowerCaseData = [];
   Object.entries(allInputValueData).forEach((entry) => {
     const [key, value] = entry;
@@ -167,7 +167,6 @@ console.log(allInputValueData)
 
   var textareaLowerCaseData = [];
   Object.entries(allTextAreaValueData).forEach((entry) => {
-    console.log(entry);
     const [key, value] = entry;
     let newString = value.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
@@ -298,7 +297,6 @@ console.log(allInputValueData)
       const exists = childMenu.find(
         (p) => p.SubMenuName === childMenuName.SubMenuName
       );
-      console.log(exists);
       if (exists) {
         setExist(true);
         swal({
@@ -371,7 +369,7 @@ console.log(allInputValueData)
             CalculationKey: allInputValueData[allInputValueDataCount],
             CalculationFormula: JSON.stringify(pageFormula),
             RelatedTable: "",
-            ColumnValueField:"",
+            ColumnValueField: "",
             Position: orderPosition,
             IsDisable:
               formulaTarget == allInputValueData[allInputValueDataCount]
@@ -399,7 +397,7 @@ console.log(allInputValueData)
             CalculationKey: "",
             CalculationFormula: "",
             RelatedTable: "",
-            ColumnValueField:"",
+            ColumnValueField: "",
             Position: orderPosition,
             IsDisable: "0",
           };
@@ -424,7 +422,7 @@ console.log(allInputValueData)
             CalculationKey: "",
             CalculationFormula: "",
             RelatedTable: "",
-            ColumnValueField:"",
+            ColumnValueField: "",
             Position: orderPosition,
             IsDisable: "0",
           };
@@ -451,7 +449,7 @@ console.log(allInputValueData)
             RelatedTable: allDropValueData[allDropValueDataCount],
             Position: orderPosition,
             IsDisable: "0",
-            ColumnValueField:radioButton[allDropValueDataCount]
+            ColumnValueField: radioButton[allDropValueDataCount],
           };
           tableModelData.detailsData.push(tabledataparams);
         }
@@ -474,7 +472,7 @@ console.log(allInputValueData)
             CalculationKey: "",
             CalculationFormula: "",
             RelatedTable: allTextAreaValueData[allTextAreaValueDataCount],
-            ColumnValueField:"",
+            ColumnValueField: "",
             Position: orderPosition,
             IsDisable: "0",
           };
@@ -498,7 +496,7 @@ console.log(allInputValueData)
             CalculationKey: "",
             CalculationFormula: "",
             RelatedTable: allImageValueData[allImageValueDataCount],
-            ColumnValueField:"",
+            ColumnValueField: "",
             Position: orderPosition,
             IsDisable: "0",
           };
@@ -529,7 +527,6 @@ console.log(allInputValueData)
             }
           );
           const data = await response.json();
-          console.log(JSON.stringify(data));
           if (data.status == true) {
             swal({
               title: "Create page successfully",
@@ -541,11 +538,10 @@ console.log(allInputValueData)
 
         fatchGetDataById();
       }
-      console.log(modelCreatePage);
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const modelKeyData = {
       procedureName: "",
       parameters: {},
@@ -568,7 +564,7 @@ console.log(allInputValueData)
           console.log(data);
         }
       });
-  },[])
+  }, []);
   const handleModalMenu = () => {
     const modelData = {
       procedureName: "",
@@ -585,92 +581,13 @@ console.log(allInputValueData)
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
-          console.log(allModalData)
-         
           setModalSpecificData(allModalData.Tables2);
         } else {
           console.log(data);
         }
       });
-  };
-  const handleDropdownValue = (i) => {
-    console.log(i);
-
-    console.log(document.querySelector('input[name="dropValueField"]:checked'));
-    var radioName = 0;
-    console.log(radioName);
-    if (
-      document.querySelector('input[name="dropValueField"]:checked') != null
-    ) {
-      radioName = document.querySelector(
-        'input[name="dropValueField"]:checked'
-      ).value;
-    }
-    setSelectedListName(radioName);
-
-    let newString = radioName.replace("-", "_");
-    const spaceRemove = newString.split(" ").join("");
-    const convertLowerCase = spaceRemove.toLowerCase();
-    let tableName = convertLowerCase;
-
-    const modelDataLabel = {
-      procedureName: "",
-      parameters: {
-        TableName: "",
-      },
-    };
-    modelDataLabel.procedureName = "prc_GetMasterInfoList";
-    modelDataLabel.parameters.TableName = `${tableName}`;
-    fetch("https://localhost:44372/api/GetData/GetDataByID", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelDataLabel),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        if (data.status == true) {
-          const allModalData = JSON.parse(data.data);
-          console.log(allModalData);
-          setAllModelDataTable(allModalData);
-      
-          setAllDropValueData({
-            ...allDropValueData,
-            [i]: radioName,
-          });
-        } else {
-          console.log(data);
-        }
-      });
-      const modelData = {
-        procedureName: "prc_GetPageInfo",
-        parameters: {
-          MenuId: menuId,
-        },
-      };
-      fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${token}`,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(modelData),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status == true) {
-            console.log(data);
-            const showSingleData = JSON.parse(data.data);
-            setDropdownName(showSingleData.Tables1);
-          }
-        });
-    setShowDropDownModal(false);
   };
 
   function validationOutsideSchema() {
@@ -719,12 +636,10 @@ console.log(allInputValueData)
   }
 
   const handleSubmit = (e) => {
-    console.log(e);
     e.preventDefault();
     validationOutsideSchema();
     var foundKey = 0;
     var foundEmpty = 0;
-    console.log(allInputValueData);
     var allInputValueDataLength = 0;
     if (inputValue != "") {
       allInputValueDataLength = inputValue;
@@ -749,8 +664,6 @@ console.log(allInputValueData)
       allInputValueDataLength +
       allDateValueDataLength +
       allDropValueDataLength;
-
-    console.log(totalField);
 
     if (totalField > 12) {
       setErrorMessageString("There cannot be more than 12 input");
@@ -799,7 +712,6 @@ console.log(allInputValueData)
         allDropCount < allDropValueDataLength;
         allDropCount++
       ) {
-        console.log(allDropValueData[allDropCount]);
         if (allDropValueData[allDropCount] == "") {
           foundEmpty = 1;
         }
@@ -847,20 +759,14 @@ console.log(allInputValueData)
     }
   };
   const createPageSchema = (fields) => {
-    const schemaFields = {};
-
-    // schemaFields =  Yup.string().required();
-    // console.log(schemaFields);
     return Yup.string().required();
   };
   const createDynamicSchema = (fields) => {
     const schemaFields = {};
-
     var countFieldLength = Object.keys(fields).length;
     for (var countField = 0; countField < countFieldLength; countField++) {
       schemaFields[countField] = Yup.string().required();
     }
-    console.log(schemaFields);
     return Yup.object().shape(schemaFields);
   };
 
@@ -870,7 +776,6 @@ console.log(allInputValueData)
     for (var countField = 0; countField < countFieldLength; countField++) {
       schemaFields[countField] = Yup.string().required();
     }
-    console.log(schemaFields);
     return Yup.object().shape(schemaFields);
   };
 
@@ -889,29 +794,9 @@ console.log(allInputValueData)
     for (var countField = 0; countField < countFieldLength; countField++) {
       schemaFields[countField] = Yup.string().required();
     }
-    console.log(schemaFields);
     return Yup.object().shape(schemaFields);
   };
 
-  // const validateField = async (field,index) => {
-  //   console.log(field);
-  //   try {
-
-  //     await Yup.object().shape({
-  //       inputData: field({
-  //         value: Yup.string().required(),
-  //       }),
-  //     }).validate(field, { abortEarly: false });
-
-  //     setErrors((prevErrors) => prevErrors.filter((err) => err.index !== index));
-  //   } catch (validationErrors) {
-  //     // Validation failed for the field
-  //     console.log(validationErrors)
-  //     setErrors((prevErrors) => [
-  //       "value cannot be empty"
-  //     ]);
-  //   }
-  // };
   const validatePageNameFields = async (schema) => {
     try {
       await schema.validate(pageName, { abortEarly: false });
@@ -931,7 +816,6 @@ console.log(allInputValueData)
   };
   const validateInputFields = async (schema) => {
     try {
-      console.log(schema);
       await schema.validate(allInputValueData, { abortEarly: false });
 
       // All fields passed validation
@@ -940,23 +824,22 @@ console.log(allInputValueData)
       // Some fields failed validation
       setInputErrors(
         validationErrors.inner.map((err) => {
-          return({
-          index: err.path != "" ? parseInt(err.path) : -1,
-          message: err.message,
-        })})
+          return {
+            index: err.path != "" ? parseInt(err.path) : -1,
+            message: err.message,
+          };
+        })
       );
     }
   };
 
   const validateDropFields = async (schema) => {
     try {
-      console.log(allDropValueData);
       await schema.validate(allDropValueData, { abortEarly: false });
 
       // All fields passed validation
       setErrorsDropDown([]);
     } catch (validationErrors) {
-      console.log(validationErrors);
       setErrorsDropDown(
         validationErrors.inner.map((err) => ({
           index: err.path != "" ? parseInt(err.path) : -1,
@@ -968,14 +851,12 @@ console.log(allInputValueData)
 
   const validateCheckFields = async (schema) => {
     try {
-      console.log(allCheckValueData);
       await schema.validate(allCheckValueData, { abortEarly: false });
 
       // All fields passed validation
       setErrorsCheck([]);
     } catch (validationErrors) {
       // Some fields failed validation
-      console.log(validationErrors);
       setErrorsCheck(
         validationErrors.inner.map((err) => ({
           index: err.path != "" ? parseInt(err.path) : -1,
@@ -993,7 +874,6 @@ console.log(allInputValueData)
       setErrorsDate([]);
     } catch (validationErrors) {
       // Some fields failed validation
-      console.log(validationErrors);
       setErrorsDate(
         validationErrors.inner.map((err) => ({
           index: err.path != "" ? parseInt(err.path) : -1,
@@ -1003,62 +883,6 @@ console.log(allInputValueData)
     }
   };
 
-  const handleDropdown = (i) => {
-    console.log(i)
-    let radioName=0
-    if (
-      document.querySelector('input[name="dropValueFieldCheck"]:checked') != null
-    ) {
-      radioName = document.querySelector(
-        'input[name="dropValueFieldCheck"]:checked'
-      ).value;
-    }
-  console.log(radioName)
-  setRadioButton([...radioButton,radioName])
-    var dataTable = [];
-          console.log(allModelDataTable);
-          for (var modelArrayPosition in allModelDataTable)
-            dataTable.push([
-              modelArrayPosition,
-              allModelDataTable[modelArrayPosition],
-            ]);
-          console.log(dataTable,allModelDataTable);
-    var dataMenuArr = [];
-    dataTable.map((element) => {
-      console.log(element);
-
-      // if (element[1][0].title == radioName) {
-      element.map((member) => {
-        for (var key in member) {
-          if (member.hasOwnProperty(key)) { 
-            if (key != "0") {
-              if (key==radioName) {
-                var dataMenuArrLength = dataMenuArr.length;
-                dataMenuArr[dataMenuArrLength] = {};
-                dataMenuArr[dataMenuArrLength]["value"] = member.ID;
-                var val = member[key];
-                dataMenuArr[dataMenuArrLength]["label"] =val
-                ;
-              }
-            }
-          }
-        }
-        console.log(dataMenuArr);
-        var allDropValueDataLength = 0;
-        if (allDropValueData != null) {
-          allDropValueDataLength = Object.keys(allDropValueData).length;
-          console.log(allDropValueDataLength);
-        } 
-      });
-      // }
-    });
-    setSelectedOption((prev) => {
-      console.log(prev);
-      const temp__details = [...prev];
-      temp__details[i] = dataMenuArr;
-      return temp__details;
-    });
-  };
   return (
     <form
       name="myForms"
@@ -1081,302 +905,74 @@ console.log(allInputValueData)
             className="btn-createMenu"
             style={{ marginLeft: "10px", background: "#F06548" }}
             onClick={() => {
-              setChildMenuName({SubMenuName:''})
-              setInputValue('')
-              setInputValueDDF('')
-              setInputValueCheck('')
-              setInputValueDate('')
-              setInputValueTextArea('')
-              setInputValueImage('')
-              setAllInputValueData('')
-              setAllDropValueData('')
-              setAllCheckValueData('')
-              setAllDateValueData('')
-              setAllTextAreaValueData('')
-              setAllImageValueData('')
+              setChildMenuName({ SubMenuName: "" });
+              setInputValue("");
+              setInputValueDDF("");
+              setInputValueCheck("");
+              setInputValueDate("");
+              setInputValueTextArea("");
+              setInputValueImage("");
+              setAllInputValueData("");
+              setAllDropValueData("");
+              setAllCheckValueData("");
+              setAllDateValueData("");
+              setAllTextAreaValueData("");
+              setAllImageValueData("");
             }}
           >
             Clear
           </button>
         </Grid>
         <div class="container-fluid mt-4">
+          <h2 className="fs-4 fw-bold" style={{ color: "#3AAFA9" }}>
+            Child Field
+          </h2>
           <div class="row shadow-lg pt-4 pb-4">
             <div class="col">
-              <label htmlFor="" className="text-style d-block mx-auto">
-                Text Field
-              </label>
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                type="number"
-                size="small"
-                defaultValue="0"
-                className="noscroll"
-                onWheel={(e) => e.preventDefault()} 
-                value={inputValue}
-                onChange={(e) => {
-                  
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-  
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-                    setAllInputValueData((prev) => {
-                      const temp__details = {};
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValue(targetValue);
-                  }}
-              />
+              <ChildTextField
+                inputValue={inputValue}
+                setAllInputValueData={setAllInputValueData}
+                setInputValue={setInputValue}
+              ></ChildTextField>
             </div>
             <div class="col">
-              <label htmlFor="" className="text-style d-block mx-auto">
-                DropDown Field
-              </label>
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                type="number"
-                size="small"
-                defaultValue="0"
-                value={inputValueDDF}
-                onChange={(e) => {
-                 
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-  
-                    setAllDropValueData((prev) => {
-                      const temp__details = {};
-                      console.log(temp__details);
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValueDDF(targetValue);
-                  }
-                 
-                }
-              />
+              <ChildDropdownField
+                inputValueDDF={inputValueDDF}
+                setAllDropValueData={setAllDropValueData}
+                setInputValueDDF={setInputValueDDF}
+              ></ChildDropdownField>
             </div>
             <div class="col">
-              <label htmlFor="" className="text-style d-block mx-auto">
-                Checkbox Field
-              </label>
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                type="number"
-                size="small"
-                defaultValue="0"
-                value={inputValueCheck}
-                onChange={(e) => {
-                 
-                  if (e.target.value < 0) {
-                    swal({
-                      title: "Not Possible!",
-                      text: "Please select positive number",
-                      icon: "warning",
-                      button: "OK",
-                    });
-                    return;
-                  }
-                  let targetValue = 0;
-                  if (e.target.value == "") {
-                    targetValue = 0;
-                  } else {
-                    targetValue = parseInt(e.target.value);
-                  }
-                  setAllCheckValueData((prev) => {
-                    const temp__details = {};
-                    console.log(temp__details);
-                    for (
-                      var inputLength = 0;
-                      inputLength < targetValue;
-                      inputLength++
-                    ) {
-                      temp__details[inputLength] = "";
-                    }
-                    return temp__details;
-                  });
-                  setInputValueCheck(targetValue);
-                }
-                }
-              />
+              <ChildCheckboxField
+                inputValueCheck={inputValueCheck}
+                setAllCheckValueData={setAllCheckValueData}
+                setInputValueCheck={setInputValueCheck}
+              ></ChildCheckboxField>
             </div>
             <div class="col">
-              <label htmlFor="" className="text-style d-block mx-auto">
-                Date Field
-              </label>
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                type="number"
-                size="small"
-                defaultValue="0"
-                value={inputValueDate}
-                onChange={(e) => {
-               
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-                    setAllDateValueData((prev) => {
-                      const temp__details = {};
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValueDate(targetValue);
-                  }
-                 
-                }
-              />
+              <ChildDateField
+                inputValueDate={inputValueDate}
+                setAllDateValueData={setAllDateValueData}
+                setInputValueDate={setInputValueDate}
+              ></ChildDateField>
             </div>
             <div class="col">
-              <label htmlFor="" className="text-style d-block mx-auto">
-                Textarea
-              </label>
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                type="number"
-                size="small"
-                defaultValue="0"
-                value={inputValueTextArea}
-                onChange={(e) => {
-                  
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-                    setAllTextAreaValueData((prev) => {
-                      const temp__details = {};
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValueTextArea(targetValue);
-                  }
-                  
-                }
-              />
+              <ChildTextareaField
+                inputValueTextArea={inputValueTextArea}
+                setAllTextAreaValueData={setAllTextAreaValueData}
+                setInputValueTextArea={setInputValueTextArea}
+              ></ChildTextareaField>
             </div>
             <div class="col">
-              <label htmlFor="" className="text-style d-block mx-auto">
-                Image Field
-              </label>
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                type="number"
-                size="small"
-                defaultValue="0"
-                value={inputValueImage}
-                onChange={(e) => {
-                 
-                    if (e.target.value < 0) {
-                      swal({
-                        title: "Not Possible!",
-                        text: "Please select positive number",
-                        icon: "warning",
-                        button: "OK",
-                      });
-                      return;
-                    }
-                    let targetValue = 0;
-                    if (e.target.value == "") {
-                      targetValue = 0;
-                    } else {
-                      targetValue = parseInt(e.target.value);
-                    }
-                    setAllImageValueData((prev) => {
-                      const temp__details = {};
-                      for (
-                        var inputLength = 0;
-                        inputLength < targetValue;
-                        inputLength++
-                      ) {
-                        temp__details[inputLength] = "";
-                      }
-                      return temp__details;
-                    });
-                    setInputValueImage(targetValue);
-                  }
-                }
-              />
+              <ChildImageField
+                inputValueImage={inputValueImage}
+                setAllImageValueData={setAllImageValueData}
+                setInputValueImage={setInputValueImage}
+              ></ChildImageField>
             </div>
             <div class="w-100"></div>
             <div class="col">
               {inputData?.map((item, name) => {
-                console.log(name)
                 return (
                   <div>
                     <TextField
@@ -1403,21 +999,17 @@ console.log(allInputValueData)
                           const temp__details = [...prev];
                           return temp__details;
                         });
-                        console.log(allInputValueForFormulaData);
                       }}
                     />
                     {errorsInput
                       .filter((err) => err.index === name)
                       .map((err, i) => {
-                        console.log(i,err,name)
                         return (
-                            <div style={{ color: "#FF0000" }} key={i}>
-                              This Field is required
-                            </div>
-                          )
-                      }
-                     
-                      )}
+                          <div style={{ color: "#FF0000" }} key={i}>
+                            This Field is required
+                          </div>
+                        );
+                      })}
                   </div>
                 );
               })}
@@ -1606,394 +1198,61 @@ console.log(allInputValueData)
           </div>
         </div>
 
-        <Modal
-          show={showCalculactionModal}
-          onHide={handleClose}
-          size="lg"
-          backdrop="static"
-          keyboard={false}
-        >
-          <Modal.Header>
-            <Modal.Title style={{ color: "#000", fontWeight: "bold" }}>
-              Calculation{" "}
-            </Modal.Title>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              onClick={handleClose}
-            >
-              X
-            </button>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="w-50">
-              <label className="fw-bold" style={{ color: "#000" }} htmlFor="">
-                Calculation Type
-              </label>
-              <Select
-                class="form-select"
-                className="w-[100%] mt-2"
-                aria-label="Default select example"
-                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                options={[
-                  {
-                    label: "Manual",
-                    value: "Manual",
-                  },
-                  {
-                    label: "Auto",
-                    value: "Auto",
-                  },
-                ]}
-                id={`dropValue`}
-                onChange={(e) => {
-                  console.log(e.value);
-                  setCalculationType(e.value);
-                  if (e.value == "Auto") {
-                    setDisplayFormulaAuto(true);
-                  } else {
-                    setDisplayFormulaAuto(false);
-                  }
-                }}
-              ></Select>
-            </div>
-            <div
-              className={`d-flex justify-content-between ${
-                displayFormulaAuto ? "d-visible" : "d-hidden"
-              } mt-4`}
-            >
-              <div className="w-100">
-                <label className="fw-bold" htmlFor="">
-                  Field1
-                </label>
-                <Select
-                  class="form-select"
-                  className="w-[100%] mt-2"
-                  aria-label="Default select example"
-                  // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                  options={allInputValueForFormulaData}
-                  id={`dropValueField1`}
-                  onChange={(e) => {
-                    let fieldName=e.value;
-                    let newString = fieldName.replace("-", "_");
-                    const spaceRemove = newString.split(" ").join("");
-                    const fieldNameLowerCase = spaceRemove.toLowerCase();
-                    console.log(fieldNameLowerCase)
-                    console.log(e.value, pageFormula);
-                    if (pageFormula[0]["Formula"][0]["Field2"] == fieldNameLowerCase) {
-                      setField1Validation(0);
-                    } else if (pageFormula[0]["Target"] == fieldNameLowerCase) {
-                      setField1Validation(0);
-                    } else {
-                      setField1Validation(1);
-                      pageFormula[0]["Formula"][0]["Field1"] = fieldNameLowerCase;
-                    }
-                  }}
-                ></Select>
+        <CalculationModal
+          showCalculactionModal={showCalculactionModal}
+          handleClose={handleClose}
+          setCalculationType={setCalculationType}
+          setDisplayFormulaAuto={setDisplayFormulaAuto}
+          displayFormulaAuto={displayFormulaAuto}
+          allInputValueForFormulaData={allInputValueForFormulaData}
+          pageFormula={pageFormula}
+          setField1Validation={setField1Validation}
+          field1Validation={field1Validation}
+          setFieldFormulaValidation={setFieldFormulaValidation}
+          fieldFormulaValidation={fieldFormulaValidation}
+          setField2Validation={setField2Validation}
+          field2Validation={field2Validation}
+          setFieldTargetValidation={setFieldTargetValidation}
+          setFormulaTarget={setFormulaTarget}
+          fieldTargetValidation={fieldTargetValidation}
+          submitForm={submitForm}
+        ></CalculationModal>
 
-                {field1Validation == 0 ? (
-                  <label className="" style={{ color: "red" }}>
-                    Value can not be same as Field2 or Target
-                  </label>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="w-100 ms-2">
-                <label className="fw-bold" htmlFor="">
-                  Formula
-                </label>
-                <Select
-                  class="form-select"
-                  className="w-[100%] mt-2"
-                  aria-label="Default select example"
-                  // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                  options={[
-                    {
-                      label: "+",
-                      value: "+",
-                    },
-                    {
-                      label: "-",
-                      value: "-",
-                    },
-                    {
-                      label: "*",
-                      value: "*",
-                    },
-                    {
-                      label: "/",
-                      value: "/",
-                    },
-                  ]}
-                  id={`dropValueFormula`}
-                  onChange={(e) => {
-                    console.log(e.value);
-                    pageFormula[0]["Formula"][0]["FormulaType"] = e.value;
-                    if (e.value != "") {
-                      setFieldFormulaValidation(1);
-                    } else {
-                      setFieldFormulaValidation(0);
-                    }
-                  }}
-                ></Select>
+        <DropdownChildField
+          showDropDownModal={showDropDownModal}
+          handleDropClose={handleDropClose}
+          modalSpecificData={modalSpecificData}
+          setMenuId={setMenuId}
+          currentDropSelected={currentDropSelected}
+          setShow2={setShow2}
+          setSelectedListName={setSelectedListName}
+          setAllModelDataTable={setAllModelDataTable}
+          setAllDropValueData={setAllDropValueData}
+          allDropValueData={allDropValueData}
+          menuId={menuId}
+          setDropdownName={setDropdownName}
+          setShowDropDownModal={setShowDropDownModal}
+        ></DropdownChildField>
 
-                {fieldFormulaValidation == 0 ? (
-                  <label className="" style={{ color: "red" }}>
-                    Value can not be empty
-                  </label>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="w-100 ms-2">
-                <label className="fw-bold" htmlFor="">
-                  Field2
-                </label>
-                <Select
-                  class="form-select"
-                  className="w-[100%] mt-2"
-                  aria-label="Default select example"
-                  // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                  options={allInputValueForFormulaData}
-                  id={`dropValueField2`}
-                  onChange={(e) => {
-                    let fieldName=e.value;
-                    let newString = fieldName.replace("-", "_");
-                    const spaceRemove = newString.split(" ").join("");
-                    const fieldNameLowerCase = spaceRemove.toLowerCase();
-                    console.log(fieldNameLowerCase)
-                    console.log(e.value);
-                    if (pageFormula[0]["Formula"][0]["Field1"] == fieldNameLowerCase) {
-                      setField2Validation(0);
-                    } else if (pageFormula[0]["Target"] == fieldNameLowerCase) {
-                      setField2Validation(0);
-                    } else {
-                      setField2Validation(1);
-                      pageFormula[0]["Formula"][0]["Field2"] = fieldNameLowerCase;
-                    }
-                  }}
-                ></Select>
-                {field2Validation == 0 ? (
-                  <label className="" style={{ color: "red" }}>
-                    Value can not be same as Field1 or Target
-                  </label>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="w-100 ms-2">
-                <label className="fw-bold" htmlFor="">
-                  Target
-                </label>
-                <Select
-                  class="form-select"
-                  className="w-[100%] mt-2"
-                  aria-label="Default select example"
-                  // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                  options={allInputValueForFormulaData}
-                  id={`dropValueFieldTarget`}
-                  onChange={(e) => {
-                    let fieldName=e.value;
-                    let newString = fieldName.replace("-", "_");
-                    const spaceRemove = newString.split(" ").join("");
-                    const fieldNameLowerCase = spaceRemove.toLowerCase();
-                    console.log(fieldNameLowerCase)
-                    if (pageFormula[0]["Formula"][0]["Field1"] == fieldNameLowerCase) {
-                      setFieldTargetValidation(0);
-                    } else if (
-                      pageFormula[0]["Formula"][0]["Field2"] ==fieldNameLowerCase
-                    ) {
-                      setFieldTargetValidation(0);
-                    } else {
-                      console.log(e.value);
-                      setFormulaTarget(fieldNameLowerCase);
-                      setFieldTargetValidation(1);
-                      pageFormula[0]["Target"] = fieldNameLowerCase;
-                    }
-                  }}
-                ></Select>
-                {fieldTargetValidation == 0 ? (
-                  <label className="" style={{ color: "red" }}>
-                    Value can not be same as Field1 or Field2
-                  </label>
-                ) : (
-                  ""
-                )}
-              </div>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <button
-              type="button"
-              class="btn"
-              style={{ backgroundColor: "#34C38F", color: "white" }}
-              onClick={() => {
-                if (pageFormula[0]["Formula"][0]["FormulaType"] == "") {
-                  setFieldFormulaValidation(0);
-                }
-                if (pageFormula[0]["Formula"][0]["Field2"] == "") {
-                  setField1Validation(0);
-                }
-                if (pageFormula[0]["Formula"][0]["Field1"] == "") {
-                  setField1Validation(0);
-                }
-                if (pageFormula[0]["Formula"][0]["FormulaType"] == "") {
-                  setFieldFormulaValidation(0);
-                }
-                if (pageFormula[0]["Formula"][0]["Target"] == "") {
-                  setFieldTargetValidation(0);
-                }
-                if (
-                  field1Validation != 1 ||
-                  field2Validation != 1 ||
-                  fieldFormulaValidation != 1 ||
-                  fieldTargetValidation != 1
-                ) {
-                } else {
-                  // addList();
-                  submitForm();
-                }
-              }}
-            >
-              Save changes
-            </button>
-          </Modal.Footer>
-        </Modal>
-        <Modal
-          show={showDropDownModal}
-          onHide={handleDropClose}
-          backdrop="true"
-          keyboard={false}
-        >
-          <Modal.Header>
-            <Modal.Title className="text-black fw-bold">
-              Select Menu
-            </Modal.Title>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              onClick={handleDropClose}
-            >
-              X
-            </button>
-          </Modal.Header>
+        <DropdownSelect
+          show2={show2}
+          setShow2={setShow2}
+          selectedListName={selectedListName}
+          handleErrorClose={handleErrorClose}
+          dropdownName={dropdownName}
+          currentDropSelected={currentDropSelected}
+          setRadioButton={setRadioButton}
+          radioButton={radioButton}
+          allModelDataTable={allModelDataTable}
+          allDropValueData={allDropValueData}
+          setSelectedOption={setSelectedOption}
+        ></DropdownSelect>
 
-          <Modal.Body>
-            {modalSpecificData
-              .filter((person) => person.MenuName === "Master Entry")
-              .map((filteredPerson) => (
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <div class="input-group-text">
-                      <input
-                        type="radio"
-                        value={filteredPerson.SubMenuName}
-                        name="dropValueField"
-                        aria-label="Radio button for following text input"
-                        onClick={(e) => {
-                          setMenuId(filteredPerson.MenuId);
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <h4 className="text-black ms-2 fs-5">
-                    {filteredPerson.SubMenuName}
-                  </h4>
-                </div>
-              ))}
-          </Modal.Body>
-          <Modal.Footer>
-            <button
-              style={{ backgroundColor: "#34C38F", border: "none" }}
-              type="button"
-              class="btn btn-primary"
-              data-dismiss="modal"
-              aria-label="Close"
-              onClick={(e) => {
-                handleDropdownValue(currentDropSelected);
-                setShow2(true);
-              }}
-            >
-              Save changes
-            </button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal
-          show={showErrorModal}
-          onHide={handleErrorClose}
-          backdrop="true"
-          keyboard={false}
-        >
-          <Modal.Header>
-            <Modal.Title>
-              <h5 className="fw-bold">Warning!</h5>
-            </Modal.Title>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              onClick={handleErrorClose}
-            >
-              X
-            </button>
-          </Modal.Header>
-          <Modal.Body>
-            <label>{errorMessageString}</label>
-          </Modal.Body>
-        </Modal>
-        <Modal show={show2} onHide={() => setShow2(false)}>
-        <Modal.Header>
-        <Modal.Title>{selectedListName}</Modal.Title>
-            <button
-              type="button"
-              class="btn-close"
-              aria-label="Close"
-              onClick={handleErrorClose}
-            >
-              X
-            </button>
-          </Modal.Header>
-          {/* <Modal.Header closeButton>
-           
-          </Modal.Header> */}
-          <Modal.Body>
-            {dropdownName.map((item, i) => {
-              return (
-                <>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <div class="input-group-text">
-                        <input
-                          type="radio"
-                          value={item.ColumnName}
-                          name="dropValueFieldCheck"
-                          aria-label="Radio button for following text input"
-                          onClick={(e) => {}}
-                        />
-                      </div>
-                    </div>
-                    <h4 className="text-black ms-2 fs-5">{item.ColumnName}</h4>
-                  </div>
-                </>
-              );
-            })}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="danger"
-              onClick={(e) => {
-                handleDropdown(currentDropSelected);
-                setShow2(false);
-              }}
-            >
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
+        <WarningModal
+        showErrorModal={showErrorModal}
+        handleErrorClose={handleErrorClose}
+        errorMessageString={errorMessageString}
+        ></WarningModal>
       </Grid>
     </form>
   );

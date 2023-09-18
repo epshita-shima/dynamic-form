@@ -1,11 +1,5 @@
-import GenerateForm from "./component/GenerateForm/GenerateForm";
 import { Routes, Route } from "react-router-dom";
-import SingleEntryForm from "./component/SingleEntryForm/SingleEntryForm";
-import SingleForm from "./component/GenerateForm/SingleForm/SingleForm";
-import MyComponent from "./component/Test/MyComponent";
-import CreatePage from "./component/CreatePage/CreatePage";
 import SingleEntryData from "./component/SingleEntryData/SingleEntryData";
-
 import Dashboard from "./component/Dashboard/Dashboard";
 import CreateMenu from "./component/CreateMenu/CreateParentMenu/CreateMenu";
 import "./App.css";

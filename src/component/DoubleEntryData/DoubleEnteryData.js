@@ -1,25 +1,32 @@
-import {Grid, TextField } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import Select from "react-select";
 import "../SingleEntryForm/SingleEntryForm.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
 import * as Yup from "yup";
-import Token from "../common/Token";
 import useChildMenu from "./../customHooks/useChildMenu";
 import DoubleEntryChildData from "./DoubleEntryChildData";
 import CalculationModal from "../ModalStore/ParentModal/CalculationModal";
 import WarningModal from "../ModalStore/ParentModal/WarningModal";
 import ChildCalculationModal from "../ModalStore/ParentModal/ChildCalculationModal";
-import DropdownParentField from "../ModalStore/ParentModal/DropdownParentField";
-import TextFieldParent from './../FormField/ParentFormField/TextFieldParent';
-import DropDownParent from './../FormField/ParentFormField/DropDownParent';
-import DateFieldParent from './../FormField/ParentFormField/DateFieldParent';
-import TextareaParentField from './../FormField/ParentFormField/TextareaParentField';
-import ImageParentField from './../FormField/ParentFormField/ImageParentField';
-import DropDownSelect from '../ModalStore/ParentModal/DropDownSelect';
+import TextFieldParent from "./../FormField/ParentFormField/TextFieldParent";
+import DropDownParent from "./../FormField/ParentFormField/DropDownParent";
+import DateFieldParent from "./../FormField/ParentFormField/DateFieldParent";
+import TextareaParentField from "./../FormField/ParentFormField/TextareaParentField";
+import ImageParentField from "./../FormField/ParentFormField/ImageParentField";
+import Show_Modal_For_Table_Selection_In_The_DropDown from "../ModalStore/ParentModal/Show_Modal_For_Table_Selection_In_The_DropDown";
+import Show_Modal_For_Value_Selection_After_The_Table_Modal_Select from "../ModalStore/ParentModal/Show_Modal_For_Value_Selection_After_The_Table_Modal_Select";
+import TextFields from "../FormField/ParentFormField/DynamicFieldForParentComponent/TextFields";
+import Dropdown from "../FormField/ParentFormField/DynamicFieldForParentComponent/Dropdown";
+import DateField from "../FormField/ParentFormField/DynamicFieldForParentComponent/DateField";
+import ImageField from "../FormField/ParentFormField/DynamicFieldForParentComponent/ImageField";
+import TextareaField from "../FormField/ParentFormField/DynamicFieldForParentComponent/TextareaField";
+import Token from "../common/Token";
+import ChildFormField from "../FormField/ChildFormField/ChildFormField";
+
+
 
 const DoubleEnteryData = ({
   setExist,
@@ -30,12 +37,11 @@ const DoubleEnteryData = ({
   setChildMenuName,
   setPageEntry,
 }) => {
-  const [inputValue, setInputValue] = useState("");
-  const [inputValueDDF, setInputValueDDF] = useState("");
-  const [inputValueCheck, setInputValueCheck] = useState("");
-  const [inputValueDate, setInputValueDate] = useState("");
-  const [inputValueTextArea, setInputValueTextArea] = useState("");
-  const [inputValueImage, setInputValueImage] = useState("");
+  const [inputValueParent, setInputValueParent] = useState("");
+  const [inputValueDDFParent, setInputValueDDFParent] = useState("");
+  const [inputValueDateParent, setInputValueDateParent] = useState("");
+  const [inputValueTextAreaParent, setInputValueTextAreaParent] = useState("");
+  const [inputValueImageParent, setInputValueImageParent] = useState("");
   const [inputValueDetails, setInputValueDetails] = useState("");
   const [inputValueDDFDetails, setInputValueDDFDetails] = useState("");
   const [inputValueCheckDetails, setInputValueCheckDetails] = useState("");
@@ -43,90 +49,93 @@ const DoubleEnteryData = ({
   const [inputValueTextAreaDetails, setInputValueTextAreaDetails] =
     useState("");
   const [inputValueImageDetails, setInputValueImageDetails] = useState("");
-  const previousInputValue = useRef("");
-  const previousInputValueDDF = useRef("");
-  const previousInputValueCheck = useRef("");
-  const previousInputValueDate = useRef("");
-  const previousInputValueTextArea = useRef("");
-  const previousInputValueImage = useRef("");
+  const previousParentInputValue = useRef("");
+  const previousParentInputValueDDF = useRef("");
+  const previousParentInputValueDate = useRef("");
+  const previousParentInputValueTextArea = useRef("");
+  const previousParentInputValueImage = useRef("");
+
   const previousInputValueDetails = useRef("");
   const previousInputValueDDFDetails = useRef("");
   const previousInputValueCheckDetails = useRef("");
   const previousInputValueDateDetails = useRef("");
   const previousInputValueTextAreaDetails = useRef("");
   const previousInputValueImageDetails = useRef("");
-  const [displayFormulaAuto, setDisplayFormulaAuto] = useState(false);
-  const [displayFormulaAutoDetails, setDisplayFormulaAutoDetails] =
-    useState(false);
-  const [calculationType, setCalculationType] = useState("Manual");
-  const [formulaTarget, setFormulaTarget] = useState("");
+
+  const [displayParentFormulaAuto, setDisplayParentFormulaAuto] = useState(false);
+  const [displayFormulaAutoDetails, setDisplayFormulaAutoDetails] =useState(false);
+  const [parentCalculationType, setParentCalculationType] = useState("Manual");
+  const [parentFormulaTarget, setParentFormulaTarget] = useState("");
   const [calculationTypeDetails, setCalculationTypeDetails] =
     useState("Manual");
   const [formulaTargetDetails, setFormulaTargetDetails] = useState("");
-  const [inputData, setInputData] = useState([]);
-  const [dropdownData, setDropdownData] = useState([]);
-  const [dateData, setDateData] = useState([]);
-  const [textareaData, setTextareaData] = useState([]);
-  const [imageData, setImageData] = useState([]);
+
+  const [parentInputData, setParentInputData] = useState([]);
+  const [parentDropdownData, setParentDropdownData] = useState([]);
+  const [parentDateData, setParentDateData] = useState([]);
+  const [parentTextareaData, setParentTextareaData] = useState([]);
+  const [parentImageData, setParentImageData] = useState([]);
+
   const [inputDataDetails, setInputDataDetails] = useState([]);
   const [dropdownDataDetails, setDropdownDataDetails] = useState([]);
   const [checkboxDataDetails, setCheckboxDataDetails] = useState([]);
   const [dateDataDetails, setDateDataDetails] = useState([]);
   const [textareaDataDetails, setTextareaDataDetails] = useState([]);
   const [imageDataDetails, setImageDataDetails] = useState([]);
-  const [showDropDownModal, setShowDropDownModal] = useState(false);
-  const [currentDropSelected, setCurrentDropSelected] = useState("0");
+  const [showParentDropDownModal, setShowParentDropDownModal] = useState(false);
+  const [currentParentDropSelected, setCurrentParentDropSelected] = useState("0");
   const [showDropDownModalDetails, setShowDropDownModalDetails] =
     useState(false);
   const [currentDropSelectedDetails, setCurrentDropSelectedDetails] =
     useState("0");
 
-  var arrayInput = [];
-  var arrayDropdown = [];
-  var arrayCheck = [];
-  var arrayDate = [];
-  var arrayTextArea = [];
-  var arrayImage = [];
+  var arrayParentInput = [];
+  var arrayParentDropdown = [];
+  var arrayParentDate = [];
+  var arrayParentTextArea = [];
+  var arrayParentImage = [];
+
   var arrayInputDetails = [];
   var arrayDropdownDetails = [];
   var arrayCheckDetails = [];
   var arrayDateDetails = [];
   var arrayTextAreaDetails = [];
   var arrayImageDetails = [];
-  const [allInputValueData, setAllInputValueData] = useState({});
-  const [allDropValueData, setAllDropValueData] = useState({});
-  const [allCheckValueData, setAllCheckValueData] = useState({});
-  const [allDateValueData, setAllDateValueData] = useState({});
-  const [allTextAreaValueData, setAllTextAreaValueData] = useState({});
-  const [allImageValueData, setAllImageValueData] = useState({});
-  const [inputSchema, setInputSchema] = useState(null);
-  const [dropSchema, setDropSchema] = useState(null);
-  const [dateSchema, setDateSchema] = useState(null);
-  const [imageSchema, setImageSchema] = useState(null);
-  const [textareaSchema, setTextareaSchema] = useState(null);
-  const [pageSchema, setPageSchema] = useState(null);
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorMessageString, setErrorMessageString] = useState("");
-  const [allInputValueForFormulaData, setAllInputValueForFormulaData] =
-    useState([]);
-  const [pageFormula, setPageFormula] = useState([
+  
+  const [allParentInputValueData, setAllParentInputValueData] = useState({});
+  const [allParentDropValueData, setAllParentDropValueData] = useState({});
+  const [allParentDateValueData, setAllParentDateValueData] = useState({});
+  const [allParentTextAreaValueData, setAllParentTextAreaValueData] = useState({});
+  const [allParentImageValueData, setAllParentImageValueData] = useState({});
+  const [parentInputSchema, setParentInputSchema] = useState(null);
+  const [parentDropSchema, setParentDropSchema] = useState(null);
+  const [parentDateSchema, setParentDateSchema] = useState(null);
+  const [parentImageSchema, setParentImageSchema] = useState(null);
+  const [parentTextareaSchema, setParentTextareaSchema] = useState(null);
+  const [parentPageSchema, setParentPageSchema] = useState(null);
+
+  const [showParentErrorModal, setShowParentErrorModal] = useState(false);
+  const [showErrorModalDetails, setShowErrorModalDetails] = useState(false);
+  const [parentErrorMessageString, setParentErrorMessageString] = useState("");
+  const [allParentInputValueForFormulaData, setAllParentInputValueForFormulaData] =useState([]);
+  const [parentPageFormula, setParentPageFormula] = useState([
     { Formula: [{ Field1: "", FormulaType: "", Field2: "" }], Target: {} },
   ]);
   const [pageFormulaDetails, setPageFormulaDetails] = useState([
     { Formula: [{ Field1: "", FormulaType: "", Field2: "" }], Target: {} },
   ]);
-  const [allData, setAllData] = useState([]);
+  const [allParentData, setParentAllData] = useState([]);
   const [selectedOptionParent, setSelectedOptionParent] = useState([]);
-  const [modalSpecificData, setModalSpecificData] = useState([]);
-  const [allModelDataTable, setAllModelDataTable] = useState([]);
-  const [pageName, setPageName] = useState("");
-  const [field1Validation, setField1Validation] = useState(2);
-  const [field2Validation, setField2Validation] = useState(2);
-  const [fieldTargetValidation, setFieldTargetValidation] = useState(2);
-  const [fieldFormulaValidation, setFieldFormulaValidation] = useState(2);
-  const [showCalculactionModal, setShowCalculactionModal] = useState(false);
-  const [showCalculactionModalDetails, setShowCalculactionModalDetails] =
-    useState(false);
+  const [parentModalSpecificData, setParentModalSpecificData] = useState([]);
+  const [parentAllModelDataTable, setParentAllModelDataTable] = useState([]);
+  const [parentPageName, setParentPageName] = useState("");
+  const [parentField1Validation, setParentField1Validation] = useState(2);
+  const [parentField2Validation, setParentField2Validation] = useState(2);
+  const [parentFieldTargetValidation, setParentFieldTargetValidation] = useState(2);
+  const [parentFieldFormulaValidation, setParentFieldFormulaValidation] = useState(2);
+  const [showParentCalculactionModal, setShowParentCalculactionModal] = useState(false);
+
+  const [showCalculactionModalDetails, setShowCalculactionModalDetails] = useState(false);
   const [allInputValueDataDetails, setAllInputValueDataDetails] = useState({});
   const [allDropValueDataDetails, setAllDropValueDataDetails] = useState({});
   const [allCheckValueDataDetails, setAllCheckValueDataDetails] = useState({});
@@ -137,33 +146,31 @@ const DoubleEnteryData = ({
 
   const [keyValue, setKeyValue] = useState([]);
 
-  const handleClose = () => setShowCalculactionModal(false);
+  const handleParentCalculactionModalClose = () => setShowParentCalculactionModal(false);
   const handleCloseDetails = () => setShowCalculactionModalDetails(false);
-  const handleDropClose = () => setShowDropDownModal(false);
-  const handleErrorClose = () => setShowErrorModal(false);
-  const [errorsPage, setErrorsPage] = useState([]);
-  const [errorsInput, setInputErrors] = useState([]);
-  const [errorsDropDown, setErrorsDropDown] = useState([]);
-  const [errorsDate, setErrorsDate] = useState([]);
-  const [errorsTextAreaErrors, setErrorsTextAreaErrors] = useState([]);
-  const [errorsImageErrors, setErrorsImageErrors] = useState([]);
+  const handleParentModalDropClose = () => setShowParentDropDownModal(false);
+  const handleParentErrorClose = () => setShowParentErrorModal(false);
+  const [parentErrorsPage, setParentErrorsPage] = useState([]);
+  const [parentErrorsInput, setParentInputErrors] = useState([]);
+  const [parentErrorsDropDown, setParentErrorsDropDown] = useState([]);
+  const [parentErrorsDate, setParentErrorsDate] = useState([]);
+  const [parentErrorsTextArea, setParentErrorsTextArea] = useState([]);
+  const [parentErrorsImage, setParentErrorsImage] = useState([]);
   const [childMenu, setChildMenu] = useChildMenu([]);
-  const [radioButton, setRadioButton] = useState([]);
-  const [dropdownName, setDropdownName] = useState([]);
-  const [menuId, setMenuId] = useState("");
+
+  const [parentTableRadioButton, setParentTableRadioButton] = useState([]);
+  const [parentTableValue, setParentTableValue] = useState([]);
+ 
   const [show2, setShow2] = useState(false);
+  const [parentModalTitle, setParentModalTitle] = useState("");
+
   const [radioButton2, setRadioButton2] = useState([]);
   const [field1ValidationDetails, setField1ValidationDetails] = useState(2);
   const [field2ValidationDetails, setField2ValidationDetails] = useState(2);
-  const [fieldTargetValidationDetails, setFieldTargetValidationDetails] =
-    useState(2);
-  const [fieldFormulaValidationDetails, setFieldFormulaValidationDetails] =
-    useState(2);
-  const [
-    allInputValueForFormulaDataDetails,
-    setAllInputValueForFormulaDataDetails,
-  ] = useState([]);
-  const [modalTitle, setModalTitle] = useState("");
+  const [fieldTargetValidationDetails, setFieldTargetValidationDetails] =useState(2);
+  const [fieldFormulaValidationDetails, setFieldFormulaValidationDetails] =useState(2);
+  const [allInputValueForFormulaDataDetails, setAllInputValueForFormulaDataDetails] = useState([]);
+
   const [childModalTitle, setChildModalTitle] = useState("");
   const [inputSchemaDetails, setInputSchemaDetails] = useState(null);
   const [dropSchemaDetails, setDropSchemaDetails] = useState(null);
@@ -186,8 +193,6 @@ const DoubleEnteryData = ({
   var tableTextareaData = [];
   var tableImageData = [];
 
-  console.log(show2);
-  console.log(radioButton, radioButton2);
   const token = Token.token;
   const tableName = childMenuName.SubMenuName;
   let newString = tableName.replace("-", "_");
@@ -219,7 +224,7 @@ const DoubleEnteryData = ({
       });
   }, []);
   var inputLowerCaseData = [];
-  Object.entries(allInputValueData).forEach((entry) => {
+  Object.entries(allParentInputValueData).forEach((entry) => {
     const [key, value] = entry;
     let newString = value.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
@@ -232,7 +237,7 @@ const DoubleEnteryData = ({
   });
 
   var dropLowerCaseData = [];
-  Object.entries(allDropValueData).forEach((entry) => {
+  Object.entries(allParentDropValueData).forEach((entry) => {
     const [key, value] = entry;
     let newString = value.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
@@ -246,7 +251,7 @@ const DoubleEnteryData = ({
 
   var tableDateData = [];
   var dateLowerCaseData = [];
-  Object.entries(allDateValueData).forEach((entry) => {
+  Object.entries(allParentDateValueData).forEach((entry) => {
     const [key, value] = entry;
     let newString = value.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
@@ -259,7 +264,7 @@ const DoubleEnteryData = ({
   });
 
   var textareaLowerCaseData = [];
-  Object.entries(allTextAreaValueData).forEach((entry) => {
+  Object.entries(allParentTextAreaValueData).forEach((entry) => {
     console.log(entry);
     const [key, value] = entry;
     let newString = value.replace("-", "_");
@@ -273,7 +278,7 @@ const DoubleEnteryData = ({
   });
 
   var imageLowerCaseData = [];
-  Object.entries(allImageValueData).forEach((entry) => {
+  Object.entries(allParentImageValueData).forEach((entry) => {
     const [key, value] = entry;
     let newString = value.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
@@ -426,7 +431,7 @@ const DoubleEnteryData = ({
       .then((data) => {
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
-          setAllModelDataTable(allModalData);
+          setParentAllModelDataTable(allModalData);
         } else {
           console.log(data);
         }
@@ -453,54 +458,48 @@ const DoubleEnteryData = ({
       });
   };
   {
-    for (let i = 0; i < inputValue; i++) {
-      arrayInput.push([i]);
+    for (let i = 0; i < inputValueParent; i++) {
+      arrayParentInput.push([i]);
     }
-    for (let i = 0; i < inputValueDDF; i++) {
-      arrayDropdown.push([i]);
+    for (let i = 0; i < inputValueDDFParent; i++) {
+      arrayParentDropdown.push([i]);
     }
-    for (let i = 0; i < inputValueCheck; i++) {
-      arrayCheck.push([i]);
+    for (let i = 0; i < inputValueDateParent; i++) {
+      arrayParentDate.push([i]);
     }
-    for (let i = 0; i < inputValueDate; i++) {
-      arrayDate.push([i]);
+    for (let i = 0; i < inputValueTextAreaParent; i++) {
+      arrayParentTextArea.push(i);
     }
-    for (let i = 0; i < inputValueTextArea; i++) {
-      arrayTextArea.push(i);
-    }
-    for (let i = 0; i < inputValueImage; i++) {
-      arrayImage.push(i);
+    for (let i = 0; i < inputValueImageParent; i++) {
+      arrayParentImage.push(i);
     }
 
     useEffect(() => {
-      setInputData(arrayInput);
-      setDropdownData(arrayDropdown);
-      setDateData(arrayDate);
-      setTextareaData(arrayTextArea);
-      setImageData(arrayImage);
+      setParentInputData(arrayParentInput);
+      setParentDropdownData(arrayParentDropdown);
+      setParentDateData(arrayParentDate);
+      setParentTextareaData(arrayParentTextArea);
+      setParentImageData(arrayParentImage);
     }, [
-      inputValue,
-      inputValueDDF,
-      inputValueCheck,
-      inputValueDate,
-      inputValueTextArea,
-      inputValueImage,
+      inputValueParent,
+      inputValueDDFParent,
+      inputValueDateParent,
+      inputValueTextAreaParent,
+      inputValueImageParent,
     ]);
   }
 
   useEffect(() => {
-    previousInputValue.current = inputValue;
-    previousInputValueDDF.current = inputValueDDF;
-    previousInputValueCheck.current = inputValueCheck;
-    previousInputValueDate.current = inputValueDate;
-    previousInputValueTextArea.current = inputValueTextArea;
-    previousInputValueImage.current = inputValueImage;
+    previousParentInputValue.current = inputValueParent;
+    previousParentInputValueDDF.current = inputValueDDFParent;
+    previousParentInputValueDate.current = inputValueDateParent;
+    previousParentInputValueTextArea.current = inputValueTextAreaParent;
+    previousParentInputValueImage.current = inputValueImageParent;
   }, [
-    inputValue,
-    inputValueDDF,
-    inputValueCheck,
-    inputValueDate,
-    inputValueTextArea,
+    inputValueParent,
+    inputValueDDFParent,
+    inputValueDateParent,
+    inputValueTextAreaParent,
   ]);
 
   const submitForm = () => {
@@ -557,27 +556,27 @@ const DoubleEnteryData = ({
           tableModelData.tableNameChild = "PageInfo";
 
           var allInputValueDataLength = 0;
-          if (allInputValueData != null) {
-            allInputValueDataLength = Object.keys(allInputValueData).length;
+          if (allParentInputValueData != null) {
+            allInputValueDataLength = Object.keys(allParentInputValueData).length;
           }
 
           var allDateValueDataLength = 0;
-          if (allDateValueData != null) {
-            allDateValueDataLength = Object.keys(allDateValueData).length;
+          if (allParentDateValueData != null) {
+            allDateValueDataLength = Object.keys(allParentDateValueData).length;
           }
 
           var allDropValueDataLength = 0;
-          if (allDropValueData != null) {
-            allDropValueDataLength = Object.keys(allDropValueData).length;
+          if (allParentDropValueData != null) {
+            allDropValueDataLength = Object.keys(allParentDropValueData).length;
           }
           var allTextareaValueDataLength = 0;
-          if (allTextAreaValueData != null) {
+          if (allParentTextAreaValueData != null) {
             allTextareaValueDataLength =
-              Object.keys(allTextAreaValueData).length;
+              Object.keys(allParentTextAreaValueData).length;
           }
           var allImageValueDataLength = 0;
-          if (allImageValueData != null) {
-            allImageValueDataLength = Object.keys(allImageValueData).length;
+          if (allParentImageValueData != null) {
+            allImageValueDataLength = Object.keys(allParentImageValueData).length;
           }
           var orderPosition = 0;
 
@@ -591,21 +590,21 @@ const DoubleEnteryData = ({
               PageId: "PageID",
               MenuId: "MenuID",
               ColumnName: inputLowerCaseData[allInputValueDataCount],
-              ColumnNameWithSpace: allInputValueData[allInputValueDataCount],
+              ColumnNameWithSpace: allParentInputValueData[allInputValueDataCount],
               ColumnType: "textbox",
               ColumnDataType: "",
               SiteName: "DynamicSite",
-              CalculationType: calculationType,
+              CalculationType: parentCalculationType,
               CalculationKey: inputLowerCaseData[allInputValueDataCount],
-              CalculationFormula: JSON.stringify(pageFormula),
+              CalculationFormula: JSON.stringify(parentPageFormula),
               RelatedTable: "",
               Position: orderPosition,
               IsDisable:
-                formulaTarget == allInputValueData[allInputValueDataCount]
+                parentFormulaTarget == allParentInputValueData[allInputValueDataCount]
                   ? "1"
                   : "0",
             };
-            console.log(allInputValueData[allInputValueDataCount]);
+            console.log(allParentInputValueData[allInputValueDataCount]);
             tableModelData.detailsData.push(tabledataparams);
           }
 
@@ -619,7 +618,7 @@ const DoubleEnteryData = ({
               PageId: "PageID",
               MenuId: "MenuID",
               ColumnName: dateLowerCaseData[allDateValueDataCount],
-              ColumnNameWithSpace: allDateValueData[allDateValueDataCount],
+              ColumnNameWithSpace: allParentDateValueData[allDateValueDataCount],
               ColumnType: "datetime",
               ColumnDataType: "",
               SiteName: "DynamicSite",
@@ -644,14 +643,14 @@ const DoubleEnteryData = ({
               PageId: "PageID",
               MenuId: "MenuID",
               ColumnName: dropLowerCaseData[allDropValueDataCount],
-              ColumnNameWithSpace: allDropValueData[allDropValueDataCount],
+              ColumnNameWithSpace: allParentDropValueData[allDropValueDataCount],
               ColumnType: "dropdown",
               ColumnDataType: "",
               SiteName: "DynamicSite",
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable: allDropValueData[allDropValueDataCount],
+              RelatedTable: allParentDropValueData[allDropValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -668,14 +667,14 @@ const DoubleEnteryData = ({
               MenuId: "MenuID",
               ColumnName: textareaLowerCaseData[allTextAreaValueDataCount],
               ColumnNameWithSpace:
-                allTextAreaValueData[allTextAreaValueDataCount],
+                allParentTextAreaValueData[allTextAreaValueDataCount],
               ColumnType: "textarea",
               ColumnDataType: "",
               SiteName: "DynamicSite",
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable: allTextAreaValueData[allTextAreaValueDataCount],
+              RelatedTable: allParentTextAreaValueData[allTextAreaValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -691,14 +690,14 @@ const DoubleEnteryData = ({
               PageId: "PageID",
               MenuId: "MenuID",
               ColumnName: imageLowerCaseData[allImageValueDataCount],
-              ColumnNameWithSpace: allImageValueData[allImageValueDataCount],
+              ColumnNameWithSpace: allParentImageValueData[allImageValueDataCount],
               ColumnType: "image",
               ColumnDataType: "",
               SiteName: "DynamicSite",
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable: allImageValueData[allImageValueDataCount],
+              RelatedTable: allParentImageValueData[allImageValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -723,27 +722,27 @@ const DoubleEnteryData = ({
           tableModelData.tableNameChild = "PageInfo";
 
           var allInputValueDataLength = 0;
-          if (allInputValueData != null) {
-            allInputValueDataLength = Object.keys(allInputValueData).length;
+          if (allParentInputValueData != null) {
+            allInputValueDataLength = Object.keys(allParentInputValueData).length;
           }
 
           var allDateValueDataLength = 0;
-          if (allDateValueData != null) {
-            allDateValueDataLength = Object.keys(allDateValueData).length;
+          if (allParentDateValueData != null) {
+            allDateValueDataLength = Object.keys(allParentDateValueData).length;
           }
 
           var allDropValueDataLength = 0;
-          if (allDropValueData != null) {
-            allDropValueDataLength = Object.keys(allDropValueData).length;
+          if (allParentDropValueData != null) {
+            allDropValueDataLength = Object.keys(allParentDropValueData).length;
           }
           var allTextareaValueDataLength = 0;
-          if (allTextAreaValueData != null) {
+          if (allParentTextAreaValueData != null) {
             allTextareaValueDataLength =
-              Object.keys(allTextAreaValueData).length;
+              Object.keys(allParentTextAreaValueData).length;
           }
           var allImageValueDataLength = 0;
-          if (allImageValueData != null) {
-            allImageValueDataLength = Object.keys(allImageValueData).length;
+          if (allParentImageValueData != null) {
+            allImageValueDataLength = Object.keys(allParentImageValueData).length;
           }
           var orderPosition = 0;
 
@@ -752,24 +751,24 @@ const DoubleEnteryData = ({
             allInputValueDataCount < allInputValueDataLength;
             allInputValueDataCount++
           ) {
-            console.log(allInputValueData);
+            console.log(allParentInputValueData);
             orderPosition++;
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
               ColumnName: inputLowerCaseData[allInputValueDataCount],
-              ColumnNameWithSpace: allInputValueData[allInputValueDataCount],
+              ColumnNameWithSpace: allParentInputValueData[allInputValueDataCount],
               ColumnType: "textbox",
               ColumnDataType: "",
               SiteName: "DynamicSite",
-              CalculationType: calculationType,
+              CalculationType: parentCalculationType,
               CalculationKey: inputLowerCaseData[allInputValueDataCount],
-              CalculationFormula: JSON.stringify(pageFormula),
+              CalculationFormula: JSON.stringify(parentPageFormula),
               RelatedTable: "",
               ColumnValueField: "",
               Position: orderPosition,
               IsDisable:
-                formulaTarget == allInputValueData[allInputValueDataCount]
+                parentFormulaTarget == allParentInputValueData[allInputValueDataCount]
                   ? "1"
                   : "0",
             };
@@ -787,7 +786,7 @@ const DoubleEnteryData = ({
               PageId: "PageID",
               MenuId: "MenuID",
               ColumnName: dateLowerCaseData[allDateValueDataCount],
-              ColumnNameWithSpace: allDateValueData[allDateValueDataCount],
+              ColumnNameWithSpace: allParentDateValueData[allDateValueDataCount],
               ColumnType: "datetime",
               ColumnDataType: "",
               SiteName: "DynamicSite",
@@ -808,21 +807,21 @@ const DoubleEnteryData = ({
             allDropValueDataCount < allDropValueDataLength;
             allDropValueDataCount++
           ) {
-            console.log(allDropValueData[allDropValueDataCount]);
+            console.log(allParentDropValueData[allDropValueDataCount]);
             orderPosition++;
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
               ColumnName: dropLowerCaseData[allDropValueDataCount],
-              ColumnNameWithSpace: allDropValueData[allDropValueDataCount],
+              ColumnNameWithSpace: allParentDropValueData[allDropValueDataCount],
               ColumnType: "dropdown",
               ColumnDataType: "",
               SiteName: "DynamicSite",
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable: allDropValueData[allDropValueDataCount],
-              ColumnValueField: radioButton[allDropValueDataCount],
+              RelatedTable: allParentDropValueData[allDropValueDataCount],
+              ColumnValueField: parentTableRadioButton[allDropValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -839,14 +838,14 @@ const DoubleEnteryData = ({
               MenuId: "MenuID",
               ColumnName: textareaLowerCaseData[allTextAreaValueDataCount],
               ColumnNameWithSpace:
-                allTextAreaValueData[allTextAreaValueDataCount],
+                allParentTextAreaValueData[allTextAreaValueDataCount],
               ColumnType: "textarea",
               ColumnDataType: "",
               SiteName: "DynamicSite",
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable: allTextAreaValueData[allTextAreaValueDataCount],
+              RelatedTable: allParentTextAreaValueData[allTextAreaValueDataCount],
               ColumnValueField: "",
               Position: orderPosition,
               IsDisable: "0",
@@ -863,14 +862,14 @@ const DoubleEnteryData = ({
               PageId: "PageID",
               MenuId: "MenuID",
               ColumnName: imageLowerCaseData[allImageValueDataCount],
-              ColumnNameWithSpace: allImageValueData[allImageValueDataCount],
+              ColumnNameWithSpace: allParentImageValueData[allImageValueDataCount],
               ColumnType: "image",
               ColumnDataType: "",
               SiteName: "DynamicSite",
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable: allImageValueData[allImageValueDataCount],
+              RelatedTable: allParentImageValueData[allImageValueDataCount],
               ColumnValueField: "",
               Position: orderPosition,
               IsDisable: "0",
@@ -1188,84 +1187,58 @@ const DoubleEnteryData = ({
     }
   };
 
-  const handleModalMenu = () => {
-    const modelData = {
-      procedureName: "",
-      parameters: {},
-    };
-    modelData.procedureName = "prc_GetMenuList";
-    fetch("https://localhost:44372/api/GetData/GetInitialData", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == true) {
-          const allModalData = JSON.parse(data.data);
-          console.log(allModalData);
-          setModalSpecificData(allModalData.Tables2);
-        } else {
-          console.log(data);
-        }
-      });
-  };
-
   function validationOutsideSchema() {
     var allInputValueDataLength = 0;
-    if (allInputValueData != null) {
-      allInputValueDataLength = Object.keys(allInputValueData).length;
+    if (allParentInputValueData != null) {
+      allInputValueDataLength = Object.keys(allParentInputValueData).length;
     }
     if (allInputValueDataLength > 0) {
-      var schemaForInput = createDynamicSchema(allInputValueData);
-      setInputSchema(schemaForInput);
+      var schemaForInput = createDynamicSchema(allParentInputValueData);
+      setParentInputSchema(schemaForInput);
       validateInputFields(schemaForInput);
     }
 
-    var schemaForPage = createPageSchema(pageName);
-    setPageSchema(schemaForPage);
+    var schemaForPage = createPageSchema(parentPageName);
+    setParentPageSchema(schemaForPage);
     validatePageNameFields(schemaForPage);
 
     var allDropValueDataLength = 0;
-    if (allDropValueData != null) {
-      allDropValueDataLength = Object.keys(allDropValueData).length;
+    if (allParentDropValueData != null) {
+      allDropValueDataLength = Object.keys(allParentDropValueData).length;
     }
     if (allDropValueDataLength > 0) {
-      var schemaForDrop = createDynamicSchemaForDrop(allDropValueData);
+      var schemaForDrop = createDynamicSchemaForDrop(allParentDropValueData);
       console.log(schemaForDrop);
-      setDropSchema(schemaForDrop);
+      setParentDropSchema(schemaForDrop);
       validateDropFields(schemaForDrop);
     }
 
     var allDateValueDataLength = 0;
-    if (allDateValueData != null) {
-      allDateValueDataLength = Object.keys(allDateValueData).length;
+    if (allParentDateValueData != null) {
+      allDateValueDataLength = Object.keys(allParentDateValueData).length;
     }
     if (allDateValueDataLength > 0) {
-      var schemaForDate = createDynamicSchemaForDate(allDateValueData);
-      setDateSchema(schemaForDate);
+      var schemaForDate = createDynamicSchemaForDate(allParentDateValueData);
+      setParentDateSchema(schemaForDate);
       validateDateFields(schemaForDate);
     }
     var allTestAreaValueDataLength = 0;
-    if (allTextAreaValueData != null) {
-      allTestAreaValueDataLength = Object.keys(allTextAreaValueData).length;
+    if (allParentTextAreaValueData != null) {
+      allTestAreaValueDataLength = Object.keys(allParentTextAreaValueData).length;
     }
     if (allTestAreaValueDataLength > 0) {
       var schemaForTextArea =
-        createDynamicSchemaForTextarea(allTextAreaValueData);
-      setTextareaSchema(schemaForTextArea);
+        createDynamicSchemaForTextarea(allParentTextAreaValueData);
+      setParentTextareaSchema(schemaForTextArea);
       validateTextAreaFields(schemaForTextArea);
     }
     var allImageValueDataLength = 0;
-    if (allImageValueData != null) {
-      allImageValueDataLength = Object.keys(allImageValueData).length;
+    if (allParentImageValueData != null) {
+      allImageValueDataLength = Object.keys(allParentImageValueData).length;
     }
     if (allImageValueDataLength > 0) {
-      var schemaForImage = createDynamicSchemaForImage(allImageValueData);
-      setImageSchema(schemaForImage);
+      var schemaForImage = createDynamicSchemaForImage(allParentImageValueData);
+      setParentImageSchema(schemaForImage);
       validateDateImageFields(schemaForImage);
     }
 
@@ -1363,26 +1336,22 @@ const DoubleEnteryData = ({
     var foundChildKey = 0;
     var foundEmpty = 0;
     var allInputValueDataLength = 0;
-    if (inputValue != "") {
-      allInputValueDataLength = inputValue;
+    if (inputValueParent != "") {
+      allInputValueDataLength = inputValueParent;
     }
     var allInputValueDataLengthDetails = 0;
     if (inputValueDetails != "") {
       allInputValueDataLengthDetails = inputValueDetails;
     }
 
-    var allCheckValueDataLength = 0;
-    if (inputValueCheck != "") {
-      allCheckValueDataLength = inputValueCheck;
-    }
     var allCheckValueDataLengthDetails = 0;
     if (inputValueCheckDetails != "") {
       allCheckValueDataLengthDetails = inputValueCheckDetails;
     }
 
     var allDateValueDataLength = 0;
-    if (inputValueDate != "") {
-      allDateValueDataLength = inputValueDate;
+    if (inputValueDateParent != "") {
+      allDateValueDataLength = inputValueDateParent;
     }
     var allDateValueDataLengthDetails = 0;
     if (inputValueDateDetails != "") {
@@ -1390,15 +1359,14 @@ const DoubleEnteryData = ({
     }
 
     var allDropValueDataLength = 0;
-    if (inputValueDDF != "") {
-      allDropValueDataLength = inputValueDDF;
+    if (inputValueDDFParent != "") {
+      allDropValueDataLength = inputValueDDFParent;
     }
     var allDropValueDataLengthDetails = 0;
     if (inputValueDDFDetails != "") {
       allDropValueDataLengthDetails = inputValueDDFDetails;
     }
     var totalField =
-      allCheckValueDataLength +
       allInputValueDataLength +
       allDateValueDataLength +
       allDropValueDataLength;
@@ -1410,25 +1378,25 @@ const DoubleEnteryData = ({
       allDropValueDataLengthDetails;
 
     if (totalField > 12) {
-      setErrorMessageString("There cannot be more than 12 input");
-      setShowErrorModal(true);
+      setParentErrorMessageString("There cannot be more than 12 input");
+      setShowParentErrorModal(true);
     } else if (totalField == 0) {
-      setErrorMessageString("There need to be more than 0 input");
-      setShowErrorModal(true);
+      setParentErrorMessageString("There need to be more than 0 input");
+      setShowParentErrorModal(true);
     } else {
       var totalValueField = 0;
-      console.log(allDropValueData);
+      console.log(allParentDropValueData);
       var errorstatus = 0;
       var allInputValueDataLength = 0;
-      if (allInputValueData != null) {
-        allInputValueDataLength = Object.keys(allInputValueData).length;
+      if (allParentInputValueData != null) {
+        allInputValueDataLength = Object.keys(allParentInputValueData).length;
       }
       for (
         var allInputCount = 0;
         allInputCount < allInputValueDataLength;
         allInputCount++
       ) {
-        if (allInputValueData[allInputCount] == "") {
+        if (allParentInputValueData[allInputCount] == "") {
           foundEmpty = 1;
         }
       }
@@ -1442,45 +1410,45 @@ const DoubleEnteryData = ({
         allInputCount < allInputValueDataLength;
         allInputCount++
       ) {
-        if (allInputValueData[allInputCount] == "") {
+        if (allParentInputValueData[allInputCount] == "") {
           foundEmpty = 1;
         }
       }
 
       var allDropValueDataLength = 0;
-      if (allDropValueData != null) {
-        allDropValueDataLength = Object.keys(allDropValueData).length;
+      if (allParentDropValueData != null) {
+        allDropValueDataLength = Object.keys(allParentDropValueData).length;
       }
       for (
         var allDropCount = 0;
         allDropCount < allDropValueDataLength;
         allDropCount++
       ) {
-        console.log(allDropValueData[allDropCount]);
-        if (allDropValueData[allDropCount] == "") {
+        console.log(allParentDropValueData[allDropCount]);
+        if (allParentDropValueData[allDropCount] == "") {
           foundEmpty = 1;
         }
       }
 
       var allDateValueDataLength = 0;
-      if (allDateValueData != null) {
-        allDateValueDataLength = Object.keys(allDateValueData).length;
+      if (allParentDateValueData != null) {
+        allDateValueDataLength = Object.keys(allParentDateValueData).length;
       }
       for (
         var allDateCount = 0;
         allDateCount < allDateValueDataLength;
         allDateCount++
       ) {
-        if (allDateValueData[allDateCount] == "") {
+        if (allParentDateValueData[allDateCount] == "") {
           foundEmpty = 1;
         }
       }
       if (foundEmpty == 1) {
       } else {
-        if (inputValue > 2 || inputValueDetails > 2) {
+        if (inputValueParent > 2 || inputValueDetails > 2) {
           console.log(
             keyValue,
-            allInputValueData,
+            allParentInputValueData,
             allInputValueDataDetails,
             allInputValueDataLength,
             allInputValueDataLengthDetails
@@ -1494,7 +1462,7 @@ const DoubleEnteryData = ({
               keyValue.some(
                 (item) =>
                   item.KeyValue.toLowerCase() ===
-                  allInputValueData[countKeyValue].toLowerCase()
+                  allParentInputValueData[countKeyValue].toLowerCase()
               )
             ) {
               foundKey = 1;
@@ -1518,7 +1486,7 @@ const DoubleEnteryData = ({
           }
           alert(foundKey);
           if (foundKey == 1 && foundChildKey == 0) {
-            setShowCalculactionModal(true);
+            setShowParentCalculactionModal(true);
           } else if (foundKey == 0 && foundChildKey == 1) {
             setShowCalculactionModalDetails(true);
           } else {
@@ -1530,14 +1498,14 @@ const DoubleEnteryData = ({
       }
     }
     if (totalFieldDetails > 12) {
-      setErrorMessageString("There cannot be more than 12 input");
-      setShowErrorModal(true);
+      setParentErrorMessageString("There cannot be more than 12 input");
+      setShowErrorModalDetails(true);
     } else if (totalFieldDetails == 0) {
-      setErrorMessageString("There need to be more than 0 input");
-      setShowErrorModal(true);
+      setParentErrorMessageString("There need to be more than 0 input");
+      setShowErrorModalDetails(true);
     } else {
       var totalValueField = 0;
-      console.log(allDropValueData);
+      console.log(allParentDropValueData);
       var errorstatus = 0;
       var allInputValueDataLengthDEtails = 0;
       if (allInputValueDataDetails != null) {
@@ -1602,7 +1570,7 @@ const DoubleEnteryData = ({
         if (inputValueDetails > 2) {
           console.log(
             keyValue,
-            allInputValueData,
+            allParentInputValueData,
             allInputValueDataDetails,
             allInputValueDataLength,
             allInputValueDataLengthDetails
@@ -1625,7 +1593,7 @@ const DoubleEnteryData = ({
           }
           alert(foundKey);
           if (foundKey == 1 && foundChildKey == 0) {
-            setShowCalculactionModal(true);
+            setShowParentCalculactionModal(true);
           } else if (foundKey == 0 && foundChildKey == 1) {
             setShowCalculactionModalDetails(true);
           } else {
@@ -1686,14 +1654,14 @@ const DoubleEnteryData = ({
 
   const validatePageNameFields = async (schema) => {
     try {
-      await schema.validate(pageName, { abortEarly: false });
+      await schema.validate(parentPageName, { abortEarly: false });
 
       // All fields passed validation
-      setErrorsPage([]);
+      setParentErrorsPage([]);
     } catch (validationErrors) {
       // Some fields failed validation
 
-      setErrorsPage(
+      setParentErrorsPage(
         validationErrors.inner.map((err) => ({
           index: 0,
           message: err.message,
@@ -1704,14 +1672,14 @@ const DoubleEnteryData = ({
   const validateInputFields = async (schema) => {
     try {
       console.log(schema);
-      await schema.validate(allInputValueData, { abortEarly: false });
+      await schema.validate(allParentInputValueData, { abortEarly: false });
 
       // All fields passed validation
-      setInputErrors([]);
+      setParentInputErrors([]);
     } catch (validationErrors) {
       // Some fields failed validation
       console.log(validationErrors);
-      setInputErrors(
+      setParentInputErrors(
         validationErrors.inner.map((err) => ({
           index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
@@ -1722,13 +1690,13 @@ const DoubleEnteryData = ({
 
   const validateDropFields = async (schema) => {
     try {
-      await schema.validate(allDropValueData, { abortEarly: false });
+      await schema.validate(allParentDropValueData, { abortEarly: false });
 
       // All fields passed validation
-      setErrorsDropDown([]);
+      setParentErrorsDropDown([]);
     } catch (validationErrors) {
       console.log(validationErrors);
-      setErrorsDropDown(
+      setParentErrorsDropDown(
         validationErrors.inner.map((err) => ({
           index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
@@ -1738,16 +1706,16 @@ const DoubleEnteryData = ({
   };
 
   const validateDateFields = async (schema) => {
-    console.log(allDateValueData);
+    console.log(allParentDateValueData);
     try {
-      await schema.validate(allDateValueData, { abortEarly: false });
+      await schema.validate(allParentDateValueData, { abortEarly: false });
 
       // All fields passed validation
-      setErrorsDate([]);
+      setParentErrorsDate([]);
     } catch (validationErrors) {
       // Some fields failed validation
       console.log(validationErrors);
-      setErrorsDate(
+      setParentErrorsDate(
         validationErrors.inner.map((err) => ({
           index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
@@ -1756,16 +1724,16 @@ const DoubleEnteryData = ({
     }
   };
   const validateTextAreaFields = async (schema) => {
-    console.log(allTextAreaValueData);
+    console.log(allParentTextAreaValueData);
     try {
-      await schema.validate(allTextAreaValueData, { abortEarly: false });
+      await schema.validate(allParentTextAreaValueData, { abortEarly: false });
 
       // All fields passed validation
-      setErrorsTextAreaErrors([]);
+      setParentErrorsTextArea([]);
     } catch (validationErrors) {
       // Some fields failed validation
       console.log(validationErrors);
-      setErrorsTextAreaErrors(
+      setParentErrorsTextArea(
         validationErrors.inner.map((err) => ({
           index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
@@ -1774,16 +1742,16 @@ const DoubleEnteryData = ({
     }
   };
   const validateDateImageFields = async (schema) => {
-    console.log(allImageValueData);
+    console.log(allParentImageValueData);
     try {
-      await schema.validate(allImageValueData, { abortEarly: false });
+      await schema.validate(allParentImageValueData, { abortEarly: false });
 
       // All fields passed validation
-      setErrorsImageErrors([]);
+      setParentErrorsImage([]);
     } catch (validationErrors) {
       // Some fields failed validation
       console.log(validationErrors);
-      setErrorsImageErrors(
+      setParentErrorsImage(
         validationErrors.inner.map((err) => ({
           index: err.path != "" ? parseInt(err.path) : -1,
           message: err.message,
@@ -1992,11 +1960,11 @@ const DoubleEnteryData = ({
               style={{ marginLeft: "10px", background: "#F06548" }}
               onClick={() => {
                 setChildMenuName({ SubMenuName: "" });
-                setInputValue("");
-                setInputValueDDF("");
-                setInputValueDate("");
-                setInputValueTextArea("");
-                setInputValueImage("");
+                setInputValueParent("");
+                setInputValueDDFParent("");
+                setInputValueDateParent("");
+                setInputValueTextAreaParent("");
+                setInputValueImageParent("");
                 setInputValueDetails("");
                 setInputValueDDFDetails("");
                 setInputValueCheckDetails("");
@@ -2004,11 +1972,11 @@ const DoubleEnteryData = ({
                 setInputValueTextAreaDetails("");
                 setInputValueImageDetails("");
 
-                setAllInputValueData("");
-                setAllDropValueData("");
-                setAllDateValueData("");
-                setAllTextAreaValueData("");
-                setAllImageValueData("");
+                setAllParentInputValueData("");
+                setAllParentDropValueData("");
+                setAllParentDateValueData("");
+                setAllParentTextAreaValueData("");
+                setAllParentImageValueData("");
                 setAllInputValueDataDetails("");
                 setAllDropValueDataDetails("");
                 setAllCheckValueDataDetails("");
@@ -2027,225 +1995,109 @@ const DoubleEnteryData = ({
             <div class="row shadow-lg pt-4 pb-4">
               <div class="col">
                 <TextFieldParent
-                  inputValue={inputValue}
-                  setInputValue={setInputValue}
-                  setAllInputValueData={setAllInputValueData}
-                  allInputValueData={allInputValueData}
+                  inputValueParent={inputValueParent}
+                  setInputValueParent={setInputValueParent}
+                  setAllParentInputValueData={setAllParentInputValueData}
+                  allParentInputValueData={allParentInputValueData}
                 ></TextFieldParent>
               </div>
               <div class="col">
                 <DropDownParent
-                  inputValueDDF={inputValueDDF}
-                  setAllDropValueData={setAllDropValueData}
-                  setInputValueDDF={setInputValueDDF}
+                  inputValueDDFParent={inputValueDDFParent}
+                  setAllParentDropValueData={setAllParentDropValueData}
+                  setInputValueDDFParent={setInputValueDDFParent}
                 ></DropDownParent>
               </div>
               <div class="col">
                 <DateFieldParent
-                  inputValueDate={inputValueDate}
-                  setAllDateValueData={setAllDateValueData}
-                  setInputValueDate={setInputValueDate}
+                  inputValueDateParent={inputValueDateParent}
+                  setAllParentDateValueData={setAllParentDateValueData}
+                  setInputValueDateParent={setInputValueDateParent}
                 ></DateFieldParent>
               </div>
               <div class="col">
                 <TextareaParentField
-                  inputValueTextArea={inputValueTextArea}
-                  setAllTextAreaValueData={setAllTextAreaValueData}
-                  setInputValueTextArea={setInputValueTextArea}
+                  inputValueTextAreaParent={inputValueTextAreaParent}
+                  setAllParentTextAreaValueData={setAllParentTextAreaValueData}
+                  setInputValueTextAreaParent={setInputValueTextAreaParent}
                 ></TextareaParentField>
               </div>
               <div class="col">
                 <ImageParentField
-                  inputValueImage={inputValueImage}
-                  setAllImageValueData={setAllImageValueData}
-                  setInputValueImage={setInputValueImage}
+                  inputValueImageParent={inputValueImageParent}
+                  setAllParentImageValueData={setAllParentImageValueData}
+                  setInputValueImageParent={setInputValueImageParent}
                 ></ImageParentField>
               </div>
               <div class="w-100"></div>
               <div class="col">
-                {inputData?.map((item, name) => {
+                {parentInputData?.map((item, name) => {
                   return (
-                    <div>
-                      <TextField
-                        type="text"
-                        name={`input${name}`}
-                        id={name}
-                        variant="outlined"
-                        size="small"
-                        placeholder="Text Field"
-                        className="getInputValue mt-2"
-                        required
-                        value={allInputValueData[name]}
-                        onChange={(e) => {
-                          setAllInputValueData({
-                            ...allInputValueData,
-                            [name]: e.target.value,
-                          });
-                          var tempValue = {
-                            label: e.target.value,
-                            value: e.target.value,
-                          };
-                          allInputValueForFormulaData[name] = tempValue;
-                          setAllInputValueForFormulaData((prev) => {
-                            const temp__details = [...prev];
-                            return temp__details;
-                          });
-                          console.log(allInputValueForFormulaData);
-                        }}
-                      />
-                      {errorsInput
-                        .filter((err) => err.index === name)
-                        .map((err, i) => (
-                          <div style={{ color: "#FF0000" }} key={i}>
-                            This Field is required
-                          </div>
-                        ))}
-                    </div>
+                   <TextFields
+                   name={name}
+                   allParentInputValueData={allParentInputValueData}
+                   setAllParentInputValueData={setAllParentInputValueData}
+                   allParentInputValueForFormulaData={allParentInputValueForFormulaData}
+                   setAllParentInputValueForFormulaData={setAllParentInputValueForFormulaData}
+                   parentErrorsInput={parentErrorsInput}
+                   ></TextFields>
                   );
                 })}
               </div>
               <div class="col">
-                {dropdownData.map((item, name) => {
+                {parentDropdownData.map((item, name) => {
                   return (
-                    <div className="d-flex align-items-center ">
-                      <div className="w-100">
-                        <Select
-                          class="form-select w-100"
-                          className="w-[100%] mt-2"
-                          name={`drop${name}`}
-                          aria-label="Default select example"
-                          options={selectedOptionParent[name]}
-                          id={`dropValue${name}`}
-                          onChange={(e) => {}}
-                          required
-                        ></Select>
-                        {errorsDropDown
-                          .filter((err) => err.index === name)
-                          .map((err, i) => (
-                            <div style={{ color: "#FF0000" }} key={i}>
-                              This Field is required
-                            </div>
-                          ))}
-                      </div>
-                      <div className="ms-2">
-                        <FontAwesomeIcon
-                          icon={faPlusCircle}
-                          className="footerColor"
-                          data-toggle="modal"
-                          data-target={`#exampleModal${name}`}
-                          data-id={name}
-                          onClick={() => {
-                            handleModalMenu();
-                            setCurrentDropSelected(name);
-                            setShowDropDownModal(true);
-                          }}
-                        ></FontAwesomeIcon>
-                      </div>
-                    </div>
+                    <Dropdown
+                    name={name}
+                    selectedOptionParent={selectedOptionParent}
+                    parentErrorsDropDown={parentErrorsDropDown}
+                    setParentModalSpecificData={setParentModalSpecificData}
+                    setCurrentParentDropSelected={setCurrentParentDropSelected}
+                    setShowParentDropDownModal={setShowParentDropDownModal}
+                    ></Dropdown>
                   );
                 })}
               </div>
 
               <div class="col">
-                {dateData.map((item, name) => {
+                {parentDateData.map((item, name) => {
                   return (
-                    <div className="">
-                      <TextField
-                        type="text"
-                        name={`input${name}`}
-                        id={name}
-                        variant="outlined"
-                        size="small"
-                        placeholder="Date Field"
-                        className="getInputValue mt-2"
-                        onChange={(e) => {
-                          setAllData({
-                            ...allData,
-                            [allData.length]: e.target.value,
-                          });
-                          setAllDateValueData({
-                            ...allDateValueData,
-                            [name]: e.target.value,
-                          });
-                        }}
-                      />
-                      {errorsDate
-                        .filter((err) => err.index === name)
-                        .map((err, i) => (
-                          <div style={{ color: "#FF0000" }} key={i}>
-                            This Field is required
-                          </div>
-                        ))}
-                    </div>
+                    <DateField
+                    name={name}
+                    allParentDateValueData={allParentDateValueData}
+                    setParentAllData={setParentAllData}
+                    allParentData={allParentData}
+                    setAllParentDateValueData={setAllParentDateValueData}
+                    parentErrorsDate={parentErrorsDate}
+                  ></DateField>
                   );
                 })}
               </div>
               <div class="col">
-                {textareaData.map((item, name) => {
+                {parentTextareaData.map((item, name) => {
                   return (
-                    <div>
-                      <TextField
-                        type="text"
-                        name={`input${name}`}
-                        id={name}
-                        variant="outlined"
-                        size="small"
-                        placeholder="textarea field"
-                        className="getInputValue mt-2"
-                        value={allTextAreaValueData[name]}
-                        onChange={(e) => {
-                          setAllData({
-                            ...allData,
-                            [allData.length]: e.target.value,
-                          });
-                          setAllTextAreaValueData({
-                            ...allTextAreaValueData,
-                            [name]: e.target.value,
-                          });
-                        }}
-                      />
-                      {errorsTextAreaErrors
-                        .filter((err) => err.index === name)
-                        .map((err, i) => (
-                          <div style={{ color: "#FF0000" }} key={i}>
-                            This Field is required
-                          </div>
-                        ))}
-                    </div>
+                    <TextareaField
+                    name={name}
+                    allParentTextAreaValueData={allParentTextAreaValueData}
+                    setParentAllData={setParentAllData}
+                    allParentData={allParentData}
+                    setAllParentTextAreaValueData={setAllParentTextAreaValueData}
+                    parentErrorsTextArea={parentErrorsTextArea}
+                    ></TextareaField>
                   );
                 })}
               </div>
               <div class="col">
-                {imageData.map((item, name) => {
+                {parentImageData.map((item, name) => {
                   return (
-                    <div>
-                      <TextField
-                        type="text"
-                        name={`input${name}`}
-                        id={name}
-                        variant="outlined"
-                        size="small"
-                        placeholder="image field"
-                        className="getInputValue mt-2"
-                        onChange={(e) => {
-                          setAllData({
-                            ...allData,
-                            [allData.length]: e.target.value,
-                          });
-                          setAllImageValueData({
-                            ...allImageValueData,
-                            [name]: e.target.value,
-                          });
-                        }}
-                      />
-                      {errorsImageErrors
-                        .filter((err) => err.index === name)
-                        .map((err, i) => (
-                          <div style={{ color: "#FF0000" }} key={i}>
-                            This Field is required
-                          </div>
-                        ))}
-                    </div>
+                    <ImageField
+                    name={name}
+                    allParentImageValueData={allParentImageValueData}
+                    setParentAllData={setParentAllData}
+                    allParentData={allParentData}
+                    setAllParentImageValueData={setAllParentImageValueData}
+                    parentErrorsImage={parentErrorsImage}
+                    ></ImageField>
                   );
                 })}
               </div>
@@ -2253,57 +2105,58 @@ const DoubleEnteryData = ({
           </div>
 
           <CalculationModal
-            showCalculactionModal={showCalculactionModal}
-            handleClose={handleClose}
-            setCalculationType={setCalculationType}
-            setDisplayFormulaAuto={setDisplayFormulaAuto}
-            displayFormulaAuto={displayFormulaAuto}
-            allInputValueForFormulaData={allInputValueForFormulaData}
-            pageFormula={pageFormula}
-            setField1Validation={setField1Validation}
-            field1Validation={field1Validation}
-            setFieldFormulaValidation={setFieldFormulaValidation}
-            fieldFormulaValidation={fieldFormulaValidation}
-            setField2Validation={setField2Validation}
-            field2Validation={field2Validation}
-            setFieldTargetValidation={setFieldTargetValidation}
-            setFormulaTarget={setFormulaTarget}
-            fieldTargetValidation={fieldTargetValidation}
+            showParentCalculactionModal={showParentCalculactionModal}
+            handleParentCalculactionModalClose={handleParentCalculactionModalClose}
+            setParentCalculationType={setParentCalculationType}
+            setDisplayParentFormulaAuto={setDisplayParentFormulaAuto}
+            displayParentFormulaAuto={displayParentFormulaAuto}
+            allParentInputValueForFormulaData={allParentInputValueForFormulaData}
+            parentPageFormula={parentPageFormula}
+            setParentField1Validation={setParentField1Validation}
+            parentField1Validation={parentField1Validation}
+            setParentFieldFormulaValidation={setParentFieldFormulaValidation}
+            parentFieldFormulaValidation={parentFieldFormulaValidation}
+            setParentField2Validation={setParentField2Validation}
+            parentField2Validation={parentField2Validation}
+            setParentFieldTargetValidation={setParentFieldTargetValidation}
+            setParentFormulaTarget={setParentFormulaTarget}
+            parentFieldTargetValidation={parentFieldTargetValidation}
             submitForm={submitForm}
           ></CalculationModal>
 
           <WarningModal
-            showErrorModal={showErrorModal}
-            handleErrorClose={handleErrorClose}
-            errorMessageString={errorMessageString}
+            showParentErrorModal={showParentErrorModal}
+            handleParentErrorClose={handleParentErrorClose}
+            parentErrorMessageString={parentErrorMessageString}
           ></WarningModal>
-          <DropDownSelect
+
+          <Show_Modal_For_Value_Selection_After_The_Table_Modal_Select
             show2={show2}
             setShow2={setShow2}
-            modalTitle={modalTitle}
-            dropdownName={dropdownName}
-            setRadioButton={setRadioButton}
-            radioButton={radioButton}
-            allModelDataTable={allModelDataTable}
-            allDropValueData={allDropValueData}
-            currentDropSelected={currentDropSelected}
+            parentModalTitle={parentModalTitle}
+            parentTableValue={parentTableValue}
+            setParentTableRadioButton={setParentTableRadioButton}
+            parentTableRadioButton={parentTableRadioButton}
+            parentAllModelDataTable={parentAllModelDataTable}
+            allParentDropValueData={allParentDropValueData}
+            currentParentDropSelected={currentParentDropSelected}
             setSelectedOptionParent={setSelectedOptionParent}
-          ></DropDownSelect>
-          <DropdownParentField
-            showDropDownModal={showDropDownModal}
-            handleDropClose={handleDropClose}
-            modalSpecificData={modalSpecificData}
-            setMenuId={setMenuId}
+          ></Show_Modal_For_Value_Selection_After_The_Table_Modal_Select>
+
+          <Show_Modal_For_Table_Selection_In_The_DropDown
+            showParentDropDownModal={showParentDropDownModal}
+            handleParentModalDropClose={handleParentModalDropClose}
+            parentModalSpecificData={parentModalSpecificData}
             setShow2={setShow2}
-            currentDropSelected={currentDropSelected}
-            setModalTitle={setModalTitle}
-            setAllModelDataTable={setAllModelDataTable}
-            setAllDropValueData={setAllDropValueData}
-            allDropValueData={allDropValueData}
-            menuId={menuId}
-            setDropdownName={setDropdownName}
-            setShowDropDownModal={setShowDropDownModal}
-          ></DropdownParentField>
+            currentParentDropSelected={currentParentDropSelected}
+            setParentModalTitle={setParentModalTitle}
+            setParentAllModelDataTable={setParentAllModelDataTable}
+            setAllParentDropValueData={setAllParentDropValueData}
+            allParentDropValueData={allParentDropValueData}
+            setParentTableValue={setParentTableValue}
+            setShowParentDropDownModal={setShowParentDropDownModal}
+          ></Show_Modal_For_Table_Selection_In_The_DropDown>
+
           <ChildCalculationModal
             showCalculactionModalDetails={showCalculactionModalDetails}
             handleCloseDetails={handleCloseDetails}
@@ -2325,7 +2178,8 @@ const DoubleEnteryData = ({
             fieldTargetValidationDetails={fieldTargetValidationDetails}
             submitForm={submitForm}
           ></ChildCalculationModal>
-          <DoubleEntryChildData
+
+          {/* <DoubleEntryChildData
             parentMenuName={parentMenuName}
             childMenuName={childMenuName}
             pageEntry={pageEntry}
@@ -2425,7 +2279,8 @@ const DoubleEnteryData = ({
             errorsCheckDetails={errorsCheckDetails}
             errorsTextareaDetails={errorsTextareaDetails}
             errorsImageDetails={errorsImageDetails}
-          ></DoubleEntryChildData>
+          ></DoubleEntryChildData> */}
+          
         </Grid>
       </form>
     </>

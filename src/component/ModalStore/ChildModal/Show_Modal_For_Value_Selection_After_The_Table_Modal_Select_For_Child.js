@@ -2,7 +2,8 @@ import { Button } from '@mui/material';
 import React from 'react'
 import { Modal } from 'react-bootstrap';
 
-const DropdownSelect = ({show2,setShow2,selectedListName,handleErrorClose,dropdownName,currentDropSelected,setRadioButton,radioButton,allModelDataTable,allDropValueData,setSelectedOption}) => {
+
+const Show_Modal_For_Value_Selection_After_The_Table_Modal_Select_For_Child = ({show2,setShow2,selectedListName,handleErrorClose,dropdownName,currentDropSelected,setRadioButton,radioButton,allModelDataTable,allDropValueData,setSelectedOption}) => {
     const handleDropdown = (i) => {
         let radioName = 0;
         if (
@@ -106,4 +107,4 @@ const DropdownSelect = ({show2,setShow2,selectedListName,handleErrorClose,dropdo
   )
 }
 
-export default DropdownSelect
+export default Show_Modal_For_Value_Selection_After_The_Table_Modal_Select_For_Child 

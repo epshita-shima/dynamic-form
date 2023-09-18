@@ -329,7 +329,7 @@ childModalTitle,setChildModalTitle,
   return (
     <Grid>
       <div class="container-fluid mt-4">
-        <h2 className="fs-4 fw-bold" style={{ color: "#3AAFA9" }}>
+        <h2 className="fs-4 fw- old" style={{ color: "#3AAFA9" }}>
           Child Field{" "}
         </h2>
         <div class="row shadow-lg pt-4 pb-4">

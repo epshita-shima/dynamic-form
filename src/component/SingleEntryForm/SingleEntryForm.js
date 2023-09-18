@@ -1,25 +1,17 @@
-import { Button, Grid, TextField } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import Select from "react-select";
+
 import "./SingleEntryForm.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import "react-datepicker/dist/react-datepicker.css";
 import swal from "sweetalert";
-import Modal from "react-bootstrap/Modal";
 import * as Yup from "yup";
 import Token from "../common/Token";
 import useChildMenu from "./../customHooks/useChildMenu";
-import ChildTextField from "../FormField/ChildFormField/ChildTextField";
-import ChildDropdownField from "../FormField/ChildFormField/ChildDropdownField";
-import ChildCheckboxField from "../FormField/ChildFormField/ChildCheckboxField";
-import ChildTextareaField from "../FormField/ChildFormField/ChildTextareaField";
-import ChildImageField from "../FormField/ChildFormField/ChildImageField";
 import CalculationModal from "../ModalStore/ChildModal/CalculationModal";
-import ChildDateField from "../FormField/ChildFormField/ChildDateField";
-import DropdownChildField from "../ModalStore/ChildModal/DropdownChildField";
-import DropdownSelect from "../ModalStore/ChildModal/DropdownSelect";
 import WarningModal from "../ModalStore/ChildModal/WarningModal";
+import Show_Modal_For_Value_Selection_After_The_Table_Modal_Select_For_Child from "./../ModalStore/ChildModal/Show_Modal_For_Value_Selection_After_The_Table_Modal_Select_For_Child";
+import Show_Modal_For_Table_Selection_In_The_DropDown_For_Child from "../ModalStore/ChildModal/Show_Modal_For_Table_Selection_In_The_DropDown_For_Child";
+import ChildFormField from "../FormField/ChildFormField/ChildFormField";
 
 const SingleEntryForm = ({
   setExist,
@@ -67,6 +59,8 @@ const SingleEntryForm = ({
   const [dropSchema, setDropSchema] = useState(null);
   const [checkSchema, setCheckSchema] = useState(null);
   const [dateSchema, setDateSchema] = useState(null);
+  const [textareaSchema, setTextareaSchema] = useState(null);
+  const [imageSchema, setImageSchema] = useState(null);
   const [pageSchema, setPageSchema] = useState(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessageString, setErrorMessageString] = useState("");
@@ -97,6 +91,9 @@ const SingleEntryForm = ({
   const [errorsDropDown, setErrorsDropDown] = useState([]);
   const [errorsDate, setErrorsDate] = useState([]);
   const [errorsCheck, setErrorsCheck] = useState([]);
+  const [errorsImage, setErrorsImage] = useState([]);
+  const [errorsTextarea, setErrorsTextarea] = useState([]);
+ 
   const [childMenu, setChildMenu] = useChildMenu([]);
   const [dropdownName, setDropdownName] = useState([]);
   const [menuId, setMenuId] = useState("");
@@ -107,6 +104,7 @@ const SingleEntryForm = ({
   var tableTextareaData = [];
   var tableImageData = [];
 
+  console.log(pageEntry.pageEntry)
   const token = Token.token;
   const tableName = childMenuName.SubMenuName;
   let newString = tableName.replace("-", "_");
@@ -514,29 +512,29 @@ const SingleEntryForm = ({
           pageType: pageEntry.pageEntry,
           pageInfoJson: tableModelData.detailsData,
         };
-        const fatchGetDataById = async () => {
-          const response = await fetch(
-            "https://localhost:44372/api/GetData/GetDataById",
-            {
-              method: "POST",
-              headers: {
-                authorization: `Bearer ${token}`,
-                "content-type": "application/json",
-              },
-              body: JSON.stringify(modelCreatePage),
-            }
-          );
-          const data = await response.json();
-          if (data.status == true) {
-            swal({
-              title: "Create page successfully",
-              icon: "success",
-              button: "OK",
-            });
-          }
-        };
+        // const fatchGetDataById = async () => {
+        //   const response = await fetch(
+        //     "https://localhost:44372/api/GetData/GetDataById",
+        //     {
+        //       method: "POST",
+        //       headers: {
+        //         authorization: `Bearer ${token}`,
+        //         "content-type": "application/json",
+        //       },
+        //       body: JSON.stringify(modelCreatePage),
+        //     }
+        //   );
+        //   const data = await response.json();
+        //   if (data.status == true) {
+        //     swal({
+        //       title: "Create page successfully",
+        //       icon: "success",
+        //       button: "OK",
+        //     });
+        //   }
+        // };
 
-        fatchGetDataById();
+        // fatchGetDataById();
       }
     }
   };
@@ -565,30 +563,6 @@ const SingleEntryForm = ({
         }
       });
   }, []);
-  const handleModalMenu = () => {
-    const modelData = {
-      procedureName: "",
-      parameters: {},
-    };
-    modelData.procedureName = "prc_GetMenuList";
-    fetch("https://localhost:44372/api/GetData/GetInitialData", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == true) {
-          const allModalData = JSON.parse(data.data);
-          setModalSpecificData(allModalData.Tables2);
-        } else {
-          console.log(data);
-        }
-      });
-  };
 
   function validationOutsideSchema() {
     var allInputValueDataLength = 0;
@@ -633,10 +607,30 @@ const SingleEntryForm = ({
       setDateSchema(schemaForDate);
       validateDateFields(schemaForDate);
     }
+    var allTextAreaValueDataLength = 0;
+    if (allTextAreaValueData != null) {
+      allDateValueDataLength = Object.keys(allTextAreaValueData).length;
+    }
+    if (allTextAreaValueDataLength > 0) {
+      var schemaForTextArea = createDynamicSchemaForDate(allTextAreaValueData);
+      setTextareaSchema(schemaForTextArea);
+      validateTextareaFields(schemaForTextArea);
+    }
+    var allImageValueDataLength = 0;
+    if (allImageValueData != null) {
+      allImageValueDataLength = Object.keys(allImageValueData ).length;
+    }
+    if ( allImageValueDataLength > 0) {
+      var schemaForImage = createDynamicSchemaForDate(allImageValueData );
+      setImageSchema(schemaForImage);
+      validateImageFields(schemaForImage);
+    }
   }
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(allInputValueData)
     validationOutsideSchema();
     var foundKey = 0;
     var foundEmpty = 0;
@@ -740,12 +734,15 @@ const SingleEntryForm = ({
           ) {
             if (
               keyValue.some(
-                (item) => item.key === allInputValueData[countKeyValue]
+                (item) =>
+                  item.KeyValue.toLowerCase() ===
+                  allInputValueData[countKeyValue].toLowerCase()
               )
             ) {
               foundKey = 1;
             }
           }
+          console.log(foundKey,allInputValueData,keyValue)
           alert(foundKey);
           if (foundKey == 1) {
             setShowCalculactionModal(true);
@@ -882,6 +879,38 @@ const SingleEntryForm = ({
       );
     }
   };
+  const validateTextareaFields = async (schema) => {
+    try {
+      await schema.validate(allTextAreaValueData, { abortEarly: false });
+
+      // All fields passed validation
+      setErrorsTextarea([]);
+    } catch (validationErrors) {
+      // Some fields failed validation
+      setErrorsTextarea(
+        validationErrors.inner.map((err) => ({
+          index: err.path != "" ? parseInt(err.path) : -1,
+          message: err.message,
+        }))
+      );
+    }
+  };
+  const validateImageFields = async (schema) => {
+    try {
+      await schema.validate(allImageValueData, { abortEarly: false });
+
+      // All fields passed validation
+      setErrorsImage([]);
+    } catch (validationErrors) {
+      // Some fields failed validation
+      setErrorsImage(
+        validationErrors.inner.map((err) => ({
+          index: err.path != "" ? parseInt(err.path) : -1,
+          message: err.message,
+        }))
+      );
+    }
+  };
 
   return (
     <form
@@ -927,275 +956,53 @@ const SingleEntryForm = ({
           <h2 className="fs-4 fw-bold" style={{ color: "#3AAFA9" }}>
             Child Field
           </h2>
-          <div class="row shadow-lg pt-4 pb-4">
-            <div class="col">
-              <ChildTextField
-                inputValue={inputValue}
-                setAllInputValueData={setAllInputValueData}
-                setInputValue={setInputValue}
-              ></ChildTextField>
-            </div>
-            <div class="col">
-              <ChildDropdownField
-                inputValueDDF={inputValueDDF}
-                setAllDropValueData={setAllDropValueData}
-                setInputValueDDF={setInputValueDDF}
-              ></ChildDropdownField>
-            </div>
-            <div class="col">
-              <ChildCheckboxField
-                inputValueCheck={inputValueCheck}
-                setAllCheckValueData={setAllCheckValueData}
-                setInputValueCheck={setInputValueCheck}
-              ></ChildCheckboxField>
-            </div>
-            <div class="col">
-              <ChildDateField
-                inputValueDate={inputValueDate}
-                setAllDateValueData={setAllDateValueData}
-                setInputValueDate={setInputValueDate}
-              ></ChildDateField>
-            </div>
-            <div class="col">
-              <ChildTextareaField
-                inputValueTextArea={inputValueTextArea}
-                setAllTextAreaValueData={setAllTextAreaValueData}
-                setInputValueTextArea={setInputValueTextArea}
-              ></ChildTextareaField>
-            </div>
-            <div class="col">
-              <ChildImageField
-                inputValueImage={inputValueImage}
-                setAllImageValueData={setAllImageValueData}
-                setInputValueImage={setInputValueImage}
-              ></ChildImageField>
-            </div>
-            <div class="w-100"></div>
-            <div class="col">
-              {inputData?.map((item, name) => {
-                return (
-                  <div>
-                    <TextField
-                      type="text"
-                      name={`input${name}`}
-                      id={name}
-                      variant="outlined"
-                      size="small"
-                      placeholder="Text Field"
-                      className="getInputValue mt-2 noscroll"
-                      required
-                      value={allInputValueData[name]}
-                      onChange={(e) => {
-                        setAllInputValueData({
-                          ...allInputValueData,
-                          [name]: e.target.value,
-                        });
-                        var tempValue = {
-                          label: e.target.value,
-                          value: e.target.value,
-                        };
-                        allInputValueForFormulaData[name] = tempValue;
-                        setAllInputValueForFormulaData((prev) => {
-                          const temp__details = [...prev];
-                          return temp__details;
-                        });
-                      }}
-                    />
-                    {errorsInput
-                      .filter((err) => err.index === name)
-                      .map((err, i) => {
-                        return (
-                          <div style={{ color: "#FF0000" }} key={i}>
-                            This Field is required
-                          </div>
-                        );
-                      })}
-                  </div>
-                );
-              })}
-            </div>
-            <div class="col">
-              {dropdownData.map((item, name) => {
-                return (
-                  <div className="d-flex align-items-center">
-                    <div className="w-100">
-                      <Select
-                        class="form-select w-100"
-                        className="w-[100%] mt-2"
-                        name={`drop${name}`}
-                        aria-label="Default select example"
-                        options={selectedOption[name]}
-                        id={`dropValue${name}`}
-                        onChange={(e) => {}}
-                        required
-                      ></Select>
-                      {errorsDropDown
-                        .filter((err) => err.index === name)
-                        .map((err, i) => (
-                          <div style={{ color: "#FF0000" }} key={i}>
-                            This Field is required
-                          </div>
-                        ))}
-                    </div>
-                    <div className="ms-2">
-                      <FontAwesomeIcon
-                        icon={faPlusCircle}
-                        className="footerColor"
-                        data-toggle="modal"
-                        data-target={`#exampleModal${name}`}
-                        data-id={name}
-                        onClick={() => {
-                          handleModalMenu();
-                          setCurrentDropSelected(name);
-                          setShowDropDownModal(true);
-                        }}
-                      ></FontAwesomeIcon>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div class="col">
-              {checkboxData.map((item, name) => {
-                return (
-                  <div className="">
-                    <TextField
-                      type="text"
-                      name={`check${name}`}
-                      id={name}
-                      variant="outlined"
-                      size="small"
-                      className="getInputValue mt-2"
-                      placeholder="Checkbox Field"
-                      value={allCheckValueData[name]}
-                      onChange={(e) => {
-                        setAllData({
-                          ...allData,
-                          [allData.length]: e.target.value,
-                        });
-                        setAllCheckValueData({
-                          ...allCheckValueData,
-                          [name]: e.target.value,
-                        });
-                      }}
-                    />
-                    {errorsCheck
-                      .filter((err) => err.index === name)
-                      .map((err, i) => (
-                        <div style={{ color: "#FF0000" }} key={i}>
-                          This Field is required
-                        </div>
-                      ))}
-                  </div>
-                );
-              })}
-            </div>
-            <div class="col">
-              {dateData.map((item, name) => {
-                return (
-                  <div className="">
-                    <TextField
-                      type="text"
-                      name={`input${name}`}
-                      id={name}
-                      variant="outlined"
-                      size="small"
-                      placeholder="Date Field"
-                      className="getInputValue mt-2"
-                      value={allDateValueData[name]}
-                      onChange={(e) => {
-                        setAllData({
-                          ...allData,
-                          [allData.length]: e.target.value,
-                        });
-                        setAllDateValueData({
-                          ...allDateValueData,
-                          [name]: e.target.value,
-                        });
-                      }}
-                    />
-                    {errorsDate
-                      .filter((err) => err.index === name)
-                      .map((err, i) => (
-                        <div style={{ color: "#FF0000" }} key={i}>
-                          This Field is required
-                        </div>
-                      ))}
-                  </div>
-                );
-              })}
-            </div>
-            <div class="col">
-              {textareaData.map((item, name) => {
-                return (
-                  <div>
-                    <TextField
-                      type="text"
-                      name={`input${name}`}
-                      id={name}
-                      variant="outlined"
-                      size="small"
-                      placeholder="textarea field"
-                      className="getInputValue mt-2"
-                      value={allTextAreaValueData[name]}
-                      onChange={(e) => {
-                        setAllData({
-                          ...allData,
-                          [allData.length]: e.target.value,
-                        });
-                        setAllTextAreaValueData({
-                          ...allTextAreaValueData,
-                          [name]: e.target.value,
-                        });
-                      }}
-                    />
-                    {errorsDate
-                      .filter((err) => err.index === name)
-                      .map((err, i) => (
-                        <div style={{ color: "#FF0000" }} key={i}>
-                          This Field is required
-                        </div>
-                      ))}
-                  </div>
-                );
-              })}
-            </div>
-            <div class="col">
-              {imageData.map((item, name) => {
-                return (
-                  <div>
-                    <TextField
-                      type="text"
-                      name={`input${name}`}
-                      id={name}
-                      variant="outlined"
-                      size="small"
-                      placeholder="image field"
-                      className="getInputValue mt-2"
-                      value={allImageValueData[name]}
-                      onChange={(e) => {
-                        setAllData({
-                          ...allData,
-                          [allData.length]: e.target.value,
-                        });
-                        setAllImageValueData({
-                          ...allImageValueData,
-                          [name]: e.target.value,
-                        });
-                      }}
-                    />
-                    {errorsDate
-                      .filter((err) => err.index === name)
-                      .map((err, i) => (
-                        <div style={{ color: "#FF0000" }} key={i}>
-                          This Field is required
-                        </div>
-                      ))}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          
+          <ChildFormField
+          inputValue={inputValue}
+          setAllInputValueData={setAllInputValueData}
+          setInputValue={setInputValue}
+          inputValueDDF={inputValueDDF}
+          setAllDropValueData={setAllDropValueData}
+          setInputValueDDF={setInputValueDDF}
+          inputValueCheck={inputValueCheck}
+          setAllCheckValueData={setAllCheckValueData}
+          setInputValueCheck={setInputValueCheck}
+          inputValueDate={inputValueDate}
+          setAllDateValueData={setAllDateValueData}
+          setInputValueDate={setInputValueDate}
+          inputValueTextArea={inputValueTextArea}
+          setAllTextAreaValueData={setAllTextAreaValueData}
+          setInputValueTextArea={setInputValueTextArea}
+          inputValueImage={inputValueImage}
+          setAllImageValueData={setAllImageValueData}
+          setInputValueImage={setInputValueImage}
+          inputData={inputData}
+          allInputValueData={allInputValueData}
+          allInputValueForFormulaData={allInputValueForFormulaData}
+          setAllInputValueForFormulaData={setAllInputValueForFormulaData}
+          errorsInput={errorsInput}
+          dropdownData={dropdownData}
+          selectedOption={selectedOption}
+          errorsDropDown={errorsDropDown}
+          setModalSpecificData={setModalSpecificData}
+          setCurrentDropSelected={setCurrentDropSelected}
+          setShowDropDownModal={setShowDropDownModal}
+          checkboxData={checkboxData}
+          allCheckValueData={allCheckValueData}
+          setAllData={setAllData}
+          allData={allData}
+          errorsCheck={errorsCheck}
+          dateData={dateData}
+          allDateValueData={allDateValueData}
+          errorsDate={errorsDate}
+          textareaData={textareaData}
+          allTextAreaValueData={allTextAreaValueData}
+          errorsTextarea={errorsTextarea}
+          imageData={imageData}
+          allImageValueData={allImageValueData}
+          errorsImage={errorsImage}
+          ></ChildFormField>
+          
         </div>
 
         <CalculationModal
@@ -1218,7 +1025,7 @@ const SingleEntryForm = ({
           submitForm={submitForm}
         ></CalculationModal>
 
-        <DropdownChildField
+        <Show_Modal_For_Table_Selection_In_The_DropDown_For_Child
           showDropDownModal={showDropDownModal}
           handleDropClose={handleDropClose}
           modalSpecificData={modalSpecificData}
@@ -1232,9 +1039,9 @@ const SingleEntryForm = ({
           menuId={menuId}
           setDropdownName={setDropdownName}
           setShowDropDownModal={setShowDropDownModal}
-        ></DropdownChildField>
+        ></Show_Modal_For_Table_Selection_In_The_DropDown_For_Child>
 
-        <DropdownSelect
+        <Show_Modal_For_Value_Selection_After_The_Table_Modal_Select_For_Child
           show2={show2}
           setShow2={setShow2}
           selectedListName={selectedListName}
@@ -1246,12 +1053,12 @@ const SingleEntryForm = ({
           allModelDataTable={allModelDataTable}
           allDropValueData={allDropValueData}
           setSelectedOption={setSelectedOption}
-        ></DropdownSelect>
+        ></Show_Modal_For_Value_Selection_After_The_Table_Modal_Select_For_Child>
 
         <WarningModal
-        showErrorModal={showErrorModal}
-        handleErrorClose={handleErrorClose}
-        errorMessageString={errorMessageString}
+          showErrorModal={showErrorModal}
+          handleErrorClose={handleErrorClose}
+          errorMessageString={errorMessageString}
         ></WarningModal>
       </Grid>
     </form>

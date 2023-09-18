@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap';
 import Token from '../../common/Token';
-const DropdownChildField = ({showDropDownModal,handleDropClose,modalSpecificData,setMenuId,currentDropSelected,setShow2,setSelectedListName,setAllModelDataTable,setAllDropValueData,allDropValueData,menuId,setDropdownName,setShowDropDownModal}) => {
+const Show_Modal_For_Table_Selection_In_The_DropDown_For_Child = ({showDropDownModal,handleDropClose,modalSpecificData,setMenuId,currentDropSelected,setShow2,setSelectedListName,setAllModelDataTable,setAllDropValueData,allDropValueData,menuId,setDropdownName,setShowDropDownModal}) => {
     const token = Token.token;
     const handleDropdownValue = (i) => {
         var radioName = 0;
@@ -139,4 +139,4 @@ const DropdownChildField = ({showDropDownModal,handleDropClose,modalSpecificData
   )
 }
 
-export default DropdownChildField
+export default Show_Modal_For_Table_Selection_In_The_DropDown_For_Child

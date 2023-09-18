@@ -1,14 +1,12 @@
 import { TextField } from "@mui/material";
 import swal from "sweetalert";
 const TextFieldParent = (
-  {inputValue,
-  setInputValue,
-  allInputValueData,
-  setAllInputValueData}
+  {inputValueParent,
+  setInputValueParent,
+  allParentInputValueData,
+  setAllParentInputValueData}
 ) => {
-  // const [inputValue, setInputValue] = useState("");
-  // const [allInputValueData, setAllInputValueData] = useState({});
-  console.log(allInputValueData);
+
   return (
    <>
     <label htmlFor="" className="text-style d-block mx-auto">
@@ -20,7 +18,7 @@ const TextFieldParent = (
       type="number"
       size="small"
       defaultValue="0"
-      value={inputValue}
+      value={inputValueParent}
       onChange={(e) => {
         console.log(e.target.value)
         if (e.target.value < 0) {
@@ -39,14 +37,14 @@ const TextFieldParent = (
         } else {
           targetValue = parseInt(e.target.value);
         }
-        setAllInputValueData((prev) => {
+        setAllParentInputValueData((prev) => {
           const temp__details = {};
           for (var inputLength = 0; inputLength < targetValue; inputLength++) {
             temp__details[inputLength] = "";
           }
           return temp__details;
         });
-        setInputValue(targetValue);
+        setInputValueParent(targetValue);
       }}
     />
    </>

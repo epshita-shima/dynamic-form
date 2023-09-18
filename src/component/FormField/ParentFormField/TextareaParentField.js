@@ -2,9 +2,9 @@ import React from "react";
 import { TextField } from "@mui/material";
 import swal from "sweetalert";
 const TextareaParentField = ({
-  inputValueTextArea,
-  setAllTextAreaValueData,
-  setInputValueTextArea,
+  inputValueTextAreaParent,
+  setAllParentTextAreaValueData,
+  setInputValueTextAreaParent,
 }) => {
   return (
     <div>
@@ -17,7 +17,7 @@ const TextareaParentField = ({
         type="number"
         size="small"
         defaultValue="0"
-        value={inputValueTextArea}
+        value={inputValueTextAreaParent}
         onChange={(e) => {
           if (e.target.value < 0) {
             swal({
@@ -34,7 +34,7 @@ const TextareaParentField = ({
           } else {
             targetValue = parseInt(e.target.value);
           }
-          setAllTextAreaValueData((prev) => {
+          setAllParentTextAreaValueData((prev) => {
             const temp__details = {};
             for (
               var inputLength = 0;
@@ -45,7 +45,7 @@ const TextareaParentField = ({
             }
             return temp__details;
           });
-          setInputValueTextArea(targetValue);
+          setInputValueTextAreaParent(targetValue);
         }}
       />
     </div>

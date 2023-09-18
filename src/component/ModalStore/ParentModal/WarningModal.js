@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
 
-const WarningModal = ({showErrorModal,handleErrorClose,errorMessageString}) => {
+const WarningModal = ({showErrorModal,handleErrorClose,parentErrorMessageString}) => {
   return (
     <div>
       <Modal
@@ -24,7 +24,7 @@ const WarningModal = ({showErrorModal,handleErrorClose,errorMessageString}) => {
               </button>
             </Modal.Header>
             <Modal.Body>
-              <label>{errorMessageString}</label>
+              <label>{parentErrorMessageString}</label>
             </Modal.Body>
           </Modal>
     </div>

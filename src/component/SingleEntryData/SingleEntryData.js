@@ -1644,80 +1644,7 @@ console.log(totalAmount)
       ]);
 
     var dataMenuArr = [];
-    // if (element.RelatedTable != "") {
-    //   const modelDataLabel = {
-    //     procedureName: "",
-    //     parameters: {
-    //       TableName: "",
-    //     },
-    //   };
-    //   modelDataLabel.procedureName = "prc_GetMasterInfoList";
-    //   modelDataLabel.parameters.TableName = `${element.ColumnName}`;
-    //   fetch("https://localhost:44372/api/GetData/GetDataByID", {
-    //     method: "POST",
-    //     headers: {
-    //       authorization: `Bearer ${token}`,
-    //       "content-type": "application/json",
-    //     },
-    //     body: JSON.stringify(modelDataLabel),
-    //   })
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //       console.log(data);
-    //       if (data.status == true) {
-    //         const allModalData = JSON.parse(data.data);
-    //         console.log(allModalData);
-    //         // setAllModelDataTable(allModalData);
-    //         var dataTable = [];
-    //         console.log(allModalData);
-    //         for (var modelArrayPosition in allModalData)
-    //           dataTable.push([
-    //             modelArrayPosition,
-    //             allModalData[modelArrayPosition],
-    //           ]);
-    //         console.log(dataTable, allModalData);
-    //         var dataMenuArr = [];
-    //         dataTable.map((elements) => {
-    //           elements.map((member) => {
-    //             for (var key in member) {
-    //               console.log(elements, key, element);
-    //               if (member.hasOwnProperty(key)) {
-    //                 if (key != "0") {
-    //                   if (key == element.ColumnValueField) {
-    //                     var dataMenuArrLength = dataMenuArr.length;
-    //                     dataMenuArr[dataMenuArrLength] = {};
-    //                     dataMenuArr[dataMenuArrLength]["value"] =
-    //                       member.ID;
-    //                     var val = member[key];
-    //                     dataMenuArr[dataMenuArrLength]["label"] =
-    //                       val;
-    //                   }
-    //                 }
-    //               }
-    //             }
-    //             console.log(dataMenuArr);
-    //             var allDropValueDataLength = 0;
-    //             if (allDropValueData != null) {
-    //               allDropValueDataLength =
-    //                 Object.keys(allDropValueData).length;
-    //               console.log(allDropValueDataLength);
-    //             }
-    //           });
-    //           // }
-    //         });
-    //         console.log(dataMenuArr);
-    //         setSelectedOption((prev) => {
-    //           console.log(prev);
-    //           const temp__details = [...prev];
-    //           temp__details[i] = dataMenuArr;
-    //           return temp__details;
-    //         });
-    //       } else {
-    //         console.log(data);
-    //       }
-    //     });
 
-    // }
     setSelectedOption((prev) => {
       const temp__details = [...prev];
       temp__details[i] = dataMenuArr;
@@ -2282,62 +2209,7 @@ console.log(totalAmount)
     setColumnValues(tempjson);
     console.log(tempjson)
   }
-  // const handleDropdown = (i) => {
-  //   console.log(i)
-  //   let radioName=0
-  //   if (
-  //     document.querySelector('input[name="dropValueFieldCheck"]:checked') != null
-  //   ) {
-  //     radioName = document.querySelector(
-  //       'input[name="dropValueFieldCheck"]:checked'
-  //     ).value;
-  //   }
-  // console.log(radioName)
-  // setRadioButton(radioName)
-  //   var dataTable = [];
-  //         console.log(allModelDataTable);
-  //         for (var modelArrayPosition in allModelDataTable)
-  //           dataTable.push([
-  //             modelArrayPosition,
-  //             allModelDataTable[modelArrayPosition],
-  //           ]);
-  //         console.log(dataTable,allModelDataTable);
-  //   var dataMenuArr = [];
-  //   dataTable.map((element) => {
-  //     console.log(element);
 
-  //     // if (element[1][0].title == radioName) {
-  //     element.map((member) => {
-  //       for (var key in member) {
-  //         if (member.hasOwnProperty(key)) { 
-  //           if (key != "0") {
-  //             if (key==radioName) {
-  //               var dataMenuArrLength = dataMenuArr.length;
-  //               dataMenuArr[dataMenuArrLength] = {};
-  //               dataMenuArr[dataMenuArrLength]["value"] = member.ID;
-  //               var val = member[key];
-  //               dataMenuArr[dataMenuArrLength]["label"] =val
-  //               ;
-  //             }
-  //           }
-  //         }
-  //       }
-  //       console.log(dataMenuArr);
-  //       var allDropValueDataLength = 0;
-  //       if (allDropValueData != null) {
-  //         allDropValueDataLength = Object.keys(allDropValueData).length;
-  //         console.log(allDropValueDataLength);
-  //       } 
-  //     });
-  //     // }
-  //   });
-  //   setSelectedOption((prev) => {
-  //     console.log(prev);
-  //     const temp__details = [...prev];
-  //     temp__details[i] = dataMenuArr;
-  //     return temp__details;
-  //   });
-  // };
   return (
     <Grid className="shadow-lg p-4">
       <Formik

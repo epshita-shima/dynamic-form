@@ -3,9 +3,9 @@ import { TextField } from "@mui/material";
 import swal from "sweetalert";
 
 const ImageParentField = ({
-  inputValueImage,
-  setAllImageValueData,
-  setInputValueImage,
+  inputValueImageParent,
+  setAllParentImageValueData,
+  setInputValueImageParent,
 }) => {
   return (
     <div>
@@ -18,7 +18,7 @@ const ImageParentField = ({
         type="number"
         size="small"
         defaultValue="0"
-        value={inputValueImage}
+        value={inputValueImageParent}
         onChange={(e) => {
           if (e.target.value < 0) {
             swal({
@@ -35,7 +35,7 @@ const ImageParentField = ({
           } else {
             targetValue = parseInt(e.target.value);
           }
-          setAllImageValueData((prev) => {
+          setAllParentImageValueData((prev) => {
             const temp__details = {};
             for (
               var inputLength = 0;
@@ -46,7 +46,7 @@ const ImageParentField = ({
             }
             return temp__details;
           });
-          setInputValueImage(targetValue);
+          setInputValueImageParent(targetValue);
         }}
       />
     </div>

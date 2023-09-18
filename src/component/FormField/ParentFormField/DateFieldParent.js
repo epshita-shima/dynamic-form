@@ -3,9 +3,9 @@ import { TextField } from "@mui/material";
 import swal from "sweetalert";
 
 const DateFieldParent = ({
-  inputValueDate,
-  setAllDateValueData,
-  setInputValueDate,
+  inputValueDateParent,
+  setAllParentDateValueData,
+  setInputValueDateParent,
 }) => {
   return (
     <div>
@@ -18,7 +18,7 @@ const DateFieldParent = ({
         type="number"
         size="small"
         defaultValue="0"
-        value={inputValueDate}
+        value={inputValueDateParent}
         onChange={(e) => {
           if (e.target.value < 0) {
             swal({
@@ -35,7 +35,7 @@ const DateFieldParent = ({
           } else {
             targetValue = parseInt(e.target.value);
           }
-          setAllDateValueData((prev) => {
+          setAllParentDateValueData((prev) => {
             const temp__details = {};
             for (
               var inputLength = 0;
@@ -46,7 +46,7 @@ const DateFieldParent = ({
             }
             return temp__details;
           });
-          setInputValueDate(targetValue);
+          setInputValueDateParent(targetValue);
         }}
       />
     </div>

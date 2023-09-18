@@ -1,281 +1,289 @@
-import React from 'react'
-import { Modal } from 'react-bootstrap';
+import React from "react";
+import { Modal } from "react-bootstrap";
 import Select from "react-select";
-const CalculationModal = ({showCalculactionModal,handleClose,setCalculationType,setDisplayFormulaAuto,displayFormulaAuto,allInputValueForFormulaData,pageFormula,setField1Validation,field1Validation,setFieldFormulaValidation,fieldFormulaValidation,setField2Validation,field2Validation,setFieldTargetValidation,setFormulaTarget,fieldTargetValidation,submitForm}) => {
+const CalculationModal = ({
+  showParentCalculactionModal,
+  handleParentCalculactionModalClose,
+  setParentCalculationType,
+  setDisplayParentFormulaAuto,
+  displayParentFormulaAuto,
+  allParentInputValueForFormulaData,
+  parentPageFormula,
+  setParentField1Validation,
+  parentField1Validation,
+  setParentFieldFormulaValidation,
+  parentFieldFormulaValidation,
+  setParentField2Validation,
+  parentField2Validation,
+  setParentFieldTargetValidation,
+  setParentFormulaTarget,
+  parentFieldTargetValidation,
+  submitForm,
+}) => {
   return (
     <div>
       <Modal
-            show={showCalculactionModal}
-            onHide={handleClose}
-            size="lg"
-            backdrop="static"
-            keyboard={false}
+        show={showParentCalculactionModal}
+        onHide={handleParentCalculactionModalClose}
+        size="lg"
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header>
+          <Modal.Title style={{ color: "#000", fontWeight: "bold" }}>
+            Calculation{" "}
+          </Modal.Title>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            onClick={handleParentCalculactionModalClose}
           >
-            <Modal.Header>
-              <Modal.Title style={{ color: "#000", fontWeight: "bold" }}>
-                Calculation{" "}
-              </Modal.Title>
-              <button
-                type="button"
-                class="btn-close"
-                aria-label="Close"
-                onClick={handleClose}
-              >
-                X
-              </button>
-            </Modal.Header>
-            <Modal.Body>
-              <div className="w-50">
-                <label className="fw-bold" style={{ color: "#000" }} htmlFor="">
-                  Calculation Type
-                </label>
-                <Select
-                  class="form-select"
-                  className="w-[100%] mt-2"
-                  aria-label="Default select example"
-                  // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                  options={[
-                    {
-                      label: "Manual",
-                      value: "Manual",
-                    },
-                    {
-                      label: "Auto",
-                      value: "Auto",
-                    },
-                  ]}
-                  id={`dropValue`}
-                  onChange={(e) => {
-                    setCalculationType(e.value);
-                    if (e.value == "Auto") {
-                      setDisplayFormulaAuto(true);
-                    } else {
-                      setDisplayFormulaAuto(false);
-                    }
-                  }}
-                ></Select>
-              </div>
-              <div
-                className={`d-flex justify-content-between ${
-                  displayFormulaAuto ? "d-visible" : "d-hidden"
-                } mt-4`}
-              >
-                <div className="w-100">
-                  <label className="fw-bold" htmlFor="">
-                    Field1
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaData}
-                    id={`dropValueField1`}
-                    onChange={(e) => {
-                      let fieldName = e.value;
-                      let newString = fieldName.replace("-", "_");
-                      const spaceRemove = newString.split(" ").join("");
-                      const fieldNameLowerCase = spaceRemove.toLowerCase();
-                      console.log(e.value, pageFormula);
-                      if (
-                        pageFormula[0]["Formula"][0]["Field2"] ==
-                        fieldNameLowerCase
-                      ) {
-                        setField1Validation(0);
-                      } else if (
-                        pageFormula[0]["Target"] == fieldNameLowerCase
-                      ) {
-                        setField1Validation(0);
-                      } else {
-                        setField1Validation(1);
-                        pageFormula[0]["Formula"][0]["Field1"] =
-                          fieldNameLowerCase;
-                      }
-                    }}
-                  ></Select>
-
-                  {field1Validation == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be same as Field2 or Target
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Formula
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={[
-                      {
-                        label: "+",
-                        value: "+",
-                      },
-                      {
-                        label: "-",
-                        value: "-",
-                      },
-                      {
-                        label: "*",
-                        value: "*",
-                      },
-                      {
-                        label: "/",
-                        value: "/",
-                      },
-                    ]}
-                    id={`dropValueFormula`}
-                    onChange={(e) => {
-                      console.log(e.value);
-                      pageFormula[0]["Formula"][0]["FormulaType"] = e.value;
-                      if (e.value != "") {
-                        setFieldFormulaValidation(1);
-                      } else {
-                        setFieldFormulaValidation(0);
-                      }
-                    }}
-                  ></Select>
-
-                  {fieldFormulaValidation == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be empty
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Field2
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaData}
-                    id={`dropValueField2`}
-                    onChange={(e) => {
-                      let fieldName = e.value;
-                      let newString = fieldName.replace("-", "_");
-                      const spaceRemove = newString.split(" ").join("");
-                      const fieldNameLowerCase = spaceRemove.toLowerCase();
-                      console.log(fieldNameLowerCase);
-                      console.log(e.value, pageFormula);
-                      console.log(e.value);
-                      if (
-                        pageFormula[0]["Formula"][0]["Field1"] ==
-                        fieldNameLowerCase
-                      ) {
-                        setField2Validation(0);
-                      } else if (
-                        pageFormula[0]["Target"] == fieldNameLowerCase
-                      ) {
-                        setField2Validation(0);
-                      } else {
-                        setField2Validation(1);
-                        pageFormula[0]["Formula"][0]["Field2"] =
-                          fieldNameLowerCase;
-                      }
-                    }}
-                  ></Select>
-                  {field2Validation == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be same as Field1 or Target
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="w-100 ms-2">
-                  <label className="fw-bold" htmlFor="">
-                    Target
-                  </label>
-                  <Select
-                    class="form-select"
-                    className="w-[100%] mt-2"
-                    aria-label="Default select example"
-                    // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
-                    options={allInputValueForFormulaData}
-                    id={`dropValueFieldTarget`}
-                    onChange={(e) => {
-                      let fieldName = e.value;
-                      let newString = fieldName.replace("-", "_");
-                      const spaceRemove = newString.split(" ").join("");
-                      const fieldNameLowerCase = spaceRemove.toLowerCase();
-                      console.log(fieldNameLowerCase);
-                      if (
-                        pageFormula[0]["Formula"][0]["Field1"] ==
-                        fieldNameLowerCase
-                      ) {
-                        setFieldTargetValidation(0);
-                      } else if (
-                        pageFormula[0]["Formula"][0]["Field2"] ==
-                        fieldNameLowerCase
-                      ) {
-                        setFieldTargetValidation(0);
-                      } else {
-                        console.log(e.value);
-                        setFormulaTarget(fieldNameLowerCase);
-                        setFieldTargetValidation(1);
-                        pageFormula[0]["Target"] = fieldNameLowerCase;
-                      }
-                    }}
-                  ></Select>
-                  {fieldTargetValidation == 0 ? (
-                    <label className="" style={{ color: "red" }}>
-                      Value can not be same as Field1 or Field2
-                    </label>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </div>
-            </Modal.Body>
-            <Modal.Footer>
-              <button
-                type="button"
-                class="btn"
-                style={{ backgroundColor: "#34C38F", color: "white" }}
-                onClick={() => {
-                  if (pageFormula[0]["Formula"][0]["FormulaType"] == "") {
-                    setFieldFormulaValidation(0);
-                  }
-                  if (pageFormula[0]["Formula"][0]["Field2"] == "") {
-                    setField1Validation(0);
-                  }
-                  if (pageFormula[0]["Formula"][0]["Field1"] == "") {
-                    setField1Validation(0);
-                  }
-                  if (pageFormula[0]["Formula"][0]["FormulaType"] == "") {
-                    setFieldFormulaValidation(0);
-                  }
-                  if (pageFormula[0]["Formula"][0]["Target"] == "") {
-                    setFieldTargetValidation(0);
-                  }
+            X
+          </button>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="w-50">
+            <label className="fw-bold" style={{ color: "#000" }} htmlFor="">
+              Calculation Type
+            </label>
+            <Select
+              class="form-select"
+              className="w-[100%] mt-2"
+              aria-label="Default select example"
+              // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+              options={[
+                {
+                  label: "Manual",
+                  value: "Manual",
+                },
+                {
+                  label: "Auto",
+                  value: "Auto",
+                },
+              ]}
+              id={`dropValue`}
+              onChange={(e) => {
+                setParentCalculationType(e.value);
+                if (e.value == "Auto") {
+                  setDisplayParentFormulaAuto(true);
+                } else {
+                  setDisplayParentFormulaAuto(false);
+                }
+              }}
+            ></Select>
+          </div>
+          <div
+            className={`d-flex justify-content-between ${
+              displayParentFormulaAuto ? "display-show" : "dispaly-hidden"
+            } mt-4`}
+          >
+            <div className="w-100">
+              <label className="fw-bold" htmlFor="">
+                Field1
+              </label>
+              <Select
+                class="form-select"
+                className="w-[100%] mt-2"
+                aria-label="Default select example"
+                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                options={allParentInputValueForFormulaData}
+                id={`dropValueField1`}
+                onChange={(e) => {
+                  let fieldName = e.value;
+                  let newString = fieldName.replace("-", "_");
+                  const spaceRemove = newString.split(" ").join("");
+                  const fieldNameLowerCase = spaceRemove.toLowerCase();
+                  console.log(e.value, parentPageFormula);
                   if (
-                    field1Validation != 1 ||
-                    field2Validation != 1 ||
-                    fieldFormulaValidation != 1 ||
-                    fieldTargetValidation != 1
+                    parentPageFormula[0]["Formula"][0]["Field2"] == fieldNameLowerCase
                   ) {
+                    setParentField1Validation(0);
+                  } else if (parentPageFormula[0]["Target"] == fieldNameLowerCase) {
+                    setParentField1Validation(0);
                   } else {
-                    // addList();
-                    submitForm();
+                    setParentField1Validation(1);
+                    parentPageFormula[0]["Formula"][0]["Field1"] = fieldNameLowerCase;
                   }
                 }}
-              >
-                Save changes
-              </button>
-            </Modal.Footer>
-          </Modal>
-    </div>
-  )
-}
+              ></Select>
 
-export default CalculationModal
+              {parentField1Validation == 0 ? (
+                <label className="" style={{ color: "red" }}>
+                  Value can not be same as Field2 or Target
+                </label>
+              ) : (
+                ""
+              )}
+            </div>
+            <div className="w-100 ms-2">
+              <label className="fw-bold" htmlFor="">
+                Formula
+              </label>
+              <Select
+                class="form-select"
+                className="w-[100%] mt-2"
+                aria-label="Default select example"
+                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                options={[
+                  {
+                    label: "+",
+                    value: "+",
+                  },
+                  {
+                    label: "-",
+                    value: "-",
+                  },
+                  {
+                    label: "*",
+                    value: "*",
+                  },
+                  {
+                    label: "/",
+                    value: "/",
+                  },
+                ]}
+                id={`dropValueFormula`}
+                onChange={(e) => {
+                  console.log(e.value);
+                  parentPageFormula[0]["Formula"][0]["FormulaType"] = e.value;
+                  if (e.value != "") {
+                    setParentFieldFormulaValidation(1);
+                  } else {
+                    setParentFieldFormulaValidation(0);
+                  }
+                }}
+              ></Select>
+
+              {parentFieldFormulaValidation == 0 ? (
+                <label className="" style={{ color: "red" }}>
+                  Value can not be empty
+                </label>
+              ) : (
+                ""
+              )}
+            </div>
+            <div className="w-100 ms-2">
+              <label className="fw-bold" htmlFor="">
+                Field2
+              </label>
+              <Select
+                class="form-select"
+                className="w-[100%] mt-2"
+                aria-label="Default select example"
+                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                options={allParentInputValueForFormulaData}
+                id={`dropValueField2`}
+                onChange={(e) => {
+                  let fieldName = e.value;
+                  let newString = fieldName.replace("-", "_");
+                  const spaceRemove = newString.split(" ").join("");
+                  const fieldNameLowerCase = spaceRemove.toLowerCase();
+                  console.log(fieldNameLowerCase);
+                  console.log(e.value, parentPageFormula);
+                  console.log(e.value);
+                  if (
+                    parentPageFormula[0]["Formula"][0]["Field1"] == fieldNameLowerCase
+                  ) {
+                    setParentField2Validation(0);
+                  } else if (parentPageFormula[0]["Target"] == fieldNameLowerCase) {
+                    setParentField2Validation(0);
+                  } else {
+                    setParentField2Validation(1);
+                    parentPageFormula[0]["Formula"][0]["Field2"] = fieldNameLowerCase;
+                  }
+                }}
+              ></Select>
+              {parentField2Validation == 0 ? (
+                <label className="" style={{ color: "red" }}>
+                  Value can not be same as Field1 or Target
+                </label>
+              ) : (
+                ""
+              )}
+            </div>
+            <div className="w-100 ms-2">
+              <label className="fw-bold" htmlFor="">
+                Target
+              </label>
+              <Select
+                class="form-select"
+                className="w-[100%] mt-2"
+                aria-label="Default select example"
+                // placeholder={`${allDropValueData[countOfInput]}`} //{test(`box${countOfInput}`)}
+                options={allParentInputValueForFormulaData}
+                id={`dropValueFieldTarget`}
+                onChange={(e) => {
+                  let fieldName = e.value;
+                  let newString = fieldName.replace("-", "_");
+                  const spaceRemove = newString.split(" ").join("");
+                  const fieldNameLowerCase = spaceRemove.toLowerCase();
+                  console.log(fieldNameLowerCase);
+                  if (
+                    parentPageFormula[0]["Formula"][0]["Field1"] == fieldNameLowerCase
+                  ) {
+                    setParentFieldTargetValidation(0);
+                  } else if (
+                    parentPageFormula[0]["Formula"][0]["Field2"] == fieldNameLowerCase
+                  ) {
+                    setParentFieldTargetValidation(0);
+                  } else {
+                    console.log(e.value);
+                    setParentFormulaTarget(fieldNameLowerCase);
+                    setParentFieldTargetValidation(1);
+                    parentPageFormula[0]["Target"] = fieldNameLowerCase;
+                  }
+                }}
+              ></Select>
+              {parentFieldTargetValidation == 0 ? (
+                <label className="" style={{ color: "red" }}>
+                  Value can not be same as Field1 or Field2
+                </label>
+              ) : (
+                ""
+              )}
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+            type="button"
+            class="btn"
+            style={{ backgroundColor: "#34C38F", color: "white" }}
+            onClick={() => {
+              if (parentPageFormula[0]["Formula"][0]["FormulaType"] == "") {
+                setParentFieldFormulaValidation(0);
+              }
+              if (parentPageFormula[0]["Formula"][0]["Field2"] == "") {
+                setParentField1Validation(0);
+              }
+              if (parentPageFormula[0]["Formula"][0]["Field1"] == "") {
+                setParentField1Validation(0);
+              }
+              if (parentPageFormula[0]["Formula"][0]["FormulaType"] == "") {
+                setParentFieldFormulaValidation(0);
+              }
+              if (parentPageFormula[0]["Formula"][0]["Target"] == "") {
+                setParentFieldTargetValidation(0);
+              }
+              if (
+                parentField1Validation != 1 ||
+                parentField2Validation != 1 ||
+                parentFieldFormulaValidation != 1 ||
+                parentFieldTargetValidation != 1
+              ) {
+              } else {
+                // addList();
+                submitForm();
+              }
+            }}
+          >
+            Save changes
+          </button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+};
+
+export default CalculationModal;

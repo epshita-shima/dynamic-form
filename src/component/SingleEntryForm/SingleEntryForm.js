@@ -7,11 +7,12 @@ import swal from "sweetalert";
 import * as Yup from "yup";
 import Token from "../common/Token";
 import useChildMenu from "./../customHooks/useChildMenu";
-import CalculationModal from "../ModalStore/ChildModal/CalculationModal";
+import CalculationModal from "../ModalStore/ChildModal/CalculationModalChild";
 import WarningModal from "../ModalStore/ChildModal/WarningModal";
-import Show_Modal_For_Value_Selection_After_The_Table_Modal_Select_For_Child from "./../ModalStore/ChildModal/Show_Modal_For_Value_Selection_After_The_Table_Modal_Select_For_Child";
-import Show_Modal_For_Table_Selection_In_The_DropDown_For_Child from "../ModalStore/ChildModal/Show_Modal_For_Table_Selection_In_The_DropDown_For_Child";
 import ChildFormField from "../FormField/ChildFormField/ChildFormField";
+import ShowModalForTableSelectionInTheDropDownForChild from './../ModalStore/ChildModal/ShowModalForTableSelectionInTheDropDownForChild';
+import ShowModalForValueSelectionAfterTheTableModalSelectForChild from "../ModalStore/ChildModal/ShowModalForValueSelectionAfterTheTableModalSelectForChild";
+import CalculationModalChild from "../ModalStore/ChildModal/CalculationModalChild";
 
 const SingleEntryForm = ({
   setExist,
@@ -67,7 +68,7 @@ const SingleEntryForm = ({
   const [radioButton, setRadioButton] = useState([]);
   const [allInputValueForFormulaData, setAllInputValueForFormulaData] =
     useState([]);
-  const [show2, setShow2] = useState(false);
+  const [showChildModal2, setShowChildModal2] = useState(false);
   const [pageFormula, setPageFormula] = useState([
     { Formula: [{ Field1: "", FormulaType: "", Field2: "" }], Target: {} },
   ]);
@@ -81,7 +82,7 @@ const SingleEntryForm = ({
   const [fieldTargetValidation, setFieldTargetValidation] = useState(2);
   const [fieldFormulaValidation, setFieldFormulaValidation] = useState(2);
   const [showCalculactionModal, setShowCalculactionModal] = useState(false);
-  const [keyValue, setKeyValue] = useState([]);
+  const [childKeyValue, setChildKeyValue] = useState([]);
   const [selectedListName, setSelectedListName] = useState([]);
   const handleClose = () => setShowCalculactionModal(false);
   const handleDropClose = () => setShowDropDownModal(false);
@@ -96,7 +97,7 @@ const SingleEntryForm = ({
  
   const [childMenu, setChildMenu] = useChildMenu([]);
   const [dropdownName, setDropdownName] = useState([]);
-  const [menuId, setMenuId] = useState("");
+  const [childMenuId, setChildMenuId] = useState("");
 
   var tableInputData = [];
   var tableDropData = [];
@@ -557,7 +558,7 @@ const SingleEntryForm = ({
       .then((data) => {
         if (data.status == true) {
           const allKeyData = JSON.parse(data.data);
-          setKeyValue(allKeyData.Tables1);
+          setChildKeyValue(allKeyData.Tables1);
         } else {
           console.log(data);
         }
@@ -733,16 +734,16 @@ const SingleEntryForm = ({
             countKeyValue++
           ) {
             if (
-              keyValue.some(
+              childKeyValue.some(
                 (item) =>
-                  item.KeyValue.toLowerCase() ===
+                  item.childKeyValue.toLowerCase() ===
                   allInputValueData[countKeyValue].toLowerCase()
               )
             ) {
               foundKey = 1;
             }
           }
-          console.log(foundKey,allInputValueData,keyValue)
+          console.log(foundKey,allInputValueData,childKeyValue)
           alert(foundKey);
           if (foundKey == 1) {
             setShowCalculactionModal(true);
@@ -1005,7 +1006,7 @@ const SingleEntryForm = ({
           
         </div>
 
-        <CalculationModal
+        <CalculationModalChild
           showCalculactionModal={showCalculactionModal}
           handleClose={handleClose}
           setCalculationType={setCalculationType}
@@ -1023,27 +1024,27 @@ const SingleEntryForm = ({
           setFormulaTarget={setFormulaTarget}
           fieldTargetValidation={fieldTargetValidation}
           submitForm={submitForm}
-        ></CalculationModal>
+        ></CalculationModalChild>
 
-        <Show_Modal_For_Table_Selection_In_The_DropDown_For_Child
+        <ShowModalForTableSelectionInTheDropDownForChild
           showDropDownModal={showDropDownModal}
           handleDropClose={handleDropClose}
           modalSpecificData={modalSpecificData}
-          setMenuId={setMenuId}
+          setChildMenuId={setChildMenuId}
           currentDropSelected={currentDropSelected}
-          setShow2={setShow2}
+          setShowChildModal2={setShowChildModal2}
           setSelectedListName={setSelectedListName}
           setAllModelDataTable={setAllModelDataTable}
           setAllDropValueData={setAllDropValueData}
           allDropValueData={allDropValueData}
-          menuId={menuId}
+          childMenuId={childMenuId}
           setDropdownName={setDropdownName}
           setShowDropDownModal={setShowDropDownModal}
-        ></Show_Modal_For_Table_Selection_In_The_DropDown_For_Child>
+        ></ShowModalForTableSelectionInTheDropDownForChild>
 
-        <Show_Modal_For_Value_Selection_After_The_Table_Modal_Select_For_Child
-          show2={show2}
-          setShow2={setShow2}
+        <ShowModalForValueSelectionAfterTheTableModalSelectForChild
+          showChildModal2={showChildModal2}
+          setShowChildModal2={setShowChildModal2}
           selectedListName={selectedListName}
           handleErrorClose={handleErrorClose}
           dropdownName={dropdownName}
@@ -1053,7 +1054,7 @@ const SingleEntryForm = ({
           allModelDataTable={allModelDataTable}
           allDropValueData={allDropValueData}
           setSelectedOption={setSelectedOption}
-        ></Show_Modal_For_Value_Selection_After_The_Table_Modal_Select_For_Child>
+        ></ShowModalForValueSelectionAfterTheTableModalSelectForChild>
 
         <WarningModal
           showErrorModal={showErrorModal}

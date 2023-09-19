@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import Select from "react-select";
-const CalculationModal = ({
+const CalculationModalChild = ({
   showCalculactionModal,
   handleClose,
   setCalculationType,
@@ -278,4 +278,4 @@ const CalculationModal = ({
   );
 };
 
-export default CalculationModal;
+export default CalculationModalChild;

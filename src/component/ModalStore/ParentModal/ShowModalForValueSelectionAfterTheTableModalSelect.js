@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
-const Show_Modal_For_Value_Selection_After_The_Table_Modal_Select = ({
+const ShowModalForValueSelectionAfterTheTableModalSelect = ({
   show2,
   setShow2,
   parentModalTitle,
@@ -114,4 +114,4 @@ const Show_Modal_For_Value_Selection_After_The_Table_Modal_Select = ({
   );
 };
 
-export default Show_Modal_For_Value_Selection_After_The_Table_Modal_Select;
+export default ShowModalForValueSelectionAfterTheTableModalSelect;

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import Token from "../../common/Token";
 
-const Show_Modal_For_Table_Selection_In_The_DropDown = ({
+const ShowModalForTableSelectionInTheDropDown = ({
   showParentDropDownModal,
   handleParentModalDropClose,
   parentModalSpecificData,
@@ -10,8 +10,8 @@ const Show_Modal_For_Table_Selection_In_The_DropDown = ({
   currentParentDropSelected,
   setParentModalTitle,
   setParentAllModelDataTable,
-  setAllDropValueData,
-  allDropValueData,
+  setAllParentDropValueData,
+  allParentDropValueData,
   setParentTableValue,
   setShowParentDropDownModal,
 }) => {
@@ -60,8 +60,8 @@ const Show_Modal_For_Table_Selection_In_The_DropDown = ({
           console.log(allModalData);
           setParentAllModelDataTable(allModalData);
 
-          setAllDropValueData({
-            ...allDropValueData,
+          setAllParentDropValueData({
+            ...allParentDropValueData,
             [i]: radioName,
           });
         } else {
@@ -156,4 +156,4 @@ const Show_Modal_For_Table_Selection_In_The_DropDown = ({
   );
 };
 
-export default Show_Modal_For_Table_Selection_In_The_DropDown;
+export default ShowModalForTableSelectionInTheDropDown;

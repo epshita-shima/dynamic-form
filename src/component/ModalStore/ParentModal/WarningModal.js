@@ -1,12 +1,12 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
 
-const WarningModal = ({showErrorModal,handleErrorClose,parentErrorMessageString}) => {
+const WarningModal = ({showParentErrorModal,handleParentErrorClose,parentErrorMessageString}) => {
   return (
     <div>
       <Modal
-            show={showErrorModal}
-            onHide={handleErrorClose}
+            show={showParentErrorModal}
+            onHide={handleParentErrorClose}
             backdrop="true"
             keyboard={false}
           >
@@ -18,7 +18,7 @@ const WarningModal = ({showErrorModal,handleErrorClose,parentErrorMessageString}
                 type="button"
                 class="btn-close"
                 aria-label="Close"
-                onClick={handleErrorClose}
+                onClick={handleParentErrorClose}
               >
                 X
               </button>

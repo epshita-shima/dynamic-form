@@ -13,7 +13,7 @@ import swal from "sweetalert";
 import useChildMenu from "../../customHooks/useChildMenu";
 import DoubleEnteryData from "../../DoubleEntryData/DoubleEnteryData";
 
-const CreateChildMenu = () => {
+const CreateChildMenu = ({setChildTableName}) => {
   const [parentSelectOption, setParentSelectOption] = useParentDropdown();
   const [show, setShow] = useState(false);
   const [showSaveData, setShowSaveData] = useState(0);
@@ -33,7 +33,7 @@ const CreateChildMenu = () => {
     procedureName: "",
     parameters: {},
   };
-
+console.log(showSaveData)
   modelData.procedureName = "prc_GetMenuList";
   const modelDataLabel = {
     procedureName: "",
@@ -257,7 +257,7 @@ const CreateChildMenu = () => {
           <Grid>
     <Grid className={`${pageEntry.pageEntry== "doubleEntryPage" ? 'd-none': 'd-block'}` || `${pageEntry.pageEntry== "singleEntryPage" ? 'd-block': 'd-none'}`}>
       {
-        pageEntry.pageEntry=="singleEntryPage"? (<SingleEntryForm
+        pageEntry.pageEntry=="singleEntryPage"? (<DoubleEnteryData
           parentMenuName={parentMenuName}
           childMenuName={childMenuName}
           pageEntry={pageEntry}
@@ -265,7 +265,8 @@ const CreateChildMenu = () => {
           setChildMenuName={setChildMenuName}
           setPageEntry={setPageEntry}
           setExist={setExist}
-        ></SingleEntryForm>) :""
+          setChildTableName={setChildTableName}
+        ></DoubleEnteryData>) :""
       }
     
     </Grid>
@@ -279,6 +280,7 @@ const CreateChildMenu = () => {
               setChildMenuName={setChildMenuName}
               setPageEntry={setPageEntry}
               setExist={setExist}
+              setChildTableName={setChildTableName}
               ></DoubleEnteryData>):''
           }
           </Grid>

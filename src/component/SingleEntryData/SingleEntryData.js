@@ -50,6 +50,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   const [childTableName, setChildTableName] = useState("");
   const [childMenu, setChildMenu] = useChildMenu([]);
 const [totalAmount,setTotalAmount]=useState('')
+const [totalAmountSingle,setTotalAmountSingle]=useState("")
 const [childModalTitle,setChildModalTitle]=useState('')
 console.log(totalAmount)
   console.log(labelData)
@@ -57,7 +58,8 @@ console.log(totalAmount)
   const search = useLocation();
   const link = search.pathname.split("/");
   let id = link[2];
-
+ const childTable=link[1]
+console.log({childTableName},{parentTableName})
   console.log(columnValues)
   useEffect(() => {
     const modelDataLabel = {
@@ -68,7 +70,8 @@ console.log(totalAmount)
     };
 
     modelDataLabel.procedureName = "prc_GetMasterInfoList";
-    modelDataLabel.parameters.TableName = "groupinformation";
+    modelDataLabel.parameters.TableName = childTable;
+    console.log(modelDataLabel)
     fetch("https://localhost:44372/api/GetData/GetDataByID", {
       method: "POST",
       headers: {
@@ -107,7 +110,7 @@ console.log(totalAmount)
     setShowTable(true);
     const findPageType = childMenu.find((item) => item.MenuId == id);
     setChildPageType(findPageType);
-    if (findPageType.PageType == "doubleEntryPage") {
+    if (findPageType?.PageType == "doubleEntryPage") {
       fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
         method: "POST",
         headers: {
@@ -136,7 +139,7 @@ console.log(totalAmount)
               });
             });
             labelDataSingle.map((elem) => {
-              
+              console.log(elem)
               elem.forEach((element, i) => {
                 if (element.RelatedTable != "") {
                   const modelDataLabel = {
@@ -492,7 +495,8 @@ console.log(totalAmount)
           }
         });
     }
-    if (findPageType.PageType == "singleEntryPage") {
+    if (findPageType?.PageType == "singleEntryPage") {
+      console.log('singlepage')
       fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
         method: "POST",
         headers: {
@@ -505,8 +509,10 @@ console.log(totalAmount)
         .then((data) => {
           if (data.status == true) {
             const allData = JSON.parse(data.data);
+            console.log(allData)
             const allLabelData = allData.Tables1;
             const getTableName = allData.Tables2;
+            console.log(allLabelData )
             const childTableData = getTableName[0].TableName;
             setChildTableName(childTableData);
             if (labelData.length == 0) {
@@ -535,6 +541,7 @@ console.log(totalAmount)
             labelData.map((item, index) => {
               multipleDateArrayField[index] = [];
               item.forEach((element, i) => {
+                console.log(element)
                 setLabelCount(i + 2);
                 multipleDateArrayField[index][i] = {};
                 multipleDateArrayField[index]["" + i]["ID"] =
@@ -786,6 +793,56 @@ console.log(totalAmount)
     }
   };
 
+  const handleSingleCalculation=(calculationFormula, i)=>{
+    console.log(calculationFormula, i)
+    var calculationValue1 = 0;
+    var calculationValue = 0;
+    var target = 0;
+    const calculationFormulaField = JSON.parse(calculationFormula);
+    const calculateFormulaField = calculationFormulaField[0].Formula;
+    console.log(calculateFormulaField,calculationFormulaField[0]);
+
+    labelDataSingle.map((items) => {
+      items.map((item,pos)=>{
+        console.log(item)
+        console.log(item.ColumnName,item?.ColumnValue,calculateFormulaField[0],calculationFormulaField.Target);
+        if (item.ColumnName.toUpperCase() == calculateFormulaField[0].Field1.toUpperCase()) {
+          if (item?.ColumnValue != "") calculationValue1 = item.ColumnValue;
+          console.log(item.ColumnValue)
+        }
+        if (item?.ColumnName.toUpperCase() == calculateFormulaField[0].Field2.toUpperCase()) {
+          console.log(item?.ColumnValue)
+          if (item?.ColumnValue != "") calculationValue = item?.ColumnValue;
+        }
+        if (item.ColumnName.toUpperCase() == calculationFormulaField[0].Target.toUpperCase()) {
+          target = pos;
+        }
+       
+      })
+    });
+    console.log(columnValues,i,target,calculationFormulaField[0].Target.toUpperCase())
+    console.log(calculationValue,calculationValue1)
+    if(calculationValue !=undefined && calculationValue1 !=undefined){
+      const result = parseFloat(calculationValue) * parseFloat(calculationValue1);
+      console.log(result)
+      setTotalAmountSingle(result)
+      labelDataSingle[0][target].ColumnValue = result;
+      
+      Object.entries(columnValues[0]).forEach((entry) => {
+        const [key, value] = entry;
+        console.log(value,key);
+        if(key.toUpperCase()==calculationFormulaField[0].Target.toUpperCase()){
+          entry[value] = result;
+          columnValues[0][key] = result;
+        }
+      });
+    }
+    else{
+      setTotalAmountSingle(0)
+      labelDataSingle[0][target].ColumnValue = 0
+    }
+
+  }
   const handleCalculation = (calculationFormula, i, countOfInput) => {
     console.log('hi')
     var calculationValue1 = 0;
@@ -808,13 +865,14 @@ console.log(totalAmount)
       if (item.ColumnName.toUpperCase() == calculationFormulaField[0].Target.toUpperCase()) {
         target = pos;
       }
-
+     
     });
     console.log(columnValues,i,target,calculationFormulaField[0].Target.toUpperCase())
     console.log(calculationValue,calculationValue1)
     const result = parseFloat(calculationValue) * parseFloat(calculationValue1);
     console.log(result)
     setTotalAmount(result)
+    
     labelData[i][target].ColumnValue = result;
     
     Object.entries(columnValues[i]).forEach((entry) => {
@@ -906,11 +964,15 @@ console.log(totalAmount)
             size="small"
             name={`${i}input`}
             style={{ marginTop: "3px" }}
-            // value={labelDataSingle[i]["ColumnValue"]}
+            disabled={
+              labelDataSingle[0][i]["IsDisable"].toLowerCase?.() ===
+              "false"
+            }
+            value={labelDataSingle[0][i]["ColumnValue"]}
             className="getValue form-control"
             placeholder={item?.ColumnName}
             onChange={(e) => {
-             
+             console.log()
               const { value } = e.target;
               const filteredArr = [];
               columnValuesSingle.forEach((item) => {
@@ -918,15 +980,35 @@ console.log(totalAmount)
                   filteredArr.push(item);
                 }
               });
-
+            
+              if( labelDataSingle[0][i]["IsDisable"]?.toLowerCase?.() ===
+              "false"){
+                filteredArr['amount']= totalAmountSingle;
+                labelData[0][i].ColumnValue = totalAmountSingle;
+              }
+            
               filteredArr[0][item?.ColumnName] = value;
-              
+              labelDataSingle[0][i].ColumnValue = value;
               setLabelDataSingle((prevArr) => {
+                console.log(prevArr)
                 const result = [...prevArr];
                 result[0][i].ColumnValue = value;
                 return result;
               });
               setColumnValuesSingle(filteredArr);
+              if (
+                labelDataSingle[0][i]["CalculationType"] == "Auto"
+              ) {
+                console.log(item?.ColumnName,item?.CalculationKey)
+                if (item?.ColumnName.toUpperCase() == item?.CalculationKey.toUpperCase()) {
+                  const calculationFormula = item?.CalculationFormula;
+                  console.log(calculationFormula)
+                  handleSingleCalculation(calculationFormula, i);
+                } else {
+                  console.log("hi");
+                }
+              }
+              
             }}
           />
         </div>
@@ -1209,6 +1291,7 @@ console.log(totalAmount)
               className="getValue form-control"
               placeholder={item?.ColumnName}
               onChange={(e) => {
+                console.log(labelData)
                 console.log(e.target.value)
                 const { value } = e.target;
                 const filteredArr = [];
@@ -1239,7 +1322,8 @@ console.log(totalAmount)
                 if (
                   labelData[i][countOfInput]["CalculationType"] == "Auto"
                 ) {
-                  if (item.ColumnName.toUpperCase() == item?.CalculationKey.toUpperCase()) {
+                  console.log(item?.ColumnName,item?.CalculationKey)
+                  if (item?.ColumnName.toUpperCase() == item?.CalculationKey.toUpperCase()) {
                     const calculationFormula = item?.CalculationFormula;
                     console.log(calculationFormula)
                     handleCalculation(calculationFormula, i, countOfInput);
@@ -2305,7 +2389,7 @@ console.log(totalAmount)
                       className={`shadow-lg p-4`}
                       style={{ visibility: showTable ? "visible" : "hidden" }}
                     >
-                      {childPageType.PageType == "doubleEntryPage"
+                      {childPageType?.PageType == "doubleEntryPage"
                         ? labelDataSingle?.map((items, i) => {
                             return (
                               <div className="row mb-4">

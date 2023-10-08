@@ -58,7 +58,7 @@ const ChildFormField = ({
   errorsImage,
 }) => {
   return (
-    <div class="row shadow-lg pt-4 pb-4">
+    <div class="row ">
       <div class="col">
         <ChildTextField
           inputValue={inputValue}

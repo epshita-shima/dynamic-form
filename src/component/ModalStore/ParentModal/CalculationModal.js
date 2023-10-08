@@ -18,8 +18,12 @@ const CalculationModal = ({
   setParentFieldTargetValidation,
   setParentFormulaTarget,
   parentFieldTargetValidation,
+  setShowCalculactionModal,
   submitForm,
+  foundParentKey,
+  childFoundKey
 }) => {
+  console.log(foundParentKey,childFoundKey)
   return (
     <div>
       <Modal
@@ -274,7 +278,15 @@ const CalculationModal = ({
               ) {
               } else {
                 // addList();
-                submitForm();
+                if(foundParentKey==1 && childFoundKey ==0){
+                  submitForm();
+                  handleParentCalculactionModalClose()
+                }
+                if(foundParentKey==1 && childFoundKey ==1){
+                  handleParentCalculactionModalClose()
+                  setShowCalculactionModal(true)
+                }
+               
               }
             }}
           >

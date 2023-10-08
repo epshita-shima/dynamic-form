@@ -266,7 +266,9 @@ const CalculationModalChild = ({
               ) {
               } else {
                 // addList();
+               
                 submitForm();
+                handleClose()
               }
             }}
           >

@@ -11,7 +11,9 @@ import { useState } from "react";
 function App() {
   const [childMenu, setChildMenu] = useChildMenu([]);
   const [showTable, setShowTable] = useState(false);
+  const [childTableName, setChildTableName]=useState('')
   console.log(childMenu)
+  console.log(childTableName)
   return (
     <div>
       <Routes>
@@ -42,7 +44,7 @@ function App() {
                       path="/child-menu"
                       element={<ChildInfoList></ChildInfoList>}
                     ></Route>
-                    <Route path="/add-child" element={<CreateChildMenu></CreateChildMenu>}></Route>
+                    <Route path="/add-child" element={<CreateChildMenu setChildTableName={setChildTableName}></CreateChildMenu>}></Route>
                 </>):''
                 }
               </>

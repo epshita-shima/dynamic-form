@@ -28,7 +28,7 @@ import ChildFormField from "../FormField/ChildFormField/ChildFormField";
 import ShowModalForTableSelectionInTheDropDownForChild from "../ModalStore/ChildModal/ShowModalForTableSelectionInTheDropDownForChild";
 import ShowModalForValueSelectionAfterTheTableModalSelectForChild from "../ModalStore/ChildModal/ShowModalForValueSelectionAfterTheTableModalSelectForChild";
 import CalculationModalChild from "../ModalStore/ChildModal/CalculationModalChild";
-
+import WarningChildModal from "../ModalStore/ChildModal/WarningChildModal";
 const DoubleEnteryData = ({
   setExist,
   parentMenuName,
@@ -37,6 +37,7 @@ const DoubleEnteryData = ({
   setParentMenuName,
   setChildMenuName,
   setPageEntry,
+  setChildTableName
 }) => {
   const [inputValueParent, setInputValueParent] = useState("");
   const [inputValueDDFParent, setInputValueDDFParent] = useState("");
@@ -156,9 +157,9 @@ const DoubleEnteryData = ({
   const [allImageValueDataDetails, setAllImageValueDataDetails] = useState({});
 
   const [keyValue, setKeyValue] = useState([]);
-
-  const handleParentCalculactionModalClose = () =>
-    setShowParentCalculactionModal(false);
+const [foundParentKey,setFoundParentKey]=useState(0)
+const [childFoundKey,setChildFoundKey]=useState(0)
+  const handleParentCalculactionModalClose = () => setShowParentCalculactionModal(false);
   const handleParentModalDropClose = () => setShowParentDropDownModal(false);
   const handleParentErrorClose = () => setShowParentErrorModal(false);
   const [parentErrorsPage, setParentErrorsPage] = useState([]);
@@ -285,6 +286,8 @@ const DoubleEnteryData = ({
   // const [childMenu, setChildMenu] = useChildMenu([]);
   const [dropdownName, setDropdownName] = useState([]);
   const [childMenuId, setChildMenuId] = useState("");
+console.log( allInputValueData,allParentInputValueData)
+console.log(showParentCalculactionModal,showCalculactionModal)
 
   var tableInputData = [];
   var tableDropData = [];
@@ -299,6 +302,7 @@ const DoubleEnteryData = ({
   const tableNameLowerCase = spaceRemove.toLowerCase();
 
   useEffect(() => {
+    setChildTableName(tableNameLowerCase)
     const modelKeyData = {
       procedureName: "",
       parameters: {},
@@ -322,6 +326,7 @@ const DoubleEnteryData = ({
         }
       });
   }, []);
+
   var inputLowerCaseParentData = [];
   Object.entries(allParentInputValueData).forEach((entry) => {
     const [key, value] = entry;
@@ -376,7 +381,7 @@ const DoubleEnteryData = ({
     textareaLowerCaseParentData.push(lowercaseTextarea);
   });
 
-  console.log(allParentImageValueData)
+  console.log(allParentImageValueData);
   var imageLowerCaseParentData = [];
   Object.entries(allParentImageValueData).forEach((entry) => {
     const [key, value] = entry;
@@ -614,7 +619,6 @@ const DoubleEnteryData = ({
     allLowercaseData += element;
   });
 
-
   useEffect(() => {
     const modelDataLabel = {
       procedureName: "",
@@ -740,13 +744,15 @@ const DoubleEnteryData = ({
     ]);
   }
 
-  console.log(allParentDropValueData)
-  console.log(selectedOptionParent)
+  console.log(allParentDropValueData);
+  console.log(selectedOptionParent);
   const submitForm = () => {
+    console.log(pageEntry.pageEntry)
     const modelCreatePageSingle = {
       procedureName: "",
       parameters: {},
     };
+    
     const modelCreatePageDetails = {
       procedureName: "",
       parameters: {},
@@ -778,7 +784,7 @@ const DoubleEnteryData = ({
         });
         return;
       } else if (exists === undefined) {
-        if ((pageEntry.pageEntry = "singleEnrtyPage")) {
+        if ((pageEntry.pageEntry == "singleEntryPage")) {
           console.log(pageEntry.pageEntry);
           var tableModelData = {
             tableNameMaster: "",
@@ -794,22 +800,26 @@ const DoubleEnteryData = ({
           };
           tableModelData.detailsData = [];
           tableModelData.tableNameChild = "PageInfo";
-
-          var allParentInputValueDataLength = 0;
-          if (allParentInputValueData != null) {
-            allParentInputValueDataLength = Object.keys(
-              allParentInputValueData
+console.log(tableModelData,allInputValueData)
+          var allInputValueDataLength = 0;
+          if (allInputValueData != null) {
+            allInputValueDataLength = Object.keys(
+              allInputValueData
             ).length;
           }
 
           var allParentDateValueDataLength = 0;
           if (allParentDateValueData != null) {
-            allParentDateValueDataLength = Object.keys(allParentDateValueData).length;
+            allParentDateValueDataLength = Object.keys(
+              allParentDateValueData
+            ).length;
           }
 
           var allParentDropValueDataLength = 0;
           if (allParentDropValueData != null) {
-            allParentDropValueDataLength = Object.keys(allParentDropValueData).length;
+            allParentDropValueDataLength = Object.keys(
+              allParentDropValueData
+            ).length;
           }
           var allParentTextareaValueDataLength = 0;
           if (allParentTextAreaValueData != null) {
@@ -826,32 +836,34 @@ const DoubleEnteryData = ({
           var orderPosition = 0;
 
           for (
-            let allParentInputValueDataCount = 0;
-            allParentInputValueDataCount < allParentInputValueDataLength;
-            allParentInputValueDataCount++
+            let allInputValueDataCount = 0;
+            allInputValueDataCount < allInputValueDataLength;
+            allInputValueDataCount++
           ) {
             orderPosition++;
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName: inputLowerCaseParentData[allParentInputValueDataCount],
+              ColumnName:
+                inputLowerCaseData[allInputValueDataCount],
               ColumnNameWithSpace:
-                allParentInputValueData[allParentInputValueDataCount],
+                allInputValueData[allInputValueDataCount],
               ColumnType: "textbox",
               ColumnDataType: "",
               SiteName: "DynamicSite",
-              CalculationType: parentCalculationType,
-              CalculationKey: inputLowerCaseParentData[allParentInputValueDataCount],
-              CalculationFormula: JSON.stringify(parentPageFormula),
+              CalculationType: calculationType,
+              CalculationKey:
+                inputLowerCaseData[allInputValueDataCount],
+              CalculationFormula: JSON.stringify(pageFormula),
               RelatedTable: "",
               Position: orderPosition,
               IsDisable:
-                parentFormulaTarget ==
-                allParentInputValueData[allParentInputValueDataCount]
+                formulaTarget ==
+                allInputValueData[allInputValueDataCount]
                   ? "1"
                   : "0",
             };
-            console.log(allParentInputValueData[allParentInputValueDataCount]);
+            console.log(allInputValueData[allInputValueDataCount]);
             tableModelData.detailsData.push(tabledataparams);
           }
 
@@ -914,7 +926,8 @@ const DoubleEnteryData = ({
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName: textareaLowerCaseParentData[allParentTextAreaValueDataCount],
+              ColumnName:
+                textareaLowerCaseParentData[allParentTextAreaValueDataCount],
               ColumnNameWithSpace:
                 allParentTextAreaValueData[allParentTextAreaValueDataCount],
               ColumnType: "textarea",
@@ -939,7 +952,8 @@ const DoubleEnteryData = ({
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName: imageLowerCaseParentData[allParentImageValueDataCount],
+              ColumnName:
+                imageLowerCaseParentData[allParentImageValueDataCount],
               ColumnNameWithSpace:
                 allParentImageValueData[allParentImageValueDataCount],
               ColumnType: "image",
@@ -948,14 +962,15 @@ const DoubleEnteryData = ({
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable: allParentImageValueData[allParentImageValueDataCount],
+              RelatedTable:
+                allParentImageValueData[allParentImageValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
             };
             tableModelData.detailsData.push(tabledataparams);
           }
         }
-        if ((pageEntry.pageEntry = "doubleEntryPage")) {
+        if ((pageEntry.pageEntry == "doubleEntryPage")) {
           console.log(pageEntry.pageEntry);
           var tableModelData = {
             tableNameMaster: "",
@@ -981,12 +996,16 @@ const DoubleEnteryData = ({
 
           var allParentDateValueDataLength = 0;
           if (allParentDateValueData != null) {
-            allParentDateValueDataLength = Object.keys(allParentDateValueData).length;
+            allParentDateValueDataLength = Object.keys(
+              allParentDateValueData
+            ).length;
           }
 
           var allParentDropValueDataLength = 0;
           if (allParentDropValueData != null) {
-            allParentDropValueDataLength = Object.keys(allParentDropValueData).length;
+            allParentDropValueDataLength = Object.keys(
+              allParentDropValueData
+            ).length;
           }
           var allParentTextareaValueDataLength = 0;
           if (allParentTextAreaValueData != null) {
@@ -1012,14 +1031,16 @@ const DoubleEnteryData = ({
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName: inputLowerCaseParentData[allParentInputValueDataCount],
+              ColumnName:
+                inputLowerCaseParentData[allParentInputValueDataCount],
               ColumnNameWithSpace:
                 allParentInputValueData[allParentInputValueDataCount],
               ColumnType: "textbox",
               ColumnDataType: "",
               SiteName: "DynamicSite",
               CalculationType: parentCalculationType,
-              CalculationKey: inputLowerCaseParentData[allParentInputValueDataCount],
+              CalculationKey:
+                inputLowerCaseParentData[allParentInputValueDataCount],
               CalculationFormula: JSON.stringify(parentPageFormula),
               RelatedTable: "",
               ColumnValueField: "",
@@ -1081,7 +1102,8 @@ const DoubleEnteryData = ({
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: allParentDropValueData[allParentDropValueDataCount],
-              ColumnValueField: parentTableRadioButton[allParentDropValueDataCount],
+              ColumnValueField:
+                parentTableRadioButton[allParentDropValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1096,7 +1118,8 @@ const DoubleEnteryData = ({
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName: textareaLowerCaseParentData[allParentTextAreaValueDataCount],
+              ColumnName:
+                textareaLowerCaseParentData[allParentTextAreaValueDataCount],
               ColumnNameWithSpace:
                 allParentTextAreaValueData[allParentTextAreaValueDataCount],
               ColumnType: "textarea",
@@ -1122,7 +1145,8 @@ const DoubleEnteryData = ({
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName: imageLowerCaseParentData[allParentImageValueDataCount],
+              ColumnName:
+                imageLowerCaseParentData[allParentImageValueDataCount],
               ColumnNameWithSpace:
                 allParentImageValueData[allParentImageValueDataCount],
               ColumnType: "image",
@@ -1131,7 +1155,8 @@ const DoubleEnteryData = ({
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable: allParentImageValueData[allParentImageValueDataCount],
+              RelatedTable:
+                allParentImageValueData[allParentImageValueDataCount],
               ColumnValueField: "",
               Position: orderPosition,
               IsDisable: "0",
@@ -1155,42 +1180,31 @@ const DoubleEnteryData = ({
 
           var allInputValueDataLength = 0;
           if (allInputValueData != null) {
-            allInputValueDataLength = Object.keys(
-              allInputValueData
-            ).length;
+            allInputValueDataLength = Object.keys(allInputValueData).length;
           }
 
           var allCheckValueDataLength = 0;
           if (allCheckValueData != null) {
-            allCheckValueDataLength = Object.keys(
-              allCheckValueData
-            ).length;
+            allCheckValueDataLength = Object.keys(allCheckValueData).length;
           }
 
           var allDateValueDataLength = 0;
           if (allDateValueData != null) {
-            allDateValueDataLength = Object.keys(
-              allDateValueData
-            ).length;
+            allDateValueDataLength = Object.keys(allDateValueData).length;
           }
 
           var allDropValueDataLength = 0;
           if (allDropValueData != null) {
-            allDropValueDataLength = Object.keys(
-              allDropValueData
-            ).length;
+            allDropValueDataLength = Object.keys(allDropValueData).length;
           }
-          var allTextareaValueDataLength= 0;
+          var allTextareaValueDataLength = 0;
           if (allTextAreaValueData != null) {
-            allTextareaValueDataLength = Object.keys(
-              allTextAreaValueData
-            ).length;
+            allTextareaValueDataLength =
+              Object.keys(allTextAreaValueData).length;
           }
           var allImageValueDataLength = 0;
-          if (allImageValueData!= null) {
-            allImageValueDataLength= Object.keys(
-              allImageValueData
-            ).length;
+          if (allImageValueData != null) {
+            allImageValueDataLength = Object.keys(allImageValueData).length;
           }
           var orderPosition = 0;
 
@@ -1203,23 +1217,19 @@ const DoubleEnteryData = ({
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName:
-                inputLowerCaseData[allInputValueDataCount],
-              ColumnNameWithSpace:
-                allInputValueData[allInputValueDataCount],
+              ColumnName: inputLowerCaseData[allInputValueDataCount],
+              ColumnNameWithSpace: allInputValueData[allInputValueDataCount],
               ColumnType: "textbox",
               ColumnDataType: "",
               SiteName: "DynamicSite",
               CalculationType: calculationType,
-              CalculationKey:
-                allInputValueData[allInputValueDataCount],
+              CalculationKey: allInputValueData[allInputValueDataCount],
               CalculationFormula: JSON.stringify(pageFormula),
               RelatedTable: "",
               ColumnValueField: "",
               Position: orderPosition,
               IsDisable:
-                formulaTarget ==
-                allInputValueData[allInputValueDataCount]
+                formulaTarget == allInputValueData[allInputValueDataCount]
                   ? "1"
                   : "0",
             };
@@ -1236,8 +1246,7 @@ const DoubleEnteryData = ({
               PageId: "PageID",
               MenuId: "MenuID",
               ColumnName: checkboxLowerCaseData[allCheckValueDataCount],
-              ColumnNameWithSpace:
-                allCheckValueData[allCheckValueDataCount],
+              ColumnNameWithSpace: allCheckValueData[allCheckValueDataCount],
               ColumnType: "checkbox",
               ColumnDataType: "",
               SiteName: "DynamicSite",
@@ -1261,10 +1270,8 @@ const DoubleEnteryData = ({
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName:
-                dateLowerCaseData[allDateValueDataCount],
-              ColumnNameWithSpace:
-                allDateValueData[allDateValueDataCount],
+              ColumnName: dateLowerCaseData[allDateValueDataCount],
+              ColumnNameWithSpace: allDateValueData[allDateValueDataCount],
               ColumnType: "datetime",
               ColumnDataType: "",
               SiteName: "DynamicSite",
@@ -1288,18 +1295,15 @@ const DoubleEnteryData = ({
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName:
-                dropLowerCaseData[allDropValueDataCount],
-              ColumnNameWithSpace:
-                allDropValueData[allDropValueDataCount],
+              ColumnName: dropLowerCaseData[allDropValueDataCount],
+              ColumnNameWithSpace: allDropValueData[allDropValueDataCount],
               ColumnType: "dropdown",
               ColumnDataType: "",
               SiteName: "DynamicSite",
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable:
-                allDropValueData[allDropValueDataCount],
+              RelatedTable: allDropValueData[allDropValueDataCount],
               ColumnValueField: radioButton2[allDropValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
@@ -1308,16 +1312,14 @@ const DoubleEnteryData = ({
           }
           for (
             let allTeaxtAreaValueDataCount = 0;
-            allTeaxtAreaValueDataCount <
-            allTextareaValueDataLength;
+            allTeaxtAreaValueDataCount < allTextareaValueDataLength;
             allTeaxtAreaValueDataCount++
           ) {
             orderPosition++;
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName:
-                textareaLowerCaseData[allTeaxtAreaValueDataCount],
+              ColumnName: textareaLowerCaseData[allTeaxtAreaValueDataCount],
               ColumnNameWithSpace:
                 allTextAreaValueData[allTeaxtAreaValueDataCount],
               ColumnType: "textarea",
@@ -1326,8 +1328,7 @@ const DoubleEnteryData = ({
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable:
-                allTextAreaValueData[allTeaxtAreaValueDataCount],
+              RelatedTable: allTextAreaValueData[allTeaxtAreaValueDataCount],
               ColumnValueField: "",
               Position: orderPosition,
               IsDisable: "0",
@@ -1336,25 +1337,22 @@ const DoubleEnteryData = ({
           }
           for (
             let allImageValueDataCount = 0;
-            allImageValueDataCount< allImageValueDataLength;
+            allImageValueDataCount < allImageValueDataLength;
             allImageValueDataCount++
           ) {
             orderPosition++;
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName:
-                imageLowerCaseData[allImageValueDataCount],
-              ColumnNameWithSpace:
-                allImageValueData[allImageValueDataCount],
+              ColumnName: imageLowerCaseData[allImageValueDataCount],
+              ColumnNameWithSpace: allImageValueData[allImageValueDataCount],
               ColumnType: "image",
               ColumnDataType: "",
               SiteName: "DynamicSite",
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable:
-                allImageValueData[allImageValueDataCount],
+              RelatedTable: allImageValueData[allImageValueDataCount],
               ColumnValueField: "",
               Position: orderPosition,
               IsDisable: "0",
@@ -1363,12 +1361,12 @@ const DoubleEnteryData = ({
           }
         }
         console.log(tableModelDataDetails);
-        if (pageEntry.pageEntry == "singleEnrtyPage") {
+        if (pageEntry.pageEntry == "singleEntryPage") {
           modelCreatePageDetails.procedureName = "createChildPage";
           modelCreatePageDetails.parameters = {
             childPageName: childMenuName.SubMenuName,
             childPageNameWithoutSpace: tableNameLowerCase,
-            tableColumn: `ID varchar(128),${allLowercaseParentData} Makedate datetime,MakeBy varchar(128)`,
+            tableColumn: `ID varchar(128),${allLowercaseData} Makedate datetime,MakeBy varchar(128), InsertTime datetime`,
             makeBy: "shima",
             parentMenu: parentMenuName.MenuName,
             menuLogo: "no logo",
@@ -1399,6 +1397,7 @@ const DoubleEnteryData = ({
           // };
 
           // fatchGetDataById();
+          console.log(JSON.stringify(modelCreatePageDetails));
         }
 
         if (pageEntry.pageEntry == "doubleEntryPage") {
@@ -1407,7 +1406,7 @@ const DoubleEnteryData = ({
             childPageName: childMenuName.SubMenuName,
             childPageNameWithoutSpace: tableNameLowerCase,
             tableColumn: `ID varchar(128),${allLowercaseParentData} Makedate datetime,MakeBy varchar(128), InsertTime datetime`,
-            makeBy: "shima",
+            makeBy: "sunshine-01",
             parentMenu: parentMenuName.MenuName,
             menuLogo: "no logo",
             pageType: pageEntry.pageEntry,
@@ -1417,34 +1416,35 @@ const DoubleEnteryData = ({
             tableColumnDetails: `DetailsId varchar(128),ID varchar(128),${allLowercaseData} Makedate datetime,MakeBy varchar(128), InsertTime datetime`,
           };
           console.log(JSON.stringify(modelCreatePageSingle));
-          // const fatchGetDataById = async () => {
-          //   const response = await fetch(
-          //     "https://localhost:44372/api/GetData/GetDataById",
-          //     {
-          //       method: "POST",
-          //       headers: {
-          //         authorization: `Bearer ${token}`,
-          //         "content-type": "application/json",
-          //       },
-          //       body: JSON.stringify(modelCreatePageSingle),
-          //     }
-          //   );
-          //   const data = await response.json();
-          //   console.log(JSON.stringify(data));
-          //   if (data.status == true) {
-          //     swal({
-          //       title: "Create page successfully",
-          //       icon: "success",
-          //       button: "OK",
-          //     });
-          //   }
-          // };
-          // fatchGetDataById();
+         
+          const fatchGetDataById = async () => {
+            const response = await fetch(
+              "https://localhost:44372/api/GetData/GetDataById",
+              {
+                method: "POST",
+                headers: {
+                  authorization: `Bearer ${token}`,
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify(modelCreatePageSingle),
+              }
+            );
+            const data = await response.json();
+            console.log(JSON.stringify(data));
+            if (data.status == true) {
+              swal({
+                title: "Create page successfully",
+                icon: "success",
+                button: "OK",
+              });
+            }
+          };
+          fatchGetDataById();
         }
-        console.log(
-          modelCreatePageDetails,
-          JSON.stringify(modelCreatePageSingle)
-        );
+        // console.log(
+        //   modelCreatePageDetails,
+        //   JSON.stringify(modelCreatePageSingle)
+        // );
       }
     }
   };
@@ -1452,10 +1452,14 @@ const DoubleEnteryData = ({
   function validationOutsideSchema() {
     var allParentInputValueDataLength = 0;
     if (allParentInputValueData != null) {
-      allParentInputValueDataLength = Object.keys(allParentInputValueData).length;
+      allParentInputValueDataLength = Object.keys(
+        allParentInputValueData
+      ).length;
     }
     if (allParentInputValueDataLength > 0) {
-      var schemaForParentInput = createDynamicSchemaForParentInput(allParentInputValueData);
+      var schemaForParentInput = createDynamicSchemaForParentInput(
+        allParentInputValueData
+      );
       setParentInputSchema(schemaForParentInput);
       validateParentInputFields(schemaForParentInput);
     }
@@ -1469,7 +1473,9 @@ const DoubleEnteryData = ({
       allParentDropValueDataLength = Object.keys(allParentDropValueData).length;
     }
     if (allParentDropValueDataLength > 0) {
-      var schemaForParentDrop = createDynamicSchemaForParentDrop(allParentDropValueData);
+      var schemaForParentDrop = createDynamicSchemaForParentDrop(
+        allParentDropValueData
+      );
       setParentDropSchema(schemaForParentDrop);
       validateParentDropFields(schemaForParentDrop);
     }
@@ -1479,7 +1485,9 @@ const DoubleEnteryData = ({
       allParentDateValueDataLength = Object.keys(allParentDateValueData).length;
     }
     if (allParentDateValueDataLength > 0) {
-      var schemaForParentDate = createDynamicSchemaForParentDate(allParentDateValueData);
+      var schemaForParentDate = createDynamicSchemaForParentDate(
+        allParentDateValueData
+      );
       setParentDateSchema(schemaForParentDate);
       validateParentDateFields(schemaForParentDate);
     }
@@ -1490,7 +1498,7 @@ const DoubleEnteryData = ({
         allParentTextAreaValueData
       ).length;
     }
-    if (allParentTestAreaValueDataLength> 0) {
+    if (allParentTestAreaValueDataLength > 0) {
       var schemaForParentTextArea = createDynamicSchemaForParentTextarea(
         allParentTextAreaValueData
       );
@@ -1499,14 +1507,18 @@ const DoubleEnteryData = ({
     }
     var allParentImageValueDataLength = 0;
     if (allParentImageValueData != null) {
-      allParentImageValueDataLength = Object.keys(allParentImageValueData).length;
+      allParentImageValueDataLength = Object.keys(
+        allParentImageValueData
+      ).length;
     }
-    if (allParentImageValueDataLength> 0) {
-      var schemaForParentImage = createDynamicSchemaForParentImage(allParentImageValueData);
+    if (allParentImageValueDataLength > 0) {
+      var schemaForParentImage = createDynamicSchemaForParentImage(
+        allParentImageValueData
+      );
       setParentImageSchema(schemaForParentImage);
       validateParentImageFields(schemaForParentImage);
     }
-      var allInputValueDataLength = 0;
+    var allInputValueDataLength = 0;
     if (allInputValueData != null) {
       allInputValueDataLength = Object.keys(allInputValueData).length;
     }
@@ -1559,10 +1571,10 @@ const DoubleEnteryData = ({
     }
     var allImageValueDataLength = 0;
     if (allImageValueData != null) {
-      allImageValueDataLength = Object.keys(allImageValueData ).length;
+      allImageValueDataLength = Object.keys(allImageValueData).length;
     }
-    if ( allImageValueDataLength > 0) {
-      var schemaForImage = createDynamicSchemaForDate(allImageValueData );
+    if (allImageValueDataLength > 0) {
+      var schemaForImage = createDynamicSchemaForDate(allImageValueData);
       setImageSchema(schemaForImage);
       validateImageFields(schemaForImage);
     }
@@ -1653,8 +1665,9 @@ const DoubleEnteryData = ({
     //   validateImageFieldsDetails(schemaForImageDetails);
     // }
   }
-
+console.log(pageEntry.pageEntry)
   const handleSubmit = (e) => {
+    console.log(pageEntry.pageEntry)
     e.preventDefault();
     validationOutsideSchema();
     var foundKey = 0;
@@ -1672,7 +1685,7 @@ const DoubleEnteryData = ({
     if (inputValueDateParent != "") {
       allParentDateValueDataLength = inputValueDateParent;
     }
-    
+
     var allParentTextareaValueDataLength = 0;
     if (inputValueTextAreaParent != "") {
       allParentTextareaValueDataLength = inputValueTextAreaParent;
@@ -1692,18 +1705,16 @@ const DoubleEnteryData = ({
     //   allCheckValueDataLengthDetails = inputValueCheckDetails;
     // }
 
-  
     // var allDateValueDataLengthDetails = 0;
     // if (inputValueDateDetails != "") {
     //   allDateValueDataLengthDetails = inputValueDateDetails;
     // }
 
-   
     // var allDropValueDataLengthDetails = 0;
     // if (inputValueDDFDetails != "") {
     //   allDropValueDataLengthDetails = inputValueDDFDetails;
     // }
-  
+
     var allInputValueDataLength = 0;
     if (inputValue != "") {
       allInputValueDataLength = inputValue;
@@ -1732,13 +1743,19 @@ const DoubleEnteryData = ({
       allImageValueDataLength = inputValueImage;
     }
     var totalParentField =
-      allParentInputValueDataLength + allParentDateValueDataLength + allParentDropValueDataLength+allParentTextareaValueDataLength+allParentImageValueDataLength;
+      allParentInputValueDataLength +
+      allParentDateValueDataLength +
+      allParentDropValueDataLength +
+      allParentTextareaValueDataLength +
+      allParentImageValueDataLength;
 
-      var totalField =
-        allCheckValueDataLength +
-        allInputValueDataLength +
-        allDateValueDataLength +
-        allDropValueDataLength+ allTextAreaValueDataLength +allImageValueDataLength;
+    var totalField =
+      allCheckValueDataLength +
+      allInputValueDataLength +
+      allDateValueDataLength +
+      allDropValueDataLength +
+      allTextAreaValueDataLength +
+      allImageValueDataLength;
 
     // var totalFieldDetails =
     //   allCheckValueDataLengthDetails +
@@ -1746,149 +1763,169 @@ const DoubleEnteryData = ({
     //   allDateValueDataLengthDetails +
     //   allDropValueDataLengthDetails;
 
-    if (totalParentField > 12) {
-      setParentErrorMessageString("There cannot be more than 12 input");
-      setShowParentErrorModal(true);
-    } else if (totalParentField == 0) {
-      setParentErrorMessageString("There need to be more than 0 input");
-      setShowParentErrorModal(true);
-    } else {
-      var totalValueField = 0;
-      console.log(allParentDropValueData);
-      var errorstatus = 0;
-
-      var allParentInputValueDataLength = 0;
-      if (allParentInputValueData != null) {
-        allParentInputValueDataLength = Object.keys(allParentInputValueData).length;
-      }
-      for (
-        var allInputCount = 0;
-        allInputCount < allParentInputValueDataLength;
-        allInputCount++
-      ) {
-        if (allParentInputValueData[allInputCount] == "") {
-          foundEmpty = 1;
-        }
-      }
-
-      var allParentDropValueDataLength = 0;
-      if (allParentDropValueData != null) {
-        allParentDropValueDataLength = Object.keys(allParentDropValueData).length;
-      }
-      for (
-        var allDropCount = 0;
-        allDropCount < allParentDropValueDataLength;
-        allDropCount++
-      ) {
-        console.log(allParentDropValueData[allDropCount]);
-        if (allParentDropValueData[allDropCount] == "") {
-          foundEmpty = 1;
-        }
-      }
-
-      var allParentDateValueDataLength = 0;
-      if (allParentDateValueData != null) {
-        allParentDateValueDataLength = Object.keys(allParentDateValueData).length;
-      }
-      for (
-        var allDateCount = 0;
-        allDateCount < allParentDateValueDataLength;
-        allDateCount++
-      ) {
-        if (allParentDateValueData[allDateCount] == "") {
-          foundEmpty = 1;
-        }
-      }
-
-      var allParentTextareaValueDataLength = 0;
-      if (allParentTextAreaValueData != null) {
-        allParentDateValueDataLength = Object.keys(allParentTextAreaValueData).length;
-      }
-      for (
-        var allTextareaCount = 0;
-        allTextareaCount < allParentTextareaValueDataLength;
-        allTextareaCount++
-      ) {
-        if (allParentTextAreaValueData[allTextareaCount] == "") {
-          foundEmpty = 1;
-        }
-      }
-
-      var allParentImageValueDataLength = 0;
-      if (allParentImageValueData != null) {
-        allParentDateValueDataLength = Object.keys(allParentImageValueData).length;
-      }
-      for (
-        var allImageCount = 0;
-        allImageCount < allParentImageValueDataLength;
-        allImageCount++
-      ) {
-        if (allParentImageValueData[allImageCount] == "") {
-          foundEmpty = 1;
-        }
-      }
-
-     
-      if (foundEmpty == 1) {
+    if(pageEntry.pageEntry=="doubleEntryPage"){
+      console.log(pageEntry.pageEntry)
+      if (totalParentField > 12) {
+        setParentErrorMessageString("There cannot be more than 12 input");
+        setShowParentErrorModal(true);
+      } else if (totalParentField == 0) {
+        setParentErrorMessageString("There need to be more than 0 input");
+        setShowParentErrorModal(true);
       } else {
-        if (inputValueParent > 2 || inputValue > 2) {
-          console.log(
-            keyValue,
-            allParentInputValueData,
-            allInputValueData,
-            allParentInputValueDataLength,
-            allInputValueDataLength
-          );
-          for (
-            let countKeyValue = 0;
-            countKeyValue < allParentInputValueDataLength;
-            countKeyValue++
-          ) {
-            if (
-              keyValue.some(
-                (item) =>
-                  item.KeyValue.toLowerCase() ===
-                  allParentInputValueData[countKeyValue].toLowerCase()
-              )
-            ) {
-              foundKey = 1;
-            }
+        var totalValueField = 0;
+        console.log(allParentDropValueData);
+        var errorstatus = 0;
+  
+        var allParentInputValueDataLength = 0;
+        if (allParentInputValueData != null) {
+          allParentInputValueDataLength = Object.keys(
+            allParentInputValueData
+          ).length;
+        }
+        for (
+          var allInputCount = 0;
+          allInputCount < allParentInputValueDataLength;
+          allInputCount++
+        ) {
+          if (allParentInputValueData[allInputCount] == "") {
+            foundEmpty = 1;
           }
-
-          for (
-            let countKeyValue = 0;
-            countKeyValue < allInputValueDataLength;
-            countKeyValue++
-          ) {
-            if (
-              keyValue.some(
-                (item) =>
-                  item.KeyValue.toLowerCase() ===
-                  allInputValueData[countKeyValue].toLowerCase()
-              )
-            ) {
-              foundChildKey = 1;
-            }
+        }
+  
+        var allParentDropValueDataLength = 0;
+        if (allParentDropValueData != null) {
+          allParentDropValueDataLength = Object.keys(
+            allParentDropValueData
+          ).length;
+        }
+        for (
+          var allDropCount = 0;
+          allDropCount < allParentDropValueDataLength;
+          allDropCount++
+        ) {
+          console.log(allParentDropValueData[allDropCount]);
+          if (allParentDropValueData[allDropCount] == "") {
+            foundEmpty = 1;
           }
+        }
+  
+        var allParentDateValueDataLength = 0;
+        if (allParentDateValueData != null) {
+          allParentDateValueDataLength = Object.keys(
+            allParentDateValueData
+          ).length;
+        }
+        for (
+          var allDateCount = 0;
+          allDateCount < allParentDateValueDataLength;
+          allDateCount++
+        ) {
+          if (allParentDateValueData[allDateCount] == "") {
+            foundEmpty = 1;
+          }
+        }
+  
+        var allParentTextareaValueDataLength = 0;
+        if (allParentTextAreaValueData != null) {
+          allParentDateValueDataLength = Object.keys(
+            allParentTextAreaValueData
+          ).length;
+        }
+        for (
+          var allTextareaCount = 0;
+          allTextareaCount < allParentTextareaValueDataLength;
+          allTextareaCount++
+        ) {
+          if (allParentTextAreaValueData[allTextareaCount] == "") {
+            foundEmpty = 1;
+          }
+        }
+  
+        var allParentImageValueDataLength = 0;
+        if (allParentImageValueData != null) {
+          allParentDateValueDataLength = Object.keys(
+            allParentImageValueData
+          ).length;
+        }
+        for (
+          var allImageCount = 0;
+          allImageCount < allParentImageValueDataLength;
+          allImageCount++
+        ) {
+          if (allParentImageValueData[allImageCount] == "") {
+            foundEmpty = 1;
+          }
+        }
+  
+        if (foundEmpty == 1) {
+        } else {
+          if (inputValueParent > 2 || inputValue > 2) {
+            console.log(
+              keyValue,
+              allParentInputValueData,
+              allInputValueData,
+              allParentInputValueDataLength,
+              allInputValueDataLength
+            );
+            for (
+              let countKeyValue = 0;
+              countKeyValue < allParentInputValueDataLength;
+              countKeyValue++
+            ) {
+              if (
+                keyValue.some(
+                  (item) =>
+                    item.KeyValue.toLowerCase() ===
+                    allParentInputValueData[countKeyValue].toLowerCase()
+                )
+              ) {
+                foundKey = 1;
+                setFoundParentKey(foundKey)
+              }
+            }
+  
+            for (
+              let countKeyValue = 0;
+              countKeyValue < allInputValueDataLength;
+              countKeyValue++
+            ) {
+              if (
+                keyValue.some(
+                  (item) =>
+                    item.KeyValue.toLowerCase() ===
+                    allInputValueData[countKeyValue].toLowerCase()
+                )
+              ) {
+                foundChildKey = 1;
+              }
+            }
+            
+  
+            if (foundKey == 1 && foundChildKey == 0) {
+              setShowParentCalculactionModal(true);
+            } else if (foundKey == 0 && foundChildKey == 1) {
+              setShowCalculactionModal(true);
+            }
+            else if(foundKey==1 && foundChildKey==1){
+              setShowParentCalculactionModal(true);
 
-          if (foundKey == 1 && foundChildKey == 0) {
-            setShowParentCalculactionModal(true);
-          } else if (foundKey == 0 && foundChildKey == 1) {
-            setShowCalculactionModal(true);
+            }
+            else {
+              submitForm();
+            }
           } else {
             submitForm();
           }
-        } else {
-          submitForm();
         }
       }
     }
+   if(pageEntry.pageEntry=="doubleEntryPage" || pageEntry.pageEntry=="singleEntryPage"){
     if (totalField > 12) {
-      setParentErrorMessageString("There cannot be more than 12 input");
-      setShowErrorModalDetails(true);
+      setErrorMessageString("There cannot be more than 12 input");
+      setShowErrorModal(true);
     } else if (totalField == 0) {
-      setParentErrorMessageString("There need to be more than 0 input");
-      setShowErrorModalDetails(true);
+      setErrorMessageString("There need to be more than 0 input");
+      setShowErrorModal(true);
     } else {
       var totalValueField = 0;
       console.log(allParentDropValueData);
@@ -2042,13 +2079,18 @@ const DoubleEnteryData = ({
               )
             ) {
               foundChildKey = 1;
+              setChildFoundKey(1)
             }
           }
           if (foundKey == 1 && foundChildKey == 0) {
             setShowParentCalculactionModal(true);
           } else if (foundKey == 0 && foundChildKey == 1) {
             setShowCalculactionModal(true);
-          } else {
+          }
+          else if(foundKey == 1 && foundChildKey == 1){
+            setShowParentCalculactionModal(true);
+          }
+           else {
             submitForm();
           }
         } else {
@@ -2056,6 +2098,8 @@ const DoubleEnteryData = ({
         }
       }
     }
+   }
+   
   };
   const createParentPageSchema = (fields) => {
     return Yup.string().required();
@@ -2596,7 +2640,7 @@ const DoubleEnteryData = ({
               Clear
             </button>
           </Grid>
-          <div class="container-fluid mt-4">
+          { pageEntry.pageEntry=="doubleEntryPage" ?(<div class="container-fluid mt-4">
             <h2 className="fs-4 fw-bold" style={{ color: "#3AAFA9" }}>
               Parent Field
             </h2>
@@ -2718,13 +2762,67 @@ const DoubleEnteryData = ({
                 })}
               </div>
             </div>
-          </div>
+          </div>) : ""}
 
+        { pageEntry.pageEntry=="singleEntryPage" || pageEntry.pageEntry=="doubleEntryPage" ? (<div className=" mt-4">
+            <h2 className="fs-4 fw-bold ml-2" style={{ color: "#3AAFA9" }}>
+              Child Field
+            </h2>
+            <div className="shadow-lg p-2 pt-4 pb-4">
+              <ChildFormField
+                inputValue={inputValue}
+                setAllInputValueData={setAllInputValueData}
+                setInputValue={setInputValue}
+                inputValueDDF={inputValueDDF}
+                setAllDropValueData={setAllDropValueData}
+                setInputValueDDF={setInputValueDDF}
+                inputValueCheck={inputValueCheck}
+                setAllCheckValueData={setAllCheckValueData}
+                setInputValueCheck={setInputValueCheck}
+                inputValueDate={inputValueDate}
+                setAllDateValueData={setAllDateValueData}
+                setInputValueDate={setInputValueDate}
+                inputValueTextArea={inputValueTextArea}
+                setAllTextAreaValueData={setAllTextAreaValueData}
+                setInputValueTextArea={setInputValueTextArea}
+                inputValueImage={inputValueImage}
+                setAllImageValueData={setAllImageValueData}
+                setInputValueImage={setInputValueImage}
+                inputData={inputData}
+                allInputValueData={allInputValueData}
+                allInputValueForFormulaData={allInputValueForFormulaData}
+                setAllInputValueForFormulaData={setAllInputValueForFormulaData}
+                errorsInput={errorsInput}
+                dropdownData={dropdownData}
+                selectedOption={selectedOption}
+                errorsDropDown={errorsDropDown}
+                setModalSpecificData={setModalSpecificData}
+                setCurrentDropSelected={setCurrentDropSelected}
+                setShowDropDownModal={setShowDropDownModal}
+                checkboxData={checkboxData}
+                allCheckValueData={allCheckValueData}
+                setAllData={setAllData}
+                allData={allData}
+                errorsCheck={errorsCheck}
+                dateData={dateData}
+                allDateValueData={allDateValueData}
+                errorsDate={errorsDate}
+                textareaData={textareaData}
+                allTextAreaValueData={allTextAreaValueData}
+                errorsTextarea={errorsTextarea}
+                imageData={imageData}
+                allImageValueData={allImageValueData}
+                errorsImage={errorsImage}
+              ></ChildFormField>
+            </div>
+          </div>) : '' }
           <CalculationModal
             showParentCalculactionModal={showParentCalculactionModal}
             handleParentCalculactionModalClose={
               handleParentCalculactionModalClose
             }
+            foundParentKey={foundParentKey}
+            childFoundKey={childFoundKey}
             setParentCalculationType={setParentCalculationType}
             setDisplayParentFormulaAuto={setDisplayParentFormulaAuto}
             displayParentFormulaAuto={displayParentFormulaAuto}
@@ -2741,14 +2839,19 @@ const DoubleEnteryData = ({
             setParentFieldTargetValidation={setParentFieldTargetValidation}
             setParentFormulaTarget={setParentFormulaTarget}
             parentFieldTargetValidation={parentFieldTargetValidation}
+            setShowCalculactionModal={setShowCalculactionModal}
             submitForm={submitForm}
           ></CalculationModal>
 
-          <WarningModal
+          {pageEntry.pageEntry=="doubleEntryPage"?(<WarningModal
             showParentErrorModal={showParentErrorModal}
             handleParentErrorClose={handleParentErrorClose}
             parentErrorMessageString={parentErrorMessageString}
-          ></WarningModal>
+          ></WarningModal>): ( <WarningChildModal
+            showErrorModal={showErrorModal}
+            handleErrorClose={handleErrorClose}
+            errorMessageString={errorMessageString}
+          ></WarningChildModal>)}
 
           <ShowModalForValueSelectionAfterTheTableModalSelect
             show2={show2}
@@ -2900,52 +3003,6 @@ const DoubleEnteryData = ({
             errorsTextareaDetails={errorsTextareaDetails}
             errorsImageDetails={errorsImageDetails}
           ></DoubleEntryChildData> */}
-
-          <ChildFormField
-            inputValue={inputValue}
-            setAllInputValueData={setAllInputValueData}
-            setInputValue={setInputValue}
-            inputValueDDF={inputValueDDF}
-            setAllDropValueData={setAllDropValueData}
-            setInputValueDDF={setInputValueDDF}
-            inputValueCheck={inputValueCheck}
-            setAllCheckValueData={setAllCheckValueData}
-            setInputValueCheck={setInputValueCheck}
-            inputValueDate={inputValueDate}
-            setAllDateValueData={setAllDateValueData}
-            setInputValueDate={setInputValueDate}
-            inputValueTextArea={inputValueTextArea}
-            setAllTextAreaValueData={setAllTextAreaValueData}
-            setInputValueTextArea={setInputValueTextArea}
-            inputValueImage={inputValueImage}
-            setAllImageValueData={setAllImageValueData}
-            setInputValueImage={setInputValueImage}
-            inputData={inputData}
-            allInputValueData={allInputValueData}
-            allInputValueForFormulaData={allInputValueForFormulaData}
-            setAllInputValueForFormulaData={setAllInputValueForFormulaData}
-            errorsInput={errorsInput}
-            dropdownData={dropdownData}
-            selectedOption={selectedOption}
-            errorsDropDown={errorsDropDown}
-            setModalSpecificData={setModalSpecificData}
-            setCurrentDropSelected={setCurrentDropSelected}
-            setShowDropDownModal={setShowDropDownModal}
-            checkboxData={checkboxData}
-            allCheckValueData={allCheckValueData}
-            setAllData={setAllData}
-            allData={allData}
-            errorsCheck={errorsCheck}
-            dateData={dateData}
-            allDateValueData={allDateValueData}
-            errorsDate={errorsDate}
-            textareaData={textareaData}
-            allTextAreaValueData={allTextAreaValueData}
-            errorsTextarea={errorsTextarea}
-            imageData={imageData}
-            allImageValueData={allImageValueData}
-            errorsImage={errorsImage}
-          ></ChildFormField>
 
           <ShowModalForTableSelectionInTheDropDownForChild
             showDropDownModal={showDropDownModal}

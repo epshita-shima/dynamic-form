@@ -8,7 +8,7 @@ import * as Yup from "yup";
 import Token from "../common/Token";
 import useChildMenu from "./../customHooks/useChildMenu";
 import CalculationModal from "../ModalStore/ChildModal/CalculationModalChild";
-import WarningModal from "../ModalStore/ChildModal/WarningModal";
+
 import ChildFormField from "../FormField/ChildFormField/ChildFormField";
 import ShowModalForTableSelectionInTheDropDownForChild from './../ModalStore/ChildModal/ShowModalForTableSelectionInTheDropDownForChild';
 import ShowModalForValueSelectionAfterTheTableModalSelectForChild from "../ModalStore/ChildModal/ShowModalForValueSelectionAfterTheTableModalSelectForChild";
@@ -1056,11 +1056,7 @@ const SingleEntryForm = ({
           setSelectedOption={setSelectedOption}
         ></ShowModalForValueSelectionAfterTheTableModalSelectForChild>
 
-        <WarningModal
-          showErrorModal={showErrorModal}
-          handleErrorClose={handleErrorClose}
-          errorMessageString={errorMessageString}
-        ></WarningModal>
+       
       </Grid>
     </form>
   );

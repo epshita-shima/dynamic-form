@@ -808,29 +808,29 @@ console.log(tableModelData,allInputValueData)
             ).length;
           }
 
-          var allParentDateValueDataLength = 0;
-          if (allParentDateValueData != null) {
-            allParentDateValueDataLength = Object.keys(
-              allParentDateValueData
+          var allDateValueDataLength = 0;
+          if (allDateValueData != null) {
+            allDateValueDataLength = Object.keys(
+              allDateValueData
             ).length;
           }
 
-          var allParentDropValueDataLength = 0;
-          if (allParentDropValueData != null) {
-            allParentDropValueDataLength = Object.keys(
-              allParentDropValueData
+          var allDropValueDataLength = 0;
+          if (allDropValueData != null) {
+            allDropValueDataLength = Object.keys(
+              allDropValueData
             ).length;
           }
-          var allParentTextareaValueDataLength = 0;
-          if (allParentTextAreaValueData != null) {
-            allParentTextareaValueDataLength = Object.keys(
-              allParentTextAreaValueData
+          var allTextareaValueDataLength = 0;
+          if (allTextAreaValueData != null) {
+            allTextareaValueDataLength = Object.keys(
+              allTextAreaValueData
             ).length;
           }
-          var allParentImageValueDataLength = 0;
-          if (allParentImageValueData != null) {
-            allParentImageValueDataLength = Object.keys(
-              allParentImageValueData
+          var allImageValueDataLength = 0;
+          if (allImageValueData != null) {
+            allImageValueDataLength = Object.keys(
+              allImageValueData
             ).length;
           }
           var orderPosition = 0;
@@ -856,6 +856,7 @@ console.log(tableModelData,allInputValueData)
                 inputLowerCaseData[allInputValueDataCount],
               CalculationFormula: JSON.stringify(pageFormula),
               RelatedTable: "",
+              ColumnValueField:'',
               Position: orderPosition,
               IsDisable:
                 formulaTarget ==
@@ -868,17 +869,17 @@ console.log(tableModelData,allInputValueData)
           }
 
           for (
-            let allParentDateValueDataCount = 0;
-            allParentDateValueDataCount < allParentDateValueDataLength;
-            allParentDateValueDataCount++
+            let allDateValueDataCount = 0;
+            allDateValueDataCount < allDateValueDataLength;
+            allDateValueDataCount++
           ) {
             orderPosition++;
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName: dateLowerCaseParentData[allParentDateValueDataCount],
+              ColumnName: dateLowerCaseData[allDateValueDataCount],
               ColumnNameWithSpace:
-                allParentDateValueData[allParentDateValueDataCount],
+                allDateValueData[allDateValueDataCount],
               ColumnType: "datetime",
               ColumnDataType: "",
               SiteName: "DynamicSite",
@@ -886,6 +887,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: "",
+              ColumnValueField:'',
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -894,42 +896,43 @@ console.log(tableModelData,allInputValueData)
           }
 
           for (
-            let allParentDropValueDataCount = 0;
-            allParentDropValueDataCount < allParentDropValueDataLength;
-            allParentDropValueDataCount++
+            let allDropValueDataCount = 0;
+            allDropValueDataCount < allDropValueDataLength;
+            allDropValueDataCount++
           ) {
             orderPosition++;
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
-              ColumnName: dropLowerCaseParentData[allParentDropValueDataCount],
+              ColumnName: dropLowerCaseData[allDropValueDataCount],
               ColumnNameWithSpace:
-                allParentDropValueData[allParentDropValueDataCount],
+                allDropValueData[allDropValueDataCount],
               ColumnType: "dropdown",
               ColumnDataType: "",
               SiteName: "DynamicSite",
               CalculationType: "Manual",
               CalculationKey: "",
               CalculationFormula: "",
-              RelatedTable: allParentDropValueData[allParentDropValueDataCount],
+              RelatedTable: allDropValueData[allDropValueDataCount],
+              ColumnValueField:radioButton[allDropValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
             };
             tableModelData.detailsData.push(tabledataparams);
           }
           for (
-            let allParentTextAreaValueDataCount = 0;
-            allParentTextAreaValueDataCount < allParentTextareaValueDataLength;
-            allParentTextAreaValueDataCount++
+            let allTextAreaValueDataCount = 0;
+            allTextAreaValueDataCount < allTextareaValueDataLength;
+            allTextAreaValueDataCount++
           ) {
             orderPosition++;
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
               ColumnName:
-                textareaLowerCaseParentData[allParentTextAreaValueDataCount],
+                textareaLowerCaseData[allTextAreaValueDataCount],
               ColumnNameWithSpace:
-                allParentTextAreaValueData[allParentTextAreaValueDataCount],
+                allTextAreaValueData[allTextAreaValueDataCount],
               ColumnType: "textarea",
               ColumnDataType: "",
               SiteName: "DynamicSite",
@@ -937,25 +940,26 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable:
-                allParentTextAreaValueData[allParentTextAreaValueDataCount],
+                allTextAreaValueData[allTextAreaValueDataCount],
+                ColumnValueField:'',
               Position: orderPosition,
               IsDisable: "0",
             };
             tableModelData.detailsData.push(tabledataparams);
           }
           for (
-            let allParentImageValueDataCount = 0;
-            allParentImageValueDataCount < allParentImageValueDataLength;
-            allParentImageValueDataCount++
+            let allImageValueDataCount = 0;
+            allImageValueDataCount < allImageValueDataLength;
+            allImageValueDataCount++
           ) {
             orderPosition++;
             var tabledataparams = {
               PageId: "PageID",
               MenuId: "MenuID",
               ColumnName:
-                imageLowerCaseParentData[allParentImageValueDataCount],
+                imageLowerCaseData[allImageValueDataCount],
               ColumnNameWithSpace:
-                allParentImageValueData[allParentImageValueDataCount],
+                allImageValueData[allImageValueDataCount],
               ColumnType: "image",
               ColumnDataType: "",
               SiteName: "DynamicSite",
@@ -963,7 +967,8 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable:
-                allParentImageValueData[allParentImageValueDataCount],
+                allImageValueData[allImageValueDataCount],
+                ColumnValueField:'',
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1304,7 +1309,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: allDropValueData[allDropValueDataCount],
-              ColumnValueField: radioButton2[allDropValueDataCount],
+              ColumnValueField: radioButton[allDropValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1373,30 +1378,30 @@ console.log(tableModelData,allInputValueData)
             pageType: pageEntry.pageEntry,
             pageInfoJson: tableModelData.detailsData,
           };
-          // const fatchGetDataById = async () => {
-          //   const response = await fetch(
-          //     "https://localhost:44372/api/GetData/GetDataById",
-          //     {
-          //       method: "POST",
-          //       headers: {
-          //         authorization: `Bearer ${token}`,
-          //         "content-type": "application/json",
-          //       },
-          //       body: JSON.stringify(modelCreatePageDetails),
-          //     }
-          //   );
-          //   const data = await response.json();
-          //   console.log(JSON.stringify(data));
-          //   if (data.status == true) {
-          //     swal({
-          //       title: "Create page successfully",
-          //       icon: "success",
-          //       button: "OK",
-          //     });
-          //   }
-          // };
+          const fatchGetDataById = async () => {
+            const response = await fetch(
+              "https://localhost:44372/api/GetData/GetDataById",
+              {
+                method: "POST",
+                headers: {
+                  authorization: `Bearer ${token}`,
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify(modelCreatePageDetails),
+              }
+            );
+            const data = await response.json();
+            console.log(JSON.stringify(data));
+            if (data.status == true) {
+              swal({
+                title: "Create child page successfully",
+                icon: "success",
+                button: "OK",
+              });
+            }
+          };
 
-          // fatchGetDataById();
+          fatchGetDataById();
           console.log(JSON.stringify(modelCreatePageDetails));
         }
 
@@ -1756,12 +1761,6 @@ console.log(pageEntry.pageEntry)
       allDropValueDataLength +
       allTextAreaValueDataLength +
       allImageValueDataLength;
-
-    // var totalFieldDetails =
-    //   allCheckValueDataLengthDetails +
-    //   allInputValueDataLengthDetails +
-    //   allDateValueDataLengthDetails +
-    //   allDropValueDataLengthDetails;
 
     if(pageEntry.pageEntry=="doubleEntryPage"){
       console.log(pageEntry.pageEntry)
@@ -2902,107 +2901,7 @@ console.log(pageEntry.pageEntry)
             submitForm={submitForm}
           ></ChildCalculationModal> */}
 
-          {/* <DoubleEntryChildData
-            parentMenuName={parentMenuName}
-            childMenuName={childMenuName}
-            pageEntry={pageEntry}
-            setParentMenuName={setParentMenuName}
-            setChildMenuName={setChildMenuName}
-            setPageEntry={setPageEntry}
-            setExist={setExist}
-            allInputValueDataDetails={allInputValueDataDetails}
-            setAllInputValueDataDetails={setAllInputValueDataDetails}
-            allDropValueData={allDropValueData}
-            setAllDropValueData={setAllDropValueData}
-            allCheckValueDataDetails={allCheckValueDataDetails}
-            setAllCheckValueDataDetails={setAllCheckValueDataDetails}
-            allDateValueDataDetails={allDateValueDataDetails}
-            setAllDateValueDataDetails={setAllDateValueDataDetails}
-            allTextAreaValueDataDetails={allTextAreaValueDataDetails}
-            setAllTextAreaValueDataDetails={setAllTextAreaValueDataDetails}
-            allImageValueDataDetails={allImageValueDataDetails}
-            setAllImageValueDataDetails={setAllImageValueDataDetails}
-            inputValue={inputValue}
-            setInputValue={setInputValue}
-            inputValueDDFDetails={inputValueDDFDetails}
-            setInputValueDDFDetails={setInputValueDDFDetails}
-            inputValueCheckDetails={inputValueCheckDetails}
-            setInputValueCheckDetails={setInputValueCheckDetails}
-            inputValueDateDetails={inputValueDateDetails}
-            setInputValueDateDetails={setInputValueDateDetails}
-            inputValueTextAreaDetails={inputValueTextAreaDetails}
-            setInputValueTextAreaDetails={setInputValueTextAreaDetails}
-            inputValueImageDetails={inputValueImageDetails}
-            setInputValueImageDetails={setInputValueImageDetails}
-            previousInputValueDetails={previousInputValueDetails}
-            previousInputValueDDFDetails={previousInputValueDDFDetails}
-            previousInputValueCheckDetails={previousInputValueCheckDetails}
-            previousInputValueDateDetails={previousInputValueDateDetails}
-            previousInputValueTextAreaDetails={
-              previousInputValueTextAreaDetails
-            }
-            previousInputValueImageDetails={previousInputValueImageDetails}
-            displayFormulaAutoDetails={displayFormulaAutoDetails}
-            setDisplayFormulaAutoDetails={setDisplayFormulaAutoDetails}
-            setCalculationTypeDetails={setCalculationTypeDetails}
-            setFormulaTargetDetails={setFormulaTargetDetails}
-            inputDataDetails={inputDataDetails}
-            setInputDataDetails={setInputDataDetails}
-            dropdownDataDetails={dropdownDataDetails}
-            setDropdownDataDetails={setDropdownDataDetails}
-            checkboxDataDetails={checkboxDataDetails}
-            setCheckboxDataDetails={setCheckboxDataDetails}
-            dateDataDetails={dateDataDetails}
-            setDateDataDetails={setDateDataDetails}
-            textareaDataDetails={textareaDataDetails}
-            setTextareaDataDetails={setTextareaDataDetails}
-            imageDataDetails={imageDataDetails}
-            setImageDataDetails={setImageDataDetails}
-            showDropDownModalDetails={showDropDownModalDetails}
-            setShowDropDownModalDetails={setShowDropDownModalDetails}
-            currentDropSelectedDetails={currentDropSelectedDetails}
-            setCurrentDropSelectedDetails={setCurrentDropSelectedDetails}
-            arrayInputDetails={arrayInputDetails}
-            arrayDropdownDetails={arrayDropdownDetails}
-            arrayCheckDetails={arrayCheckDetails}
-            arrayDateDetails={arrayDateDetails}
-            arrayTextAreaDetails={arrayTextAreaDetails}
-            arrayImageDetails={arrayImageDetails}
-            pageFormulaDetails={pageFormulaDetails}
-            setPageFormulaDetails={setPageFormulaDetails}
-            radioButton2={radioButton2}
-            setRadioButton2={setRadioButton2}
-            keyValue={keyValue}
-            setKeyValue={setKeyValue}
-            showCalculactionModalDetails={showCalculactionModalDetails}
-            setShowCalculactionModalDetails={setShowCalculactionModalDetails}
-            allInputValueForFormulaDataDetails={
-              allInputValueForFormulaDataDetails
-            }
-            setAllInputValueForFormulaDataDetails={
-              setAllInputValueForFormulaDataDetails
-            }
-            childModalTitle={childModalTitle}
-            setChildModalTitle={setChildModalTitle}
-            inputSchemaDetails={inputSchemaDetails}
-            setInputSchemaDetails={setInputSchemaDetails}
-            dropSchemaDetails={dropSchemaDetails}
-            setDropSchemaDetails={setDropSchemaDetails}
-            checkSchemaDetails={checkSchemaDetails}
-            setCheckSchemaDetails={setCheckSchemaDetails}
-            dateSchemaDetails={dateSchemaDetails}
-            setDateSchemaDetails={setDateSchemaDetails}
-            pageSchemaDetails={pageSchemaDetails}
-            pageNameDetails={pageNameDetails}
-            setPageNameDetails={setPageNameDetails}
-            errorsPageDetails={errorsPageDetails}
-            errorsInputDetails={errorsInputDetails}
-            errorsDropDownDetails={errorsDropDownDetails}
-            errorsDateDetails={errorsDateDetails}
-            errorsCheckDetails={errorsCheckDetails}
-            errorsTextareaDetails={errorsTextareaDetails}
-            errorsImageDetails={errorsImageDetails}
-          ></DoubleEntryChildData> */}
+       
 
           <ShowModalForTableSelectionInTheDropDownForChild
             showDropDownModal={showDropDownModal}

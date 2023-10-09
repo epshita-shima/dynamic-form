@@ -49,6 +49,7 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   const [parentTableName, setParentTableName] = useState("");
   const [childTableName, setChildTableName] = useState("");
   const [childMenu, setChildMenu] = useChildMenu([]);
+  const [childMenuId, setChildMenuId] = useState("");
 const [totalAmount,setTotalAmount]=useState('')
 const [totalAmountSingle,setTotalAmountSingle]=useState("")
 const [childModalTitle,setChildModalTitle]=useState('')
@@ -98,6 +99,7 @@ console.log({childTableName},{parentTableName})
       MenuId: id,
     },
   };
+  console.log(modelData)
   const modelDataDetails = {
     procedureName: "prc_GetPageInfoDetails",
     parameters: {
@@ -105,6 +107,7 @@ console.log({childTableName},{parentTableName})
     },
   };
 
+  console.log(selectedOption)
   const handleLabelField = () => {
 
     setShowTable(true);
@@ -162,6 +165,7 @@ console.log({childTableName},{parentTableName})
                     .then((data) => {
                       if (data.status == true) {
                         const allModalData = JSON.parse(data.data);
+                        console.log(allModalData)
                         var dataTable = [];
                         for (var modelArrayPosition in allModalData)
                           dataTable.push([
@@ -238,6 +242,7 @@ console.log({childTableName},{parentTableName})
             labelData.map((item, index) => {
               multipleDateArrayField[index] = [];
               item.forEach((element, i) => {
+                console.log(element)
                 setLabelCount(i + 2);
                 multipleDateArrayField[index][i] = {};
 
@@ -308,6 +313,7 @@ console.log({childTableName},{parentTableName})
                     .then((data) => {
                       if (data.status == true) {
                         const allModalData = JSON.parse(data.data);
+                        console.log(allModalData)
                         var dataTable = [];
                         for (var modelArrayPosition in allModalData)
                           dataTable.push([
@@ -619,6 +625,7 @@ console.log({childTableName},{parentTableName})
                         var dataMenuArr = [];
                         dataTable.map((elements) => {
                           elements.map((member) => {
+                            console.log(member,element.ColumnValueField)
                             for (var key in member) {
                               if (member.hasOwnProperty(key)) {
                                 if (key != "0") {
@@ -662,6 +669,7 @@ console.log({childTableName},{parentTableName})
             labelDataCopy.map((item, index) => {
               multipleDateArrayFieldcopy[index] = [];
               item.forEach((element, i) => {
+                console.log(element)
                 multipleDateArrayFieldcopy[index][i] = {};
                 multipleDateArrayFieldcopy[index]["" + i]["ID"] =
                   "newID()";
@@ -1715,25 +1723,85 @@ console.log({childTableName},{parentTableName})
   };
 
   const handleDropdownValue = (i) => {
+    console.log(allModelDataTable,i)
     var radioName = document.querySelector(
       'input[name="dropValueField"]:checked'
     ).value;
-
+console.log(radioName)
     setSelectedListName(radioName);
-    var dataTable = [];
-    for (var modelArrayPosition in allModelDataTable)
-      dataTable.push([
-        modelArrayPosition,
-        allModelDataTable[modelArrayPosition],
-      ]);
+    
+    let newString = radioName.replace("-", "_");
+    const spaceRemove = newString.split(" ").join("");
+    const convertLowerCase = spaceRemove.toLowerCase();
+    let tableName = convertLowerCase;
 
-    var dataMenuArr = [];
+    const modelDataLabel = {
+      procedureName: "",
+      parameters: {
+        TableName: "",
+      },
+    };
+    modelDataLabel.procedureName = "prc_GetMasterInfoList";
+    modelDataLabel.parameters.TableName = `${tableName}`;
+    fetch("https://localhost:44372/api/GetData/GetDataByID", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelDataLabel),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == true) {
+          const allModalData = JSON.parse(data.data);
+          console.log(allModalData)
+          setAllModelDataTable(allModalData);
 
-    setSelectedOption((prev) => {
-      const temp__details = [...prev];
-      temp__details[i] = dataMenuArr;
-      return temp__details;
-    });
+          setAllDropValueData({
+            ...allDropValueData,
+            [i]: radioName,
+          });
+        } else {
+          console.log(data);
+        }
+      });
+    const modelData = {
+      procedureName: "prc_GetPageInfo",
+      parameters: {
+        MenuId: childMenuId,
+      },
+    };
+    fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == true) {
+          const showSingleData = JSON.parse(data.data);
+          // setDropdownName(showSingleData.Tables1);
+        }
+      });
+  
+//     var dataTable = [];
+//     for (var modelArrayPosition in allModelDataTable)
+//       dataTable.push([
+//         modelArrayPosition,
+//         allModelDataTable[modelArrayPosition],
+//       ]);
+// console.log(dataTable)
+//     var dataMenuArr = [];
+
+//     setSelectedOption((prev) => {
+//       const temp__details = [...prev];
+//       temp__details[i] = dataMenuArr;
+//       return temp__details;
+//     });
   };
 
 
@@ -2422,6 +2490,8 @@ console.log({childTableName},{parentTableName})
                         labelCount={labelCount}
                         childModalTitle={childModalTitle}
                         setChildModalTitle={setChildModalTitle}
+                        childMenuId={childMenuId} 
+                        setChildMenuId={setChildMenuId}
                       ></SingleEntryList>
                     </div>
                   );

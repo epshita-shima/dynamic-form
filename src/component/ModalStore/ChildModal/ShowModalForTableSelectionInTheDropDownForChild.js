@@ -53,6 +53,7 @@ const ShowModalForTableSelectionInTheDropDownForChild = ({
       .then((data) => {
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
+          console.log(allModalData)
           setAllModelDataTable(allModalData);
 
           setAllDropValueData({

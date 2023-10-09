@@ -7,9 +7,11 @@ import Select from "react-select";
 import { handleDeleteColumn } from './SingleEntyAddRow';
 import './SingleEntryData.css'
 
-const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCopy,setLabelPosition,showDeleteIcon,setColumnValues,columnValues,setShowDeleteIcon,setModalSpecificData,setOpenModal,labelDataCopy,handleDropdownValue,handleInputValue,modalSpecificData,labelPosition,selectedListName,labelCount}) => {
-
+const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCopy,setLabelPosition,showDeleteIcon,setColumnValues,columnValues,setShowDeleteIcon,setModalSpecificData,setOpenModal,labelDataCopy,handleDropdownValue,handleInputValue,modalSpecificData,labelPosition,selectedListName,labelCount,childMenuId, 
+  setChildMenuId}) => {
+console.log(modalSpecificData)
     const handleModalMenu = () => {
+      
         const modelData = {
           procedureName: "",
           parameters: {},
@@ -27,7 +29,8 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
           .then((data) => {
             if (data.status == true) {
               const allModalData = JSON.parse(data.data);
-              setModalSpecificData(allModalData.Tables1);
+              console.log(allModalData)
+              setModalSpecificData(allModalData.Tables2);
             } else {
               console.log(data);
             }
@@ -139,7 +142,7 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
   return (
   <div className='table-container'>
     <h2 className='fs-3 mb-2'>Details Information</h2>
-      <table className={`table table-size`} style={{width: labelCount > 3 ? '1548px' : '100%',border:'2px solid gray'}}>
+      <table className={`table table-size`} style={{width: labelCount > 5 ? '2448px' : '100%',border:'2px solid gray'}}>
     <thead>
       <tr  style={{border:'2px solid gray'}} >
       <th scope="col" style={{width:'70px',textAlign:'center',border:'2px solid gray'}}>SL</th>
@@ -275,6 +278,7 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
                                     className="form-select"
                                     class="w-[100%]"
                                     aria-label="Default select example"
+                                    // options={selectedOption[name]}
                                   ></Select>
                                 </div>
                                 <div
@@ -484,12 +488,12 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
                             <div className="input-group-text">
                               <input
                                 type="radio"
-                                value={
-                                  filteredPerson.SubMenuName
-                                }
+                                value={ filteredPerson.SubMenuName}
                                 name="dropValueField"
                                 aria-label="Radio button for following text input"
-                                onClick={(e) => {}}
+                                onClick={(e) => {
+                                  setChildMenuId(filteredPerson.MenuId);
+                                }}
                               />
                             </div>
                           </div>

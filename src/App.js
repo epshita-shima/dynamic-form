@@ -7,6 +7,7 @@ import CreateChildMenu from "./component/CreateMenu/CreateChildMenu/CreateChildM
 import useChildMenu from "./component/customHooks/useChildMenu";
 import ChildInfoList from "./component/CreateMenu/CreateChildMenu/ChildInfoList";
 import { useState } from "react";
+import ListPage from "./component/CreateListPage/ListPage";
 
 function App() {
   const [childMenu, setChildMenu] = useChildMenu([]);
@@ -44,6 +45,7 @@ function App() {
                       path="/child-menu"
                       element={<ChildInfoList></ChildInfoList>}
                     ></Route>
+                    <Route path="/list-page" element={<ListPage></ListPage>}></Route>
                     <Route path="/add-child" element={<CreateChildMenu setChildTableName={setChildTableName}></CreateChildMenu>}></Route>
                 </>):''
                 }

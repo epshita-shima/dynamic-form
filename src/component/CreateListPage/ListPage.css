@@ -1,0 +1,15 @@
+.btn-showdata{
+    height:35px;
+    width:120px;
+    color:white;
+    background:rgb(255, 111, 0);
+    box-shadow: 5px 5px orangered;
+    border: 1px solid orange;
+    text-align: center;
+    cursor: grabbing;
+}
+.btn-showdata:hover{
+    color:white;
+    box-shadow: 5px 5px orangered;
+    outline: none;
+}

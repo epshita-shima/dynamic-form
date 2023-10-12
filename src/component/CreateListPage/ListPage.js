@@ -10,10 +10,11 @@ const ListPage = () => {
   const [listName, setListName] = useState([]);
   const [tableValue, setTableValue] = useState("");
   const [tableColumnData, setTableColumnData] = useState([]);
-  console.log(childMenu);
+  const [allInputValueDataCheck, setAllInputValueDataCheck] = useState([]);
+console.log(allInputValueDataCheck)
+console.log(tableColumnData)
   useEffect(() => {
     childMenu.map((item, i) => {
-      console.log(item);
       var dataMenuArr = [];
       var dataMenuArrLength = dataMenuArr.length;
       dataMenuArr[dataMenuArrLength] = {};
@@ -26,8 +27,7 @@ const ListPage = () => {
       });
     });
   }, [setListName, childMenu]);
-  console.log(listName);
-  // console.log(listName)
+
   const handleTableColumn = () => {
     const modelDataDetails = {
       procedureName: "prc_GetPageInfoDetails",
@@ -48,13 +48,53 @@ const ListPage = () => {
       .then((data) => {
         if (data.status == true) {
           const showSingleData = JSON.parse(data.data);
+          console.log(showSingleData)
           setTableColumnData(showSingleData.Tables1);
         }
       });
   };
+
+  const handleSubmit = () => {
+    var newObj = allInputValueDataCheck.map((item) => ({
+      IsListShow:item.IsListShow,
+      PageId:item.PageId
+    }));
+    var myJsonString = JSON.stringify(newObj)
+    // console.log(myJsonString)
+    const modelData = {
+      procedureName: "",
+      parameters: {
+        pageInfoJson: myJsonString,
+        pageInfoJsonDetails: "",
+      },
+    };
+    modelData.procedureName = "declareChildPageList";
+console.log(modelData)
+    const fatchGetDataById = async () => {
+      const response = await fetch(
+        "https://localhost:44372/api/GetData/GetDataById",
+        {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${token}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(modelData),
+        }
+      );
+      const data = await response.json();
+      console.log(JSON.stringify(data));
+    };
+    fatchGetDataById();
+  };
+const handleCheck=(i,status)=>{
+  const checkbox = document.getElementById(i);
+    checkbox.checked = status;
+  console.log(i)
+}
   return (
     <div className="shadow-lg p-4">
-      <div className="w-50">
+      <div className="w-75">
         <div>
           <h2 className="fs-3">Page list</h2>
         </div>
@@ -91,14 +131,23 @@ const ListPage = () => {
           >
             Show Table
           </button>
+          <button
+            className="btn btn-secondary ml-4"
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
+            Save
+          </button>
         </div>
       </div>
+
       {tableColumnData.length != 0 ? (
         <table
           className="table w-75 mx-auto mt-4"
           style={{ border: "1px solid #677788" }}
         >
-          <thead >
+          <thead style={{ background: "#eef0f7" }}>
             <tr style={{ border: "1px solid #677788" }}>
               <th
                 style={{
@@ -129,9 +178,9 @@ const ListPage = () => {
               </th>
             </tr>
           </thead>
-          <tbody style={{color:'#677788'}}>
+          <tbody style={{ color: "#677788" }}>
             {tableColumnData.map((item, i) => {
-              console.log(item);
+console.log(item)
               return (
                 <tr>
                   <td
@@ -150,7 +199,40 @@ const ListPage = () => {
                     className="text-center align-middle"
                     style={{ border: "1px solid #677788" }}
                   >
-                    <input type="checkbox" name="" id="" />
+                    <input
+                      type="checkbox"
+                      name=""
+                      id={`id${i}`}
+                      checked={item.IsListShow}
+                      onClick={(e) => {
+                        // setTableColumnData((prev) => {
+                        //   const temp__details = prev;
+                        //   temp__details[i]["PageId"]=item.PageId;
+                        //   temp__details[i]["IsListShow"]=e.target.checked;
+                        //   return temp__details
+                        // });
+                        console.log(item.PageId, e.target.checked);
+                        setTableColumnData((prev)=>{
+                          const temp_details=prev;
+                          temp_details[i]["IsListShow"]=e.target.checked;
+                          return temp_details
+                        })
+                        setAllInputValueDataCheck((prev) => {
+                          let temp__details = prev;
+                          let temp2 = [];
+                          temp2["PageId"] = [];
+                          temp2["IsListShow"] = [];
+                          temp2["PageId"] = item.PageId;
+                          if (e.target.checked) {
+                            temp2["IsListShow"] = 1;
+                          } else { 
+                            temp2["IsListShow"] = 0;
+                          }
+                          temp__details.push(temp2);
+                          return temp__details;
+                        });
+                      }}
+                    />
                   </td>
                 </tr>
               );

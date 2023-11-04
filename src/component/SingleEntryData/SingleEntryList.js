@@ -9,7 +9,13 @@ import './SingleEntryData.css'
 
 const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCopy,setLabelPosition,showDeleteIcon,setColumnValues,columnValues,setShowDeleteIcon,setModalSpecificData,setOpenModal,labelDataCopy,handleDropdownValue,handleInputValue,modalSpecificData,labelPosition,selectedListName,labelCount,childMenuId, 
   setChildMenuId}) => {
-console.log(modalSpecificData)
+    var w
+    function myFunction() { 
+         w = window.outerWidth; 
+        
+      } 
+      myFunction() 
+     console.log(w)
     const handleModalMenu = () => {
       
         const modelData = {
@@ -403,12 +409,11 @@ console.log(modalSpecificData)
 
     <tbody className=''>
       {labelData.map((item, index) => {
-        
         return (
           <tr id={`tr${index}`} 
           style={{border:'2px solid gray'}}
           >
-            <td className='text-center align-middle'  style={{border:'2px solid gray'}}>{index+1}</td>
+            <td className='text-center align-middle' style={{border:'2px solid gray'}}>{index+1}</td>
             {item.map((element, i) => {
               return handleInputValue(element, i, index);
             })}

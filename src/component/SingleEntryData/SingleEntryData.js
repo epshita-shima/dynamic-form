@@ -16,10 +16,11 @@ import "./SingleEntryData.css";
 import SingleEntryList from "./SingleEntryList";
 import { handleAddRow } from "./SingleEntyAddRow";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faUpload } from "@fortawesome/free-solid-svg-icons";
 import useChildMenu from "../customHooks/useChildMenu";
 import swal from "sweetalert";
-const SingleEntryData = ({ showTable, setShowTable }) => {
+import useIndexTableData from "../customHooks/useIndexTableData";
+const SingleEntryData = ({ showTable, setShowTable, tableName }) => {
   const [labelDataSingle, setLabelDataSingle] = useState([]);
   const [openModal, setOpenModal] = useState(true);
   const [labelPosition, setLabelPosition] = useState([]);
@@ -50,18 +51,22 @@ const SingleEntryData = ({ showTable, setShowTable }) => {
   const [childTableName, setChildTableName] = useState("");
   const [childMenu, setChildMenu] = useChildMenu([]);
   const [childMenuId, setChildMenuId] = useState("");
-const [totalAmount,setTotalAmount]=useState('')
-const [totalAmountSingle,setTotalAmountSingle]=useState("")
-const [childModalTitle,setChildModalTitle]=useState('')
-console.log(totalAmount)
-  console.log(labelData)
+  const [totalAmount, setTotalAmount] = useState("");
+  const [totalAmountSingle, setTotalAmountSingle] = useState("");
+  const [childModalTitle, setChildModalTitle] = useState("");
+  const [tableListData, setTableListData] = useIndexTableData([]);
+  console.log(labelDataSingle);
+  console.log(labelData);
+  console.log(tableListData);
   const token = Token.token;
   const search = useLocation();
   const link = search.pathname.split("/");
   let id = link[2];
- const childTable=link[1]
-console.log({childTableName},{parentTableName})
-  console.log(columnValues)
+  console.log(id, tableName);
+  const childTable = link[1];
+  console.log(link)
+  // console.log({childTableName},{parentTableName})
+  //   console.log(columnValues)
   useEffect(() => {
     const modelDataLabel = {
       procedureName: "",
@@ -71,8 +76,8 @@ console.log({childTableName},{parentTableName})
     };
 
     modelDataLabel.procedureName = "prc_GetMasterInfoList";
-    modelDataLabel.parameters.TableName = childTable;
-    console.log(modelDataLabel)
+    modelDataLabel.parameters.TableName = tableName;
+    console.log(modelDataLabel);
     fetch("https://localhost:44372/api/GetData/GetDataByID", {
       method: "POST",
       headers: {
@@ -85,6 +90,7 @@ console.log({childTableName},{parentTableName})
       .then((data) => {
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
+          console.log(allModalData);
           setAllModelDataTable(allModalData);
         } else {
           console.log(data);
@@ -92,14 +98,20 @@ console.log({childTableName},{parentTableName})
       });
   }, []);
 
- 
+const singleTableName=childMenu?.filter((x)=>x.MenuId===id)
+console.log(singleTableName)
+const newString=(singleTableName[0]?.SubMenuName)
+const spaceRemove = newString?.split(" ").join("");
+const tableLowercase=spaceRemove?.toLowerCase()
+console.log(tableLowercase)
+
   const modelData = {
     procedureName: "prc_GetPageInfo",
     parameters: {
       MenuId: id,
     },
   };
-  console.log(modelData)
+  console.log(modelData);
   const modelDataDetails = {
     procedureName: "prc_GetPageInfoDetails",
     parameters: {
@@ -107,9 +119,9 @@ console.log({childTableName},{parentTableName})
     },
   };
 
-  console.log(selectedOption)
-  const handleLabelField = () => {
 
+  console.log(selectedOption);
+  const handleLabelField = () => {
     setShowTable(true);
     const findPageType = childMenu.find((item) => item.MenuId == id);
     setChildPageType(findPageType);
@@ -126,13 +138,13 @@ console.log({childTableName},{parentTableName})
         .then((data) => {
           if (data.status == true) {
             const showSingleData = JSON.parse(data.data);
-         console.log(showSingleData)
-         const getParentTableName=showSingleData.Tables3
-         const tableName=getParentTableName[0].TableName
-         setParentTableName(tableName)
-         const childName=tableName+"details"
-         setChildTableName(childName)
-         console.log(getParentTableName)
+            console.log(showSingleData);
+            const getParentTableName = showSingleData.Tables3;
+            const tableName = getParentTableName[0].TableName;
+            setParentTableName(tableName);
+            const childName = tableName + "details";
+            setChildTableName(childName);
+            console.log(getParentTableName);
             labelDataSingle[0] = showSingleData.Tables1;
             setLabelDataSingle(labelDataSingle);
             var createColumnValuesObjectSingle = {};
@@ -142,7 +154,7 @@ console.log({childTableName},{parentTableName})
               });
             });
             labelDataSingle.map((elem) => {
-              console.log(elem)
+              console.log(elem);
               elem.forEach((element, i) => {
                 if (element.RelatedTable != "") {
                   const modelDataLabel = {
@@ -165,31 +177,35 @@ console.log({childTableName},{parentTableName})
                     .then((data) => {
                       if (data.status == true) {
                         const allModalData = JSON.parse(data.data);
-                        console.log(allModalData)
+                        console.log(allModalData);
                         var dataTable = [];
                         for (var modelArrayPosition in allModalData)
                           dataTable.push([
                             modelArrayPosition,
                             allModalData[modelArrayPosition],
                           ]);
-                       
+
                         var dataMenuArr = [];
                         dataTable.map((elements) => {
+                          console.log(elements);
                           elements.map((member) => {
+                            console.log(member);
                             for (var key in member) {
                               if (member.hasOwnProperty(key)) {
-                                if (key != "0") {
-                                  if (key == element.ColumnValueField) {
-                                    var dataMenuArrLength = dataMenuArr.length;
-                                    dataMenuArr[dataMenuArrLength] = {};
-                                    dataMenuArr[dataMenuArrLength]["value"] =
-                                      member.ID;
-                                    var val = member[key];
-                                    dataMenuArr[dataMenuArrLength]["label"] =
-                                      val;
-                                  }
+                                console.log(key);
+                                // if (key != "0") {
+                                if (key == element.ColumnValueField_dropdown) {
+                                  var dataMenuArrLength = dataMenuArr.length;
+                                  dataMenuArr[dataMenuArrLength] = {};
+                                  dataMenuArr[dataMenuArrLength]["value"] =
+                                    member.ID;
+                                  var val = member[key];
+                                  console.log(val);
+                                  dataMenuArr[dataMenuArrLength]["label"] = val;
+                                  // }
                                 }
                               }
+                              console.log(dataMenuArr);
                             }
                             var allDropValueDataLength = 0;
                             if (allDropValueData != null) {
@@ -197,6 +213,7 @@ console.log({childTableName},{parentTableName})
                                 Object.keys(allDropValueData).length;
                             }
                           });
+
                           // }
                           setSelectedOptionParent((prev) => {
                             const temp__details = [...prev];
@@ -204,12 +221,10 @@ console.log({childTableName},{parentTableName})
                             return temp__details;
                           });
                         });
-                       
                       } else {
                         console.log(data);
                       }
                     });
-            
                 }
               });
             });
@@ -237,19 +252,17 @@ console.log({childTableName},{parentTableName})
                 setColumnValues(columnValues);
               });
             }
-            var createColumnValuesObject = {DetailsId:"newID()",ID:""};
+            var createColumnValuesObject = { DetailsId: "newID()", ID: "" };
             var multipleDateArrayField = [];
             labelData.map((item, index) => {
               multipleDateArrayField[index] = [];
               item.forEach((element, i) => {
-                console.log(element)
+                console.log(element);
                 setLabelCount(i + 2);
                 multipleDateArrayField[index][i] = {};
 
-                multipleDateArrayField[index]["" + i]["DetailsId"] =
-                 "newID()";
-                multipleDateArrayField[index]["" + i]["ID"] =
-                 "";
+                multipleDateArrayField[index]["" + i]["DetailsId"] = "newID()";
+                multipleDateArrayField[index]["" + i]["ID"] = "";
                 multipleDateArrayField[index]["" + i]["ColumnName"] =
                   element.ColumnName;
                 multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
@@ -269,8 +282,9 @@ console.log({childTableName},{parentTableName})
                 multipleDateArrayField[index]["" + i]["ColumnValue"] = "";
                 multipleDateArrayField[index]["" + i]["RelatedTable"] =
                   element.RelatedTable;
-                  multipleDateArrayField[index]["" + i]["ColumnValueField"] =
-                  element?.ColumnValueField;
+                multipleDateArrayField[index]["" + i][
+                  "ColumnValueField_dropdown"
+                ] = element?.ColumnValueField_dropdown;
                 multipleDateArrayField[index]["" + i]["PageId"] =
                   element.PageId;
                 if (element.ColumnType == "datetime") {
@@ -313,24 +327,28 @@ console.log({childTableName},{parentTableName})
                     .then((data) => {
                       if (data.status == true) {
                         const allModalData = JSON.parse(data.data);
-                        console.log(allModalData)
+                        console.log(allModalData);
                         var dataTable = [];
                         for (var modelArrayPosition in allModalData)
                           dataTable.push([
                             modelArrayPosition,
                             allModalData[modelArrayPosition],
                           ]);
-                          console.log(dataTable)
+                        console.log(dataTable);
                         var dataMenuArr = [];
                         dataTable.map((elements) => {
-                          console.log(elements)
+                          console.log(elements);
                           elements.map((member) => {
-                            console.log(member)
+                            console.log(member);
                             for (var key in member) {
                               if (member.hasOwnProperty(key)) {
                                 if (key != "0") {
-                                  console.log(element.ColumnValueField)
-                                  if (key == element.ColumnValueField) {
+                                  console.log(
+                                    element.ColumnValueField_dropdown
+                                  );
+                                  if (
+                                    key == element.ColumnValueField_dropdown
+                                  ) {
                                     var dataMenuArrLength = dataMenuArr.length;
                                     dataMenuArr[dataMenuArrLength] = {};
                                     dataMenuArr[dataMenuArrLength]["value"] =
@@ -349,21 +367,18 @@ console.log({childTableName},{parentTableName})
                             }
                           });
                           // }
-                          console.log(dataMenuArr)
+                          console.log(dataMenuArr);
                           setSelectedOption((prev) => {
-                            console.log(prev)
+                            console.log(prev);
                             const temp__details = [...prev];
                             temp__details[i] = dataMenuArr;
                             return temp__details;
                           });
                         });
-                       
-                      
                       } else {
                         console.log(data);
                       }
                     });
-            
                 }
               });
             });
@@ -373,9 +388,8 @@ console.log({childTableName},{parentTableName})
               item.forEach((element, i) => {
                 multipleDateArrayFieldcopy[index][i] = {};
                 multipleDateArrayFieldcopy[index]["" + i]["DetailsId"] =
-                 "newID()";
-                multipleDateArrayFieldcopy[index]["" + i]["ID"] =
-                 "";
+                  "newID()";
+                multipleDateArrayFieldcopy[index]["" + i]["ID"] = "";
                 multipleDateArrayFieldcopy[index]["" + i]["ColumnName"] =
                   element.ColumnName;
                 multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
@@ -396,8 +410,9 @@ console.log({childTableName},{parentTableName})
                   element.IsDisable;
                 multipleDateArrayFieldcopy[index]["" + i]["RelatedTable"] =
                   element.RelatedTable;
-                  multipleDateArrayField[index]["" + i]["ColumnValueField"] =
-                  element?.ColumnValueField;
+                multipleDateArrayField[index]["" + i][
+                  "ColumnValueField_dropdown"
+                ] = element?.ColumnValueField_dropdown;
                 multipleDateArrayField[index]["" + i]["PageId"] =
                   element.PageId;
                 if (element.ColumnType == "datetime") {
@@ -453,7 +468,9 @@ console.log({childTableName},{parentTableName})
                             for (var key in member) {
                               if (member.hasOwnProperty(key)) {
                                 if (key != "0") {
-                                  if (key == element.ColumnValueField) {
+                                  if (
+                                    key == element.ColumnValueField_dropdown
+                                  ) {
                                     var dataMenuArrLength = dataMenuArr.length;
                                     dataMenuArr[dataMenuArrLength] = {};
                                     dataMenuArr[dataMenuArrLength]["value"] =
@@ -482,7 +499,6 @@ console.log({childTableName},{parentTableName})
                         console.log(data);
                       }
                     });
-            
                 }
               });
             });
@@ -501,8 +517,9 @@ console.log({childTableName},{parentTableName})
           }
         });
     }
+
     if (findPageType?.PageType == "singleEntryPage") {
-      console.log('singlepage')
+      console.log("singlepage");
       fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
         method: "POST",
         headers: {
@@ -515,10 +532,10 @@ console.log({childTableName},{parentTableName})
         .then((data) => {
           if (data.status == true) {
             const allData = JSON.parse(data.data);
-            console.log(allData)
+            console.log(allData);
             const allLabelData = allData.Tables1;
             const getTableName = allData.Tables2;
-            console.log(allLabelData )
+            console.log(allLabelData);
             const childTableData = getTableName[0].TableName;
             setChildTableName(childTableData);
             if (labelData.length == 0) {
@@ -540,18 +557,16 @@ console.log({childTableName},{parentTableName})
                 setColumnValues(columnValues);
               });
             }
-            var createColumnValuesObject = {ID:"newID()"};
+            var createColumnValuesObject = { ID: "newID()" };
 
-     
             var multipleDateArrayField = [];
             labelData.map((item, index) => {
               multipleDateArrayField[index] = [];
               item.forEach((element, i) => {
-                console.log(element)
+                console.log(element);
                 setLabelCount(i + 2);
                 multipleDateArrayField[index][i] = {};
-                multipleDateArrayField[index]["" + i]["ID"] =
-                  'newID()';
+                multipleDateArrayField[index]["" + i]["ID"] = "newID()";
                 multipleDateArrayField[index]["" + i]["ColumnName"] =
                   element.ColumnName;
                 multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
@@ -569,10 +584,14 @@ console.log({childTableName},{parentTableName})
                 multipleDateArrayField[index]["" + i]["IsDisable"] =
                   element.IsDisable;
                 multipleDateArrayField[index]["" + i]["ColumnValue"] = "";
+                if(link.length>3){
+                  multipleDateArrayField[index]["" + i]["ColumnValue"] = '123';
+                }
                 multipleDateArrayField[index]["" + i]["RelatedTable"] =
                   element.RelatedTable;
-                multipleDateArrayField[index]["" + i]["ColumnValueField"] =
-                  element?.ColumnValueField;
+                multipleDateArrayField[index]["" + i][
+                  "ColumnValueField_dropdown"
+                ] = element?.ColumnValueField_dropdown;
                 multipleDateArrayField[index]["" + i]["PageId"] =
                   element.PageId;
                 if (element.ColumnType == "datetime") {
@@ -621,15 +640,20 @@ console.log({childTableName},{parentTableName})
                             modelArrayPosition,
                             allModalData[modelArrayPosition],
                           ]);
-                       
+
                         var dataMenuArr = [];
                         dataTable.map((elements) => {
                           elements.map((member) => {
-                            console.log(member,element.ColumnValueField)
+                            console.log(
+                              member,
+                              element.ColumnValueField_dropdown
+                            );
                             for (var key in member) {
                               if (member.hasOwnProperty(key)) {
                                 if (key != "0") {
-                                  if (key == element.ColumnValueField) {
+                                  if (
+                                    key == element.ColumnValueField_dropdown
+                                  ) {
                                     var dataMenuArrLength = dataMenuArr.length;
                                     dataMenuArr[dataMenuArrLength] = {};
                                     dataMenuArr[dataMenuArrLength]["value"] =
@@ -649,19 +673,18 @@ console.log({childTableName},{parentTableName})
                           });
                           // }
                         });
-                      
+
                         setSelectedOption((prev) => {
                           const temp__details = [...prev];
                           temp__details[i] = dataMenuArr;
                           return temp__details;
                         });
-                        
-            console.log(columnValues);
+
+                        console.log(columnValues);
                       } else {
                         console.log(data);
                       }
                     });
-            
                 }
               });
             });
@@ -669,10 +692,9 @@ console.log({childTableName},{parentTableName})
             labelDataCopy.map((item, index) => {
               multipleDateArrayFieldcopy[index] = [];
               item.forEach((element, i) => {
-                console.log(element)
+                console.log(element);
                 multipleDateArrayFieldcopy[index][i] = {};
-                multipleDateArrayFieldcopy[index]["" + i]["ID"] =
-                  "newID()";
+                multipleDateArrayFieldcopy[index]["" + i]["ID"] = "newID()";
                 multipleDateArrayFieldcopy[index]["" + i]["ColumnName"] =
                   element.ColumnName;
                 multipleDateArrayField[index]["" + i]["ColumnNameWithSpace"] =
@@ -693,8 +715,9 @@ console.log({childTableName},{parentTableName})
                   element.IsDisable;
                 multipleDateArrayFieldcopy[index]["" + i]["RelatedTable"] =
                   element.RelatedTable;
-                multipleDateArrayFieldcopy[index]["" + i]["ColumnValueField"] =
-                  element.ColumnValueField;
+                multipleDateArrayFieldcopy[index]["" + i][
+                  "ColumnValueField_dropdown"
+                ] = element.ColumnValueField_dropdown;
                 multipleDateArrayFieldcopy[index]["" + i]["PageId"] =
                   element.PageId;
                 if (element.ColumnType == "datetime") {
@@ -745,14 +768,16 @@ console.log({childTableName},{parentTableName})
                             modelArrayPosition,
                             allModalData[modelArrayPosition],
                           ]);
-                      
+
                         var dataMenuArr = [];
                         dataTable.map((elements) => {
                           elements.map((member) => {
                             for (var key in member) {
                               if (member.hasOwnProperty(key)) {
                                 if (key != "0") {
-                                  if (key == element.ColumnValueField) {
+                                  if (
+                                    key == element.ColumnValueField_dropdown
+                                  ) {
                                     var dataMenuArrLength = dataMenuArr.length;
                                     dataMenuArr[dataMenuArrLength] = {};
                                     dataMenuArr[dataMenuArrLength]["value"] =
@@ -764,17 +789,16 @@ console.log({childTableName},{parentTableName})
                                 }
                               }
                             }
-                         
+
                             var allDropValueDataLength = 0;
                             if (allDropValueData != null) {
                               allDropValueDataLength =
                                 Object.keys(allDropValueData).length;
-                             
                             }
                           });
                           // }
                         });
-                        
+
                         setSelectedOption((prev) => {
                           const temp__details = [...prev];
                           temp__details[i] = dataMenuArr;
@@ -784,7 +808,6 @@ console.log({childTableName},{parentTableName})
                         console.log(data);
                       }
                     });
-            
                 }
               });
             });
@@ -801,98 +824,136 @@ console.log({childTableName},{parentTableName})
     }
   };
 
-  const handleSingleCalculation=(calculationFormula, i)=>{
-    console.log(calculationFormula, i)
+  const handleSingleCalculation = (calculationFormula, i) => {
+    console.log(calculationFormula, i);
     var calculationValue1 = 0;
     var calculationValue = 0;
     var target = 0;
     const calculationFormulaField = JSON.parse(calculationFormula);
     const calculateFormulaField = calculationFormulaField[0].Formula;
-    console.log(calculateFormulaField,calculationFormulaField[0]);
+    console.log(calculateFormulaField, calculationFormulaField[0]);
 
     labelDataSingle.map((items) => {
-      items.map((item,pos)=>{
-        console.log(item)
-        console.log(item.ColumnName,item?.ColumnValue,calculateFormulaField[0],calculationFormulaField.Target);
-        if (item.ColumnName.toUpperCase() == calculateFormulaField[0].Field1.toUpperCase()) {
+      items.map((item, pos) => {
+        console.log(item);
+        console.log(
+          item.ColumnName,
+          item?.ColumnValue,
+          calculateFormulaField[0],
+          calculationFormulaField.Target
+        );
+        if (
+          item.ColumnName.toUpperCase() ==
+          calculateFormulaField[0].Field1.toUpperCase()
+        ) {
           if (item?.ColumnValue != "") calculationValue1 = item.ColumnValue;
-          console.log(item.ColumnValue)
+          console.log(item.ColumnValue);
         }
-        if (item?.ColumnName.toUpperCase() == calculateFormulaField[0].Field2.toUpperCase()) {
-          console.log(item?.ColumnValue)
+        if (
+          item?.ColumnName.toUpperCase() ==
+          calculateFormulaField[0].Field2.toUpperCase()
+        ) {
+          console.log(item?.ColumnValue);
           if (item?.ColumnValue != "") calculationValue = item?.ColumnValue;
         }
-        if (item.ColumnName.toUpperCase() == calculationFormulaField[0].Target.toUpperCase()) {
+        if (
+          item.ColumnName.toUpperCase() ==
+          calculationFormulaField[0].Target.toUpperCase()
+        ) {
           target = pos;
         }
-       
-      })
+      });
     });
-    console.log(columnValues,i,target,calculationFormulaField[0].Target.toUpperCase())
-    console.log(calculationValue,calculationValue1)
-    if(calculationValue !=undefined && calculationValue1 !=undefined){
-      const result = parseFloat(calculationValue) * parseFloat(calculationValue1);
-      console.log(result)
-      setTotalAmountSingle(result)
+    console.log(
+      columnValues,
+      i,
+      target,
+      calculationFormulaField[0].Target.toUpperCase()
+    );
+    console.log(calculationValue, calculationValue1);
+    if (calculationValue != undefined && calculationValue1 != undefined) {
+      const result =
+        parseFloat(calculationValue) * parseFloat(calculationValue1);
+      console.log(result);
+      setTotalAmountSingle(result);
       labelDataSingle[0][target].ColumnValue = result;
-      
+
       Object.entries(columnValues[0]).forEach((entry) => {
         const [key, value] = entry;
-        console.log(value,key);
-        if(key.toUpperCase()==calculationFormulaField[0].Target.toUpperCase()){
+        console.log(value, key);
+        if (
+          key.toUpperCase() == calculationFormulaField[0].Target.toUpperCase()
+        ) {
           entry[value] = result;
           columnValues[0][key] = result;
         }
       });
+    } else {
+      setTotalAmountSingle(0);
+      labelDataSingle[0][target].ColumnValue = 0;
     }
-    else{
-      setTotalAmountSingle(0)
-      labelDataSingle[0][target].ColumnValue = 0
-    }
-
-  }
+  };
   const handleCalculation = (calculationFormula, i, countOfInput) => {
-    console.log('hi')
+    console.log("hi");
     var calculationValue1 = 0;
     var calculationValue = 0;
     var target = 0;
     const calculationFormulaField = JSON.parse(calculationFormula);
     const calculateFormulaField = calculationFormulaField[0].Formula;
-    console.log(calculateFormulaField,calculationFormulaField[0]);
+    console.log(calculateFormulaField, calculationFormulaField[0]);
 
     labelData[i].map((item, pos) => {
-      console.log(labelData,item.ColumnName,item.ColumnValue,calculateFormulaField[0],calculationFormulaField.Target);
-      if (item.ColumnName.toUpperCase() == calculateFormulaField[0].Field1.toUpperCase()) {
-       
+      console.log(
+        labelData,
+        item.ColumnName,
+        item.ColumnValue,
+        calculateFormulaField[0],
+        calculationFormulaField.Target
+      );
+      if (
+        item.ColumnName.toUpperCase() ==
+        calculateFormulaField[0].Field1.toUpperCase()
+      ) {
         if (item.ColumnValue != "") calculationValue1 = item.ColumnValue;
       }
-      if (item.ColumnName.toUpperCase() == calculateFormulaField[0].Field2.toUpperCase()) {
-        console.log(item.ColumnValue)
+      if (
+        item.ColumnName.toUpperCase() ==
+        calculateFormulaField[0].Field2.toUpperCase()
+      ) {
+        console.log(item.ColumnValue);
         if (item.ColumnValue != "") calculationValue = item.ColumnValue;
       }
-      if (item.ColumnName.toUpperCase() == calculationFormulaField[0].Target.toUpperCase()) {
+      if (
+        item.ColumnName.toUpperCase() ==
+        calculationFormulaField[0].Target.toUpperCase()
+      ) {
         target = pos;
       }
-     
     });
-    console.log(columnValues,i,target,calculationFormulaField[0].Target.toUpperCase())
-    console.log(calculationValue,calculationValue1)
+    console.log(
+      columnValues,
+      i,
+      target,
+      calculationFormulaField[0].Target.toUpperCase()
+    );
+    console.log(calculationValue, calculationValue1);
     const result = parseFloat(calculationValue) * parseFloat(calculationValue1);
-    console.log(result)
-    setTotalAmount(result)
-    
+    console.log(result);
+    setTotalAmount(result);
+
     labelData[i][target].ColumnValue = result;
-    
+
     Object.entries(columnValues[i]).forEach((entry) => {
       const [key, value] = entry;
-      console.log(value,key);
-      if(key.toUpperCase()==calculationFormulaField[0].Target.toUpperCase()){
+      console.log(value, key);
+      if (
+        key.toUpperCase() == calculationFormulaField[0].Target.toUpperCase()
+      ) {
         entry[value] = result;
         columnValues[i][key] = result;
       }
     });
     // columnValues[i][target].ColumnName= result;
-    
   };
   // const   handleImageFile=(item, countOfInput, i)=>{
   //    const filteredArr = [];
@@ -935,7 +996,7 @@ console.log({childTableName},{parentTableName})
       const resultFile = URL.createObjectURL(files);
       var multipleDateArrayField = [...selectedImageSingle];
       multipleDateArrayField[i] = resultFile;
-    
+
       setSelectedImageSingle(multipleDateArrayField);
       const filteredArr = [];
       columnValuesSingle.forEach((item) => {
@@ -973,14 +1034,13 @@ console.log({childTableName},{parentTableName})
             name={`${i}input`}
             style={{ marginTop: "3px" }}
             disabled={
-              labelDataSingle[0][i]["IsDisable"].toLowerCase?.() ===
-              "false"
+              labelDataSingle[0][i]["IsDisable"].toLowerCase?.() === "false"
             }
             value={labelDataSingle[0][i]["ColumnValue"]}
             className="getValue form-control"
             placeholder={item?.ColumnName}
             onChange={(e) => {
-             console.log()
+              console.log();
               const { value } = e.target;
               const filteredArr = [];
               columnValuesSingle.forEach((item) => {
@@ -988,35 +1048,36 @@ console.log({childTableName},{parentTableName})
                   filteredArr.push(item);
                 }
               });
-            
-              if( labelDataSingle[0][i]["IsDisable"]?.toLowerCase?.() ===
-              "false"){
-                filteredArr['amount']= totalAmountSingle;
+
+              if (
+                labelDataSingle[0][i]["IsDisable"]?.toLowerCase?.() === "false"
+              ) {
+                filteredArr["amount"] = totalAmountSingle;
                 labelData[0][i].ColumnValue = totalAmountSingle;
               }
-            
+
               filteredArr[0][item?.ColumnName] = value;
               labelDataSingle[0][i].ColumnValue = value;
               setLabelDataSingle((prevArr) => {
-                console.log(prevArr)
+                console.log(prevArr);
                 const result = [...prevArr];
                 result[0][i].ColumnValue = value;
                 return result;
               });
               setColumnValuesSingle(filteredArr);
-              if (
-                labelDataSingle[0][i]["CalculationType"] == "Auto"
-              ) {
-                console.log(item?.ColumnName,item?.CalculationKey)
-                if (item?.ColumnName.toUpperCase() == item?.CalculationKey.toUpperCase()) {
+              if (labelDataSingle[0][i]["CalculationType"] == "Auto") {
+                console.log(item?.ColumnName, item?.CalculationKey);
+                if (
+                  item?.ColumnName.toUpperCase() ==
+                  item?.CalculationKey.toUpperCase()
+                ) {
                   const calculationFormula = item?.CalculationFormula;
-                  console.log(calculationFormula)
+                  console.log(calculationFormula);
                   handleSingleCalculation(calculationFormula, i);
                 } else {
                   console.log("hi");
                 }
               }
-              
             }}
           />
         </div>
@@ -1036,7 +1097,6 @@ console.log({childTableName},{parentTableName})
             // value={labelDataSingle[i]["ColumnValue"]}
             selected={startDate}
             onChange={(e) => {
-              
               const newDate = e;
               var year = newDate.toLocaleString("default", {
                 year: "numeric",
@@ -1060,8 +1120,8 @@ console.log({childTableName},{parentTableName})
                 result[0][i].ColumnValue = formattedDate;
                 return result;
               });
-              console.log(formattedDate)
-              setStartDate(e)
+              console.log(formattedDate);
+              setStartDate(e);
               // getDate.push(e);
               // setTwoDimentionData(multipleDateArrayField);
               setColumnValuesSingle(filteredArr);
@@ -1236,7 +1296,6 @@ console.log({childTableName},{parentTableName})
   };
 
   const handleInputValue = (item, countOfInput, i) => {
-
     const handleImageChange = (event) => {
       const files = event.target.files[0];
       const resultFile = URL.createObjectURL(files);
@@ -1299,24 +1358,26 @@ console.log({childTableName},{parentTableName})
               className="getValue form-control"
               placeholder={item?.ColumnName}
               onChange={(e) => {
-                console.log(labelData)
-                console.log(e.target.value)
+                console.log(labelData);
+                console.log(e.target.value);
                 const { value } = e.target;
                 const filteredArr = [];
                 columnValues.forEach((item) => {
-                  console.log(item)
+                  console.log(item);
                   if (item !== undefined) {
                     filteredArr.push(item);
                   }
                 });
 
-                if( labelData[i][countOfInput]["IsDisable"]?.toLowerCase?.() ===
-                "false"){
-                  filteredArr['amount']= totalAmount;
+                if (
+                  labelData[i][countOfInput]["IsDisable"]?.toLowerCase?.() ===
+                  "false"
+                ) {
+                  filteredArr["amount"] = totalAmount;
                   labelData[i][countOfInput].ColumnValue = totalAmount;
                 }
                 filteredArr[i][item?.ColumnName] = value;
-                
+
                 // filteredArr[i][item?.ColumnValue] = totalAmount;
                 // setLabelData((prevArr) => {
                 //   const result = [...prevArr];
@@ -1324,16 +1385,21 @@ console.log({childTableName},{parentTableName})
                 // labelData[i][target].ColumnValue = result;
                 //   return result;
                 // });
-                console.log(filteredArr)
+                console.log(filteredArr);
                 setColumnValues(filteredArr);
-                console.log(item.ColumnName,item?.CalculationKey,labelData[i][countOfInput]["CalculationType"]);
-                if (
-                  labelData[i][countOfInput]["CalculationType"] == "Auto"
-                ) {
-                  console.log(item?.ColumnName,item?.CalculationKey)
-                  if (item?.ColumnName.toUpperCase() == item?.CalculationKey.toUpperCase()) {
+                console.log(
+                  item.ColumnName,
+                  item?.CalculationKey,
+                  labelData[i][countOfInput]["CalculationType"]
+                );
+                if (labelData[i][countOfInput]["CalculationType"] == "Auto") {
+                  console.log(item?.ColumnName, item?.CalculationKey);
+                  if (
+                    item?.ColumnName.toUpperCase() ==
+                    item?.CalculationKey.toUpperCase()
+                  ) {
                     const calculationFormula = item?.CalculationFormula;
-                    console.log(calculationFormula)
+                    console.log(calculationFormula);
                     handleCalculation(calculationFormula, i, countOfInput);
                   } else {
                     console.log("hi");
@@ -1498,7 +1564,7 @@ console.log({childTableName},{parentTableName})
                     });
                     filteredArr[i][item.ColumnName] = "true";
                     labelData[i][countOfInput].ColumnValue = "true";
-                   
+
                     setColumnValues(filteredArr);
                     setLabelData(labelData);
                     columnValues.forEach((e, index) => {
@@ -1723,13 +1789,13 @@ console.log({childTableName},{parentTableName})
   };
 
   const handleDropdownValue = (i) => {
-    console.log(allModelDataTable,i)
+    console.log(allModelDataTable, i);
     var radioName = document.querySelector(
       'input[name="dropValueField"]:checked'
     ).value;
-console.log(radioName)
+    console.log(radioName);
     setSelectedListName(radioName);
-    
+
     let newString = radioName.replace("-", "_");
     const spaceRemove = newString.split(" ").join("");
     const convertLowerCase = spaceRemove.toLowerCase();
@@ -1755,7 +1821,7 @@ console.log(radioName)
       .then((data) => {
         if (data.status == true) {
           const allModalData = JSON.parse(data.data);
-          console.log(allModalData)
+          console.log(allModalData);
           setAllModelDataTable(allModalData);
 
           setAllDropValueData({
@@ -1787,26 +1853,25 @@ console.log(radioName)
           // setDropdownName(showSingleData.Tables1);
         }
       });
-  
-//     var dataTable = [];
-//     for (var modelArrayPosition in allModelDataTable)
-//       dataTable.push([
-//         modelArrayPosition,
-//         allModelDataTable[modelArrayPosition],
-//       ]);
-// console.log(dataTable)
-//     var dataMenuArr = [];
 
-//     setSelectedOption((prev) => {
-//       const temp__details = [...prev];
-//       temp__details[i] = dataMenuArr;
-//       return temp__details;
-//     });
+    //     var dataTable = [];
+    //     for (var modelArrayPosition in allModelDataTable)
+    //       dataTable.push([
+    //         modelArrayPosition,
+    //         allModelDataTable[modelArrayPosition],
+    //       ]);
+    // console.log(dataTable)
+    //     var dataMenuArr = [];
+
+    //     setSelectedOption((prev) => {
+    //       const temp__details = [...prev];
+    //       temp__details[i] = dataMenuArr;
+    //       return temp__details;
+    //     });
   };
 
-
   const handleSubmitData = (e, i) => {
- e.preventDefault();
+    e.preventDefault();
     if (childPageType.PageType == "doubleEntryPage") {
       Object.keys(columnValuesSingle).map(function (object) {
         columnValuesSingle[object]["ID"] = "newID()";
@@ -1824,7 +1889,7 @@ console.log(radioName)
       };
 
       columnValues.map((item) => {
-        modelPurchase.detailsData.push(item)
+        modelPurchase.detailsData.push(item);
       });
       fetch(`https://localhost:44372/api/DoubleMasterEntry/Insert`, {
         method: "POST",
@@ -1855,7 +1920,7 @@ console.log(radioName)
       console.log(JSON.stringify(modelPurchase));
     }
     if (childPageType.PageType == "singleEntryPage") {
-      console.log(columnValues)
+      console.log(columnValues);
       const modelSingleData = {
         tableNameMaster: null,
         tableNameChild: childTableName,
@@ -2009,7 +2074,6 @@ console.log(radioName)
                 document.getElementById(data),
                 event.target.parentElement.id
               );
-              
             }
           });
       }
@@ -2078,7 +2142,7 @@ console.log(radioName)
     var multipleDateArrayField = [...labelData];
     multipleDateArrayField.map((item, index) => {
       const e = item.splice(frompositions, 1)[0];
-      item.splice(parseInt(topositions)-2, 0, e);
+      item.splice(parseInt(topositions) - 2, 0, e);
 
       multipleDateArrayField[index] = item;
     });
@@ -2090,7 +2154,7 @@ console.log(radioName)
     multipleDateArrayFieldcopy.map((item, index) => {
       const e = item.splice(frompositions, 1)[0];
       console.log(e); // ['css']
-      item.splice(parseInt(topositions)-2, 0, e);
+      item.splice(parseInt(topositions) - 2, 0, e);
       multipleDateArrayFieldcopy[index] = item;
     });
 
@@ -2108,16 +2172,15 @@ console.log(radioName)
           twoDimensionData[index][i] = item.ColumnValue;
         }
         const findPageType = childMenu.find((item) => item.MenuId == id);
-        if (findPageType.PageType == "doubleEntryPage"){
-          tempjson[index] = {DetailsID:"newID()",ID:""};
+        if (findPageType.PageType == "doubleEntryPage") {
+          tempjson[index] = { DetailsID: "newID()", ID: "" };
         }
-        if (findPageType.PageType == "singleEntryPage"){
-          tempjson[index] = {ID:"newID()"};
+        if (findPageType.PageType == "singleEntryPage") {
+          tempjson[index] = { ID: "newID()" };
         }
 
         tempjson["" + index][e.ColumnName] = columnValues[index][e.ColumnName];
 
-        
         if (item[i].RelatedTable != null) {
           const modelDataLabel = {
             procedureName: "",
@@ -2151,24 +2214,21 @@ console.log(radioName)
                     for (var key in member) {
                       if (member.hasOwnProperty(key)) {
                         if (key != "0") {
-                          if (key == item[i].ColumnValueField) {
+                          if (key == item[i].ColumnValueField_dropdown) {
                             var dataMenuArrLength = dataMenuArr.length;
                             dataMenuArr[dataMenuArrLength] = {};
-                            dataMenuArr[dataMenuArrLength]["value"] =
-                              member.ID;
+                            dataMenuArr[dataMenuArrLength]["value"] = member.ID;
                             var val = member[key];
-                            dataMenuArr[dataMenuArrLength]["label"] =
-                              val;
+                            dataMenuArr[dataMenuArrLength]["label"] = val;
                           }
                         }
                       }
                     }
-                   
+
                     var allDropValueDataLength = 0;
                     if (allDropValueData != null) {
                       allDropValueDataLength =
                         Object.keys(allDropValueData).length;
-                  
                     }
                   });
                   // }
@@ -2182,7 +2242,6 @@ console.log(radioName)
                 console.log(data);
               }
             });
-    
         }
 
         setSelectedOption((prev) => {
@@ -2226,25 +2285,24 @@ console.log(radioName)
     }
     var multipleDateArrayField = [...labelData]; //JSON.parse(JSON.stringify(labelData));
     multipleDateArrayField.map((item, index) => {
-      console.log(item)
+      console.log(item);
       const e = item.splice(frompositions, 1)[0];
       console.log(e); // ['css']
       item.splice(parseInt(topositions), 0, e);
 
       multipleDateArrayField[index] = item;
-      console.log(multipleDateArrayField)
+      console.log(multipleDateArrayField);
     });
     setLabelData(multipleDateArrayField);
 
     var multipleDateArrayFieldcopy = [...labelDataCopy];
     multipleDateArrayFieldcopy.map((item, index) => {
-
-      console.log(item)
+      console.log(item);
       const e = item.splice(frompositions, 1)[0];
       item.splice(parseInt(topositions), 0, e);
 
       multipleDateArrayFieldcopy[index] = item;
-      console.log(multipleDateArrayFieldcopy)
+      console.log(multipleDateArrayFieldcopy);
     });
     setLabelDataCopy(multipleDateArrayFieldcopy);
 
@@ -2252,7 +2310,7 @@ console.log(radioName)
 
     var tempjson = [];
     labelData.map((item, index) => {
-      console.log(item)
+      console.log(item);
       tempjson[index] = {};
       item.map((e, i) => {
         if (item.ColumnType == "datetime") {
@@ -2263,14 +2321,12 @@ console.log(radioName)
 
         labelData.map((item, index) => {
           const findPageType = childMenu.find((item) => item.MenuId == id);
-          console.log(findPageType.PageType)
-          if (findPageType.PageType == "doubleEntryPage"){
-
-            tempjson[index] = {DetailsID:"newID()",ID:""};
+          console.log(findPageType.PageType);
+          if (findPageType.PageType == "doubleEntryPage") {
+            tempjson[index] = { DetailsID: "newID()", ID: "" };
           }
-          if (findPageType.PageType == "singleEntryPage"){
-            tempjson[index] = {ID:"newID()"};
-
+          if (findPageType.PageType == "singleEntryPage") {
+            tempjson[index] = { ID: "newID()" };
           }
 
           item.map((e, i) => {
@@ -2282,7 +2338,7 @@ console.log(radioName)
             tempjson["" + index][e.ColumnName] =
               columnValues[index][e.ColumnName];
             console.log(item, index, i);
-         
+
             if (item[i].RelatedTable != null) {
               const modelDataLabel = {
                 procedureName: "",
@@ -2316,14 +2372,13 @@ console.log(radioName)
                         for (var key in member) {
                           if (member.hasOwnProperty(key)) {
                             if (key != "0") {
-                              if (key == item[i].ColumnValueField) {
+                              if (key == item[i].ColumnValueField_dropdown) {
                                 var dataMenuArrLength = dataMenuArr.length;
                                 dataMenuArr[dataMenuArrLength] = {};
                                 dataMenuArr[dataMenuArrLength]["value"] =
                                   member.ID;
                                 var val = member[key];
-                                dataMenuArr[dataMenuArrLength]["label"] =
-                                  val;
+                                dataMenuArr[dataMenuArrLength]["label"] = val;
                               }
                             }
                           }
@@ -2345,7 +2400,6 @@ console.log(radioName)
                     console.log(data);
                   }
                 });
-        
             }
 
             setSelectedOption((prev) => {
@@ -2359,7 +2413,7 @@ console.log(radioName)
     });
     setTwoDimentionData(twoDimensionData);
     setColumnValues(tempjson);
-    console.log(tempjson)
+    console.log(tempjson);
   }
 
   return (
@@ -2379,6 +2433,36 @@ console.log(radioName)
                 {allModelDataTable.MenuName}
               </h2>
               <div className="mt-2">
+                {
+                  tableListData?.length != 0 ? (
+                    ""
+                  ) : (
+                    <div class="card" style={{ border: "2px solid red" }}>
+                      <div class="card-body">
+                        <span
+                          class="card-text text-decoration-none text-dark"
+                          style={{ display: "flex", alignItems: "center" }}
+                        >
+                          There is no list page for this menu. Please{" "}
+                          <a
+                          href="/list-page"
+                            style={{
+                              textDecoration: "underline",
+                              marginLeft: "2px",
+                              color: "blue",
+                            }}
+                          >
+                            click here
+                          </a>
+                        </span>
+                      </div>
+                    </div>
+                  )
+                  //  (<div style={{}}>
+                  //   <a>Alert</a>
+                  //   <a href="/list-page" target='_blank' style={{textDecoration:'none'}} ><span style={{ color:'#e63946',fontSize:'20px'}}>There is no list page for this menu. Please click the button</span> <FontAwesomeIcon icon={faPlus} style={{background:"#ff0060",color:'white', borderRadius:'50px',height:'30px',width:'30px',marginLeft:'5px',padding:'2px'}}></FontAwesomeIcon></a>
+                  // </div>)
+                }
                 {showTable ? (
                   ""
                 ) : (
@@ -2422,7 +2506,7 @@ console.log(radioName)
                           setTwoDimentionData,
                           selectedImage,
                           setSelectedImage,
-                          childPageType
+                          childPageType,
                         });
                       }}
                     >
@@ -2490,7 +2574,7 @@ console.log(radioName)
                         labelCount={labelCount}
                         childModalTitle={childModalTitle}
                         setChildModalTitle={setChildModalTitle}
-                        childMenuId={childMenuId} 
+                        childMenuId={childMenuId}
                         setChildMenuId={setChildMenuId}
                       ></SingleEntryList>
                     </div>

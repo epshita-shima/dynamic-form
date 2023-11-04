@@ -6,10 +6,13 @@ import useParentMenu from "../../customHooks/useParentMenu";
 import useChildMenu from "../../customHooks/useChildMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import TableListData from "../../ViewTableListData/TableListData";
 
 
 const Sidebar = ({ showHeader, showSidebar, setShowSidebar,showTable, setShowTable }) => {
+  
+const navigate=useNavigate()
   const [backgroundColor, setBackgroundColor] = useState(false);
   const [fontColor, setFontColor] = useState(false);
   const [fontColorBtn, setFontColorBtn] = useState(false);
@@ -20,11 +23,9 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar,showTable, setShowTab
   const sidebarBackground = sessionStorage.getItem("sidebarBackground");
   const sidebarText = sessionStorage.getItem("sidebarText");
   const getSidebarTextColor = sessionStorage.getItem("sidebarTextColor");
-  const sidebarBackgroundColor = sessionStorage.getItem(
-    "sidebarBackgroundColor"
-  );
-console.log(childMenu)
-console.log(parentMenu)
+  const sidebarBackgroundColor = sessionStorage.getItem("sidebarBackgroundColor");
+
+
   const thirdArray = childMenu.filter((elem) => {
     return parentMenu.some((ele) => {
       return elem.MenuName === ele.MenuName;
@@ -59,6 +60,12 @@ console.log(parentMenu)
      
     }
     fatchAllMenuData()
+  }
+  const handleListData=(menuId)=>{
+    console.log('click')
+    
+
+
   }
 
   return (
@@ -177,7 +184,7 @@ console.log(parentMenu)
                                 <Link
                                   to={`${item?.PageType== 'singleEntryPage' || item?.PageType== 'doubleEntryPage' ? `${item.UiLink}/${item.MenuId}`: 
                                   // item.PageType== 'doubleEntryPage' ? `${item.UiLink}/${item.MenuId}` : 
-                                  item?.PageType !== "doubleEntryPage" || item?.PageType== "singleEntryPage" ? `${item.UiLink}`:'' }`}
+                                  item?.PageType !== "doubleEntryPage" || item?.PageType == "singleEntryPage" ? `${item.UiLink}`:'' }`}
                                   className="nav-link"
                                   style={{
                                     backgroundColor: "#66CBFF",
@@ -185,11 +192,11 @@ console.log(parentMenu)
                                     fontSize:'16px',
                                   }}
                                   onClick={()=>{
-                                    setShowTable(false)
+                                    // setShowTable(false)
                                   }}
                                 >
                                   <i className="far fa-circle nav-icon" />
-                                  <p className="text-white fw-normal">{item.SubMenuName}</p>
+                                  <p className="text-white fw-normal" onClick={()=>handleListData(item.MenuId)}>{item.SubMenuName}</p>
                                 </Link>
                               </li>
                             );
@@ -204,6 +211,9 @@ console.log(parentMenu)
           </nav>
         </div>
       </aside>
+      {/* <div className="d-none">
+        <TableListData tableListData={tableListData} ></TableListData>
+      </div> */}
     </div>
   );
 };

@@ -29,6 +29,7 @@ import ShowModalForTableSelectionInTheDropDownForChild from "../ModalStore/Child
 import ShowModalForValueSelectionAfterTheTableModalSelectForChild from "../ModalStore/ChildModal/ShowModalForValueSelectionAfterTheTableModalSelectForChild";
 import CalculationModalChild from "../ModalStore/ChildModal/CalculationModalChild";
 import WarningChildModal from "../ModalStore/ChildModal/WarningChildModal";
+import { useNavigate } from "react-router-dom";
 const DoubleEnteryData = ({
   setExist,
   parentMenuName,
@@ -204,7 +205,7 @@ const [childFoundKey,setChildFoundKey]=useState(0)
   const [errorsCheckDetails, setErrorsCheckDetails] = useState([]);
   const [errorsTextareaDetails, setErrorsTextareaDetails] = useState([]);
   const [errorsImageDetails, setErrorsImageDetails] = useState([]);
-
+  const navigate=useNavigate()
   var tableParentInputData = [];
   var tableParentDropData = [];
   var tableParentTextareaData = [];
@@ -297,6 +298,7 @@ console.log(showParentCalculactionModal,showCalculactionModal)
 
   const token = Token.token;
   const tableName = childMenuName.SubMenuName;
+  console.log(tableName)
   let newString = tableName.replace("-", "_");
   const spaceRemove = newString.split(" ").join("");
   const tableNameLowerCase = spaceRemove.toLowerCase();
@@ -856,7 +858,7 @@ console.log(tableModelData,allInputValueData)
                 inputLowerCaseData[allInputValueDataCount],
               CalculationFormula: JSON.stringify(pageFormula),
               RelatedTable: "",
-              ColumnValueField:'',
+              ColumnValueField_Dropdown:'',
               Position: orderPosition,
               IsDisable:
                 formulaTarget ==
@@ -887,7 +889,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: "",
-              ColumnValueField:'',
+              ColumnValueField_Dropdown:'',
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -914,7 +916,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: allDropValueData[allDropValueDataCount],
-              ColumnValueField:radioButton[allDropValueDataCount],
+              ColumnValueField_Dropdown:radioButton[allDropValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -941,7 +943,7 @@ console.log(tableModelData,allInputValueData)
               CalculationFormula: "",
               RelatedTable:
                 allTextAreaValueData[allTextAreaValueDataCount],
-                ColumnValueField:'',
+                ColumnValueField_Dropdown:'',
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -968,7 +970,7 @@ console.log(tableModelData,allInputValueData)
               CalculationFormula: "",
               RelatedTable:
                 allImageValueData[allImageValueDataCount],
-                ColumnValueField:'',
+                ColumnValueField_Dropdown:'',
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1048,7 +1050,7 @@ console.log(tableModelData,allInputValueData)
                 inputLowerCaseParentData[allParentInputValueDataCount],
               CalculationFormula: JSON.stringify(parentPageFormula),
               RelatedTable: "",
-              ColumnValueField: "",
+              ColumnValueField_Dropdown: "",
               Position: orderPosition,
               IsDisable:
                 parentFormulaTarget ==
@@ -1079,7 +1081,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: "",
-              ColumnValueField: "",
+              ColumnValueField_Dropdown: "",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1107,7 +1109,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: allParentDropValueData[allParentDropValueDataCount],
-              ColumnValueField:
+              ColumnValueField_Dropdown:
                 parentTableRadioButton[allParentDropValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
@@ -1135,7 +1137,7 @@ console.log(tableModelData,allInputValueData)
               CalculationFormula: "",
               RelatedTable:
                 allParentTextAreaValueData[allParentTextAreaValueDataCount],
-              ColumnValueField: "",
+              ColumnValueField_Dropdown: "",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1162,7 +1164,7 @@ console.log(tableModelData,allInputValueData)
               CalculationFormula: "",
               RelatedTable:
                 allParentImageValueData[allParentImageValueDataCount],
-              ColumnValueField: "",
+              ColumnValueField_Dropdown: "",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1231,7 +1233,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: allInputValueData[allInputValueDataCount],
               CalculationFormula: JSON.stringify(pageFormula),
               RelatedTable: "",
-              ColumnValueField: "",
+              ColumnValueField_Dropdown: "",
               Position: orderPosition,
               IsDisable:
                 formulaTarget == allInputValueData[allInputValueDataCount]
@@ -1259,7 +1261,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: "",
-              ColumnValueField: "",
+              ColumnValueField_Dropdown: "",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1284,7 +1286,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: "",
-              ColumnValueField: "",
+              ColumnValueField_Dropdown: "",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1309,7 +1311,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: allDropValueData[allDropValueDataCount],
-              ColumnValueField: radioButton[allDropValueDataCount],
+              ColumnValueField_Dropdown: radioButton[allDropValueDataCount],
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1334,7 +1336,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: allTextAreaValueData[allTeaxtAreaValueDataCount],
-              ColumnValueField: "",
+              ColumnValueField_Dropdown: "",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1358,7 +1360,7 @@ console.log(tableModelData,allInputValueData)
               CalculationKey: "",
               CalculationFormula: "",
               RelatedTable: allImageValueData[allImageValueDataCount],
-              ColumnValueField: "",
+              ColumnValueField_Dropdown: "",
               Position: orderPosition,
               IsDisable: "0",
             };
@@ -1402,6 +1404,8 @@ console.log(tableModelData,allInputValueData)
           };
 
           fatchGetDataById();
+       navigate('/child-menu')
+
           console.log(JSON.stringify(modelCreatePageDetails));
         }
 
@@ -1670,7 +1674,7 @@ console.log(tableModelData,allInputValueData)
     //   validateImageFieldsDetails(schemaForImageDetails);
     // }
   }
-console.log(pageEntry.pageEntry)
+
   const handleSubmit = (e) => {
     console.log(pageEntry.pageEntry)
     e.preventDefault();

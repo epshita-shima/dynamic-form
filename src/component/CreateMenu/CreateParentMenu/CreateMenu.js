@@ -15,7 +15,7 @@ const CreateMenu = ({ handleClose }) => {
   const [updateButton, setUpdateButton] = useState(false);
   const [updateData, setUpdateData] = useState([]);
   const [menuId, setMenuId] = useState("");
-
+console.log(data)
   const token = Token.token;
   const modelData = {
     procedureName: "",
@@ -192,6 +192,7 @@ const CreateMenu = ({ handleClose }) => {
       });
   };
 
+
   const columns = [
     {
       name: "Sl.",
@@ -236,7 +237,7 @@ const CreateMenu = ({ handleClose }) => {
           >
             <FontAwesomeIcon icon={faPenToSquare}></FontAwesomeIcon>
           </button>
-          <button
+          {/* <button
             className="ml-2"
             style={{
               fontSize: "23px",
@@ -245,11 +246,11 @@ const CreateMenu = ({ handleClose }) => {
               color: "red",
             }}
             onClick={() => {
-              // handleDelete(groupInfoList?.GroupId);
+              handleDelete(data?.MenuId);
             }}
           >
             <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon>
-          </button>
+          </button> */}
         </div>
       ),
     },

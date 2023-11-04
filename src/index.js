@@ -4,13 +4,15 @@ import $ from 'jquery';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, MemoryRouter } from "react-router-dom";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 
-     <BrowserRouter>
-     <App />
-     </BrowserRouter>
+     // <BrowserRouter> initialEntries={['/', '/add-child']} initialIndex={1}
+   <MemoryRouter >
+      <App />
+</MemoryRouter >
+     // </BrowserRouter>
   
 );
 

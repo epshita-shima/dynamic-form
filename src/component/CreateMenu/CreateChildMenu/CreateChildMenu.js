@@ -12,6 +12,7 @@ import Token from "../../common/Token";
 import swal from "sweetalert";
 import useChildMenu from "../../customHooks/useChildMenu";
 import DoubleEnteryData from "../../DoubleEntryData/DoubleEnteryData";
+import { useNavigate } from "react-router-dom";
 
 const CreateChildMenu = ({setChildTableName}) => {
   const [parentSelectOption, setParentSelectOption] = useParentDropdown();
@@ -27,13 +28,14 @@ const CreateChildMenu = ({setChildTableName}) => {
   const [exist, setExist] = useState(false);
   const [childMenu, setChildMenu] = useChildMenu([]);
 
-  console.log(pageEntry.pageEntry)
+console.log(pageEntry)
   const token = Token.token;
+  console.log(token)
   const modelData = {
     procedureName: "",
     parameters: {},
   };
-console.log(showSaveData)
+  console.log(showSaveData)
   modelData.procedureName = "prc_GetMenuList";
   const modelDataLabel = {
     procedureName: "",
@@ -89,6 +91,7 @@ console.log(showSaveData)
                   console.log(data);
                 }
               });
+             
           }
         });
       // setData([...data, userInput]);

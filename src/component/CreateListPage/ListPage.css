@@ -14,3 +14,22 @@
     box-shadow: 5px 5px orangered;
     outline: none;
 }
+.btn-saveListData{
+    height:35px;
+    width:120px;
+    color:white;
+    background:rgba(178, 196, 15, 0.944);
+    box-shadow: 5px 5px rgb(255, 225, 0);
+    border: 1px solid rgba(178, 196, 15, 0.944);
+    text-align: center;
+    cursor: grabbing;
+    outline:none;
+}
+.btn-saveListData:hover{
+    color:white;
+    box-shadow: 5px 5px rgb(255, 225, 0);
+    outline: none;
+}
+tr:nth-child(even) {
+    background-color:  #ffe2e2;
+  }

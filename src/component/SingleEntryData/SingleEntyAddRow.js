@@ -29,7 +29,6 @@ export const handleAddRow=({columnValues,childPageType,setGetDate,getDate,twoDim
         columnValues[columnValues.length - 1][
           [Object.keys(element)[0]]
         ] = "newID()";
-        
       }
       if(childPageType.PageType=="doubleEntryPage"){
         columnValues[columnValues.length - 1][

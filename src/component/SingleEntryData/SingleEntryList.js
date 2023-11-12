@@ -153,6 +153,7 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
       <tr  style={{border:'2px solid gray'}} >
       <th scope="col" style={{width:'70px',textAlign:'center',border:'2px solid gray'}}>SL</th>
         {labelData?.map((item, i) => {
+          console.log(item)
           if (i == 0) {
             return item?.map((element, index) => {
               console.log(element)

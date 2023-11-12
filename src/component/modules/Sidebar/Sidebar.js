@@ -6,13 +6,11 @@ import useParentMenu from "../../customHooks/useParentMenu";
 import useChildMenu from "../../customHooks/useChildMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate } from "react-router-dom";
-import TableListData from "../../ViewTableListData/TableListData";
-
+import { Link} from "react-router-dom";
 
 const Sidebar = ({ showHeader, showSidebar, setShowSidebar,showTable, setShowTable }) => {
   
-const navigate=useNavigate()
+
   const [backgroundColor, setBackgroundColor] = useState(false);
   const [fontColor, setFontColor] = useState(false);
   const [fontColorBtn, setFontColorBtn] = useState(false);
@@ -74,7 +72,7 @@ const navigate=useNavigate()
       <aside
         className={`main-sidebar sidebar-dark-primary sidebarColor elevation-4`}
         style={{
-          backgroundColor:
+          background:
             sidebarBackground == "1"
               ? `${sidebarBackgroundColor}`
               : `${currentColor.hex}`,
@@ -108,11 +106,11 @@ const navigate=useNavigate()
 
         {/* Sidebar */}
         <div className="sidebar">
-        <div className="mt-4">
+        {/* <div className="mt-4">
         <button className="btn" style={{backgroundColor:'#F06548',color:'white'}} onClick={()=>{
           handleParentMenu()
         }}><FontAwesomeIcon icon={faRefresh}></FontAwesomeIcon></button>
-       </div>
+       </div> */}
           {showHeader ? (
             " "
           ) : (
@@ -161,11 +159,11 @@ const navigate=useNavigate()
                             color: sidebarText
                               ? `${getSidebarTextColor}`
                               : `${fontColor.hex}`,
-                            backgroundColor: "white",
+                            backgroundColor: "#51365F",
                           }}
                         >
-                          <i className="far fa-circle nav-icon" />
-                          <p className="fw-bold hearderTextColor">
+                          <i className="far fa-circle nav-icon text-white" />
+                          <p className=" text-white">
                             {items.MenuName}
                             <span>
                               <i className="fas fa-angle-down ml-2" />
@@ -187,8 +185,8 @@ const navigate=useNavigate()
                                   item?.PageType !== "doubleEntryPage" || item?.PageType == "singleEntryPage" ? `${item.UiLink}`:'' }`}
                                   className="nav-link"
                                   style={{
-                                    backgroundColor: "#66CBFF",
-                                    color:'white',
+                                    background: "linear-gradient(to bottom, #FC6294,#58355F)",
+                                    color:'black',
                                     fontSize:'16px',
                                   }}
                                   onClick={()=>{

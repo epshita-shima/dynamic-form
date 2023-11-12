@@ -12,7 +12,7 @@ const ColumnPermisionButton = ({menuId,tableListData}) => {
     <div>
       <TableListData click={clickhandler} />
       <div className="position-absolute" style={{right:'5%',bottom:"15%"}}>
-        <div className="d-flex justify-content-center align-items-center" style={{backgroundColor:'#5A6691',fontSize:'25px', borderRadius:'50px'}}>
+        <div className="d-flex justify-content-center align-items-center" style={{background:'linear-gradient(to bottom, #FC6294,#58355F)',fontSize:'25px', borderRadius:'50px'}}>
           <button
             // href={} target='_blank' className="text-white"
             style={{width:'40px',height:'40px',border:'none',background:'transparent'}}

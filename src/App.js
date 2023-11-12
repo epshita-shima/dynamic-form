@@ -26,18 +26,9 @@ function App({children}) {
   console.log(link);
   console.log(childMenu)
   console.log(children)
-  const generateInitialEntries = () => {
-    // Your logic here to determine the initial entries
-    const dynamicEntries = ['/'];
-  
-    // if (someConditionIsMet) {
-    //   dynamicEntries.push('/about');
-    // }
-  
-    return dynamicEntries;
-  };
+
   return (
-    <div>
+    <div className="container-fluid">
       {/* <MemoryRouter initialEntries={generateInitialEntries()} initialIndex={0}>
       {children}
     </MemoryRouter> */}
@@ -55,6 +46,7 @@ function App({children}) {
             const pageType = item.PageType;
             const menuId = item.MenuId;
             const tableName = item.UiLink;
+            console.log(menuId)
             return (
               <>
                 {pageType == "singleEntryPage" ||

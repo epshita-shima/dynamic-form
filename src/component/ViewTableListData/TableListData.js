@@ -106,7 +106,7 @@ const navigate=useNavigate()
       grow: 2,
       cell: (heading) => (
         <div>
-          <a target="_blank" style={{ fontSize: "23px" }} href="">
+          <a target="_blank" style={{ fontSize: "23px", color:'#FC6294'}} href="">
             <FontAwesomeIcon
               icon={faPrint}
               onClick={() => {
@@ -121,7 +121,7 @@ const navigate=useNavigate()
               fontSize: "23px",
               backgroundColor: "transparent",
               border: "none",
-              color: "blue",
+              color: "#58355F",
             }}
             onClick={() => {
               navigate(`/add-list/${id}/&${heading?.id}`)
@@ -163,11 +163,13 @@ const navigate=useNavigate()
     rows: {
       style: {
         textAlign: "center",
+       fontFamily:' "Times New Roman", Times, serif',
+       fontWeight:'400'
       },
     },
     headCells: {
       style: {
-        backgroundColor: "#5A6691",
+        background: "linear-gradient(to bottom, #FC6294,#58355F)",
         color: "white",
         fontWeight: "bold",
         textAlign: "center",
@@ -175,7 +177,8 @@ const navigate=useNavigate()
     },
     cells: {
       style: {
-        borderRight: "1px solid #5A6691",
+        borderRight: "1px solid #58355F",
+        // borderBottom: "1px solid #58355F",
       },
     },
   };

@@ -27,6 +27,8 @@ const SingleEntryData = ({ showTable, setShowTable, tableName }) => {
   const [selectedListName, setSelectedListName] = useState([]);
   const [showDeleteIcon, setShowDeleteIcon] = useState(false);
   const [labelData, setLabelData] = useState([]);
+  const [labelUpdateData, setLabelUpdateData] = useState([]);
+  const [labelUpdateSingleData, setLabelUpdateSingleData] = useState([]);
   const [columnValues, setColumnValues] = useState([]);
   const [columnValuesSingle, setColumnValuesSingle] = useState([]);
   const [labelDataCopy, setLabelDataCopy] = useState([]);
@@ -55,18 +57,22 @@ const SingleEntryData = ({ showTable, setShowTable, tableName }) => {
   const [totalAmountSingle, setTotalAmountSingle] = useState("");
   const [childModalTitle, setChildModalTitle] = useState("");
   const [tableListData, setTableListData] = useIndexTableData([]);
+  var temArrayUpdate=[]
+  var temArrayUpdateSingle=[]
   console.log(labelDataSingle);
   console.log(labelData);
   console.log(tableListData);
+  console.log(selectedOption);
   const token = Token.token;
   const search = useLocation();
   const link = search.pathname.split("/");
   let id = link[2];
-  console.log(id, tableName);
+  let singleId = link[3];
+  let newSingleID = singleId?.slice(1)
+  console.log(id,newSingleID);
   const childTable = link[1];
-  console.log(link)
-  // console.log({childTableName},{parentTableName})
-  //   console.log(columnValues)
+  console.log(labelUpdateData)
+
   useEffect(() => {
     const modelDataLabel = {
       procedureName: "",
@@ -97,6 +103,34 @@ const SingleEntryData = ({ showTable, setShowTable, tableName }) => {
         }
       });
   }, []);
+
+  useEffect(()=>{
+    const modelUpdateData = {
+      procedureName: "prc_GetUpdateListDetails",
+      parameters: {
+        MenuId: id,
+        UpdateID:newSingleID
+      },
+    };
+    fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelUpdateData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == true) {
+          const allData = JSON.parse(data.data);
+          console.log(allData)
+          const allUpdateData=allData.Tables1;
+          
+          setLabelUpdateData(allUpdateData)
+          setLabelUpdateSingleData(allUpdateData)
+        }})
+  },[id,newSingleID,token])
 
 const singleTableName=childMenu?.filter((x)=>x.MenuId===id)
 console.log(singleTableName)
@@ -137,7 +171,9 @@ console.log(tableLowercase)
         .then((res) => res.json())
         .then((data) => {
           if (data.status == true) {
+            console.log(data.data)
             const showSingleData = JSON.parse(data.data);
+
             console.log(showSingleData);
             const getParentTableName = showSingleData.Tables3;
             const tableName = getParentTableName[0].TableName;
@@ -156,6 +192,17 @@ console.log(tableLowercase)
             labelDataSingle.map((elem) => {
               console.log(elem);
               elem.forEach((element, i) => {
+                for(let arryindex=0;labelUpdateSingleData.length>arryindex;arryindex++){
+                  console.log(labelUpdateSingleData[arryindex])
+                  for (let key in labelUpdateSingleData[arryindex]) {
+                    if(element.ColumnName==key){
+                      console.log(element.ColumnName,key)
+                      element.ColumnValue=labelUpdateData[arryindex][key]
+                      temArrayUpdateSingle[arryindex]=labelDataSingle[0]
+                    }
+                  }
+                }
+                console.log( temArrayUpdateSingle)
                 if (element.RelatedTable != "") {
                   const modelDataLabel = {
                     procedureName: "",
@@ -254,12 +301,42 @@ console.log(tableLowercase)
             }
             var createColumnValuesObject = { DetailsId: "newID()", ID: "" };
             var multipleDateArrayField = [];
+            if(link.length>3){
+              console.log(link.length)
+              for(let arryindex=0;labelUpdateData.length>arryindex;arryindex++){
+                console.log(labelUpdateData[arryindex],labelData[arryindex])
+                for (let key in labelUpdateData[arryindex]) {
+                  console.log(labelUpdateData[arryindex])
+                  temArrayUpdate[arryindex] = [];
+                  labelData.map((item, index)=>{
+                    console.log(item,temArrayUpdate)
+                    item.forEach((element,i)=>{
+                      if(element.ColumnName==key){
+                        console.log(element.ColumnName,key,temArrayUpdate,arryindex,labelData,index)
+                        element.ColumnValue=labelUpdateData[arryindex][key]
+                        temArrayUpdate[arryindex][index] = (labelData[0][i])
+                        console.log(arryindex,labelData,key,labelData[0][i])
+                      }
+                    })
+                  })
+                  
+                  console.log(temArrayUpdate)
+              
+              }
+              console.log(labelData[0])
+              // console.log(element.ColumnValue)
+              console.log(temArrayUpdate)
+             
+            }
+
+            }
             labelData.map((item, index) => {
               multipleDateArrayField[index] = [];
               item.forEach((element, i) => {
                 console.log(element);
                 setLabelCount(i + 2);
                 multipleDateArrayField[index][i] = {};
+            
 
                 multipleDateArrayField[index]["" + i]["DetailsId"] = "newID()";
                 multipleDateArrayField[index]["" + i]["ID"] = "";
@@ -279,7 +356,7 @@ console.log(tableLowercase)
                   element.CalculationFormula;
                 multipleDateArrayField[index]["" + i]["IsDisable"] =
                   element.IsDisable;
-                multipleDateArrayField[index]["" + i]["ColumnValue"] = "";
+                multipleDateArrayField[index]["" + i]["ColumnValue"] = element?.ColumnValue;
                 multipleDateArrayField[index]["" + i]["RelatedTable"] =
                   element.RelatedTable;
                 multipleDateArrayField[index]["" + i][
@@ -287,6 +364,7 @@ console.log(tableLowercase)
                 ] = element?.ColumnValueField_dropdown;
                 multipleDateArrayField[index]["" + i]["PageId"] =
                   element.PageId;
+        
                 if (element.ColumnType == "datetime") {
                   const newDate = new Date();
                   var year = newDate.toLocaleString("default", {
@@ -398,7 +476,7 @@ console.log(tableLowercase)
                   element.Position;
                 multipleDateArrayFieldcopy[index]["" + i]["ColumnType"] =
                   element.ColumnType;
-                multipleDateArrayFieldcopy[index]["" + i]["ColumnValue"] = "";
+                multipleDateArrayFieldcopy[index]["" + i]["ColumnValue"] = '';
                 multipleDateArrayFieldcopy[index]["" + i]["CalculationType"] =
                   element.CalculationType;
                 multipleDateArrayFieldcopy[index]["" + i]["CalculationKey"] =
@@ -564,6 +642,7 @@ console.log(tableLowercase)
               multipleDateArrayField[index] = [];
               item.forEach((element, i) => {
                 console.log(element);
+            
                 setLabelCount(i + 2);
                 multipleDateArrayField[index][i] = {};
                 multipleDateArrayField[index]["" + i]["ID"] = "newID()";
@@ -985,6 +1064,7 @@ console.log(tableLowercase)
   //   return new Blob([u8arr], { type: mime });
   // }
   const handleSingleData = (item, i) => {
+    console.log(item)
     const str = item?.ColumnNameWithSpace;
     let str2 = str.split(" ");
     for (let i = 0; i < str2.length; i++) {
@@ -1094,9 +1174,10 @@ console.log(tableLowercase)
             name={`date${i}`}
             id={`date${i}`}
             placeholderText="Click to select a date"
-            // value={labelDataSingle[i]["ColumnValue"]}
+            value={labelDataSingle[0][i]["ColumnValue"]}
             selected={startDate}
             onChange={(e) => {
+              console.log(labelDataSingle[0][i]["ColumnValue"])
               const newDate = e;
               var year = newDate.toLocaleString("default", {
                 year: "numeric",
@@ -1142,11 +1223,12 @@ console.log(tableLowercase)
               id="groupName"
               placeholder="Select.."
               options={selectedOptionParent[i]}
-              //       value={selectedOption[i].find(
-              //   (x) => x.value == labelDataSingle[i]["ColumnValue"]
-              // )}
+                    value={selectedOptionParent[i]?.find(
+                (x) => x?.value == labelDataSingle[0][i]["ColumnValue"]
+              )}
               onChange={(e) => {
                 const filteredArr = [];
+         
                 columnValuesSingle.forEach((item) => {
                   if (item !== undefined) {
                     filteredArr.push(item);
@@ -1166,61 +1248,7 @@ console.log(tableLowercase)
         </div>
       );
     }
-    // if (item?.ColumnType == "checkbox") {
-    //   return (
-    //     <div className="col-md-4 mb-2">
-    //      <label htmlFor="">{item.ColumnName}</label>
-    //      <FormGroup>
-    //             <FormControlLabel
-    //               name={`box${i}`}
-    //               id={`check${i}`}
-    //               style={{ marginTop: "3px", textAlign: "center" }}
-    //               control={<Checkbox />}
-    //               label="Label"
-    //               checked={labelData[i]["ColumnValue"]}
-    //               onChange={(e) => {
-    //                 const { checked } = e.target;
-    //                 console.log(checked);
-    //                 if (checked) {
-    //                   let filteredArr = [];
-    //                   columnValues.forEach((item) => {
-    //                     if (item !== undefined) {
-    //                       filteredArr.push(item);
-    //                     }
-    //                   });
 
-    //                   filteredArr[i][item.ColumnName] = "true";
-    //                   //  filteredArr[i][item?.ColumnName] = value;
-    //                   setLabelDataSingle((prevArr) => {
-    //                     const result = [...prevArr];
-
-    //                     result[i].ColumnValue = true;
-    //                     return result;
-    //                   });
-    //                   setColumnValues(filteredArr);
-    //                 } else {
-    //                   let filteredArr = [];
-    //                   columnValues.forEach((item) => {
-    //                     if (item !== undefined) {
-    //                       filteredArr.push(item);
-    //                     }
-    //                   });
-    //                   filteredArr[i][item.ColumnName] = "false";
-    //                   setLabelDataSingle((prevArr) => {
-    //                     const result = [...prevArr];
-
-    //                     result[i].ColumnValue = false;
-    //                     return result;
-    //                   });
-    //                   setColumnValues(filteredArr);
-    //                 }
-    //                 // const {value,name}=e.checked
-    //               }}
-    //             />
-    //           </FormGroup>
-    //      </div>
-    //   );
-    // }
     if (item.ColumnType == "textarea") {
       return (
         <div className="col-md-3 mb-2">
@@ -1436,11 +1464,12 @@ console.log(tableLowercase)
                 required
                 placeholder="Select.."
                 options={selectedOption[countOfInput]}
-                // value={selectedOption[countOfInput].find(
-                //   (x) => x.value == labelData[i][countOfInput]["ColumnValue"]
-                // )}
+                value={selectedOption[countOfInput]?.find(
+                  (x) => x?.value == labelData[i][countOfInput]["ColumnValue"]
+                )}
                 onChange={(e) => {
                   const filteredArr = [];
+                  console.log(e)
                   columnValues.forEach((item) => {
                     if (item !== undefined) {
                       filteredArr.push(item);
@@ -1450,7 +1479,7 @@ console.log(tableLowercase)
                   filteredArr[i][item?.ColumnName] = e.value;
                   setLabelData((prevArr) => {
                     const result = [...prevArr];
-                    result[i].ColumnValue = e.value;
+                    result[i][countOfInput].ColumnValue = e.value;
                     return result;
                   });
                   setColumnValues(filteredArr);
@@ -2546,6 +2575,7 @@ console.log(tableLowercase)
                             return (
                               <div className="row mb-4">
                                 {items?.map((item, i) => {
+
                                   return handleSingleData(item, i);
                                 })}
                               </div>

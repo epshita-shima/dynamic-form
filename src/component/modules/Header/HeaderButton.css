@@ -21,12 +21,12 @@
     height: 30px;
     width: 30px;
     /* background-color: #2385BA; */
-    background-color: #5A6691;
+    background: linear-gradient(to bottom, #58355F,#FC6294,#58355F);
     border-radius: 50%;
     border: none;
 }
 .btn-plus{
-    background-color:#5A6691;
+    background: linear-gradient(to bottom, #58355F,#FC6294,#58355F);
     width:30px;
     height:30px;
      border-radius:50px;

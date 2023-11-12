@@ -1,5 +1,5 @@
 .sidebarColor{
-    background-color:#5a6691; color: purple; font-weight: 600;
+    background:linear-gradient(to bottom, #58355F,#FC6294,#58355F); font-weight: 400;
 }
 .sidebarListColor{
     background-color: #FFD966; color: #778686; font-weight: 600;
@@ -26,3 +26,4 @@
 body {
     overflow: hidden;
   }
+

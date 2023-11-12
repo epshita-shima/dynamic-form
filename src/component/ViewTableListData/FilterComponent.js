@@ -34,12 +34,13 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
     <Input
       id="search"
       type="text"
-       className="input bg-white border-primary"
+       className="input bg-white"
+       style={{border:'1px solid #FC6294'}}
       placeholder="search"
       value={filterText}
       onChange={onFilter}
     />
-    <ClearButton onClick={onClear} className='bg-transparent text-red fw-bold'>X</ClearButton>
+    <ClearButton onClick={onClear} className='bg-transparent text-red fw-bold' style={{border:'1px solid #FC6294',height:'32px'}}>X</ClearButton>
   </>
 );
 

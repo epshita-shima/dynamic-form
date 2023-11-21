@@ -12,6 +12,7 @@ import TableListData from "./component/ViewTableListData/TableListData";
 import ColumnPermisionButton from "./component/ViewTableListData/ColumnPermisionButton";
 import useIndexTableData from "./component/customHooks/useIndexTableData";
 import { useLocation } from "react-router-dom";
+import UpdateData from "./component/Update/UpdateData";
 
 function App({children}) {
   const [childMenu, setChildMenu] = useChildMenu([]);
@@ -84,6 +85,7 @@ function App({children}) {
                     <Route
                       path={"/add-list" + "/" + id + "/" + singleId}
                       element={
+                        // <UpdateData></UpdateData>
                         <SingleEntryData
                           showTable={showTable}
                           tableName={tableName}

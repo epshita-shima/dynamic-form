@@ -1,7 +1,9 @@
+
 import swal from "sweetalert";
 
-export const handleAddRow=({columnValues,childPageType,setGetDate,getDate,twoDimensionData,setLabelData,labelDataCopy,setTwoDimentionData, selectedImage,
-  setSelectedImage})=>{
+export const handleAddRow=({columnValues,labelData,childPageType,setGetDate,getDate,twoDimensionData,setLabelData,labelDataCopy,setTwoDimentionData, selectedImage,
+  setSelectedImage,newSingleID,link})=>{
+console.log(newSingleID,link.length)
     console.log(childPageType.PageType)
     console.log(columnValues)
   console.log(labelDataCopy)
@@ -34,9 +36,17 @@ export const handleAddRow=({columnValues,childPageType,setGetDate,getDate,twoDim
         columnValues[columnValues.length - 1][
           [Object.keys(element)[0]]
         ] = "newID()";
-        columnValues[columnValues.length - 1][
-          [Object.keys(element)[1]]
-        ] = "";
+        if(link.length>3){
+          columnValues[columnValues.length - 1][
+            [Object.keys(element)[1]]
+          ] =newSingleID;
+        }
+        else{
+          columnValues[columnValues.length - 1][
+            [Object.keys(element)[1]]
+          ] = "";
+        }
+        
       }
      
     });

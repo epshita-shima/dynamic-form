@@ -1373,7 +1373,7 @@ console.log(tableModelData,allInputValueData)
           modelCreatePageDetails.parameters = {
             childPageName: childMenuName.SubMenuName,
             childPageNameWithoutSpace: tableNameLowerCase,
-            tableColumn: `ID varchar(128),${allLowercaseData} Makedate datetime,MakeBy varchar(128), InsertTime datetime`,
+            tableColumn: `ID varchar(128),${allLowercaseData} Makedate datetime,MakeBy varchar(128), InsertTime datetime,UpdateBy nvarchar(50), UpdateDate date, UpdateTime datetime`,
             makeBy: "shima",
             parentMenu: parentMenuName.MenuName,
             menuLogo: "no logo",
@@ -1414,7 +1414,7 @@ console.log(tableModelData,allInputValueData)
           modelCreatePageSingle.parameters = {
             childPageName: childMenuName.SubMenuName,
             childPageNameWithoutSpace: tableNameLowerCase,
-            tableColumn: `ID varchar(128),${allLowercaseParentData} Makedate datetime,MakeBy varchar(128), InsertTime datetime`,
+            tableColumn: `ID varchar(128),${allLowercaseParentData} Makedate datetime,MakeBy varchar(128), InsertTime datetime,UpdateBy nvarchar(50), UpdateDate date, UpdateTime datetime`,
             makeBy: "sunshine-01",
             parentMenu: parentMenuName.MenuName,
             menuLogo: "no logo",
@@ -1422,7 +1422,7 @@ console.log(tableModelData,allInputValueData)
             pageInfoJson: tableModelData.detailsData,
             pageInfoDetailsJson: tableModelDataDetails.detailsData,
             childPageNameDetailsWithoutSpace: tableNameLowerCase + "details",
-            tableColumnDetails: `DetailsId varchar(128),ID varchar(128),${allLowercaseData} Makedate datetime,MakeBy varchar(128), InsertTime datetime`,
+            tableColumnDetails: `DetailsId varchar(128),ID varchar(128),${allLowercaseData} Makedate datetime,MakeBy varchar(128), InsertTime datetime,UpdateBy nvarchar(50), UpdateDate date, UpdateTime datetime`,
           };
           console.log(JSON.stringify(modelCreatePageSingle));
          

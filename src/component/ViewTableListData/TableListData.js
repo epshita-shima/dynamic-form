@@ -21,7 +21,9 @@ const TableListData = () => {
   const link = search.pathname.split("/");
   let tableName = link[1];
   let id = link[2];
-
+console.log(link)
+console.log(heading)
+  console.log(tableListData)
   useEffect(() => {
     const modelListData = {
       procedureName: "prc_GetListDetails",
@@ -90,6 +92,7 @@ const TableListData = () => {
       center: true,
     };
   });
+  console.log(columns_custom)
 const navigate=useNavigate()
   const columns = [
     {
@@ -210,6 +213,7 @@ const navigate=useNavigate()
   }, [filterText, resetPaginationToggle]);
 
   const handleDelete = (tableData) => {
+  
     const modelDelete = {
       tableName:'',
       columnNames:'',
@@ -262,7 +266,7 @@ const navigate=useNavigate()
     <Grid className="shadow-lg h-100">
       {tableListData.length == "" ? (
         <div class="card" style={{ border: "2px solid red" }}>
-          <div class="card-body">
+          <div class="card-body" >
             <span
               class="card-text text-decoration-none text-dark"
               style={{ display: "flex", alignItems: "center" }}
@@ -274,6 +278,7 @@ const navigate=useNavigate()
                   marginLeft: "2px",
                   color: "blue",
                 }}
+                onClick={()=>{navigate("/list-page")}}
               >
                 click here
               </span>

@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 import {
   Button,
   Checkbox,
@@ -15,8 +16,6 @@ import { useLocation } from "react-router-dom";
 import "./SingleEntryData.css";
 import SingleEntryList from "./SingleEntryList";
 import { handleAddRow } from "./SingleEntyAddRow";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faUpload } from "@fortawesome/free-solid-svg-icons";
 import useChildMenu from "../customHooks/useChildMenu";
 import swal from "sweetalert";
 import useIndexTableData from "../customHooks/useIndexTableData";
@@ -26,12 +25,14 @@ const SingleEntryData = ({ showTable, setShowTable, tableName }) => {
   const [labelPosition, setLabelPosition] = useState([]);
   const [selectedListName, setSelectedListName] = useState([]);
   const [showDeleteIcon, setShowDeleteIcon] = useState(false);
-  const [labelData, setLabelData] = useState([]);
+  var [labelData, setLabelData] = useState([]);
   const [labelUpdateData, setLabelUpdateData] = useState([]);
+  const [labelUpdateWithAllData, setLabelUpdateWithAllData] = useState([]);
+  const [labelUpdateWithSingleData,  setLabelUpdateWithSingleData] = useState([]);
   const [labelUpdateSingleData, setLabelUpdateSingleData] = useState([]);
   const [columnValues, setColumnValues] = useState([]);
   const [columnValuesSingle, setColumnValuesSingle] = useState([]);
-  const [labelDataCopy, setLabelDataCopy] = useState([]);
+var [labelDataCopy, setLabelDataCopy] = useState([]);
   const [twoDimensionData, setTwoDimentionData] = useState([[]]);
   const [allModelDataTable, setAllModelDataTable] = useState([]);
   const [selectedOption, setSelectedOption] = useState([]);
@@ -59,19 +60,24 @@ const SingleEntryData = ({ showTable, setShowTable, tableName }) => {
   const [tableListData, setTableListData] = useIndexTableData([]);
   var temArrayUpdate=[]
   var temArrayUpdateSingle=[]
-  console.log(labelDataSingle);
+  console.log(labelUpdateData);
   console.log(labelData);
+  console.log(labelDataCopy);
+  console.log(columnValues)
+  console.log(columnValuesSingle)
   console.log(tableListData);
   console.log(selectedOption);
   const token = Token.token;
   const search = useLocation();
   const link = search.pathname.split("/");
+  console.log(link)
   let id = link[2];
   let singleId = link[3];
   let newSingleID = singleId?.slice(1)
   console.log(id,newSingleID);
   const childTable = link[1];
   console.log(labelUpdateData)
+  console.log(labelUpdateSingleData)
 
   useEffect(() => {
     const modelDataLabel = {
@@ -125,12 +131,46 @@ const SingleEntryData = ({ showTable, setShowTable, tableName }) => {
         if (data.status == true) {
           const allData = JSON.parse(data.data);
           console.log(allData)
-          const allUpdateData=allData.Tables1;
-          
-          setLabelUpdateData(allUpdateData)
-          setLabelUpdateSingleData(allUpdateData)
+          const allSingleUpdateData=allData.Tables1;
+          const allUpdateData=allData.Tables2;
+          console.log(allSingleUpdateData)
+          console.log(allUpdateData)
+          setLabelUpdateWithAllData(allUpdateData)
+          setLabelUpdateWithSingleData(allSingleUpdateData)
         }})
   },[id,newSingleID,token])
+
+  useEffect(()=>{
+    const modelUpdateData = {
+      procedureName: "prc_GetUpdateListDetails",
+      parameters: {
+        MenuId: id,
+        UpdateID:newSingleID
+      },
+    };
+    fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelUpdateData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == true) {
+          const allData = JSON.parse(data.data);
+          console.log(allData)
+          const allSingleUpdateData=allData.Tables1;
+          const allUpdateData=allData.Tables2;
+          console.log(allSingleUpdateData)
+          console.log(allUpdateData)
+          setLabelUpdateData(allUpdateData)
+          setLabelUpdateWithAllData(allUpdateData)
+          setLabelUpdateSingleData(allSingleUpdateData)
+        }})
+  },[id,newSingleID,token])
+ 
 
 const singleTableName=childMenu?.filter((x)=>x.MenuId===id)
 console.log(singleTableName)
@@ -184,24 +224,49 @@ console.log(tableLowercase)
             labelDataSingle[0] = showSingleData.Tables1;
             setLabelDataSingle(labelDataSingle);
             var createColumnValuesObjectSingle = {};
-            labelDataSingle.map((item) => {
-              return item.map((items) => {
-                return (createColumnValuesObjectSingle[items.ColumnName] = "");
+            if(link.length>3){
+              // for(let singleIndex=0;labelUpdateSingleData?.length>0;singleIndex++){
+              //   var updateSingleDataObj=labelUpdateSingleData[singleIndex]
+              //   Object.keys(updateSingleDataObj)?.forEach(function(key){
+              //     var value = updateSingleDataObj[key];
+              //     createColumnValuesObjectSingle[key]=value
+              //   })
+              // }
+              // labelUpdateSingleData.map((item) => {
+              //   return item.map((items) => {
+              //     return (createColumnValuesObjectSingle[items.ColumnName] = "");
+              //   });
+              // });
+            }
+           
+            else{
+              labelDataSingle.map((item) => {
+                return item.map((items) => {
+                  return (createColumnValuesObjectSingle[items.ColumnName] = "");
+                });
               });
-            });
+            }
+           
+            var tempSingleData=[]
             labelDataSingle.map((elem) => {
               console.log(elem);
+              
               elem.forEach((element, i) => {
                 for(let arryindex=0;labelUpdateSingleData.length>arryindex;arryindex++){
                   console.log(labelUpdateSingleData[arryindex])
                   for (let key in labelUpdateSingleData[arryindex]) {
                     if(element.ColumnName==key){
-                      console.log(element.ColumnName,key)
-                      element.ColumnValue=labelUpdateData[arryindex][key]
-                      temArrayUpdateSingle[arryindex]=labelDataSingle[0]
+                      console.log(element.ColumnName,key,labelUpdateData[arryindex][key])
+                      element.ColumnValue= labelUpdateSingleData[arryindex][key]
+                      if(link.length>3){
+                        createColumnValuesObjectSingle[element.ColumnName]=labelUpdateSingleData[arryindex][key]
+                      }
+                      temArrayUpdateSingle[arryindex]= labelUpdateSingleData[0]
                     }
                   }
                 }
+               let singleObj=createColumnValuesObjectSingle
+               tempSingleData=singleObj
                 console.log( temArrayUpdateSingle)
                 if (element.RelatedTable != "") {
                   const modelDataLabel = {
@@ -275,7 +340,9 @@ console.log(tableLowercase)
                 }
               });
             });
+           console.log(tempSingleData)
             columnValues.forEach((item, i) => {
+              console.log(item)
               delete columnValues[i];
               setColumnValues(columnValues);
             });
@@ -283,6 +350,12 @@ console.log(tableLowercase)
               console.log(showSingleData.Tables2);
               labelDataCopy[0] = showSingleData.Tables2;
               labelData[0] = showSingleData.Tables2;
+              var labelUpdate=showSingleData.Tables2
+            
+              // labelData[1] = showSingleData.Tables2;
+              // labelData[2] = showSingleData.Tables2;
+              // labelData[3] = showSingleData.Tables2;
+             
               // columnValues.forEach((item, i) => {
               //   delete columnValues[i];
               //   setColumnValues(columnValues);
@@ -294,40 +367,87 @@ console.log(tableLowercase)
               });
               labelDataCopy[0] = showSingleData.Tables2;
               labelData[0] = showSingleData.Tables2;
+              // labelData[1] = showSingleData.Tables2;
+              // labelData[2] = showSingleData.Tables2;
+              // labelData[3] = showSingleData.Tables2;
+           
+             
               columnValues.forEach((item, i) => {
+                console.log(item)
                 delete columnValues[i];
                 setColumnValues(columnValues);
               });
             }
-            var createColumnValuesObject = { DetailsId: "newID()", ID: "" };
+            
+          var createColumnValuesObject = { DetailsId: "newID()", ID: '' };
+         
+      
             var multipleDateArrayField = [];
             if(link.length>3){
               console.log(link.length)
-              for(let arryindex=0;labelUpdateData.length>arryindex;arryindex++){
-                console.log(labelUpdateData[arryindex],labelData[arryindex])
-                for (let key in labelUpdateData[arryindex]) {
-                  console.log(labelUpdateData[arryindex])
-                  temArrayUpdate[arryindex] = [];
-                  labelData.map((item, index)=>{
-                    console.log(item,temArrayUpdate)
-                    item.forEach((element,i)=>{
-                      if(element.ColumnName==key){
-                        console.log(element.ColumnName,key,temArrayUpdate,arryindex,labelData,index)
-                        element.ColumnValue=labelUpdateData[arryindex][key]
-                        temArrayUpdate[arryindex][index] = (labelData[0][i])
-                        console.log(arryindex,labelData,key,labelData[0][i])
-                      }
-                    })
+              var temp = [];
+              var tempData = [];
+              for(let arrayIndex=0;labelUpdateData.length>arrayIndex;arrayIndex++){
+                delete labelUpdateData[arrayIndex].id
+                delete labelUpdateData[arrayIndex].DetailsId
+               
+              createColumnValuesObject = { DetailsId:labelUpdateWithAllData[arrayIndex].DetailsId };
+               temp[arrayIndex] = [];
+               tempData[arrayIndex] = [];
+               let  jObj=[]
+               for(let indexarray=0;labelUpdate.length>indexarray;indexarray++){
+                  var loopObj = labelUpdateData[arrayIndex]
+                  var updateDataObj=labelUpdateWithAllData[arrayIndex]
+                  var index = 0;
+                  Object.keys(loopObj).forEach(function(key){
+                    console.log([key])
+                    jObj[index] = {}
+                    var value = loopObj[key];
+                    console.log(key + ':' + value,createColumnValuesObject);
+                   
+                    jObj[index]["ColumnName"] = key;
+                    jObj[index]["ColumnValue"] = value;
+                    // jObj[index]["DetailsId"] = labelUpdate[indexarray].DetailsId;
+                    // jObj[index]["ID"] = labelUpdate[indexarray].id;
+                    jObj[index]["CalculationFormula"] = labelUpdate[indexarray]?.CalculationFormula;
+                    jObj[index]["CalculationKey"] = labelUpdate[indexarray]?.CalculationKey;
+                    jObj[index]["CalculationType"] = labelUpdate[indexarray]?.CalculationType;
+                    jObj[index]["ColumnType"] = labelUpdate[indexarray]?.ColumnType;
+                    jObj[index]["ColumnNameWithSpace"] = labelUpdate[indexarray]?.ColumnNameWithSpace;
+                    jObj[index]["ColumnValueField_dropdown"] = labelUpdate[indexarray]?.ColumnValueField_dropdown;
+                    jObj[index]["IsDisable"] = labelUpdate[indexarray]?.IsDisable;
+                    jObj[index]["PageId"] = labelUpdate[indexarray]?.PageId;
+                    jObj[index]["Position"] = labelUpdate[indexarray]?.Position;
+                    jObj[index]["RelatedTable"] = labelUpdate[indexarray]?.RelatedTable;
+                   
+                    index++
+                    indexarray++
+                   
+                    console.log(index,arrayIndex,indexarray)
+                  });
+                  //  console.log(jObj,labelUpdate[indexarray],labelUpdate[indexarray].ColumnName)
+                  Object.keys(updateDataObj).forEach(function(key){
+                    var value = updateDataObj[key];
+                    createColumnValuesObject[key]=value
                   })
-                  
-                  console.log(temArrayUpdate)
+                }
+                console.log(updateDataObj)
+                console.log(arrayIndex)
+                 temp[arrayIndex]=jObj
+                const jdata=JSON.stringify(createColumnValuesObject)
+                const jdataParse=(JSON.parse(jdata))
+                 tempData[arrayIndex]=jdataParse
+
+                 console.log(jObj)
+                
               
               }
-              console.log(labelData[0])
-              // console.log(element.ColumnValue)
-              console.log(temArrayUpdate)
-             
-            }
+              
+             labelData=temp
+             labelDataCopy=temp
+            setColumnValues(tempData)
+              console.log(temp)
+              console.log(tempData)
 
             }
             labelData.map((item, index) => {
@@ -337,7 +457,6 @@ console.log(tableLowercase)
                 setLabelCount(i + 2);
                 multipleDateArrayField[index][i] = {};
             
-
                 multipleDateArrayField[index]["" + i]["DetailsId"] = "newID()";
                 multipleDateArrayField[index]["" + i]["ID"] = "";
                 multipleDateArrayField[index]["" + i]["ColumnName"] =
@@ -356,7 +475,7 @@ console.log(tableLowercase)
                   element.CalculationFormula;
                 multipleDateArrayField[index]["" + i]["IsDisable"] =
                   element.IsDisable;
-                multipleDateArrayField[index]["" + i]["ColumnValue"] = element?.ColumnValue;
+                multipleDateArrayField[index]["" + i]["ColumnValue"] =element.ColumnValue;
                 multipleDateArrayField[index]["" + i]["RelatedTable"] =
                   element.RelatedTable;
                 multipleDateArrayField[index]["" + i][
@@ -459,6 +578,8 @@ console.log(tableLowercase)
                     });
                 }
               });
+              console.log(multipleDateArrayField)
+              console.log([createColumnValuesObject])
             });
             var multipleDateArrayFieldcopy = [];
             labelDataCopy.map((item, index) => {
@@ -585,10 +706,14 @@ console.log(tableLowercase)
             setLabelDataCopy(multipleDateArrayFieldcopy);
             setTwoDimentionData(twoDimensionData);
             setGetDate([...getDate, new Date()]);
-            setColumnValues([...columnValues, createColumnValuesObject]);
+            console.log(createColumnValuesObject)
+            if(labelData.length==1){
+              setColumnValues([...columnValues, createColumnValuesObject]);
+            }
+            // columnValues.push([createColumnValuesObject])
             setColumnValuesSingle([
               ...columnValuesSingle,
-              createColumnValuesObjectSingle,
+              tempSingleData,
             ]);
           } else {
             console.log(data);
@@ -619,6 +744,9 @@ console.log(tableLowercase)
             if (labelData.length == 0) {
               labelDataCopy[0] = allLabelData;
               labelData[0] = allLabelData;
+              var labelUpdate=allLabelData
+              console.log(labelUpdate)
+              // var labelUpdate=allData.Tables2
               // columnValues.forEach((item, i) => {
               //   delete columnValues[i];
               //   setColumnValues(columnValues);
@@ -637,11 +765,87 @@ console.log(tableLowercase)
             }
             var createColumnValuesObject = { ID: "newID()" };
 
+            if(link.length>3){
+              console.log(link.length)
+              var temp = [];
+              var tempData = [];
+              for(let arrayIndex=0;labelUpdateSingleData.length>arrayIndex;arrayIndex++){
+                delete labelUpdateSingleData[arrayIndex].id
+              createColumnValuesObject = { };
+               temp[arrayIndex] = [];
+               tempData[arrayIndex] = [];
+               let  jObj=[]
+               for(let indexarray=0;labelUpdate.length>indexarray;indexarray++){
+                  var loopObj = labelUpdateSingleData[arrayIndex]
+                  var updateDataObj=labelUpdateWithSingleData[arrayIndex]
+                  var index = 0;
+                  Object.keys(loopObj).forEach(function(key){
+                    console.log([key])
+                    jObj[index] = {}
+                    var value = loopObj[key];
+                    console.log(key + ':' + value,createColumnValuesObject);
+                   
+                    jObj[index]["ColumnName"] = key;
+                    jObj[index]["ColumnValue"] = value;
+                    // jObj[index]["DetailsId"] = labelUpdate[indexarray].DetailsId;
+                    // jObj[index]["ID"] = labelUpdate[indexarray].id;
+                    jObj[index]["CalculationFormula"] = labelUpdate[indexarray]?.CalculationFormula;
+                    jObj[index]["CalculationKey"] = labelUpdate[indexarray]?.CalculationKey;
+                    jObj[index]["CalculationType"] = labelUpdate[indexarray]?.CalculationType;
+                    jObj[index]["ColumnType"] = labelUpdate[indexarray]?.ColumnType;
+                    jObj[index]["ColumnNameWithSpace"] = labelUpdate[indexarray]?.ColumnNameWithSpace;
+                    jObj[index]["ColumnValueField_dropdown"] = labelUpdate[indexarray]?.ColumnValueField_dropdown;
+                    jObj[index]["IsDisable"] = labelUpdate[indexarray]?.IsDisable;
+                    jObj[index]["PageId"] = labelUpdate[indexarray]?.PageId;
+                    jObj[index]["Position"] = labelUpdate[indexarray]?.Position;
+                    jObj[index]["RelatedTable"] = labelUpdate[indexarray]?.RelatedTable;
+                   
+                    index++
+                    indexarray++
+                   
+                    console.log(index,arrayIndex,indexarray)
+                  });
+                  //  console.log(jObj,labelUpdate[indexarray],labelUpdate[indexarray].ColumnName)
+                  
+                }
+                createColumnValuesObject=updateDataObj
+                // Object.keys(updateDataObj).forEach(function(key){
+                //   var value = updateDataObj[key];
+                //   createColumnValuesObject[key]=value
+                // })
+                console.log(updateDataObj)
+                console.log(arrayIndex)
+                 temp[arrayIndex]=jObj
+                const jdata=JSON.stringify(createColumnValuesObject)
+                const jdataParse=(JSON.parse(jdata))
+                 tempData[arrayIndex]=jdataParse
+                 console.log(jObj)
+                
+              
+              }
+              
+             labelData=temp
+             labelDataCopy=temp
+            // setColumnValues(tempData)
+              console.log(temp)
+              console.log(tempData)
+            }
             var multipleDateArrayField = [];
             labelData.map((item, index) => {
               multipleDateArrayField[index] = [];
               item.forEach((element, i) => {
                 console.log(element);
+                // for(let arryindex=0;labelUpdateSingleData.length>arryindex;arryindex++){
+                //   console.log(labelUpdateSingleData[arryindex])
+                //   for (let key in labelUpdateSingleData[arryindex]) {
+                //     console.log(key)
+                //     if(element.ColumnName==key){
+                //       console.log(element.ColumnName,key)
+                //       element.ColumnValue= labelUpdateSingleData[arryindex][key]
+                //       temArrayUpdateSingle[arryindex]= labelUpdateSingleData[0]
+                //     }
+                //   }
+                // }
             
                 setLabelCount(i + 2);
                 multipleDateArrayField[index][i] = {};
@@ -662,9 +866,9 @@ console.log(tableLowercase)
                   element.CalculationFormula;
                 multipleDateArrayField[index]["" + i]["IsDisable"] =
                   element.IsDisable;
-                multipleDateArrayField[index]["" + i]["ColumnValue"] = "";
+                multipleDateArrayField[index]["" + i]["ColumnValue"] = '';
                 if(link.length>3){
-                  multipleDateArrayField[index]["" + i]["ColumnValue"] = '123';
+                  multipleDateArrayField[index]["" + i]["ColumnValue"] =  element.ColumnValue;
                 }
                 multipleDateArrayField[index]["" + i]["RelatedTable"] =
                   element.RelatedTable;
@@ -895,7 +1099,15 @@ console.log(tableLowercase)
             setLabelDataCopy(multipleDateArrayFieldcopy);
             setTwoDimentionData(twoDimensionData);
             setGetDate([...getDate, new Date()]);
-            setColumnValues([...columnValues, createColumnValuesObject]);
+            console.log(createColumnValuesObject)
+            
+             if(labelData.length==1 && link.length>3){
+              setColumnValues([...columnValues, tempData[0]]);
+            }
+           else{
+ setColumnValues([...columnValues, createColumnValuesObject]);
+           }
+           
           } else {
             console.log(data);
           }
@@ -1324,6 +1536,7 @@ console.log(tableLowercase)
   };
 
   const handleInputValue = (item, countOfInput, i) => {
+    
     const handleImageChange = (event) => {
       const files = event.target.files[0];
       const resultFile = URL.createObjectURL(files);
@@ -1387,6 +1600,7 @@ console.log(tableLowercase)
               placeholder={item?.ColumnName}
               onChange={(e) => {
                 console.log(labelData);
+                console.log(item?.ColumnName)
                 console.log(e.target.value);
                 const { value } = e.target;
                 const filteredArr = [];
@@ -1404,6 +1618,7 @@ console.log(tableLowercase)
                   filteredArr["amount"] = totalAmount;
                   labelData[i][countOfInput].ColumnValue = totalAmount;
                 }
+                console.log([item?.ColumnName])
                 filteredArr[i][item?.ColumnName] = value;
 
                 // filteredArr[i][item?.ColumnValue] = totalAmount;
@@ -1465,7 +1680,7 @@ console.log(tableLowercase)
                 placeholder="Select.."
                 options={selectedOption[countOfInput]}
                 value={selectedOption[countOfInput]?.find(
-                  (x) => x?.value == labelData[i][countOfInput]["ColumnValue"]
+                  (x) => x?.value === labelData[i][countOfInput]["ColumnValue"]
                 )}
                 onChange={(e) => {
                   const filteredArr = [];
@@ -1902,10 +2117,18 @@ console.log(tableLowercase)
   const handleSubmitData = (e, i) => {
     e.preventDefault();
     if (childPageType.PageType == "doubleEntryPage") {
-      Object.keys(columnValuesSingle).map(function (object) {
-        columnValuesSingle[object]["ID"] = "newID()";
-      });
-      const modelPurchase = {
+      if(link.length>3){
+        Object.keys(columnValuesSingle).map(function (object) {
+          columnValuesSingle[object]["ID"] = newSingleID;
+        }); 
+      }
+      else{
+        Object.keys(columnValuesSingle).map(function (object) {
+          columnValuesSingle[object]["ID"] = "newID()";
+        });
+      }
+   
+      const modelInsertData= {
         tableNameMaster: parentTableName,
         tableNameChild: childTableName,
         columnNamePrimary: "ID",
@@ -1915,64 +2138,143 @@ console.log(tableLowercase)
         IsFlag: "",
         data: columnValuesSingle[0],
         detailsData: [],
+        whereParams: { id: newSingleID},
       };
 
       columnValues.map((item) => {
-        modelPurchase.detailsData.push(item);
+        modelInsertData.detailsData.push(item);
       });
-      fetch(`https://localhost:44372/api/DoubleMasterEntry/Insert`, {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${token}`,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(modelPurchase),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status == true) {
-            swal({
-              title: "Data added successfully",
-              icon: "success",
-              button: "OK",
+      if(link.length>3){
+        fetch(`https://localhost:44372/api/DoubleMasterEntry/Update`, {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${token}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(modelInsertData),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status == true) {
+              swal({
+                title: "Data update successfully",
+                icon: "success",
+                button: "OK",
+              });
+            } else if (data.status == false) {
+              console.log(data);
+              swal({
+                title: "Try again",
+                text: "Something is worng",
+                icon: "warning",
+                button: "OK",
+              });
+            }
+          });
+      }
+      else{
+     fetch(`https://localhost:44372/api/DoubleMasterEntry/Insert`, {
+            method: "POST",
+            headers: {
+              authorization: `Bearer ${token}`,
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(modelInsertData),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.status == true) {
+                swal({
+                  title: "Data added successfully",
+                  icon: "success",
+                  button: "OK",
+                });
+              } else if (data.status == false) {
+                console.log(data);
+                swal({
+                  title: "Try again",
+                  text: "Something is worng",
+                  icon: "warning",
+                  button: "OK",
+                });
+              }
             });
-          } else if (data.status == false) {
-            console.log(data);
-            swal({
-              title: "Try again",
-              text: "Something is worng",
-              icon: "warning",
-              button: "OK",
-            });
-          }
-        });
-      console.log(JSON.stringify(modelPurchase));
+      }
+     
+    
+      console.log(JSON.stringify(modelInsertData));
     }
     if (childPageType.PageType == "singleEntryPage") {
-      console.log(columnValues);
-      const modelSingleData = {
-        tableNameMaster: null,
-        tableNameChild: childTableName,
-        columnNamePrimary: null,
-        columnNameForign: null,
-        serialType: null,
-        columnNameSerialNo: null,
-        isFlag: null,
-        data: null,
-        detailsData: [],
-        whereParams: null,
-      };
-      columnValues.map((item) => {
-        modelSingleData.detailsData.push(item);
-      });
+      if(link.length>3){
+        let pos = 0;
+        let keydata=''
+        for (let i of columnValues) {
+            if(pos==0){
+              keydata +=Object.keys(i)+','
+            }
+            pos++;
+        }
+        keydata = keydata.substring(0,keydata.length-1)
 
-      fetch(`https://localhost:44372/api/DoubleMasterEntry/InsertListData`, {
+       var objectData= columnValues.reduce(function(result, item) {
+          return item;
+        }, {});
+      const modelSingleData = {
+      tableName : childTableName,
+      columnNames :keydata,
+        queryParams :objectData,
+        whereParams: { id: newSingleID},
+      };
+        fetch(`https://localhost:44372/api/MasterEntry/Update`, {
+          method: "PUT",
+          headers: {
+            authorization: `Bearer ${token}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(modelSingleData),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status == true) {
+              swal({
+                title: "Data update successfully",
+                icon: "success",
+                button: "OK",
+              });
+            } else if (data.status == false) {
+              console.log(data);
+              swal({
+                title: "Try again",
+                text: "Something is worng",
+                icon: "warning",
+                button: "OK",
+              });
+            }
+          });
+      }
+      else{
+        const modelSingleInsertData = {
+          tableNameMaster: null,
+          tableNameChild: childTableName,
+          columnNamePrimary: null,
+          columnNameForign: null,
+          serialType: null,
+          columnNameSerialNo: null,
+          isFlag: null,
+          data: null,
+          detailsData: [],
+          whereParams: null,
+        };
+        columnValues.map((item) => {
+          modelSingleInsertData.detailsData.push(item);
+        });
+         fetch(`https://localhost:44372/api/DoubleMasterEntry/InsertListData`, {
         method: "POST",
         headers: {
           authorization: `Bearer ${token}`,
           "content-type": "application/json",
         },
-        body: JSON.stringify(modelSingleData),
+        body: JSON.stringify(modelSingleInsertData),
       })
         .then((res) => res.json())
         .then((data) => {
@@ -1992,7 +2294,15 @@ console.log(tableLowercase)
             });
           }
         });
-      console.log(JSON.stringify(modelSingleData));
+      }
+       
+      // columnValues.map((item) => {
+      //   modelSingleData.columnNames.push(item);
+      // });
+
+     
+     
+      // console.log(JSON.stringify(modelSingleData));
     }
   };
 
@@ -2519,28 +2829,33 @@ console.log(tableLowercase)
                     >
                       Save
                     </Button>
-
-                    <Button
-                      type="button"
-                      variant="contained"
-                      style={{ marginLeft: "5px", background: "#66CBFF" }}
-                      onClick={(e) => {
-                        handleAddRow({
-                          columnValues,
-                          setGetDate,
-                          getDate,
-                          twoDimensionData,
-                          setLabelData,
-                          labelDataCopy,
-                          setTwoDimentionData,
-                          selectedImage,
-                          setSelectedImage,
-                          childPageType,
-                        });
-                      }}
-                    >
-                      Add row
-                    </Button>
+              { 
+                  link.length >3 && childPageType?.PageType == "singleEntryPage" ? '':   <Button
+                  type="button"
+                  variant="contained"
+                  style={{ marginLeft: "5px", background: "#66CBFF" }}
+                  onClick={(e) => {
+                    handleAddRow({
+                      columnValues,
+                      setGetDate,
+                      getDate,
+                      twoDimensionData,
+                      setLabelData,
+                      labelData,
+                      labelDataCopy,
+                      setTwoDimentionData,
+                      selectedImage,
+                      setSelectedImage,
+                      childPageType,
+                newSingleID,
+                link
+                    });
+                  }}
+                >
+                  Add row
+                </Button>
+              }
+                    
 
                     <Button
                       variant="contained"

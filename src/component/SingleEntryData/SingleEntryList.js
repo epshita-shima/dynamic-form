@@ -162,7 +162,7 @@ const SingleEntryList = ({token,startDate,labelData,setLabelData,setLabelDataCop
               for (let i = 0; i < str2.length; i++) {
                 str2[i] = str2[i][0]?.toUpperCase() + str2[i].substr(1);
               }
-            
+            console.log(str2)
               return (
                 <th
                   scope="col"

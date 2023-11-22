@@ -3,9 +3,7 @@ import DataTable from "react-data-table-component";
 import FilterComponent from "./FilterComponent";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  faEye,
   faPenToSquare,
-  faPlus,
   faPrint,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -16,14 +14,17 @@ import swal from "sweetalert";
 const TableListData = () => {
   const [tableListData, setTableListData] = useState([]);
   const [heading, setHeading] = useState([]);
+  const navigate=useNavigate()
   const token = Token.token;
   const search = useLocation();
   const link = search.pathname.split("/");
+
   let tableName = link[1];
   let id = link[2];
-console.log(link)
-console.log(heading)
+  console.log(link)
+  console.log(heading)
   console.log(tableListData)
+
   useEffect(() => {
     const modelListData = {
       procedureName: "prc_GetListDetails",
@@ -44,11 +45,42 @@ console.log(heading)
       .then((data) => {
         if (data.status == true) {
           const showListData = JSON.parse(data.data);
+          delete showListData.Tables1.id
+          delete showListData.Tables1.DetailsId
           console.log(showListData);
           setTableListData(showListData.Tables1);
+        }
+      });
+  }, [setTableListData, id, token]);
+
+  useEffect(() => {
+    const modelListData = {
+      procedureName: "prc_GetListDetails",
+      parameters: {
+        MenuId: id,
+      },
+    };
+    console.log(modelListData);
+    fetch(`https://localhost:44372/api/GetData/GetMultipleDataByParam`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(modelListData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status == true) {
+          const showListData = JSON.parse(data.data);
+          delete showListData.Tables1.id
+          delete showListData.Tables1.DetailsId
+          console.log(showListData);
           let arraykeys = [];
           let pos = 0;
           for (let i of showListData.Tables1) {
+             delete i.id
+              delete i.DetailsId
             if (pos == 0) {
               arraykeys.push(...Object.keys(i));
             }
@@ -57,34 +89,9 @@ console.log(heading)
           setHeading(arraykeys);
         }
       });
-  }, [setTableListData, id, token]);
+  }, [id, token]);
 
   const columns_custom = heading?.map((key, id) => {
-    // let arr = [];
-    // let arraykeys=[]
-    // for (let i of tableListData) {
-    //    arr.push(...Object.values(i))
-    //    arraykeys.push(...Object.keys(i))
-    // }
-    // console.log(arr)
-    // console.log(arraykeys)
-    // return JSON.stringify(arr)
-    //     var a = [];
-    //     Object.values(key).map((key1, id)=>{
-    //       console.log(key1)
-    // //       Object.values(key1).map((key2, id)=>{
-    // // console.log(key2)
-    // //       })
-
-    // a.push({
-    //   name:key1,
-    //   selector: key1,
-    // })
-
-    //       }
-    //     )
-    //     console.log(a)
-    //     return a;
     return {
       name: key,
       selector: key,
@@ -93,7 +100,7 @@ console.log(heading)
     };
   });
   console.log(columns_custom)
-const navigate=useNavigate()
+
   const columns = [
     {
       name: "Sl.",
@@ -107,7 +114,7 @@ const navigate=useNavigate()
       button: true,
       width: "130px",
       grow: 2,
-      cell: (heading) => (
+      cell: (tableListData) => (
         <div>
           <a target="_blank" style={{ fontSize: "23px", color:'#FC6294'}} href="">
             <FontAwesomeIcon
@@ -127,7 +134,8 @@ const navigate=useNavigate()
               color: "#58355F",
             }}
             onClick={() => {
-              navigate(`/add-list/${id}/&${heading?.id}`)
+              console.log(tableListData)
+              navigate(`/add-list/${id}/&${tableListData?.id}`)
               //   if (updateButton == false) {
               //     setUpdateButton(true);
               //     handleGetUpdateData(data.MenuId);
@@ -147,7 +155,7 @@ const navigate=useNavigate()
               color: "red",
             }}
             onClick={() => {
-              handleDelete(heading);
+              handleDelete(tableListData);
             }}
           >
             <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon>
@@ -183,6 +191,7 @@ const navigate=useNavigate()
         borderRight: "1px solid #58355F",
         // borderBottom: "1px solid #58355F",
       },
+      hide:true,
     },
   };
   
@@ -213,7 +222,7 @@ const navigate=useNavigate()
   }, [filterText, resetPaginationToggle]);
 
   const handleDelete = (tableData) => {
-  
+  console.log(tableData.DetailsId)
     const modelDelete = {
       tableName:'',
       columnNames:'',
@@ -223,44 +232,44 @@ const navigate=useNavigate()
    modelDelete.tableName = tableName;
     modelDelete.whereParams = { id: tableData.id };
     console.log(modelDelete)
-          swal({
-            title: "Are you sure?",
-            text: "Once deleted, you will not be able to recover this record",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-          }).then((willDelete) => {
-            if (willDelete) {
-              fetch(`https://localhost:44372/api/MasterEntry/Delete`, {
-                method: "DELETE",
-                headers: {
-                  authorization: `Bearer ${token}`,
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify(modelDelete),
-              })
-                .then((res) => res.json())
-                .then((data) => {
-                    console.log(data)
-                  if (data.status === true && data.messageType == "Success") {
-                    swal("Delete success", {
-                      icon: "success",
-                    });
-                    const remaining=tableListData?.filter((x)=>x.id !=tableData.id)
-                    console.log(remaining)
-                    setTableListData(remaining)
-                  } else {
-                    console.log(data);
-                    swal({
-                      title: "Try again",
-                      text: "Something is worng",
-                      icon: "warning",
-                      button: "OK",
-                    });
-                  }
-                });
-            }
-          });
+          // swal({
+          //   title: "Are you sure?",
+          //   text: "Once deleted, you will not be able to recover this record",
+          //   icon: "warning",
+          //   buttons: true,
+          //   dangerMode: true,
+          // }).then((willDelete) => {
+          //   if (willDelete) {
+          //     fetch(`https://localhost:44372/api/MasterEntry/Delete`, {
+          //       method: "DELETE",
+          //       headers: {
+          //         authorization: `Bearer ${token}`,
+          //         "content-type": "application/json",
+          //       },
+          //       body: JSON.stringify(modelDelete),
+          //     })
+          //       .then((res) => res.json())
+          //       .then((data) => {
+          //           console.log(data)
+          //         if (data.status === true && data.messageType == "Success") {
+          //           swal("Delete success", {
+          //             icon: "success",
+          //           });
+          //           const remaining=tableListData?.filter((x)=>x.id !=tableData.id)
+          //           console.log(remaining)
+          //           setTableListData(remaining)
+          //         } else {
+          //           console.log(data);
+          //           swal({
+          //             title: "Try again",
+          //             text: "Something is worng",
+          //             icon: "warning",
+          //             button: "OK",
+          //           });
+          //         }
+          //       });
+          //   }
+          // });
   };
   return (
     <Grid className="shadow-lg h-100">

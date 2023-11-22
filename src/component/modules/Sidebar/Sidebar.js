@@ -190,7 +190,7 @@ const Sidebar = ({ showHeader, showSidebar, setShowSidebar,showTable, setShowTab
                                     fontSize:'16px',
                                   }}
                                   onClick={()=>{
-                                    // setShowTable(false)
+                                    setShowTable(false)
                                   }}
                                 >
                                   <i className="far fa-circle nav-icon" />

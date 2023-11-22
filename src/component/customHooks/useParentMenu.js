@@ -8,7 +8,9 @@ const useParentMenu = () => {
     procedureName: "",
     parameters: {},
   };
+ 
   modelData.procedureName = "prc_GetMenuList";
+  console.log(modelData)
   useEffect(() => {
     const faceParentData=async()=>{
      const response=await fetch("https://localhost:44372/api/GetData/GetInitialData", {

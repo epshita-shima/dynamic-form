@@ -20,7 +20,7 @@ import useChildMenu from "../customHooks/useChildMenu";
 import swal from "sweetalert";
 import useIndexTableData from "../customHooks/useIndexTableData";
 const SingleEntryData = ({ showTable, setShowTable, tableName }) => {
-  const [labelDataSingle, setLabelDataSingle] = useState([]);
+  var [labelDataSingle, setLabelDataSingle] = useState([]);
   const [openModal, setOpenModal] = useState(true);
   const [labelPosition, setLabelPosition] = useState([]);
   const [selectedListName, setSelectedListName] = useState([]);
@@ -78,6 +78,7 @@ var [labelDataCopy, setLabelDataCopy] = useState([]);
   const childTable = link[1];
   console.log(labelUpdateData)
   console.log(labelUpdateSingleData)
+  console.log(labelDataSingle)
 
   useEffect(() => {
     const modelDataLabel = {
@@ -222,21 +223,53 @@ console.log(tableLowercase)
             setChildTableName(childName);
             console.log(getParentTableName);
             labelDataSingle[0] = showSingleData.Tables1;
+            var labelSingleUpdateData=showSingleData.Tables1
             setLabelDataSingle(labelDataSingle);
             var createColumnValuesObjectSingle = {};
             if(link.length>3){
-              // for(let singleIndex=0;labelUpdateSingleData?.length>0;singleIndex++){
-              //   var updateSingleDataObj=labelUpdateSingleData[singleIndex]
-              //   Object.keys(updateSingleDataObj)?.forEach(function(key){
-              //     var value = updateSingleDataObj[key];
-              //     createColumnValuesObjectSingle[key]=value
-              //   })
-              // }
-              // labelUpdateSingleData.map((item) => {
-              //   return item.map((items) => {
-              //     return (createColumnValuesObjectSingle[items.ColumnName] = "");
-              //   });
-              // });
+            var  temp = [];
+             var tempData = [];
+           for(let arrayIndex=0;labelUpdateSingleData.length>arrayIndex;arrayIndex++){
+            temp[arrayIndex] = [];
+            delete labelUpdateSingleData[arrayIndex].id
+            tempData[arrayIndex] = [];
+            let  jObj=[]
+            for(let indexarray=0;labelSingleUpdateData.length>indexarray;indexarray++){
+              var loopObj = labelUpdateSingleData[arrayIndex]
+              // var updateDataObj=labelUpdateWithAllData[arrayIndex]
+              var index = 0;
+              console.log(loopObj)
+              Object.keys(loopObj).forEach(function(key){
+                console.log([key])
+                jObj[index] = {}
+                var value = loopObj[key];
+                console.log(key + ':' + value,createColumnValuesObject);
+               
+                jObj[index]["ColumnName"] = key;
+                jObj[index]["ColumnValue"] = value;
+                // jObj[index]["DetailsId"] = labelSingleUpdateData[indexarray].DetailsId;
+                // jObj[index]["ID"] = labelSingleUpdateData[indexarray].id;
+                jObj[index]["CalculationFormula"] = labelSingleUpdateData[indexarray]?.CalculationFormula;
+                jObj[index]["CalculationKey"] = labelSingleUpdateData[indexarray]?.CalculationKey;
+                jObj[index]["CalculationType"] = labelSingleUpdateData[indexarray]?.CalculationType;
+                jObj[index]["ColumnType"] = labelSingleUpdateData[indexarray]?.ColumnType;
+                jObj[index]["ColumnNameWithSpace"] = labelSingleUpdateData[indexarray]?.ColumnNameWithSpace;
+                jObj[index]["ColumnValueField_dropdown"] = labelSingleUpdateData[indexarray]?.ColumnValueField_dropdown;
+                jObj[index]["IsDisable"] = labelSingleUpdateData[indexarray]?.IsDisable;
+                jObj[index]["PageId"] = labelSingleUpdateData[indexarray]?.PageId;
+                jObj[index]["Position"] = labelSingleUpdateData[indexarray]?.Position;
+                jObj[index]["RelatedTable"] = labelSingleUpdateData[indexarray]?.RelatedTable;
+               
+                index++
+                indexarray++
+               
+                console.log(index,arrayIndex,indexarray)
+              });
+              console.log(jObj)
+              temp[arrayIndex]=jObj
+            }
+            // labelDataSingle[0]=temp[0]
+           }
             }
            
             else{
@@ -256,7 +289,6 @@ console.log(tableLowercase)
                   console.log(labelUpdateSingleData[arryindex])
                   for (let key in labelUpdateSingleData[arryindex]) {
                     if(element.ColumnName==key){
-                      console.log(element.ColumnName,key,labelUpdateData[arryindex][key])
                       element.ColumnValue= labelUpdateSingleData[arryindex][key]
                       if(link.length>3){
                         createColumnValuesObjectSingle[element.ColumnName]=labelUpdateSingleData[arryindex][key]

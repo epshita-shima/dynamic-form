@@ -232,44 +232,44 @@ const TableListData = () => {
    modelDelete.tableName = tableName;
     modelDelete.whereParams = { id: tableData.id };
     console.log(modelDelete)
-          // swal({
-          //   title: "Are you sure?",
-          //   text: "Once deleted, you will not be able to recover this record",
-          //   icon: "warning",
-          //   buttons: true,
-          //   dangerMode: true,
-          // }).then((willDelete) => {
-          //   if (willDelete) {
-          //     fetch(`https://localhost:44372/api/MasterEntry/Delete`, {
-          //       method: "DELETE",
-          //       headers: {
-          //         authorization: `Bearer ${token}`,
-          //         "content-type": "application/json",
-          //       },
-          //       body: JSON.stringify(modelDelete),
-          //     })
-          //       .then((res) => res.json())
-          //       .then((data) => {
-          //           console.log(data)
-          //         if (data.status === true && data.messageType == "Success") {
-          //           swal("Delete success", {
-          //             icon: "success",
-          //           });
-          //           const remaining=tableListData?.filter((x)=>x.id !=tableData.id)
-          //           console.log(remaining)
-          //           setTableListData(remaining)
-          //         } else {
-          //           console.log(data);
-          //           swal({
-          //             title: "Try again",
-          //             text: "Something is worng",
-          //             icon: "warning",
-          //             button: "OK",
-          //           });
-          //         }
-          //       });
-          //   }
-          // });
+          swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this record",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          }).then((willDelete) => {
+            if (willDelete) {
+              fetch(`https://localhost:44372/api/MasterEntry/Delete`, {
+                method: "DELETE",
+                headers: {
+                  authorization: `Bearer ${token}`,
+                  "content-type": "application/json",
+                },
+                body: JSON.stringify(modelDelete),
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log(data)
+                  if (data.status === true && data.messageType == "Success") {
+                    swal("Delete success", {
+                      icon: "success",
+                    });
+                    const remaining=tableListData?.filter((x)=>x.id !=tableData.id)
+                    console.log(remaining)
+                    setTableListData(remaining)
+                  } else {
+                    console.log(data);
+                    swal({
+                      title: "Try again",
+                      text: "Something is worng",
+                      icon: "warning",
+                      button: "OK",
+                    });
+                  }
+                });
+            }
+          });
   };
   return (
     <Grid className="shadow-lg h-100">

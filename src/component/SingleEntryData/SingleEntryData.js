@@ -79,37 +79,38 @@ var [labelDataCopy, setLabelDataCopy] = useState([]);
   console.log(labelUpdateData)
   console.log(labelUpdateSingleData)
   console.log(labelDataSingle)
+  console.log(childPageType)
 
-  useEffect(() => {
-    const modelDataLabel = {
-      procedureName: "",
-      parameters: {
-        TableName: "",
-      },
-    };
+  // useEffect(() => {
+  //   const modelDataLabel = {
+  //     procedureName: "",
+  //     parameters: {
+  //       TableName: "",
+  //     },
+  //   };
 
-    modelDataLabel.procedureName = "prc_GetMasterInfoList";
-    modelDataLabel.parameters.TableName = tableName;
-    console.log(modelDataLabel);
-    fetch("https://localhost:44372/api/GetData/GetDataByID", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(modelDataLabel),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status == true) {
-          const allModalData = JSON.parse(data.data);
-          console.log(allModalData);
-          setAllModelDataTable(allModalData);
-        } else {
-          console.log(data);
-        }
-      });
-  }, []);
+  //   modelDataLabel.procedureName = "prc_GetMasterInfoList";
+  //   modelDataLabel.parameters.TableName = tableName;
+  //   console.log(modelDataLabel);
+  //   fetch("https://localhost:44372/api/GetData/GetDataByID", {
+  //     method: "POST",
+  //     headers: {
+  //       authorization: `Bearer ${token}`,
+  //       "content-type": "application/json",
+  //     },
+  //     body: JSON.stringify(modelDataLabel),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       if (data.status == true) {
+  //         const allModalData = JSON.parse(data.data);
+  //         console.log(allModalData);
+  //         setAllModelDataTable(allModalData);
+  //       } else {
+  //         console.log(data);
+  //       }
+  //     });
+  // }, []);
 
   useEffect(()=>{
     const modelUpdateData = {
@@ -136,10 +137,11 @@ var [labelDataCopy, setLabelDataCopy] = useState([]);
           const allUpdateData=allData.Tables2;
           console.log(allSingleUpdateData)
           console.log(allUpdateData)
-          setLabelUpdateWithAllData(allUpdateData)
-          setLabelUpdateWithSingleData(allSingleUpdateData)
+            setLabelUpdateWithAllData(allUpdateData)
+            setLabelUpdateWithSingleData(allSingleUpdateData)
+          
         }})
-  },[id,newSingleID,token])
+  },[id,newSingleID,token,link.length])
 
   useEffect(()=>{
     const modelUpdateData = {
@@ -167,10 +169,12 @@ var [labelDataCopy, setLabelDataCopy] = useState([]);
           console.log(allSingleUpdateData)
           console.log(allUpdateData)
           setLabelUpdateData(allUpdateData)
-          setLabelUpdateWithAllData(allUpdateData)
+          if(childPageType.PageType == "singleEntryPage"){
+            setLabelUpdateWithAllData(allUpdateData)
+          }
           setLabelUpdateSingleData(allSingleUpdateData)
         }})
-  },[id,newSingleID,token])
+  },[id,newSingleID,token,childPageType.PageType])
  
 
 const singleTableName=childMenu?.filter((x)=>x.MenuId===id)
@@ -226,52 +230,53 @@ console.log(tableLowercase)
             var labelSingleUpdateData=showSingleData.Tables1
             setLabelDataSingle(labelDataSingle);
             var createColumnValuesObjectSingle = {};
-            if(link.length>3){
-            var  temp = [];
-             var tempData = [];
-           for(let arrayIndex=0;labelUpdateSingleData.length>arrayIndex;arrayIndex++){
-            temp[arrayIndex] = [];
-            delete labelUpdateSingleData[arrayIndex].id
-            tempData[arrayIndex] = [];
-            let  jObj=[]
-            for(let indexarray=0;labelSingleUpdateData.length>indexarray;indexarray++){
-              var loopObj = labelUpdateSingleData[arrayIndex]
-              // var updateDataObj=labelUpdateWithAllData[arrayIndex]
-              var index = 0;
-              console.log(loopObj)
-              Object.keys(loopObj).forEach(function(key){
-                console.log([key])
-                jObj[index] = {}
-                var value = loopObj[key];
-                console.log(key + ':' + value,createColumnValuesObject);
+          //   if(link.length>3){
+          //   var  temp = [];
+          //    var tempData = [];
+          //  for(let arrayIndex=0;labelUpdateSingleData.length>arrayIndex;arrayIndex++){
+          //   temp[arrayIndex] = [];
+          //   delete labelUpdateSingleData[arrayIndex].id
+          //   tempData[arrayIndex] = [];
+          //   let  jObj=[]
+          //   for(let indexarray=0;labelSingleUpdateData.length>indexarray;indexarray++){
+          //     var loopObj = labelUpdateSingleData[arrayIndex]
+          //     // var updateDataObj=labelUpdateWithAllData[arrayIndex]
+          //     var index = 0;
+          //     console.log(loopObj)
+          //     Object.keys(loopObj).forEach(function(key){
+          //       console.log([key])
+          //       jObj[index] = {}
+          //       var value = loopObj[key];
+          //       console.log(key + ':' + value,createColumnValuesObject);
                
-                jObj[index]["ColumnName"] = key;
-                jObj[index]["ColumnValue"] = value;
-                // jObj[index]["DetailsId"] = labelSingleUpdateData[indexarray].DetailsId;
-                // jObj[index]["ID"] = labelSingleUpdateData[indexarray].id;
-                jObj[index]["CalculationFormula"] = labelSingleUpdateData[indexarray]?.CalculationFormula;
-                jObj[index]["CalculationKey"] = labelSingleUpdateData[indexarray]?.CalculationKey;
-                jObj[index]["CalculationType"] = labelSingleUpdateData[indexarray]?.CalculationType;
-                jObj[index]["ColumnType"] = labelSingleUpdateData[indexarray]?.ColumnType;
-                jObj[index]["ColumnNameWithSpace"] = labelSingleUpdateData[indexarray]?.ColumnNameWithSpace;
-                jObj[index]["ColumnValueField_dropdown"] = labelSingleUpdateData[indexarray]?.ColumnValueField_dropdown;
-                jObj[index]["IsDisable"] = labelSingleUpdateData[indexarray]?.IsDisable;
-                jObj[index]["PageId"] = labelSingleUpdateData[indexarray]?.PageId;
-                jObj[index]["Position"] = labelSingleUpdateData[indexarray]?.Position;
-                jObj[index]["RelatedTable"] = labelSingleUpdateData[indexarray]?.RelatedTable;
+          //       jObj[index]["ColumnName"] = key;
+          //       jObj[index]["ColumnValue"] = value;
+          //       // jObj[index]["DetailsId"] = labelSingleUpdateData[indexarray].DetailsId;
+          //       // jObj[index]["ID"] = labelSingleUpdateData[indexarray].id;
+          //       jObj[index]["CalculationFormula"] = labelSingleUpdateData[indexarray]?.CalculationFormula;
+          //       jObj[index]["CalculationKey"] = labelSingleUpdateData[indexarray]?.CalculationKey;
+          //       jObj[index]["CalculationType"] = labelSingleUpdateData[indexarray]?.CalculationType;
+          //       jObj[index]["ColumnType"] = labelSingleUpdateData[indexarray]?.ColumnType;
+          //       jObj[index]["ColumnNameWithSpace"] = labelSingleUpdateData[indexarray]?.ColumnNameWithSpace;
+          //       jObj[index]["ColumnValueField_dropdown"] = labelSingleUpdateData[indexarray]?.ColumnValueField_dropdown;
+          //       jObj[index]["IsDisable"] = labelSingleUpdateData[indexarray]?.IsDisable;
+          //       jObj[index]["PageId"] = labelSingleUpdateData[indexarray]?.PageId;
+          //       jObj[index]["Position"] = labelSingleUpdateData[indexarray]?.Position;
+          //       jObj[index]["RelatedTable"] = labelSingleUpdateData[indexarray]?.RelatedTable;
                
-                index++
-                indexarray++
+          //       index++
+          //       indexarray++
                
-                console.log(index,arrayIndex,indexarray)
-              });
-              console.log(jObj)
-              temp[arrayIndex]=jObj
-            }
-            // labelDataSingle[0]=temp[0]
-           }
-            }
-           
+          //       console.log(index,arrayIndex,indexarray)
+          //     });
+          //     console.log(jObj)
+          //     temp[arrayIndex]=jObj
+          //   }
+          //   console.log(temp)
+          //   labelDataSingle[0]=temp[0]
+          //  }
+          //   }
+           if(link.length>3){}
             else{
               labelDataSingle.map((item) => {
                 return item.map((items) => {
@@ -2283,6 +2288,7 @@ console.log(tableLowercase)
               });
             }
           });
+          console.log(JSON.stringify(modelSingleData))
       }
       else{
         const modelSingleInsertData = {
@@ -2919,6 +2925,7 @@ console.log(tableLowercase)
                     >
                       {childPageType?.PageType == "doubleEntryPage"
                         ? labelDataSingle?.map((items, i) => {
+                          console.log(items)
                             return (
                               <div className="row mb-4">
                                 {items?.map((item, i) => {
